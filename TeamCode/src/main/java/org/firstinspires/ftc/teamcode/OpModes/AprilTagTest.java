@@ -33,10 +33,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Camera;
+import org.firstinspires.ftc.teamcode.LoopTime;
 
 @Autonomous
 public class AprilTagTest extends LinearOpMode {
     Camera camera = new Camera();
+    LoopTime loopTime; // custom loop time class
 
     @Override
     public void runOpMode() {
@@ -50,10 +52,12 @@ public class AprilTagTest extends LinearOpMode {
         }
         waitForStart();
 
-        while (opModeIsActive()) {
-             camera.telemetryAprilTag(telemetry);
+        while (opModeIsActive()) { // Main loop
+            loopTime.updateLoopTime(telemetry);
+            camera.telemetryAprilTag(telemetry);
 
             telemetry.update();
+
         }
     }
 }

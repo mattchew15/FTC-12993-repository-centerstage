@@ -21,6 +21,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.List;
 
 public class Camera {
+
+    AprilTagProcessor aprilTag;
+
     public void initBlueWebcam(HardwareMap hwMap) {
         BlueTeamPropDetectorPipeline blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
@@ -63,7 +66,6 @@ public class Camera {
         });
     }
 
-    AprilTagProcessor aprilTag;
     public void initAprilTag(HardwareMap hwMap) {
         aprilTag = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(822.317, 822.317, 319.495, 242.502)
@@ -80,6 +82,7 @@ public class Camera {
     public void telemetryBlueWebcam(Telemetry telemetry) {
 
     }
+
     public void telemetryAprilTag(Telemetry telemetry) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
