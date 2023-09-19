@@ -8,6 +8,4 @@ public class Globals {
             auto = false,
             blueAuto = false,
             redAuto = false;
-
-
 }
