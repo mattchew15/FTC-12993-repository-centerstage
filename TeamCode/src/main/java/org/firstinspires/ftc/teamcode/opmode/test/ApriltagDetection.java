@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
-@Autonomous
+@Autonomous(group = "test")
 public class ApriltagDetection extends LinearOpMode {
     VisionHardware robot = new VisionHardware();
     Print print = new Print();
