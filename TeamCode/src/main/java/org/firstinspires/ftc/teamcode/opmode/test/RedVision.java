@@ -21,7 +21,7 @@ public class RedVision extends LinearOpMode {
 
         waitForStart();
         hardware.stopStreamingRedWebcam();
-        hardware.telemetryAprilTag(telemetry);
+        hardware.initApriltag(hardwareMap);
 
         while (opModeIsActive()) {
             hardware.telemetryAprilTag(telemetry);
