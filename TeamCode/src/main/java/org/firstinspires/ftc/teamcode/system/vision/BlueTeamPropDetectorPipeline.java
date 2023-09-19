@@ -9,10 +9,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
-    private enum teamPropPosition {
-        left,
-        center,
-        right
+    private enum TeamPropPosition {
+        LEFT,
+        CENTER,
+        RIGHT
     }
 
     // Colors for rectangles drawn
@@ -42,7 +42,7 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
 
     private int avg1, avg2, avg3; // average cb values in each rectangle
 
-    private volatile teamPropPosition position = teamPropPosition.left; //default position is left
+    private volatile TeamPropPosition position = TeamPropPosition.LEFT; //default position is left
 
     // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
     private void inputToCb(Mat input) {
@@ -98,20 +98,20 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if(max == avg1) {
-            position = teamPropPosition.left;
+            position = TeamPropPosition.LEFT;
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if(max == avg2) {
-            position = teamPropPosition.center;
+            position = TeamPropPosition.CENTER;
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            position = teamPropPosition.right;
+            position = TeamPropPosition.RIGHT;
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
         return input;
     }
 
-    public teamPropPosition getPosition() { return position; }
+    public TeamPropPosition getPosition() { return position; }
 
     public int getAvg1() { return avg1; }
     public int getAvg2() { return avg2; }

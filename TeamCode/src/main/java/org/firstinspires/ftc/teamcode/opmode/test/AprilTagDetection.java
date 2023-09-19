@@ -3,28 +3,25 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
 public class AprilTagDetection extends LinearOpMode {
-    VisionHardware robot = new VisionHardware();
-    Print print = new Print();
+    VisionHardware visionHardware = new VisionHardware();
 
     @Override
     public void runOpMode() {
-        robot.initApriltag(hardwareMap);
+        visionHardware.initApriltag(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryAprilTag(telemetry, robot.getAprilTag());
+            visionHardware.telemetryAprilTag(telemetry);
             telemetry.update();
         }
 
         waitForStart();
 
         while(opModeIsActive()) {
-            print.telemetryAprilTag(telemetry, robot.getAprilTag());
-
+            visionHardware.telemetryAprilTag(telemetry);
             telemetry.update();
         }
 
