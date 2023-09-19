@@ -7,10 +7,11 @@ import org.firstinspires.ftc.teamcode.system.hardware.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous
 public class AprilTagTest extends LinearOpMode {
-    RobotHardware robot = new RobotHardware();
+    VisionHardware robot = new VisionHardware();
     Print print = new Print();
     LoopTime loopTime; // custom loop time class
 

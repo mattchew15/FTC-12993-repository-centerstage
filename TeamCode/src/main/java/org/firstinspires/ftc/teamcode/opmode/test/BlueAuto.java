@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.hardware.LoopTime;
 
 @Autonomous
 public class BlueAuto extends LinearOpMode {
     BlueTeamPropDetectorPipeline teamPropPipeline = new BlueTeamPropDetectorPipeline();
-    RobotHardware robot = new RobotHardware();
+    VisionHardware robot = new VisionHardware();
     Print print = new Print();
     LoopTime loopTime; // custom loop time class
 
