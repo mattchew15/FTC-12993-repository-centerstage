@@ -9,21 +9,21 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 public class Print {
-    BlueTeamPropDetectorPipeline blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
-    RedTeamPropDetectorPipeline redTeamPropPipeline = new RedTeamPropDetectorPipeline();
+    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
 
     public void telemetryBlueWebcam(Telemetry telemetry) {
-        telemetry.addData("Position", blueTeamPropPipeline.getPosition());
-        telemetry.addData("Region 1", blueTeamPropPipeline.getAvg1());
-        telemetry.addData("Region 2", blueTeamPropPipeline.getAvg2());
-        telemetry.addData("Region 3", blueTeamPropPipeline.getAvg3());
+        telemetry.addData("Position", bluePipeline.getPosition());
+        telemetry.addData("Region 1", bluePipeline.getAvg1());
+        telemetry.addData("Region 2", bluePipeline.getAvg2());
+        telemetry.addData("Region 3", bluePipeline.getAvg3());
     }
 
     public void telemetryRedWebcam(Telemetry telemetry) {
-        telemetry.addData("Position", redTeamPropPipeline.getPosition());
-        telemetry.addData("Region 1", redTeamPropPipeline.getAvg1());
-        telemetry.addData("Region 2", redTeamPropPipeline.getAvg2());
-        telemetry.addData("Region 3", redTeamPropPipeline.getAvg3());
+        telemetry.addData("Position", redPipeline.getPosition());
+        telemetry.addData("Region 1", redPipeline.getAvg1());
+        telemetry.addData("Region 2", redPipeline.getAvg2());
+        telemetry.addData("Region 3", redPipeline.getAvg3());
     }
 
     public void telemetryAprilTag(Telemetry telemetry, AprilTagProcessor aprilTag) {

@@ -44,13 +44,12 @@ public class RobotHardware {
 
     public AprilTagProcessor aprilTag;
     public VisionPortal visionPortal;
-    public OpenCvWebcam blueWebcam;
-    public OpenCvWebcam redWebcam;
+    private OpenCvWebcam blueWebcam;
+    private OpenCvWebcam redWebcam;
 
-    public BlueTeamPropDetectorPipeline blueTeamPropPipeline;
-    public RedTeamPropDetectorPipeline redTeamPropPipeline;
+    public BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    public RedTeamPropDetectorPipeline redPipeline;
     int cameraMonitorViewId;
-
 
     public void init(HardwareMap hwMap) { //edit
         frontLeftMotor = hwMap.get(DcMotorEx.class, "frontLeftMotor");
@@ -73,50 +72,6 @@ public class RobotHardware {
         servo10 = hwMap.get(Servo.class, "servo10");
         servo11 = hwMap.get(Servo.class, "servo11");
 
-        if (Globals.auto) { //If auto init backWebcam
-            aprilTag = new AprilTagProcessor.Builder()
-                    .setLensIntrinsics(822.317, 822.317, 319.495, 242.502)
-                    .build();
 
-            visionPortal = new VisionPortal.Builder()
-                    .addProcessor(aprilTag)
-                    .setCamera(hwMap.get(WebcamName.class, "backWebcam"))
-                    .setCameraResolution(new Size(640, 480))
-                    .enableLiveView(true)
-                    .build();
-
-            cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
-                    ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-
-            if (Globals.blueAuto) { // If blue auto, init blueWebcam
-                blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
-                blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "blueWebcam"), cameraMonitorViewId);
-                blueWebcam.setPipeline(blueTeamPropPipeline);
-                blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                    @Override
-                    public void onOpened()
-                    {
-                        blueWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-                    }
-                    @Override
-                    public void onError(int errorCode) {
-                    }
-                });
-            } else if(Globals.redAuto) { // If red auto, init redWebcam
-                redTeamPropPipeline = new RedTeamPropDetectorPipeline();
-                redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "redWebcam"), cameraMonitorViewId);
-                redWebcam.setPipeline(redTeamPropPipeline);
-                redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                    @Override
-                    public void onOpened()
-                    {
-                        redWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-                    }
-                    @Override
-                    public void onError(int errorCode) {
-                    }
-                });
-            }
-        }
     }
 }

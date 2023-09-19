@@ -15,14 +15,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class VisionHardware {
-    public AprilTagProcessor aprilTag;
+    private AprilTagProcessor aprilTag;
     public VisionPortal visionPortal;
-    public OpenCvWebcam blueWebcam;
-    public OpenCvWebcam redWebcam;
-
-    public BlueTeamPropDetectorPipeline blueTeamPropPipeline;
-    public RedTeamPropDetectorPipeline redTeamPropPipeline;
-    int cameraMonitorViewId;
+    private OpenCvWebcam blueWebcam, redWebcam;
+    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
+    private int cameraMonitorViewId;
 
     public void initApriltag(HardwareMap hwMap) {
         aprilTag = new AprilTagProcessor.Builder()
@@ -37,11 +35,9 @@ public class VisionHardware {
     }
 
     public void initBlueWebcam(HardwareMap hwMap) {
-        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
-                ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
+        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        blueWebcam.setPipeline(blueTeamPropPipeline);
+        blueWebcam.setPipeline(bluePipeline);
         blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -55,11 +51,9 @@ public class VisionHardware {
     }
 
     public void initRedWebcam(HardwareMap hwMap) {
-        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
-                ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        redTeamPropPipeline = new RedTeamPropDetectorPipeline();
+        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        redWebcam.setPipeline(redTeamPropPipeline);
+        redWebcam.setPipeline(redPipeline);
         redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

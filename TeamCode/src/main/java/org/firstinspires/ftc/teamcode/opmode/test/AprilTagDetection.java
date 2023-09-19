@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
-public class ApriltagDetection extends LinearOpMode {
+public class AprilTagDetection extends LinearOpMode {
     VisionHardware robot = new VisionHardware();
     Print print = new Print();
 
