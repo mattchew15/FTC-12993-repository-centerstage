@@ -11,7 +11,8 @@ import java.util.List;
 public class Print {
     BlueTeamPropDetectorPipeline blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
     RedTeamPropDetectorPipeline redTeamPropPipeline = new RedTeamPropDetectorPipeline();
-    AprilTagProcessor aprilTag;
+    VisionHardware visionHardware = new VisionHardware();
+    AprilTagProcessor aprilTag = visionHardware.getAprilTag();
 
     public void telemetryBlueWebcam(Telemetry telemetry) {
         telemetry.addData("Position", blueTeamPropPipeline.getPosition());
