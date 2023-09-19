@@ -11,8 +11,6 @@ import java.util.List;
 public class Print {
     BlueTeamPropDetectorPipeline blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
     RedTeamPropDetectorPipeline redTeamPropPipeline = new RedTeamPropDetectorPipeline();
-    VisionHardware visionHardware = new VisionHardware();
-    AprilTagProcessor aprilTag = visionHardware.getAprilTag();
 
     public void telemetryBlueWebcam(Telemetry telemetry) {
         telemetry.addData("Position", blueTeamPropPipeline.getPosition());
@@ -28,7 +26,7 @@ public class Print {
         telemetry.addData("Region 3", redTeamPropPipeline.getAvg3());
     }
 
-    public void telemetryAprilTag(Telemetry telemetry) {
+    public void telemetryAprilTag(Telemetry telemetry, AprilTagProcessor aprilTag) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 

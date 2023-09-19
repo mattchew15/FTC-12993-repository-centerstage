@@ -30,7 +30,7 @@ public class VisionHardware {
                 .build();
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTag)
-                .setCamera(hwMap.get(WebcamName.class, "redWebcam"))
+                .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(640, 480))
                 .enableLiveView(true)
                 .build();
@@ -40,7 +40,7 @@ public class VisionHardware {
         cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
                 ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
-        blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "blueWebcam"), cameraMonitorViewId);
+        blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         blueWebcam.setPipeline(blueTeamPropPipeline);
         blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -58,7 +58,7 @@ public class VisionHardware {
         cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
                 ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         redTeamPropPipeline = new RedTeamPropDetectorPipeline();
-        redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "redWebcam"), cameraMonitorViewId);
+        redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         redWebcam.setPipeline(redTeamPropPipeline);
         redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override

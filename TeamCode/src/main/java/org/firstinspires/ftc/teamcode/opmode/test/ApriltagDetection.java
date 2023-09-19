@@ -16,7 +16,7 @@ public class ApriltagDetection extends LinearOpMode {
         robot.initApriltag(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getAprilTag());
 
             telemetry.update();
         }
@@ -24,7 +24,7 @@ public class ApriltagDetection extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getAprilTag());
 
             telemetry.update();
         }
