@@ -5,7 +5,6 @@ public class Globals {
     //edit based on robot, this is just a rough draft
 
     public static boolean
-            auto = false,
-            blueAuto = false,
-            redAuto = false;
+            BLUE_AUTO = false,
+            RED_AUTO = false;
 }

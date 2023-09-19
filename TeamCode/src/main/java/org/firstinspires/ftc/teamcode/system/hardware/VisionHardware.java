@@ -78,7 +78,7 @@ public class VisionHardware {
                 .build();
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTag)
-                .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
                 .setCameraResolution(new Size(640, 480))
                 .enableLiveView(true)
                 .build();

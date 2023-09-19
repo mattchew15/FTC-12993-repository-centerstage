@@ -97,10 +97,10 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
         //Find max average, this will be where the team prop is.
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
-        if(max == avg1) {
+        if (max == avg1) {
             position = TeamPropPosition.LEFT;
             Imgproc.rectangle(input, region1A, region1B, green, -1);
-        } else if(max == avg2) {
+        } else if (max == avg2) {
             position = TeamPropPosition.CENTER;
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {

@@ -7,21 +7,21 @@ import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
 public class BlueTeamPropDetection extends LinearOpMode {
-    VisionHardware visionHardware = new VisionHardware();
+    private final VisionHardware hardware = new VisionHardware();
 
     @Override
     public void runOpMode() {
-        visionHardware.initBlueWebcam(hardwareMap);
+        hardware.initBlueWebcam(hardwareMap);
 
         while(!isStarted()) {
-            visionHardware.telemetryBlueWebcam(telemetry);
+            hardware.telemetryBlueWebcam(telemetry);
             telemetry.update();
         }
 
         waitForStart();
 
         while(opModeIsActive()) {
-            visionHardware.telemetryBlueWebcam(telemetry);
+            hardware.telemetryBlueWebcam(telemetry);
             telemetry.update();
         }
 
