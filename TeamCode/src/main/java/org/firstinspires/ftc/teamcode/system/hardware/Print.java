@@ -13,7 +13,6 @@ public class Print {
     private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
 
     public void telemetryBlueWebcam(Telemetry telemetry) {
-        bluePipeline.returnPosition();
         telemetry.addData("Position", bluePipeline.getPosition());
         telemetry.addData("Region 1", bluePipeline.getAvg1());
         telemetry.addData("Region 2", bluePipeline.getAvg2());

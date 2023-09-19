@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.system.hardware.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
@@ -18,6 +17,7 @@ public class BlueTeamPropDetection extends LinearOpMode {
 
         while(!isStarted()) {
             print.telemetryBlueWebcam(telemetry);
+
             telemetry.update();
         }
 
@@ -25,6 +25,7 @@ public class BlueTeamPropDetection extends LinearOpMode {
 
         while(opModeIsActive()) {
             print.telemetryBlueWebcam(telemetry);
+
             telemetry.update();
         }
 
