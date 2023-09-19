@@ -77,7 +77,10 @@ public class VisionHardware {
                     }
                 });
             }
-
         }
+    }
+
+    public AprilTagProcessor getApriltag() {
+        return aprilTag;
     }
 }

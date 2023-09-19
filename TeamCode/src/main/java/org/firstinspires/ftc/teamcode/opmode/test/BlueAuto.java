@@ -25,7 +25,7 @@ public class BlueAuto extends LinearOpMode {
         robot.init(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getApriltag());
             print.telemetryBlueWebcam(telemetry);
 
             telemetry.update();
@@ -33,7 +33,7 @@ public class BlueAuto extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getApriltag());
             print.telemetryBlueWebcam(telemetry);
             loopTime.updateLoopTime(telemetry);
 

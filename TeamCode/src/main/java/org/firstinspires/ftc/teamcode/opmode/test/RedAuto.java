@@ -25,7 +25,7 @@ public class RedAuto extends LinearOpMode {
         robot.init(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getApriltag());
             print.telemetryRedWebcam(telemetry);
 
             telemetry.update();
@@ -33,7 +33,7 @@ public class RedAuto extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
-            print.telemetryAprilTag(telemetry);
+            print.telemetryAprilTag(telemetry, robot.getApriltag());
             print.telemetryRedWebcam(telemetry);
             loopTime.updateLoopTime(telemetry);
 
