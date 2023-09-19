@@ -26,22 +26,22 @@ public class VisionHardware {
     int cameraMonitorViewId;
 
     public void init(HardwareMap hwMap) {
-        if (Globals.auto) { //If auto init backWebcam
+        if (Globals.auto) {
             aprilTag = new AprilTagProcessor.Builder()
                     .setLensIntrinsics(822.317, 822.317, 319.495, 242.502)
-                    .build();
-
-            visionPortal = new VisionPortal.Builder()
-                    .addProcessor(aprilTag)
-                    .setCamera(hwMap.get(WebcamName.class, "backWebcam"))
-                    .setCameraResolution(new Size(640, 480))
-                    .enableLiveView(true)
                     .build();
 
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier
                     ("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
 
-            if (Globals.blueAuto) { // If blue auto, init blueWebcam
+            if (Globals.blueAuto) {
+                visionPortal = new VisionPortal.Builder()
+                        .addProcessor(aprilTag)
+                        .setCamera(hwMap.get(WebcamName.class, "redWebcam"))
+                        .setCameraResolution(new Size(640, 480))
+                        .enableLiveView(true)
+                        .build();
+
                 blueTeamPropPipeline = new BlueTeamPropDetectorPipeline();
                 blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "blueWebcam"), cameraMonitorViewId);
                 blueWebcam.setPipeline(blueTeamPropPipeline);
@@ -55,7 +55,14 @@ public class VisionHardware {
                     public void onError(int errorCode) {
                     }
                 });
-            } else if (Globals.redAuto) { // If red auto, init redWebcam
+            } else if (Globals.redAuto) {
+                visionPortal = new VisionPortal.Builder()
+                        .addProcessor(aprilTag)
+                        .setCamera(hwMap.get(WebcamName.class, "blueWebcam"))
+                        .setCameraResolution(new Size(640, 480))
+                        .enableLiveView(true)
+                        .build();
+
                 redTeamPropPipeline = new RedTeamPropDetectorPipeline();
                 redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "redWebcam"), cameraMonitorViewId);
                 redWebcam.setPipeline(redTeamPropPipeline);
