@@ -42,6 +42,10 @@ public class VisionHardware {
         });
     }
 
+    public void stopStreamingBlueWebcam() {
+        blueWebcam.stopStreaming();
+    }
+
     public void telemetryBlueWebcam(Telemetry telemetry) {
         telemetry.addData("Position", bluePipeline.getPosition());
         telemetry.addData("Region 1", bluePipeline.getAvg1());
@@ -63,6 +67,10 @@ public class VisionHardware {
             public void onError(int errorCode) {
             }
         });
+    }
+
+    public void stopStreamingRedWebcam() {
+        stopStreamingRedWebcam();
     }
 
     public void telemetryRedWebcam(Telemetry telemetry) {

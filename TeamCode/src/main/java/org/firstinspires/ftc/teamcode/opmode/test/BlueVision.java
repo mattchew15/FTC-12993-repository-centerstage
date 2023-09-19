@@ -4,26 +4,27 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
-import org.firstinspires.ftc.teamcode.system.hardware.WebcamHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
 public class BlueVision extends LinearOpMode {
-    private final WebcamHardware hardware = new WebcamHardware();
+    private final VisionHardware hardware = new VisionHardware();
 
     @Override
     public void runOpMode() {
-        Globals.BLUE_AUTO = true;
-        hardware.initWebcam(hardwareMap);
+        hardware.initBlueWebcam(hardwareMap);
 
-        while(!isStarted()) {
-            hardware.telemetryWebcam(telemetry);
+        while (!isStarted()) {
+            hardware.telemetryBlueWebcam(telemetry);
             telemetry.update();
         }
 
         waitForStart();
+        hardware.stopStreamingBlueWebcam();
+        hardware.initApriltag(hardwareMap);
 
-        while(opModeIsActive()) {
-            hardware.telemetryWebcam(telemetry);
+        while (opModeIsActive()) {
+            hardware.telemetryAprilTag(telemetry);
             telemetry.update();
         }
 
