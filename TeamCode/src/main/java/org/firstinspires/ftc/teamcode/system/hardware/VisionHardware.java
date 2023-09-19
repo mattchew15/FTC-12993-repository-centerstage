@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
@@ -48,6 +49,13 @@ public class VisionHardware {
             public void onError(int errorCode) {
             }
         });
+    }
+
+    public void telemetryBlueWebcam(Telemetry telemetry) {
+        telemetry.addData("Position", bluePipeline.getPosition());
+        telemetry.addData("Region 1", bluePipeline.getAvg1());
+        telemetry.addData("Region 2", bluePipeline.getAvg2());
+        telemetry.addData("Region 3", bluePipeline.getAvg3());
     }
 
     public void initRedWebcam(HardwareMap hwMap) {

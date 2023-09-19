@@ -9,10 +9,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
-    private enum TeamPropPosition {
-        LEFT,
-        CENTER,
-        RIGHT
+    private enum teamPropPosition {
+        left,
+        center,
+        right
     }
 
     // Colors for rectangles drawn
@@ -26,7 +26,7 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
             regionHeight = 40;
 
     // Points A and B for 3 regions. Counting from left.
-    private final Point
+    private final Point // position of rectangles
             region1A = new Point(150, 200),
             region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
             region2A = new Point(300, 100),
@@ -34,15 +34,15 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
             region3A = new Point(450, 200),
             region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
 
-    private Mat region1Cb, region2Cb, region3Cb;
+    private Mat region1Cb, region2Cb, region3Cb; // CB values in 3 rectangles
 
     private final Mat
             YCrCb = new Mat(),
             Cb = new Mat();
 
-    private int avg1, avg2, avg3;
+    private int avg1, avg2, avg3; // average cb values in each rectangle
 
-    private volatile TeamPropPosition position = TeamPropPosition.LEFT;
+    private volatile teamPropPosition position = teamPropPosition.left; //default position is left
 
     // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
     private void inputToCb(Mat input) {
@@ -98,20 +98,20 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if(max == avg1) {
-            position = TeamPropPosition.LEFT;
+            position = teamPropPosition.left;
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if(max == avg2) {
-            position = TeamPropPosition.CENTER;
+            position = teamPropPosition.center;
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            position = TeamPropPosition.RIGHT;
+            position = teamPropPosition.right;
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
         return input;
     }
 
-    public TeamPropPosition getPosition() { return position; }
+    public teamPropPosition getPosition() { return position; }
 
     public int getAvg1() { return avg1; }
     public int getAvg2() { return avg2; }
