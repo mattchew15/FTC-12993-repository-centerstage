@@ -8,8 +8,8 @@ public class Globals {
 
     // Use in Auto
     public static boolean
-            BLUE_AUTO,
-            RED_AUTO;
+            BLUE_AUTO = false,
+            RED_AUTO = false;
 
     public static void setRedAuto(){
         Globals.RED_AUTO = true;
