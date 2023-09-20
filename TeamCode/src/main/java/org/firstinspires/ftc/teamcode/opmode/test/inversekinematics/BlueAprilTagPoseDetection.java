@@ -23,6 +23,7 @@ public class BlueAprilTagPoseDetection extends LinearOpMode {
             telemetry.update();
         }
         BlueTeamPropDetectorPipeline.TeamPropPosition position = hardware.getBluePosition();
+        Globals.BLUE_POSITION = position;
 
         hardware.closeBlueWebcam();
         hardware.initApriltag(hardwareMap);

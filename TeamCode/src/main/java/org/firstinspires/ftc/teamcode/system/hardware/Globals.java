@@ -32,12 +32,12 @@ public class Globals {
     public static BlueTeamPropDetectorPipeline.TeamPropPosition
             BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
             BLUE_CENTER = BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT;
+            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+            BLUE_POSITION = null;
 
     public static RedTeamPropDetectorPipeline.TeamPropPosition
             RED_LEFT = RedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
             RED_CENTER = RedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT;
-
-
+            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+            RED_POSITION = null;
 }

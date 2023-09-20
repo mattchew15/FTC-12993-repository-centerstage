@@ -14,22 +14,23 @@ public class AprilTagPoseDetector {
     private final AprilTagProcessor aprilTag = hardware.getAprilTag();
     private boolean targetFound = false;
     private AprilTagDetection desiredTag = null;
+    private int result;
 
     public int desiredAprilTagId() {
         if (Globals.BLUE_AUTO) {
-            if (hardware.getBluePosition() == Globals.BLUE_LEFT) {
+            if (Globals.BLUE_POSITION == Globals.BLUE_LEFT) {
                 return 1;
-            } else if (hardware.getBluePosition() == Globals.BLUE_CENTER) {
+            } else if (Globals.BLUE_POSITION == Globals.BLUE_CENTER) {
                 return 2;
-            } else if (hardware.getBluePosition() == Globals.BLUE_RIGHT) {
+            } else if (Globals.BLUE_POSITION == Globals.BLUE_RIGHT) {
                 return 3;
             }
         } else if (Globals.RED_AUTO) {
-            if (hardware.getRedPosition() == Globals.RED_LEFT) {
+            if (Globals.RED_POSITION == Globals.RED_LEFT) {
                 return 4;
-            } else if (hardware.getRedPosition() == Globals.RED_CENTER) {
+            } else if (Globals.RED_POSITION == Globals.RED_CENTER) {
                 return 5;
-            } else if (hardware.getRedPosition() == Globals.RED_RIGHT) {
+            } else if (Globals.RED_POSITION == Globals.RED_RIGHT) {
                 return 6;
             }
         }

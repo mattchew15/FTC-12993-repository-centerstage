@@ -23,6 +23,7 @@ public class RedaprilTagPoseDetection extends LinearOpMode {
             telemetry.update();
         }
         RedTeamPropDetectorPipeline.TeamPropPosition position = hardware.getRedPosition();
+        Globals.RED_POSITION = position;
 
         hardware.closeRedWebcam();
         hardware.initApriltag(hardwareMap);
@@ -39,5 +40,4 @@ public class RedaprilTagPoseDetection extends LinearOpMode {
         //place purple pixel at 'position'
 
     }
-
 }
