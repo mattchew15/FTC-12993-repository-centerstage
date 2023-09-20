@@ -9,7 +9,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class RedTeamPropDetectorPipeline extends OpenCvPipeline {
-    private enum TeamPropPosition {
+    public enum TeamPropPosition {
         LEFT,
         CENTER,
         RIGHT

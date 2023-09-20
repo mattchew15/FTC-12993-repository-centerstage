@@ -51,6 +51,8 @@ public class VisionHardware {
         telemetry.addData("Region 3", bluePipeline.getAvg3());
     }
 
+    public BlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
+
     public void initRedWebcam(HardwareMap hwMap) {
         cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -76,6 +78,8 @@ public class VisionHardware {
         telemetry.addData("Region 3", redPipeline.getAvg3());
     }
 
+    public RedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
+
     public void initApriltag(HardwareMap hwMap) {
         aprilTag = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(822.317, 822.317, 319.495, 242.502)
@@ -87,6 +91,8 @@ public class VisionHardware {
                 .enableLiveView(false)
                 .build();
     }
+
+    public AprilTagProcessor getAprilTag() { return aprilTag; }
 
     public void telemetryAprilTag(Telemetry telemetry) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

@@ -1,32 +1,27 @@
-package org.firstinspires.ftc.teamcode.opmode.test;
+package org.firstinspires.ftc.teamcode.opmode.test.vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
-public class RedVision extends LinearOpMode {
+public class RedTeamPropDetection extends LinearOpMode {
     private final VisionHardware hardware = new VisionHardware();
 
     @Override
     public void runOpMode() {
         hardware.initRedWebcam(hardwareMap);
 
-        while (!isStarted()) {
+        while(!isStarted()) {
             hardware.telemetryRedWebcam(telemetry);
             telemetry.update();
         }
 
-        hardware.closeRedWebcam();
-        hardware.initApriltag(hardwareMap);
-
         waitForStart();
 
-        while (opModeIsActive()) {
+        while(opModeIsActive()) {
             hardware.telemetryRedWebcam(telemetry);
-            hardware.telemetryAprilTag(telemetry);
             telemetry.update();
         }
 
