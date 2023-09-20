@@ -6,32 +6,31 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.system.inversekinematics.AprilTagPoseDetector;
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 
-@TeleOp
+@TeleOp(group = "test")
 public class RedaprilTagPoseDetection extends LinearOpMode {
     private final VisionHardware hardware = new VisionHardware();
     private final AprilTagPoseDetector detector = new AprilTagPoseDetector();
-    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
 
     @Override
     public void runOpMode() {
-        Globals.BLUE_AUTO = true;
-        hardware.initBlueWebcam(hardwareMap);
+        Globals.RED_AUTO = true;
+        hardware.initRedWebcam(hardwareMap);
 
         while (!isStarted()) {
-            hardware.telemetryBlueWebcam(telemetry);
+            hardware.telemetryRedWebcam(telemetry);
             telemetry.update();
         }
-        BlueTeamPropDetectorPipeline.TeamPropPosition position = hardware.getBluePosition();
+        RedTeamPropDetectorPipeline.TeamPropPosition position = hardware.getRedPosition();
 
-        hardware.closeBlueWebcam();
+        hardware.closeRedWebcam();
         hardware.initApriltag(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            hardware.telemetryBlueWebcam(telemetry);
+            hardware.telemetryRedWebcam(telemetry);
             detector.printId(telemetry);
             telemetry.addData("Position is", position);
             telemetry.update();

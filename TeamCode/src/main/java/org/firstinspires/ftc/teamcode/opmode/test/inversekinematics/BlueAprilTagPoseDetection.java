@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline
 public class BlueAprilTagPoseDetection extends LinearOpMode {
     private final VisionHardware hardware = new VisionHardware();
     private final AprilTagPoseDetector detector = new AprilTagPoseDetector();
-    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
 
     @Override
     public void runOpMode() {
