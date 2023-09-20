@@ -109,6 +109,4 @@ public class VisionHardware {
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }
-
-    public void closeAprilTag() { visionPortal.close(); }
 }
