@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 
 @Autonomous(group = "test")
@@ -19,11 +18,13 @@ public class BlueVision extends LinearOpMode {
             telemetry.update();
         }
 
-        waitForStart();
-        hardware.stopStreamingBlueWebcam();
+        hardware.closeBlueWebcam();
         hardware.initApriltag(hardwareMap);
 
+        waitForStart();
+
         while (opModeIsActive()) {
+            hardware.telemetryBlueWebcam(telemetry);
             hardware.telemetryAprilTag(telemetry);
             telemetry.update();
         }

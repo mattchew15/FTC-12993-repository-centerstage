@@ -42,9 +42,7 @@ public class VisionHardware {
         });
     }
 
-    public void stopStreamingBlueWebcam() {
-        blueWebcam.stopStreaming();
-    }
+    public void closeBlueWebcam() { blueWebcam.closeCameraDevice(); }
 
     public void telemetryBlueWebcam(Telemetry telemetry) {
         telemetry.addData("Position", bluePipeline.getPosition());
@@ -69,9 +67,7 @@ public class VisionHardware {
         });
     }
 
-    public void stopStreamingRedWebcam() {
-        stopStreamingRedWebcam();
-    }
+    public void closeRedWebcam() { redWebcam.closeCameraDevice(); }
 
     public void telemetryRedWebcam(Telemetry telemetry) {
         telemetry.addData("Position", redPipeline.getPosition());
@@ -88,7 +84,7 @@ public class VisionHardware {
                 .addProcessor(aprilTag)
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
                 .setCameraResolution(new Size(640, 480))
-                .enableLiveView(true)
+                .enableLiveView(false)
                 .build();
     }
 
@@ -113,4 +109,6 @@ public class VisionHardware {
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }
+
+    public void closeAprilTag() { visionPortal.close(); }
 }
