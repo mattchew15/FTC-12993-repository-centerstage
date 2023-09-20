@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.system.inversekinematics.AprilTagPoseDetec
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 
 @TeleOp(group = "test")
-public class RedaprilTagPoseDetection extends LinearOpMode {
+public class RedAprilTagPoseDetection extends LinearOpMode {
     private final VisionHardware hardware = new VisionHardware();
     private final AprilTagPoseDetector detector = new AprilTagPoseDetector();
 

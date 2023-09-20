@@ -8,8 +8,8 @@ public class Globals {
 
     // Use in Auto
     public static boolean
-            BLUE_AUTO,
-            RED_AUTO;
+            BLUE_AUTO = false,
+            RED_AUTO = false;
 
     // Inverse kinematic values
     public static double
