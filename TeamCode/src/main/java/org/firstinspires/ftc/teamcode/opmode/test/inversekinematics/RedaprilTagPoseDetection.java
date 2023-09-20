@@ -15,7 +15,7 @@ public class RedaprilTagPoseDetection extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Globals.RED_AUTO = true;
+        Globals.setRedAuto();
         hardware.initRedWebcam(hardwareMap);
 
         while (!isStarted()) {
@@ -34,6 +34,7 @@ public class RedaprilTagPoseDetection extends LinearOpMode {
             hardware.telemetryRedWebcam(telemetry);
             detector.printId(telemetry);
             telemetry.addData("Position is", position);
+            telemetry.addData("Blue Auto =", Globals.BLUE_AUTO);
             telemetry.update();
         }
 
