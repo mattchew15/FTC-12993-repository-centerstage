@@ -17,19 +17,19 @@ public class AprilTagPoseDetector {
 
     public int desiredAprilTagId() {
         if (Globals.BLUE_AUTO) {
-            if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT) {
+            if (hardware.getBluePosition() == Globals.BLUE_LEFT) {
                 return 1;
-            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER) {
+            } else if (hardware.getBluePosition() == Globals.BLUE_CENTER) {
                 return 2;
-            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT) {
+            } else if (hardware.getBluePosition() == Globals.BLUE_RIGHT) {
                 return 3;
             }
         } else if (Globals.RED_AUTO) {
-            if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT) {
+            if (hardware.getRedPosition() == Globals.RED_LEFT) {
                 return 4;
-            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER) {
+            } else if (hardware.getRedPosition() == Globals.RED_CENTER) {
                 return 5;
-            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT) {
+            } else if (hardware.getRedPosition() == Globals.RED_RIGHT) {
                 return 6;
             }
         }

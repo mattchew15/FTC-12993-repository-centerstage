@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+
 public class Globals {
     // All constants
 
@@ -25,6 +28,16 @@ public class Globals {
             PIXEL_POSE_X = APRILTAG_POSE_X + PIXEL_DISTANCE_X, // Pixel scoring coordinates
             PIXEL_POSE_Y = APRILTAG_POSE_Y + APIXEL_DISTANCE_Y,
             PIXEL_POSE_Z = APRILTAG_POSE_Z + PIXEL_DISTANCE_Z;
+
+    public static BlueTeamPropDetectorPipeline.TeamPropPosition
+            BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            BLUE_CENTER = BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT;
+
+    public static RedTeamPropDetectorPipeline.TeamPropPosition
+            RED_LEFT = RedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            RED_CENTER = RedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT;
 
 
 }
