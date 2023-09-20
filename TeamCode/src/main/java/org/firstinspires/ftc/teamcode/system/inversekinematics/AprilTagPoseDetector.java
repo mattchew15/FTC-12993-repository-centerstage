@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.OuttakeInverseKinematics;
+package org.firstinspires.ftc.teamcode.system.inversekinematics;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
@@ -17,24 +17,20 @@ public class AprilTagPoseDetector {
 
     public int desiredAprilTagId() {
         if (Globals.BLUE_AUTO) {
-            BlueTeamPropDetectorPipeline.TeamPropPosition position = hardware.getBluePosition();
-            switch (position) {
-                case LEFT:
-                    return 1;
-                case CENTER:
-                    return 2;
-                case RIGHT:
-                    return 3;
+            if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT) {
+                return 1;
+            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER) {
+                return 2;
+            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT) {
+                return 3;
             }
         } else if (Globals.RED_AUTO) {
-            BlueTeamPropDetectorPipeline.TeamPropPosition position = hardware.getBluePosition();
-            switch (position) {
-                case LEFT:
-                    return 4;
-                case CENTER:
-                    return 5;
-                case RIGHT:
-                    return 6;
+            if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT) {
+                return 4;
+            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER) {
+                return 5;
+            } else if (hardware.getBluePosition() == BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT) {
+                return 6;
             }
         }
         return 0;
