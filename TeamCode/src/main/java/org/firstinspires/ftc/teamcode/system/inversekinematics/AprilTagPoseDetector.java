@@ -16,8 +16,9 @@ public class AprilTagPoseDetector {
     private AprilTagDetection desiredTag = null;
     private int result;
 
-    public int desiredAprilTagId() {
+    public int desiredAprilTagId(Telemetry telemetry) {
         if (Globals.BLUE_AUTO) {
+            telemetry.addLine("We are in the blue part of the loop");
             if (Globals.BLUE_POSITION == Globals.BLUE_LEFT) {
                 return 1;
             } else if (Globals.BLUE_POSITION == Globals.BLUE_CENTER) {
@@ -26,6 +27,7 @@ public class AprilTagPoseDetector {
                 return 3;
             }
         } else if (Globals.RED_AUTO) {
+            telemetry.addLine("We are in the red part of the loop");
             if (Globals.RED_POSITION == Globals.RED_LEFT) {
                 return 4;
             } else if (Globals.RED_POSITION == Globals.RED_CENTER) {
@@ -38,13 +40,13 @@ public class AprilTagPoseDetector {
     }
 
     public void printId(Telemetry telemetry) {
-        telemetry.addData("Desired apriltag id", desiredAprilTagId());
+        telemetry.addData("Desired apriltag id", desiredAprilTagId(telemetry));
     }
 
     public void getAprilTagPose(Telemetry telemetry) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
-            if ((detection.metadata != null) && (detection.id == desiredAprilTagId())) {
+            if ((detection.metadata != null) && (detection.id == desiredAprilTagId(telemetry))) {
                 targetFound = true;
                 desiredTag = detection;
                 break;
