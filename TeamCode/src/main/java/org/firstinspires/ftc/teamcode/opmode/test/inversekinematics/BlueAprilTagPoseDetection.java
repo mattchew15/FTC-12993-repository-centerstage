@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.inversekinematics.AprilTagPoseDetector;
+import org.firstinspires.ftc.teamcode.system.inversekinematics.PixelPoseDetector;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline
 @TeleOp(group = "test")
 public class BlueAprilTagPoseDetection extends LinearOpMode {
     private final VisionHardware hardware = new VisionHardware();
-    private final AprilTagPoseDetector detector = new AprilTagPoseDetector();
+    private final PixelPoseDetector detector = new PixelPoseDetector();
 
     @Override
     public void runOpMode() {
@@ -33,7 +33,7 @@ public class BlueAprilTagPoseDetection extends LinearOpMode {
 
         while (opModeIsActive()) {
             hardware.telemetryBlueWebcam(telemetry);
-            detector.getAprilTagPose(telemetry, hardware.getAprilTag());
+            detector.getPixelPose(telemetry, hardware.getAprilTag());
             telemetry.update();
         }
 

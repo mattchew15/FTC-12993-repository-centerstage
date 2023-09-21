@@ -23,11 +23,11 @@ public class Globals {
             PIXEL_PITCH_DEGREES = 30, // Scoring pixel pitch (Backdrop pitch)
             PIXEL_PITCH_RADIANS = Math.toRadians(PIXEL_PITCH_DEGREES),
 
-            APIXEL_DISTANCE_Y = PIXEL_DISTANCE_Z *Math.tan(PIXEL_PITCH_RADIANS),
+            PIXEL_DISTANCE_Y = PIXEL_DISTANCE_Z *Math.tan(PIXEL_PITCH_RADIANS),
 
-            PIXEL_POSE_X = APRILTAG_POSE_X + PIXEL_DISTANCE_X, // Pixel scoring coordinates
-            PIXEL_POSE_Y = APRILTAG_POSE_Y + APIXEL_DISTANCE_Y,
-            PIXEL_POSE_Z = APRILTAG_POSE_Z + PIXEL_DISTANCE_Z;
+            PIXEL_POSE_X, // Pixel scoring coordinates
+            PIXEL_POSE_Y,
+            PIXEL_POSE_Z;
 
     public static BlueTeamPropDetectorPipeline.TeamPropPosition
             BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
