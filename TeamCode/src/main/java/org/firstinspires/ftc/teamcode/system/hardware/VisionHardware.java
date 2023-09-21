@@ -33,7 +33,7 @@ public class VisionHardware {
         blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                blueWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                blueWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
