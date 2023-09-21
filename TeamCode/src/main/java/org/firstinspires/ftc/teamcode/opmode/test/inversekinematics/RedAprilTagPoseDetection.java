@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.test.inversekinematics;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.system.inversekinematics.AprilTagPoseDetector;
@@ -15,7 +16,7 @@ public class RedAprilTagPoseDetection extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Globals.setRedAuto();
+        SetAuto.setRedAuto();
         hardware.initRedWebcam(hardwareMap);
 
         while (!isStarted()) {
@@ -33,8 +34,6 @@ public class RedAprilTagPoseDetection extends LinearOpMode {
         while (opModeIsActive()) {
             hardware.telemetryRedWebcam(telemetry);
             detector.printId(telemetry);
-            telemetry.addData("Position is", position);
-            telemetry.addData("Blue Auto =", Globals.BLUE_AUTO);
             telemetry.update();
         }
 

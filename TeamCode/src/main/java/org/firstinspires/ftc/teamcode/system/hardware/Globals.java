@@ -11,15 +11,6 @@ public class Globals {
             BLUE_AUTO = false,
             RED_AUTO = false;
 
-    public static void setRedAuto(){
-        Globals.RED_AUTO = true;
-        Globals.BLUE_AUTO = false;
-    }
-    public static void setBlueAuto(){
-        Globals.RED_AUTO = false;
-        Globals.BLUE_AUTO = true;
-    }
-
     // Inverse kinematic values
     public static double
             APRILTAG_POSE_X, // Apriltag coordinates from camera
