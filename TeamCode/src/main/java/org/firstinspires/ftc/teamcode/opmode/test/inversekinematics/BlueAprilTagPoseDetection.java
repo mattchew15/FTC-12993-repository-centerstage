@@ -33,7 +33,7 @@ public class BlueAprilTagPoseDetection extends LinearOpMode {
 
         while (opModeIsActive()) {
             hardware.telemetryBlueWebcam(telemetry);
-            detector.printId(telemetry);
+            detector.getAprilTagPose(telemetry, hardware.getAprilTag());
             telemetry.update();
         }
 
