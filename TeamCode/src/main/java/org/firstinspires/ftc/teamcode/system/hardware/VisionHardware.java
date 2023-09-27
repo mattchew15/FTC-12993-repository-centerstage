@@ -29,10 +29,10 @@ public class VisionHardware {
     public void initBlueWebcam(HardwareMap hwMap) {
         cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        blueWebcam.setPipeline(bluePipeline);
         blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
+                blueWebcam.setPipeline(bluePipeline);
                 blueWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
@@ -56,10 +56,10 @@ public class VisionHardware {
     public void initRedWebcam(HardwareMap hwMap) {
         cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        redWebcam.setPipeline(redPipeline);
         redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
+                redWebcam.setPipeline(redPipeline);
                 redWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 

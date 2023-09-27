@@ -1,46 +1,37 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import android.util.Size;
-
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class RobotHardware {
-    //All hardware initialization
-    //edit based on robot, this is just a rough draft
-
     public DcMotorEx
-            frontLeftMotor,
-            frontRightMotor,
-            backLeftMotor,
-            backRightMotor,
-            extensionMotor,
-            liftLeftMotor,
-            liftRightMotor;
+            frontLeftDrive,
+            frontRightDrive,
+            backLeftDrive,
+            backRightDrive,
+            extension,
+            liftLeft,
+            liftRight;
 
     public Servo
-            servo1,
-            servo2,
-            servo3,
-            servo4,
-            servo5,
-            servo6,
-            servo7,
-            servo8,
-            servo9,
-            servo10,
-            servo11;
+            bottomRoller,
+            brushHeight,
+            flap,
+            rail,
+            armLeft,
+            armRight,
+            pivot,
+            wrist,
+            claw,
+            outtakeLock,
+            intakeLock;
 
     public AprilTagProcessor aprilTag;
     public VisionPortal visionPortal;
@@ -51,27 +42,25 @@ public class RobotHardware {
     public RedTeamPropDetectorPipeline redPipeline;
     int cameraMonitorViewId;
 
-    public void init(HardwareMap hwMap) { //edit
-        frontLeftMotor = hwMap.get(DcMotorEx.class, "frontLeftMotor");
-        frontRightMotor = hwMap.get(DcMotorEx.class, "frontRightMotor");
-        backLeftMotor = hwMap.get(DcMotorEx.class, "backLeftMotor");
-        backRightMotor = hwMap.get(DcMotorEx.class, "backRightMotor");
-        extensionMotor = hwMap.get(DcMotorEx.class, "extensionMotor");
-        liftLeftMotor = hwMap.get(DcMotorEx.class, "liftLeftMotor");
-        liftRightMotor = hwMap.get(DcMotorEx.class, "liftRightMotor");
+    public void init(HardwareMap hwMap) {
+        frontLeftDrive = hwMap.get(DcMotorEx.class, "frontLeftMotor");
+        frontRightDrive = hwMap.get(DcMotorEx.class, "frontRightMotor");
+        backLeftDrive = hwMap.get(DcMotorEx.class, "backLeftMotor");
+        backRightDrive = hwMap.get(DcMotorEx.class, "backRightMotor");
+        extension = hwMap.get(DcMotorEx.class, "extensionMotor");
+        liftLeft = hwMap.get(DcMotorEx.class, "liftLeftMotor");
+        liftRight = hwMap.get(DcMotorEx.class, "liftRightMotor");
 
-        servo1 = hwMap.get(Servo.class, "servo1");
-        servo2 = hwMap.get(Servo.class, "servo2");
-        servo3 = hwMap.get(Servo.class, "servo3");
-        servo4 = hwMap.get(Servo.class, "servo4");
-        servo5 = hwMap.get(Servo.class, "servo5");
-        servo6 = hwMap.get(Servo.class, "servo6");
-        servo7 = hwMap.get(Servo.class, "servo7");
-        servo8 = hwMap.get(Servo.class, "servo8");
-        servo9 = hwMap.get(Servo.class, "servo9");
-        servo10 = hwMap.get(Servo.class, "servo10");
-        servo11 = hwMap.get(Servo.class, "servo11");
-
-
+        bottomRoller = hwMap.get(Servo.class, "Bottom_Roller");
+        brushHeight = hwMap.get(Servo.class, "Brush_Height");
+        flap = hwMap.get(Servo.class, "Flap");
+        rail = hwMap.get(Servo.class, "Rail");
+        armLeft = hwMap.get(Servo.class, "Arm_Left");
+        armRight = hwMap.get(Servo.class, "Arm_Right");
+        pivot = hwMap.get(Servo.class, "Pivot");
+        wrist = hwMap.get(Servo.class, "Wrist");
+        claw = hwMap.get(Servo.class, "Claw");
+        outtakeLock = hwMap.get(Servo.class, "Outtake_Lock");
+        intakeLock = hwMap.get(Servo.class, "Intake_Lock");
     }
 }
