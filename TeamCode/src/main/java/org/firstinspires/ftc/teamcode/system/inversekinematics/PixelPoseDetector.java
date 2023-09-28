@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.inversekinematics;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -14,20 +15,20 @@ public class PixelPoseDetector {
     private AprilTagDetection desiredTag = null;
 
     public int desiredAprilTagId() {
-        if (Globals.BLUE_AUTO) {
-            if (Globals.BLUE_POSITION == Globals.BLUE_LEFT) {
+        if (BLUE_AUTO) {
+            if (BLUE_POSITION == BLUE_LEFT) {
                 return 1;
-            } else if (Globals.BLUE_POSITION == Globals.BLUE_CENTER) {
+            } else if (BLUE_POSITION == BLUE_CENTER) {
                 return 2;
-            } else if (Globals.BLUE_POSITION == Globals.BLUE_RIGHT) {
+            } else if (BLUE_POSITION == BLUE_RIGHT) {
                 return 3;
             }
-        } else if (Globals.RED_AUTO) {
-            if (Globals.RED_POSITION == Globals.RED_LEFT) {
+        } else if (RED_AUTO) {
+            if (RED_POSITION == RED_LEFT) {
                 return 4;
-            } else if (Globals.RED_POSITION == Globals.RED_CENTER) {
+            } else if (RED_POSITION == RED_CENTER) {
                 return 5;
-            } else if (Globals.RED_POSITION == Globals.RED_RIGHT) {
+            } else if (RED_POSITION == RED_RIGHT) {
                 return 6;
             }
         }
@@ -48,21 +49,21 @@ public class PixelPoseDetector {
         }
 
         if (targetFound) {
-            Globals.APRILTAG_POSE_X = desiredTag.ftcPose.x;
-            Globals.APRILTAG_POSE_Y = desiredTag.ftcPose.y;
-            Globals.APRILTAG_POSE_Z = desiredTag.ftcPose.z;
+            APRILTAG_POSE_X = desiredTag.ftcPose.x;
+            APRILTAG_POSE_Y = desiredTag.ftcPose.y;
+            APRILTAG_POSE_Z = desiredTag.ftcPose.z;
 
-            Globals.PIXEL_POSE_X = Globals.APRILTAG_POSE_X + Globals.PIXEL_DISTANCE_X;
-            Globals.PIXEL_POSE_Y = Globals.APRILTAG_POSE_Y + Globals.PIXEL_DISTANCE_Y;
-            Globals.PIXEL_POSE_Z = Globals.APRILTAG_POSE_Z + Globals.PIXEL_DISTANCE_Z;
+            PIXEL_POSE_X = APRILTAG_POSE_X + PIXEL_DISTANCE_X;
+            PIXEL_POSE_Y = APRILTAG_POSE_Y + PIXEL_DISTANCE_Y;
+            PIXEL_POSE_Z = APRILTAG_POSE_Z + PIXEL_DISTANCE_Z;
 
-            telemetry.addData("AprilTag x", Globals.APRILTAG_POSE_X);
-            telemetry.addData("AprilTag y", Globals.APRILTAG_POSE_Y);
-            telemetry.addData("AprilTag z", Globals.APRILTAG_POSE_Z);
+            telemetry.addData("AprilTag x", APRILTAG_POSE_X);
+            telemetry.addData("AprilTag y", APRILTAG_POSE_Y);
+            telemetry.addData("AprilTag z", APRILTAG_POSE_Z);
 
-            telemetry.addData("Pixel x", Globals.PIXEL_POSE_X);
-            telemetry.addData("Pixel y", Globals.PIXEL_POSE_Y);
-            telemetry.addData("Pixel z", Globals.PIXEL_POSE_Z);
+            telemetry.addData("Pixel x", PIXEL_POSE_X);
+            telemetry.addData("Pixel y", PIXEL_POSE_Y);
+            telemetry.addData("Pixel z", PIXEL_POSE_Z);
         } else {
             telemetry.addLine("Target not found");
         }

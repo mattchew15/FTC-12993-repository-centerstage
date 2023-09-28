@@ -17,8 +17,9 @@ public class RobotHardware {
             backLeftDrive,
             backRightDrive,
             extension,
-            liftLeft,
-            liftRight;
+            intake,
+            lift,
+            pitch;
 
     public Servo
             bottomRoller,
@@ -48,8 +49,9 @@ public class RobotHardware {
         backLeftDrive = hwMap.get(DcMotorEx.class, "backLeftMotor");
         backRightDrive = hwMap.get(DcMotorEx.class, "backRightMotor");
         extension = hwMap.get(DcMotorEx.class, "extensionMotor");
-        liftLeft = hwMap.get(DcMotorEx.class, "liftLeftMotor");
-        liftRight = hwMap.get(DcMotorEx.class, "liftRightMotor");
+        intake = hwMap.get(DcMotorEx.class, "intake");
+        lift = hwMap.get(DcMotorEx.class, "lift");
+        pitch = hwMap.get(DcMotorEx.class, "pitch");
 
         bottomRoller = hwMap.get(Servo.class, "Bottom_Roller");
         brushHeight = hwMap.get(Servo.class, "Brush_Height");

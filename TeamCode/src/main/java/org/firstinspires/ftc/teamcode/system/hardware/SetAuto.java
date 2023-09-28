@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+
 public class SetAuto {
     public static void setRedAuto(){
-        Globals.RED_AUTO = true;
-        Globals.BLUE_AUTO = false;
+        RED_AUTO = true;
+        BLUE_AUTO = false;
     }
     public static void setBlueAuto(){
-        Globals.RED_AUTO = false;
-        Globals.BLUE_AUTO = true;
+        RED_AUTO = false;
+        BLUE_AUTO = true;
     }
 
 }
