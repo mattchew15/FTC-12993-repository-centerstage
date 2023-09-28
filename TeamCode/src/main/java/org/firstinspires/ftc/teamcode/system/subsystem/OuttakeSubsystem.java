@@ -54,4 +54,77 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
+    public void update(ArmState state) {
+        switch (state) {
+            case DOWN:
+                robot.armLeft.setPosition(ARM_LEFT_DOWN);
+                robot.armRight.setPosition(ARM_RIGHT_DOWN);
+            break;
+            case LIFT:
+                robot.armLeft.setPosition(ARM_LEFT_LIFT);
+                robot.armRight.setPosition(ARM_RIGHT_LIFT);
+                break;
+            case UP:
+                robot.armLeft.setPosition(ARM_LEFT_UP);
+                robot.armRight.setPosition(ARM_RIGHT_UP);
+                break;
+            case LEVEL:
+                robot.armLeft.setPosition(ARM_LEFT_LEVEL);
+                robot.armRight.setPosition(ARM_RIGHT_LEVEL);
+                break;
+        }
+    }
+
+    public void update(PivotState state) {
+        switch (state) {
+            case LEFT:
+                robot.rail.setPosition(PIVOT_LEFT);
+                break;
+            case VERTICAL:
+                robot.rail.setPosition(PIVOT_VERTICAL);
+                break;
+            case RIGHT:
+                robot.rail.setPosition(PIVOT_RIGHT);
+                break;
+        }
+    }
+
+    public void update(WristState state) {
+        switch (state) {
+            case LEFT:
+                robot.rail.setPosition(WRIST_LEFT);
+                break;
+            case STRAIGHT:
+                robot.rail.setPosition(WRIST_STRAIGHT);
+                break;
+            case RIGHT:
+                robot.rail.setPosition(WRIST_RIGHT);
+                break;
+        }
+    }
+
+    public void update(ClawState state) {
+        switch (state) {
+            case CLOSE:
+                robot.rail.setPosition(CLAW_CLOSE);
+                break;
+            case NEUTRAL:
+                robot.rail.setPosition(CLAW_NEUTRAL);
+                break;
+            case OPEN:
+                robot.rail.setPosition(CLAW_OPEN);
+                break;
+        }
+    }
+
+    public void update(OuttakeLockState state) {
+        switch (state) {
+            case LOCK:
+                robot.rail.setPosition(OUTTAKE_LOCK_LOCK);
+                break;
+            case UNLOCK:
+                robot.rail.setPosition(OUTTAKE_LOCK_UNLOCK);
+                break;
+        }
+    }
 }

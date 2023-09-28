@@ -48,13 +48,17 @@ public class Globals {
 
     //Outtake Subsystem Constants
     public static double //give pos values
-            RAIL_LEFT,
+            RAIL_LEFT = 0.4,
             RAIL_CENTER,
             RAIL_RIGHT,
-            ARM_DOWN,
-            ARM_LIFT,
-            ARM_UP,
-            ARM_LEVEL,
+            ARM_LEFT_DOWN,
+            ARM_LEFT_LIFT,
+            ARM_LEFT_UP,
+            ARM_RIGHT_DOWN,
+            ARM_RIGHT_LIFT,
+            ARM_RIGHT_UP,
+            ARM_LEFT_LEVEL,
+            ARM_RIGHT_LEVEL,
             PIVOT_LEFT,
             PIVOT_VERTICAL,
             PIVOT_RIGHT,

@@ -11,6 +11,7 @@ import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PixelDetectorPipeline extends OpenCvPipeline {
@@ -64,7 +65,11 @@ public class PixelDetectorPipeline extends OpenCvPipeline {
             double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
             Imgproc.approxPolyDP(contour2f, approxCurve, epsilon, true);
 
-            if (approxCurve.total() == 6) { // Assuming 6 sides for hexagons
+            if (approxCurve.total() == 6) {
+                // Draw contours for visualization
+                Imgproc.drawContours(input, Collections.singletonList(contour), -1, new Scalar(0, 255, 0), 2);
+
+                // Determine color, row, and column
                 int color = determineColor(input, contour);
                 int row = determineRow(contour);
                 int col = determineColumn(contour);
