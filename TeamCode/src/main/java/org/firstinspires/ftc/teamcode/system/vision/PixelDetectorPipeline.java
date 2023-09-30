@@ -24,7 +24,6 @@ public class PixelDetectorPipeline extends OpenCvPipeline { // Still in progress
             orangeMask = new Mat(),
             purpleMask = new Mat();
 
-
     // Define lower and upper bounds for color filtering for each color
     private final Scalar
             lowerWhite = new Scalar(200, 200, 200),

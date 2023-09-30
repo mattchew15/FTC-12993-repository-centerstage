@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.system.inversekinematics.PixelPoseDetector;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 @TeleOp(group = "test")
 public class RedAprilTagPoseDetection extends LinearOpMode {
@@ -23,7 +23,7 @@ public class RedAprilTagPoseDetection extends LinearOpMode {
             hardware.telemetryRedWebcam(telemetry);
             telemetry.update();
         }
-        RedTeamPropDetectorPipeline.TeamPropPosition position = hardware.getRedPosition();
+        YCrCbRedTeamPropDetectorPipeline.TeamPropPosition position = hardware.getRedPosition();
         Globals.RED_POSITION = position;
 
         hardware.closeRedWebcam();

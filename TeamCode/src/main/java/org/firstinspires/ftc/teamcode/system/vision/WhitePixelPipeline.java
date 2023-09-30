@@ -42,7 +42,6 @@ public class WhitePixelPipeline extends OpenCvPipeline {
         finalImage = new Mat();
     }
 
-
     @Override
     public Mat processFrame(Mat input) {
         // Convert the input frame to Gray color space

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 public class Globals {
     // Auto States
@@ -26,15 +26,15 @@ public class Globals {
             PIXEL_POSE_X, // Pixel scoring coordinates
             PIXEL_POSE_Y,
             PIXEL_POSE_Z;
-    public static BlueTeamPropDetectorPipeline.TeamPropPosition
-            BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            BLUE_CENTER = BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition
+            BLUE_LEFT = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            BLUE_CENTER = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            BLUE_RIGHT = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             BLUE_POSITION = null;
-    public static RedTeamPropDetectorPipeline.TeamPropPosition
-            RED_LEFT = RedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            RED_CENTER = RedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static YCrCbRedTeamPropDetectorPipeline.TeamPropPosition
+            RED_LEFT = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            RED_CENTER = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            RED_RIGHT = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             RED_POSITION = null;
 
     //Intake Subsystem Constants

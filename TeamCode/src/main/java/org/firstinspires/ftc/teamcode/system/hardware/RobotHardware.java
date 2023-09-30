@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -39,8 +39,8 @@ public class RobotHardware {
     private OpenCvWebcam blueWebcam;
     private OpenCvWebcam redWebcam;
 
-    public BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
-    public RedTeamPropDetectorPipeline redPipeline;
+    public YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
+    public YCrCbRedTeamPropDetectorPipeline redPipeline;
     int cameraMonitorViewId;
 
     public void init(HardwareMap hwMap) {

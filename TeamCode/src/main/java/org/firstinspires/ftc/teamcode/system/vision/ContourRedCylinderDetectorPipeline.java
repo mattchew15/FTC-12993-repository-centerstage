@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BlueCylinderDetectorPipeline extends OpenCvPipeline {
+public class ContourRedCylinderDetectorPipeline extends OpenCvPipeline {
     private Telemetry telemetry;
 
     public enum TeamPropPosition {
@@ -31,8 +31,8 @@ public class BlueCylinderDetectorPipeline extends OpenCvPipeline {
 
     // Define lower and upper bounds for color filtering
     private final Scalar
-            lowerBlue = new Scalar(100, 100, 100), // Adjust as needed
-            upperBlue = new Scalar(140, 255, 255),
+            lowerRed = new Scalar(0, 100, 100), // Adjust as needed
+            upperRed = new Scalar(20, 255, 255),
             green = new Scalar(0, 255, 0);
 
     // Y threshold and line pos
@@ -60,7 +60,7 @@ public class BlueCylinderDetectorPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, greyImage, Imgproc.COLOR_RGB2GRAY);
 
         // Apply a color filter to isolate blue cylinders
-        Core.inRange(greyImage, lowerBlue, upperBlue, filteredImage);
+        Core.inRange(greyImage, lowerRed, upperRed, filteredImage);
 
         // Iterate through image pixels and set pixels below the Y-coordinate threshold to black
         for (int y = 0; y < greyImage.rows(); y++) {
