@@ -14,36 +14,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PixelDetectorPipeline extends OpenCvPipeline {
-    private Mat maskedImage;
-    private int[][] gameBoard = new int[9][7];  // Matrix to represent the game board
-    private int currentColor = 1;  // Initialize with color 1
+public class PixelDetectorPipeline extends OpenCvPipeline { // Still in progress
+    private final Mat
+            grayImage = new Mat(),
+            finalImage = new Mat(),
+            hierarchy = new Mat(),
+            whiteMask = new Mat(),
+            greenMask = new Mat(),
+            orangeMask = new Mat(),
+            purpleMask = new Mat();
+
+
+    // Define lower and upper bounds for color filtering for each color
+    private final Scalar
+            lowerWhite = new Scalar(200, 200, 200),
+            upperWhite = new Scalar(255, 255, 255),
+            lowerGreen = new Scalar(0, 100, 0),
+            upperGreen = new Scalar(100, 255, 100),
+            lowerOrange = new Scalar(150, 100, 0),
+            upperOrange = new Scalar(255, 200, 100),
+            lowerPurple = new Scalar(100, 0, 100),
+            upperPurple = new Scalar(200, 100, 200);
+
+    private final List<MatOfPoint> contours = new ArrayList<>();
+
+    // Matrix to represent the game board
+    private int[][] gameBoard = new int[9][7];
+
+    // Initialize with color 1
+    private int currentColor = 1;
 
     @Override
     public Mat processFrame(Mat input) {
-        Mat grayImage = new Mat();
-        Mat finalImage = new Mat();
-        Mat hierarchy = new Mat();
-        List<MatOfPoint> contours = new ArrayList<>();
-
         // Convert input frame to grayscale
         Imgproc.cvtColor(input, grayImage, Imgproc.COLOR_RGB2GRAY);
 
-        // Define lower and upper bounds for color filtering for each color
-        Scalar lowerWhite = new Scalar(200, 200, 200);
-        Scalar upperWhite = new Scalar(255, 255, 255);
-        Scalar lowerGreen = new Scalar(0, 100, 0);
-        Scalar upperGreen = new Scalar(100, 255, 100);
-        Scalar lowerOrange = new Scalar(150, 100, 0);
-        Scalar upperOrange = new Scalar(255, 200, 100);
-        Scalar lowerPurple = new Scalar(100, 0, 100);
-        Scalar upperPurple = new Scalar(200, 100, 200);
-
         // Apply color filtering for each color
-        Mat whiteMask = new Mat();
-        Mat greenMask = new Mat();
-        Mat orangeMask = new Mat();
-        Mat purpleMask = new Mat();
         Core.inRange(input, lowerWhite, upperWhite, whiteMask);
         Core.inRange(input, lowerGreen, upperGreen, greenMask);
         Core.inRange(input, lowerOrange, upperOrange, orangeMask);
@@ -93,42 +99,18 @@ public class PixelDetectorPipeline extends OpenCvPipeline {
         // Calculate the mean color of the ROI
         Scalar meanColor = Core.mean(roi);
 
-        // Define color ranges for each color
-        Scalar whiteLower = new Scalar(200, 200, 200);
-        Scalar whiteUpper = new Scalar(255, 255, 255);
-
-        Scalar greenLower = new Scalar(0, 100, 0);
-        Scalar greenUpper = new Scalar(100, 255, 100);
-
-        Scalar orangeLower = new Scalar(150, 100, 0);
-        Scalar orangeUpper = new Scalar(255, 200, 100);
-
-        Scalar purpleLower = new Scalar(100, 0, 100);
-        Scalar purpleUpper = new Scalar(200, 100, 200);
-
         // Compare the meanColor to the predefined color ranges and return the corresponding color code.
-
-        // Determine white color
-        if (isColorInRange(meanColor, whiteLower, whiteUpper)) {
+        if (isColorInRange(meanColor, lowerWhite, upperWhite)) {
             return 1; // White
-        }
-
-        // Determine green color
-        if (isColorInRange(meanColor, greenLower, greenUpper)) {
+        } else if (isColorInRange(meanColor, lowerGreen, upperGreen)) {
             return 2; // Green
-        }
-
-        // Determine orange color
-        if (isColorInRange(meanColor, orangeLower, orangeUpper)) {
+        } else if (isColorInRange(meanColor, lowerOrange, upperOrange)) {
             return 3; // Orange
-        }
-
-        // Determine purple color
-        if (isColorInRange(meanColor, purpleLower, purpleUpper)) {
+        } else if (isColorInRange(meanColor, lowerPurple, upperPurple)) {
             return 4; // Purple
+        } else {
+            return 0; // Return 0 if no color is detected
         }
-
-        return 0; // Return 0 if no color is detected
     }
 
     private boolean isColorInRange(Scalar color, Scalar lower, Scalar upper) {
@@ -141,15 +123,28 @@ public class PixelDetectorPipeline extends OpenCvPipeline {
         // Calculate the Y-coordinate of the centroid of the contour
         Moments moments = Imgproc.moments(contour);
         double cy = moments.get_m01() / moments.get_m00();
+        double lowestRow = 0;
+        double rowHeight = 2;
 
-        // You can define thresholds to determine the row based on the Y-coordinate of the centroid.
-        // For example, you can divide the Y-coordinate range into zones corresponding to rows on the game board.
+        // Check if the detected pixel is the lowest so far
+        if (cy < lowestRow || lowestRow == 0) {
+            lowestRow = cy;
+        }
+
+        // If no pixel is found, return 0 rows
+        if (lowestRow == 0) {
+            return 0;
+        }
+
+        // Calculate the row based on the lowest detected Y-coordinate
+        // You can divide the Y-coordinate range into zones corresponding to rows on the game board.
+        // Adjust the thresholds and row numbers as needed.
 
         // Example: Determine the row based on the Y-coordinate
-        if (cy < 100) {
-            return 0; // Top row
-        } else if (cy < 200) {
-            return 1; // Second row
+        if (cy < lowestRow + rowHeight) {
+            return 1; // Bottom row
+        } else if (cy < lowestRow + 2 * rowHeight) {
+            return 2; // Second row from the bottom
         }
 
         // Add similar logic for other rows as needed.

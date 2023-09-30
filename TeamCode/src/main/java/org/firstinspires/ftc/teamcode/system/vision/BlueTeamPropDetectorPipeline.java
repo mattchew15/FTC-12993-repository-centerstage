@@ -26,7 +26,7 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
             regionHeight = 40;
 
     // Points A and B for 3 regions. Counting from left.
-    private final Point // position of rectangles
+    private final Point
             region1A = new Point(150, 200),
             region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
             region2A = new Point(300, 100),
@@ -34,15 +34,18 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
             region3A = new Point(450, 200),
             region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
 
-    private Mat region1Cb, region2Cb, region3Cb; // CB values in 3 rectangles
+    // CB values in 3 rectangles.
+    private Mat region1Cb, region2Cb, region3Cb;
 
     private final Mat
             YCrCb = new Mat(),
             Cb = new Mat();
 
-    private int avg1, avg2, avg3; // average cb values in each rectangle
+    // Average Cb values in each rectangle.
+    private int avg1, avg2, avg3;
 
-    private volatile TeamPropPosition position = TeamPropPosition.LEFT; //default position is left
+    // Default position is left.
+    private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
     // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
     private void inputToCb(Mat input) {
@@ -53,9 +56,9 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
     @Override
     public void init(Mat firstFrame) {
         /*
-        To make sure the 'Cb' object is initialized.
+        To make sure the 'Cb' object is initialized, so the submats will still be linked.
         If the object were to only be initialized in processFrame, then the submats would delink
-        Because the back buffer would be re-allocated the first time a real frame was crunched.
+        because the back buffer would be re-allocated the first time a real frame was crunched.
          */
 
         inputToCb(firstFrame);

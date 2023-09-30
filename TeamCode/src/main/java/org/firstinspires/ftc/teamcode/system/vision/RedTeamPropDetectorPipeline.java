@@ -34,18 +34,21 @@ public class RedTeamPropDetectorPipeline extends OpenCvPipeline {
             region3A = new Point(450, 200),
             region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
 
+    // CB values in 3 rectangles.
     private Mat region1Cr, region2Cr, region3Cr;
 
     private final Mat
             YCrCb = new Mat(),
             Cr = new Mat();
 
+    // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
 
+    // Default position is left.
     private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
-    //Take the RGB frame and convert to YCrCb, then extract the Cr channel.
-    void inputToCr(Mat input) {
+    // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
+    private void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cr, 1);
     }
