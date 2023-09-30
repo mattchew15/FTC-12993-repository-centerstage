@@ -64,7 +64,6 @@ public class WhitePixelPipeline extends OpenCvPipeline {
         }
 
         // Combine the color mask and modified grayscale image
-
         Core.bitwise_and(maskedImage, grayImage, finalImage);
 
         // Find contours in the filtered image
