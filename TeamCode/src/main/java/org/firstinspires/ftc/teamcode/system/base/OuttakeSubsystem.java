@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.system.subsystem;
+package org.firstinspires.ftc.teamcode.system.base;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
-
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 
-public class OuttakeSubsystem extends SubsystemBase {
+public class OuttakeSubsystem {
     private RobotHardware robot;
 
     public enum RailState {
@@ -14,33 +12,43 @@ public class OuttakeSubsystem extends SubsystemBase {
         CENTER,
         RIGHT
     }
+
     public enum ArmState {
         DOWN,
         LIFT,
         UP,
         LEVEL
     }
+
     public enum PivotState {
         LEFT,
         VERTICAL,
         RIGHT
     }
+
     public enum WristState {
         LEFT,
         STRAIGHT,
         RIGHT
     }
+
     public enum ClawState {
         CLOSE,
         NEUTRAL,
         OPEN
     }
+
     public enum OuttakeLockState {
         LOCK,
         UNLOCK
     }
 
-    public void update(RailState state) {
+    public enum DroneState {
+        HOLD,
+        RELEASE
+    }
+
+    public void RailState(RailState state) {
         switch (state) {
             case LEFT:
                 robot.rail.setPosition(RAIL_LEFT);
@@ -54,7 +62,7 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void update(ArmState state) {
+    public void ArmState(ArmState state) {
         switch (state) {
             case DOWN:
                 robot.armLeft.setPosition(ARM_LEFT_DOWN);
@@ -75,7 +83,7 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void update(PivotState state) {
+    public void PivotState(PivotState state) {
         switch (state) {
             case LEFT:
                 robot.rail.setPosition(PIVOT_LEFT);
@@ -89,7 +97,7 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void update(WristState state) {
+    public void WristState(WristState state) {
         switch (state) {
             case LEFT:
                 robot.rail.setPosition(WRIST_LEFT);
@@ -103,7 +111,7 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void update(ClawState state) {
+    public void ClawState(ClawState state) {
         switch (state) {
             case CLOSE:
                 robot.rail.setPosition(CLAW_CLOSE);
@@ -117,13 +125,24 @@ public class OuttakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void update(OuttakeLockState state) {
+    public void OuttakeLockState(OuttakeLockState state) {
         switch (state) {
             case LOCK:
                 robot.rail.setPosition(OUTTAKE_LOCK_LOCK);
                 break;
             case UNLOCK:
                 robot.rail.setPosition(OUTTAKE_LOCK_UNLOCK);
+                break;
+        }
+    }
+
+    public void DroneState(DroneState state) {
+        switch (state) {
+            case HOLD:
+                robot.drone.setPosition(DRONE_HOLD);
+                break;
+            case RELEASE:
+                robot.drone.setPosition(DRONE_RELEASE);
                 break;
         }
     }

@@ -1,32 +1,29 @@
-package org.firstinspires.ftc.teamcode.system.hardware;
+package org.firstinspires.ftc.teamcode.system.accessory;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 public class Print {
-    private final YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
-    private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
+    private Telemetry telemetry;
+    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
 
-    public void telemetryBlueWebcam(Telemetry telemetry) {
-        telemetry.addData("Position", bluePipeline.getPosition());
-        telemetry.addData("Region 1", bluePipeline.getAvg1());
-        telemetry.addData("Region 2", bluePipeline.getAvg2());
-        telemetry.addData("Region 3", bluePipeline.getAvg3());
+    public void telemetryBlueWebcam(BlueTeamPropDetectorPipeline.TeamPropPosition position) {
+        telemetry.addData("Position", position);
     }
 
-    public void telemetryRedWebcam(Telemetry telemetry) {
-        telemetry.addData("Position", redPipeline.getPosition());
-        telemetry.addData("Region 1", redPipeline.getAvg1());
-        telemetry.addData("Region 2", redPipeline.getAvg2());
-        telemetry.addData("Region 3", redPipeline.getAvg3());
+    public void telemetryRedWebcam(RedTeamPropDetectorPipeline.TeamPropPosition position) {
+        telemetry.addData("Position", position);
     }
 
-    public void telemetryAprilTag(Telemetry telemetry, AprilTagProcessor aprilTag) {
+    public void telemetryAprilTag(AprilTagProcessor aprilTag) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 

@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.system.inversekinematics;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 public class PixelPoseDetector {
-    private final VisionHardware hardware = new VisionHardware();
+    private final RobotHardware hardware = new RobotHardware();
     private boolean targetFound = false;
     private AprilTagDetection desiredTag = null;
 

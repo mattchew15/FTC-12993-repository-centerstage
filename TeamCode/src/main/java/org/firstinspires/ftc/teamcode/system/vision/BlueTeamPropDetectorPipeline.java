@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContourBlueCylinderDetectorPipeline extends OpenCvPipeline {
+public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
     private Telemetry telemetry;
 
     public enum TeamPropPosition {

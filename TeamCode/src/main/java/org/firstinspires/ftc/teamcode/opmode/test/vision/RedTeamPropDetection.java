@@ -3,25 +3,29 @@ package org.firstinspires.ftc.teamcode.opmode.test.vision;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.hardware.VisionHardware;
+import org.firstinspires.ftc.teamcode.system.accessory.Print;
+import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
 @Autonomous(group = "test")
 public class RedTeamPropDetection extends LinearOpMode {
-    private final VisionHardware hardware = new VisionHardware();
+    private final RobotHardware hardware = new RobotHardware();
+    private final Print print = new Print();
 
     @Override
     public void runOpMode() {
-        hardware.initRedWebcam(hardwareMap);
+        SetAuto.setRedAuto();
+        hardware.initWebcam(hardwareMap);
 
         while(!isStarted()) {
-            hardware.telemetryRedWebcam(telemetry);
+            print.telemetryRedWebcam(hardware.getRedPosition());
             telemetry.update();
         }
 
         waitForStart();
 
         while(opModeIsActive()) {
-            hardware.telemetryRedWebcam(telemetry);
+            print.telemetryRedWebcam(hardware.getRedPosition());
             telemetry.update();
         }
 

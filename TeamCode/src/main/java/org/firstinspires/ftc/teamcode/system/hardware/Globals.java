@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
+import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+
+@Config // Allows dashboard tune
 public class Globals {
     // Auto States
     public static boolean
@@ -26,18 +31,18 @@ public class Globals {
             PIXEL_POSE_X, // Pixel scoring coordinates
             PIXEL_POSE_Y,
             PIXEL_POSE_Z;
-    public static YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition
-            BLUE_LEFT = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            BLUE_CENTER = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            BLUE_RIGHT = YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static BlueTeamPropDetectorPipeline.TeamPropPosition
+            BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            BLUE_CENTER = BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             BLUE_POSITION = null;
-    public static YCrCbRedTeamPropDetectorPipeline.TeamPropPosition
-            RED_LEFT = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            RED_CENTER = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            RED_RIGHT = YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static RedTeamPropDetectorPipeline.TeamPropPosition
+            RED_LEFT = RedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            RED_CENTER = RedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             RED_POSITION = null;
 
-    //Intake Subsystem Constants
+    //Intake Servo Positions
     public static double //give pos values
             BOTTOM_ROLLER_, //write states
             BRUSH_HEIGHT_,
@@ -46,9 +51,19 @@ public class Globals {
             INTAKE_LOCK_LOCK,
             INTAKE_LOCK_UNLOCK;
 
-    //Outtake Subsystem Constants
+    //Outtake Servo Positions
     public static double //give pos values
-            RAIL_LEFT = 0.4,
+            BOTTOM_ROLLER_5,
+            BOTTOM_ROLLER_4,
+            BOTTOM_ROLLER_3,
+            BOTTOM_ROLLER_2,
+            BOTTOM_ROLLER_1,
+            BRUSH_HEIGHT_5,
+            BRUSH_HEIGHT_4,
+            BRUSH_HEIGHT_3,
+            BRUSH_HEIGHT_2,
+            BRUSH_HEIGHT_1,
+            RAIL_LEFT,
             RAIL_CENTER,
             RAIL_RIGHT,
             ARM_LEFT_DOWN,
@@ -69,5 +84,7 @@ public class Globals {
             CLAW_NEUTRAL,
             CLAW_OPEN,
             OUTTAKE_LOCK_LOCK,
-            OUTTAKE_LOCK_UNLOCK;
+            OUTTAKE_LOCK_UNLOCK,
+            DRONE_HOLD,
+            DRONE_RELEASE;
 }
