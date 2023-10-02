@@ -1,30 +1,35 @@
 package org.firstinspires.ftc.teamcode.system.accessory;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 public class Print {
     private Telemetry telemetry;
+    private final RobotHardware hardware = new RobotHardware();
     private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
     private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
 
-    public void telemetryBlueWebcam(BlueTeamPropDetectorPipeline.TeamPropPosition position) {
-        telemetry.addData("Position", position);
+    public void telemetryTeamProp() {
+        if (BLUE_AUTO) {
+            telemetry.addData("Position", hardware.getBluePosition());
+            telemetry.addData("cx", hardware.getBlueCx());
+            telemetry.addData("cy", hardware.getBlueCy());
+        } else if (RED_AUTO) {
+            telemetry.addData("Position", hardware.getRedPosition());
+            telemetry.addData("cx", hardware.getBlueCx());
+            telemetry.addData("cy", hardware.getBlueCy());
+        }
     }
 
-    public void telemetryRedWebcam(RedTeamPropDetectorPipeline.TeamPropPosition position) {
-        telemetry.addData("Position", position);
-    }
-
-    public void telemetryAprilTag(AprilTagProcessor aprilTag) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+    public void telemetryAprilTag() {
+        List<AprilTagDetection> currentDetections = hardware.getAprilTag().getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         for (AprilTagDetection detection : currentDetections) {

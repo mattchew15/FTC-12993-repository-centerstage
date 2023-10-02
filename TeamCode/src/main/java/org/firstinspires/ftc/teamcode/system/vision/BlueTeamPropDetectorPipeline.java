@@ -51,6 +51,8 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
 
     private final List<MatOfPoint> contours = new ArrayList<>();
 
+    private double cx, cy;
+
     // Default position is left.
     private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
@@ -99,8 +101,8 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
                 Moments moments = Imgproc.moments(contour);
 
                 // Calculate the centroid coordinates
-                double cx = moments.get_m10() / moments.get_m00();
-                double cy = moments.get_m01() / moments.get_m00();
+                cx = moments.get_m10() / moments.get_m00();
+                cy = moments.get_m01() / moments.get_m00();
                 Point point = new Point(cx, cy);
 
                 // Determine position
@@ -131,4 +133,6 @@ public class BlueTeamPropDetectorPipeline extends OpenCvPipeline {
     {
         return position;
     }
+    public double getCx() { return cx;}
+    public double getCy() { return cy;}
 }

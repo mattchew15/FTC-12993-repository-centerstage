@@ -129,8 +129,12 @@ public class RobotHardware {
     }
 
     public BlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
+    public double getBlueCx() { return bluePipeline.getCx();}
+    public double getBlueCy() { return bluePipeline.getCy();}
 
     public RedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
+    public double getRedCx() { return redPipeline.getCx();}
+    public double getRedCy() { return redPipeline.getCy();}
 
     public AprilTagProcessor getAprilTag() { return aprilTag; }
 

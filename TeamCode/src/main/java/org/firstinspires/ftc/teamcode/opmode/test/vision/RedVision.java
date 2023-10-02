@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test.vision;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RED_POSITION;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,8 +19,10 @@ public class RedVision extends LinearOpMode {
         SetAuto.setRedAuto();
         hardware.initWebcam(hardwareMap);
 
+        RED_POSITION = hardware.getRedPosition();
+
         while (!isStarted()) {
-            print.telemetryRedWebcam(hardware.getRedPosition());
+            print.telemetryTeamProp();
             telemetry.update();
         }
 
@@ -27,8 +31,8 @@ public class RedVision extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            print.telemetryRedWebcam(hardware.getRedPosition());
-            print.telemetryAprilTag(hardware.getAprilTag());
+            print.telemetryTeamProp();
+            print.telemetryAprilTag();
             telemetry.update();
         }
 

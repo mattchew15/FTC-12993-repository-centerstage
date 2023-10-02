@@ -13,6 +13,7 @@ public class PixelPoseDetector {
     private final RobotHardware hardware = new RobotHardware();
     private boolean targetFound = false;
     private AprilTagDetection desiredTag = null;
+    private Telemetry telemetry;
 
     public int desiredAprilTagId() {
         if (BLUE_AUTO) {
@@ -35,9 +36,9 @@ public class PixelPoseDetector {
         return 0;
     }
 
-    public void getPixelPose(Telemetry telemetry, AprilTagProcessor aprilTag) {
+    public void getPixelPose() {
         telemetry.addData("Desired apriltag id", desiredAprilTagId());
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = hardware.getAprilTag().getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if ((detection.metadata != null) && (detection.id == desiredAprilTagId())) {
                 targetFound = true;

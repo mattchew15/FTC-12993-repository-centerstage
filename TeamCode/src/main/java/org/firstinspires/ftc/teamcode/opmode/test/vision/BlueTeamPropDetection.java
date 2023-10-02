@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test.vision;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_POSITION;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,15 +19,17 @@ public class BlueTeamPropDetection extends LinearOpMode {
         SetAuto.setBlueAuto();
         hardware.initWebcam(hardwareMap);
 
+        BLUE_POSITION = hardware.getBluePosition();
+
         while(!isStarted()) {
-            print.telemetryBlueWebcam(hardware.getBluePosition());
+            print.telemetryTeamProp();
             telemetry.update();
         }
 
         waitForStart();
 
         while(opModeIsActive()) {
-            print.telemetryBlueWebcam(hardware.getBluePosition());
+            print.telemetryTeamProp();
             telemetry.update();
         }
 

@@ -16,14 +16,14 @@ public class AprilTagDetection extends LinearOpMode {
         hardware.initAprilTag(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryAprilTag(hardware.getAprilTag());
+            print.telemetryAprilTag();
             telemetry.update();
         }
 
         waitForStart();
 
         while(opModeIsActive()) {
-            print.telemetryAprilTag(hardware.getAprilTag());
+            print.telemetryAprilTag();
             telemetry.update();
         }
 
