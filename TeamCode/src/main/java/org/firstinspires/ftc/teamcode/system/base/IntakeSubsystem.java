@@ -3,12 +3,27 @@ package org.firstinspires.ftc.teamcode.system.base;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 
+import java.security.cert.Extension;
+
 @Config
 public class IntakeSubsystem {
-    private RobotHardware robot;
+    private RobotHardware hardware;
+    private final PIDController extensionController = new PIDController(EXTENSION_P, EXTENSION_I, EXTENSION_D);
+
+    public enum ExtensionState {
+        RETRACT,
+        EXTEND
+    }
+
+    public enum IntakeState {
+        STOP,
+        INTAKE,
+        REVERSE
+    }
 
     public enum BottomRollerState {
         INTAKE5,
@@ -36,33 +51,47 @@ public class IntakeSubsystem {
         UNLOCK
     }
 
-    public enum ExtensionState {
-        IN,
-        OUT
+    public void extension(ExtensionState state) {
+        switch (state) {
+            case RETRACT:
+
+                break;
+            case EXTEND:
+
+                break;
+        }
     }
 
-    public enum IntakeState {
-        STOP,
-        INTAKE,
-        REVERSE
+    public void intake(IntakeState state) {
+        switch (state) {
+            case STOP:
+
+                break;
+            case INTAKE:
+
+                break;
+            case REVERSE:
+
+                break;
+        }
     }
 
     public void bottomRoller(BottomRollerState state) {
         switch (state) {
             case INTAKE5:
-                robot.bottomRoller.setPosition(BOTTOM_ROLLER_5);
+                hardware.bottomRoller.setPosition(BOTTOM_ROLLER_5);
                 break;
             case INTAKE4:
-                robot.bottomRoller.setPosition(BOTTOM_ROLLER_4);
+                hardware.bottomRoller.setPosition(BOTTOM_ROLLER_4);
                 break;
             case INTAKE3:
-                robot.bottomRoller.setPosition(BOTTOM_ROLLER_3);
+                hardware.bottomRoller.setPosition(BOTTOM_ROLLER_3);
                 break;
             case INTAKE2:
-                robot.bottomRoller.setPosition(BOTTOM_ROLLER_2);
+                hardware.bottomRoller.setPosition(BOTTOM_ROLLER_2);
                 break;
             case INTAKE1:
-                robot.bottomRoller.setPosition(BOTTOM_ROLLER_1);
+                hardware.bottomRoller.setPosition(BOTTOM_ROLLER_1);
                 break;
         }
     }
@@ -70,19 +99,19 @@ public class IntakeSubsystem {
     public void brushHeight(BrushHeightState state) {
         switch (state) {
             case INTAKE5:
-                robot.bottomRoller.setPosition(BRUSH_HEIGHT_5);
+                hardware.bottomRoller.setPosition(BRUSH_HEIGHT_5);
                 break;
             case INTAKE4:
-                robot.bottomRoller.setPosition(BRUSH_HEIGHT_4);
+                hardware.bottomRoller.setPosition(BRUSH_HEIGHT_4);
                 break;
             case INTAKE3:
-                robot.bottomRoller.setPosition(BRUSH_HEIGHT_3);
+                hardware.bottomRoller.setPosition(BRUSH_HEIGHT_3);
                 break;
             case INTAKE2:
-                robot.bottomRoller.setPosition(BRUSH_HEIGHT_2);
+                hardware.bottomRoller.setPosition(BRUSH_HEIGHT_2);
                 break;
             case INTAKE1:
-                robot.bottomRoller.setPosition(BRUSH_HEIGHT_1);
+                hardware.bottomRoller.setPosition(BRUSH_HEIGHT_1);
                 break;
         }
     }
@@ -90,10 +119,10 @@ public class IntakeSubsystem {
     public void flap(FlapState state) {
         switch (state) {
             case CLOSE:
-                robot.flap.setPosition(FLAP_CLOSE);
+                hardware.flap.setPosition(FLAP_CLOSE);
                 break;
             case OPEN:
-                robot.flap.setPosition(FLAP_OPEN);
+                hardware.flap.setPosition(FLAP_OPEN);
                 break;
         }
     }
@@ -101,10 +130,10 @@ public class IntakeSubsystem {
     public void intakeLock(IntakeLockState state) {
         switch (state) {
             case LOCK:
-                robot.intakeLock.setPosition(INTAKE_LOCK_LOCK);
+                hardware.intakeLock.setPosition(INTAKE_LOCK_LOCK);
                 break;
             case UNLOCK:
-                robot.intakeLock.setPosition(INTAKE_LOCK_UNLOCK);
+                hardware.intakeLock.setPosition(INTAKE_LOCK_UNLOCK);
                 break;
         }
     }

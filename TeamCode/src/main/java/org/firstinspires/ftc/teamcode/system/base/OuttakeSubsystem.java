@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 
 public class OuttakeSubsystem {
-    private RobotHardware robot;
+    private RobotHardware hardware;
 
     public enum RailState {
         LEFT,
@@ -51,13 +51,13 @@ public class OuttakeSubsystem {
     public void RailState(RailState state) {
         switch (state) {
             case LEFT:
-                robot.rail.setPosition(RAIL_LEFT);
+                hardware.rail.setPosition(RAIL_LEFT);
                 break;
             case CENTER:
-                robot.rail.setPosition(RAIL_CENTER);
+                hardware.rail.setPosition(RAIL_CENTER);
                 break;
             case RIGHT:
-                robot.rail.setPosition(RAIL_RIGHT);
+                hardware.rail.setPosition(RAIL_RIGHT);
                 break;
         }
     }
@@ -65,20 +65,20 @@ public class OuttakeSubsystem {
     public void ArmState(ArmState state) {
         switch (state) {
             case DOWN:
-                robot.armLeft.setPosition(ARM_LEFT_DOWN);
-                robot.armRight.setPosition(ARM_RIGHT_DOWN);
+                hardware.armLeft.setPosition(ARM_LEFT_DOWN);
+                hardware.armRight.setPosition(ARM_RIGHT_DOWN);
             break;
             case LIFT:
-                robot.armLeft.setPosition(ARM_LEFT_LIFT);
-                robot.armRight.setPosition(ARM_RIGHT_LIFT);
+                hardware.armLeft.setPosition(ARM_LEFT_LIFT);
+                hardware.armRight.setPosition(ARM_RIGHT_LIFT);
                 break;
             case UP:
-                robot.armLeft.setPosition(ARM_LEFT_UP);
-                robot.armRight.setPosition(ARM_RIGHT_UP);
+                hardware.armLeft.setPosition(ARM_LEFT_UP);
+                hardware.armRight.setPosition(ARM_RIGHT_UP);
                 break;
             case LEVEL:
-                robot.armLeft.setPosition(ARM_LEFT_LEVEL);
-                robot.armRight.setPosition(ARM_RIGHT_LEVEL);
+                hardware.armLeft.setPosition(ARM_LEFT_LEVEL);
+                hardware.armRight.setPosition(ARM_RIGHT_LEVEL);
                 break;
         }
     }
@@ -86,13 +86,13 @@ public class OuttakeSubsystem {
     public void PivotState(PivotState state) {
         switch (state) {
             case LEFT:
-                robot.rail.setPosition(PIVOT_LEFT);
+                hardware.rail.setPosition(PIVOT_LEFT);
                 break;
             case VERTICAL:
-                robot.rail.setPosition(PIVOT_VERTICAL);
+                hardware.rail.setPosition(PIVOT_VERTICAL);
                 break;
             case RIGHT:
-                robot.rail.setPosition(PIVOT_RIGHT);
+                hardware.rail.setPosition(PIVOT_RIGHT);
                 break;
         }
     }
@@ -100,13 +100,13 @@ public class OuttakeSubsystem {
     public void WristState(WristState state) {
         switch (state) {
             case LEFT:
-                robot.rail.setPosition(WRIST_LEFT);
+                hardware.rail.setPosition(WRIST_LEFT);
                 break;
             case STRAIGHT:
-                robot.rail.setPosition(WRIST_STRAIGHT);
+                hardware.rail.setPosition(WRIST_STRAIGHT);
                 break;
             case RIGHT:
-                robot.rail.setPosition(WRIST_RIGHT);
+                hardware.rail.setPosition(WRIST_RIGHT);
                 break;
         }
     }
@@ -114,13 +114,13 @@ public class OuttakeSubsystem {
     public void ClawState(ClawState state) {
         switch (state) {
             case CLOSE:
-                robot.rail.setPosition(CLAW_CLOSE);
+                hardware.rail.setPosition(CLAW_CLOSE);
                 break;
             case NEUTRAL:
-                robot.rail.setPosition(CLAW_NEUTRAL);
+                hardware.rail.setPosition(CLAW_NEUTRAL);
                 break;
             case OPEN:
-                robot.rail.setPosition(CLAW_OPEN);
+                hardware.rail.setPosition(CLAW_OPEN);
                 break;
         }
     }
@@ -128,10 +128,10 @@ public class OuttakeSubsystem {
     public void OuttakeLockState(OuttakeLockState state) {
         switch (state) {
             case LOCK:
-                robot.rail.setPosition(OUTTAKE_LOCK_LOCK);
+                hardware.rail.setPosition(OUTTAKE_LOCK_LOCK);
                 break;
             case UNLOCK:
-                robot.rail.setPosition(OUTTAKE_LOCK_UNLOCK);
+                hardware.rail.setPosition(OUTTAKE_LOCK_UNLOCK);
                 break;
         }
     }
@@ -139,10 +139,10 @@ public class OuttakeSubsystem {
     public void DroneState(DroneState state) {
         switch (state) {
             case HOLD:
-                robot.drone.setPosition(DRONE_HOLD);
+                hardware.drone.setPosition(DRONE_HOLD);
                 break;
             case RELEASE:
-                robot.drone.setPosition(DRONE_RELEASE);
+                hardware.drone.setPosition(DRONE_RELEASE);
                 break;
         }
     }
