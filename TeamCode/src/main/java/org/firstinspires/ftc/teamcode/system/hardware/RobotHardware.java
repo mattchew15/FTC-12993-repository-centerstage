@@ -43,12 +43,10 @@ public class RobotHardware {
             outtakeLock,
             drone;
 
-    int cameraMonitorViewId;
     private OpenCvWebcam blueWebcam, redWebcam;
-    public BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
-    public RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
-    public AprilTagProcessor aprilTag;
-    public VisionPortal visionPortal;
+    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
+    private AprilTagProcessor aprilTag;
 
     public void init(HardwareMap hwMap) {
         frontLeftDrive = hwMap.get(DcMotorEx.class, "frontLeftMotor");
@@ -79,6 +77,7 @@ public class RobotHardware {
     }
 
     public void initWebcam(HardwareMap hwMap) {
+        int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
             blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -120,7 +119,7 @@ public class RobotHardware {
         aprilTag = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(822.317, 822.317, 319.495, 242.502)
                 .build();
-        visionPortal = new VisionPortal.Builder()
+        VisionPortal visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTag)
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
                 .setCameraResolution(new Size(640, 480))

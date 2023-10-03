@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.system.accessory.Print;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.Others.YCrCbRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 
 @Config // Allows dashboard tune
 public class Globals {
+    public static RobotHardware hardware;
+    public static Telemetry telemetry;
+    public static Print print;
+
     // Auto States
     public static boolean
             BLUE_AUTO = false,
@@ -19,7 +23,8 @@ public class Globals {
             EXTENSION_P = 0,
             EXTENSION_I = 0,
             EXTENSION_D = 0,
-            EXTENSION_F = 0;
+            EXTENSION_F = 0,
+            EXTENSION_TICKS_IN_DEGREES = 700 / 180;
 
     // Intake Motor Positions
     public static int
@@ -52,19 +57,21 @@ public class Globals {
             LIFT_I = 0,
             LIFT_D = 0,
             LIFT_F = 0,
+            LIFT_TICKS_IN_DEGREES = 700 / 180,
 
             PITCH_P = 0, // Pitch
             PITCH_I = 0,
             PITCH_D = 0,
-            PITCH_F = 0;
+            PITCH_F = 0,
+            PITCH_TICKS_IN_DEGREES = 700 / 180;
 
     // Outtake Motor Positions
     public static int
             LIFT_RETRACT = 0, // Lift
             LIFT_EXTEND = 0,
 
-            PITCH_30 = 0, // Pitch
-            PITCH_60 = 0;
+            PITCH_DEGREES_30 = 0, // Pitch
+            PITCH_DEGREES_60 = 0;
 
     //Outtake Servo Positions
     public static double

@@ -2,17 +2,16 @@ package org.firstinspires.ftc.teamcode.system.base;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 
-import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
-
-import java.security.cert.Extension;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class IntakeSubsystem {
-    private RobotHardware hardware;
-    private final PIDController extensionController = new PIDController(EXTENSION_P, EXTENSION_I, EXTENSION_D);
+    private final  Telemetry dashTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
     public enum ExtensionState {
         RETRACT,
@@ -51,32 +50,40 @@ public class IntakeSubsystem {
         UNLOCK
     }
 
-    public void extension(ExtensionState state) {
+    public void extensionState(ExtensionState state) {
+        PIDController controller = new PIDController(EXTENSION_P, EXTENSION_I, EXTENSION_D);
+        int pos = hardware.extension.getCurrentPosition();
         switch (state) {
             case RETRACT:
-
+                double retractPID = controller.calculate(pos, EXTENSION_RETRACT);
+                double retractFF = Math. cos(Math. toRadians (EXTENSION_RETRACT / EXTENSION_TICKS_IN_DEGREES)) * EXTENSION_F;
+                double retractPower = retractPID + retractFF;
+                hardware.extension.setPower(retractPower);
                 break;
             case EXTEND:
-
+                double extendPID = controller.calculate(pos, EXTENSION_EXTEND);
+                double extendFF = Math. cos(Math. toRadians (EXTENSION_EXTEND / EXTENSION_TICKS_IN_DEGREES)) * EXTENSION_F;
+                double extendPower = extendPID + extendFF;
+                hardware.extension.setPower(extendPower);
                 break;
         }
     }
 
-    public void intake(IntakeState state) {
+    public void intakeState(IntakeState state) {
         switch (state) {
             case STOP:
-
+                hardware.extension.setPower(0);
                 break;
             case INTAKE:
-
+                hardware.extension.setPower(1);
                 break;
             case REVERSE:
-
+                hardware.extension.setPower(-1);
                 break;
         }
     }
 
-    public void bottomRoller(BottomRollerState state) {
+    public void bottomRollerState(BottomRollerState state) {
         switch (state) {
             case INTAKE5:
                 hardware.bottomRoller.setPosition(BOTTOM_ROLLER_5);
@@ -96,7 +103,7 @@ public class IntakeSubsystem {
         }
     }
 
-    public void brushHeight(BrushHeightState state) {
+    public void brushHeightState(BrushHeightState state) {
         switch (state) {
             case INTAKE5:
                 hardware.bottomRoller.setPosition(BRUSH_HEIGHT_5);
@@ -116,7 +123,7 @@ public class IntakeSubsystem {
         }
     }
 
-    public void flap(FlapState state) {
+    public void flapState(FlapState state) {
         switch (state) {
             case CLOSE:
                 hardware.flap.setPosition(FLAP_CLOSE);
@@ -127,7 +134,7 @@ public class IntakeSubsystem {
         }
     }
 
-    public void intakeLock(IntakeLockState state) {
+    public void intakeLockState(IntakeLockState state) {
         switch (state) {
             case LOCK:
                 hardware.intakeLock.setPosition(INTAKE_LOCK_LOCK);
