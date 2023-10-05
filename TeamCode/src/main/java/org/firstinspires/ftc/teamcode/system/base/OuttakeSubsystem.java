@@ -2,15 +2,9 @@ package org.firstinspires.ftc.teamcode.system.base;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class OuttakeSubsystem {
-    private final Telemetry dashTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
     public enum LiftState {
         RETRACT,
         EXTEND
@@ -29,7 +23,7 @@ public class OuttakeSubsystem {
 
     public enum ArmState {
         DOWN,
-        LIFT,
+        READY,
         UP,
         LEVEL
     }
@@ -65,18 +59,21 @@ public class OuttakeSubsystem {
     public void liftState(LiftState state) {
         PIDController controller = new PIDController(LIFT_P, LIFT_I, LIFT_D);
         int pos = hardware.lift.getCurrentPosition();
+        dashTelemetry.addData("pos", pos);
         switch (state) {
             case RETRACT:
                 double retractPID = controller.calculate(pos, LIFT_RETRACT);
-                double retractFF = Math.cos(Math.toRadians(LIFT_RETRACT / LIFT_TICKS_IN_DEGREES)) * LIFT_F;
+                double retractFF = Math.cos(Math.toRadians(LIFT_RETRACT / LIFT_TICKS_PER_DEGREES)) * LIFT_F;
                 double retractPower = retractPID + retractFF;
                 hardware.extension.setPower(retractPower);
+                dashTelemetry.addData("target", LIFT_RETRACT);
                 break;
             case EXTEND:
                 double extendPID = controller.calculate(pos, LIFT_EXTEND);
-                double extendFF = Math.cos(Math.toRadians(LIFT_EXTEND / LIFT_TICKS_IN_DEGREES)) * LIFT_F;
+                double extendFF = Math.cos(Math.toRadians(LIFT_EXTEND / LIFT_TICKS_PER_DEGREES)) * LIFT_F;
                 double extendPower = extendPID + extendFF;
                 hardware.extension.setPower(extendPower);
+                dashTelemetry.addData("target", LIFT_EXTEND);
                 break;
         }
     }
@@ -84,18 +81,21 @@ public class OuttakeSubsystem {
     public void pitchState(PitchState state) {
         PIDController controller = new PIDController(PITCH_P, PITCH_I, PITCH_D);
         int pos = hardware.pitch.getCurrentPosition();
+        dashTelemetry.addData("pos", pos);
         switch (state) {
             case DEGREES_30:
                 double degrees30PID = controller.calculate(pos, PITCH_DEGREES_30);
-                double degrees30FF = Math.cos(Math.toRadians(PITCH_DEGREES_30 / PITCH_TICKS_IN_DEGREES)) * PITCH_F;
+                double degrees30FF = Math.cos(Math.toRadians(PITCH_DEGREES_30 / PITCH_TICKS_PER_DEGREES)) * PITCH_F;
                 double degrees30Power = degrees30PID + degrees30FF;
                 hardware.extension.setPower(degrees30Power);
+                dashTelemetry.addData("target", PITCH_DEGREES_30);
                 break;
             case DEGREES_60:
                 double degrees60PID = controller.calculate(pos, PITCH_DEGREES_60);
-                double degrees60FF = Math.cos(Math.toRadians(PITCH_DEGREES_60 / PITCH_TICKS_IN_DEGREES)) * PITCH_F;
+                double degrees60FF = Math.cos(Math.toRadians(PITCH_DEGREES_60 / PITCH_TICKS_PER_DEGREES)) * PITCH_F;
                 double degrees60Power = degrees60PID + degrees60FF;
                 hardware.extension.setPower(degrees60Power);
+                dashTelemetry.addData("target", PITCH_DEGREES_60);
                 break;
         }
     }
@@ -120,9 +120,9 @@ public class OuttakeSubsystem {
                 hardware.armLeft.setPosition(ARM_LEFT_DOWN);
                 hardware.armRight.setPosition(ARM_RIGHT_DOWN);
             break;
-            case LIFT:
-                hardware.armLeft.setPosition(ARM_LEFT_LIFT);
-                hardware.armRight.setPosition(ARM_RIGHT_LIFT);
+            case READY:
+                hardware.armLeft.setPosition(ARM_LEFT_READY);
+                hardware.armRight.setPosition(ARM_RIGHT_READY);
                 break;
             case UP:
                 hardware.armLeft.setPosition(ARM_LEFT_UP);

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -29,8 +30,9 @@ public class RobotHardware {
             lift,
             pitch;
 
+    public CRServo bottomRoller;
+
     public ServoImplEx
-            bottomRoller,
             brushHeight,
             flap,
             intakeLock,
@@ -60,7 +62,8 @@ public class RobotHardware {
 
 
 
-        bottomRoller = hwMap.get(ServoImplEx.class, "Bottom_Roller");
+        bottomRoller = hwMap.get(CRServo.class, "Bottom_Roller");
+
         brushHeight = hwMap.get(ServoImplEx.class, "Brush_Height");
         flap = hwMap.get(ServoImplEx.class, "Flap");
         intakeLock = hwMap.get(ServoImplEx.class, "Intake_Lock");
