@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.system.accessory.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.base.SetAuto;
 import org.firstinspires.ftc.teamcode.system.inversekinematics.PixelPoseDetector;
 
 @TeleOp(group = "test")

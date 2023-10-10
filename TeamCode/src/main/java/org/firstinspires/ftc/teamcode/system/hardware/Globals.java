@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.Print;
+import org.firstinspires.ftc.teamcode.system.base.AutoCommand;
 import org.firstinspires.ftc.teamcode.system.base.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.base.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
@@ -21,6 +23,7 @@ public class Globals {
     public final static Telemetry dashTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     public final static IntakeSubsystem intake = new IntakeSubsystem();
     public final static OuttakeSubsystem outtake = new OuttakeSubsystem();
+    public final static AutoCommand command = new AutoCommand();
     public static ElapsedTime GlobalTimer = new ElapsedTime(System.nanoTime());
 
     // Auto Constants
@@ -32,7 +35,9 @@ public class Globals {
     // Auto States
     public static boolean
             BLUE_AUTO = false,
-            RED_AUTO = false;
+            RED_AUTO = false,
+            FRONT_AUTO = false,
+            BACK_AUTO = false;
 
     // Intake Motor PID Gains
     public static double
@@ -43,23 +48,31 @@ public class Globals {
             EXTENSION_TICKS_PER_REVOLUTION = 146.44,
             EXTENSION_TICKS_PER_DEGREES = EXTENSION_TICKS_PER_REVOLUTION / 360,
             EXTENSION_SPOOL_RADIUS_CM = 2.15,
-            EXTENSION_TICKS_PER_CM = EXTENSION_TICKS_PER_REVOLUTION / 2*Math.PI*EXTENSION_SPOOL_RADIUS_CM;
+            EXTENSION_TICKS_PER_CM = EXTENSION_TICKS_PER_REVOLUTION / (2 * Math.PI * EXTENSION_SPOOL_RADIUS_CM);
 
-    // Intake Motor Positions
-    public static int
+    // Intake Motor Positions In CM
+    public static double
             EXTENSION_RETRACT_CM = 0,
             EXTENSION_EXTEND_CM = 0,
-            EXTENSION_RETRACT = 0,
-            EXTENSION_EXTEND = 0;
+            EXTENSION_LEFT_CM = 0,
+            EXTENSION_CENTER_CM = 0,
+            EXTENSION_RIGHT_CM = 0,
+            EXTENSION_RETRACT = EXTENSION_RETRACT_CM * EXTENSION_TICKS_PER_CM,
+            EXTENSION_EXTEND = EXTENSION_EXTEND_CM * EXTENSION_TICKS_PER_CM,
+            EXTENSION_LEFT = EXTENSION_LEFT_CM * EXTENSION_TICKS_PER_CM,
+            EXTENSION_CENTER = EXTENSION_CENTER_CM * EXTENSION_TICKS_PER_CM,
+            EXTENSION_RIGHT = EXTENSION_RIGHT_CM * EXTENSION_TICKS_PER_CM;
 
     // Intake Servo/Motor Power
     public static double
             INTAKE_STOP = 0, // Intake
             INTAKE_INTAKE = 0,
             INTAKE_REVERSE = 0,
+            INTAKE_DEPOSIT = 0,
             BOTTOM_ROLLER_STOP = 0, // Bottom roller
             BOTTOM_ROLLER_INTAKE = 0,
-            BOTTOM_ROLLER_REVERSE = 0;
+            BOTTOM_ROLLER_REVERSE = 0,
+            BOTTOM_ROLLER_DEPOSIT = 0;
 
     // Intake Servo Positions In Degrees
     public static double
@@ -73,8 +86,8 @@ public class Globals {
             FLAP_CLOSE = 0, // Flap
             FLAP_OPEN = 0,
 
-            INTAKE_LOCK_LOCK = 0, // Intake lock
-            INTAKE_LOCK_UNLOCK = 0;
+            LOCK_LOCK = 0, // Lock
+            LOCK_UNLOCK = 0;
 
     // Outtake Motor PID Gains
     public static double
@@ -85,7 +98,7 @@ public class Globals {
             LIFT_TICKS_PER_REVOLUTION = 103.8,
             LIFT_TICKS_PER_DEGREES = LIFT_TICKS_PER_REVOLUTION / 360, // Ticks per revolution / 360, 36
             LIFT_SPOOL_RADIUS_CM = 1.8,
-            LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / 2*Math.PI*LIFT_SPOOL_RADIUS_CM,
+            LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / (2 * Math.PI * LIFT_SPOOL_RADIUS_CM),
 
             PITCH_P = 0, // Pitch
             PITCH_I = 0,
@@ -94,44 +107,40 @@ public class Globals {
             PITCH_TICKS_PER_REVOLUTION = 3895.9,
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360;
 
-    // Outtake Motor Positions
-    public static int
-            LIFT_RETRACT = 0, // Lift
-            LIFT_EXTEND = 0,
+    // Outtake Motor Positions In CM/Degrees
+    public static double
+            LIFT_RETRACT_CM = 0, // Lift
+            LIFT_EXTEND_CM = 0,
+            LIFT_RETRACT = LIFT_RETRACT_CM * LIFT_TICKS_PER_CM,
+            LIFT_EXTEND = LIFT_EXTEND_CM * LIFT_TICKS_PER_CM,
 
-            PITCH_DEGREES_30 = 0, // Pitch
-            PITCH_DEGREES_60 = 0;
+            PITCH_ANGLE_30_DEGREES = 0, // Pitch
+            PITCH_ANGLE_60_DEGREES = 0,
+            PITCH_ANGLE_30 = PITCH_ANGLE_30_DEGREES * PITCH_TICKS_PER_DEGREES,
+            PITCH_ANGLE_60 = PITCH_ANGLE_60_DEGREES * PITCH_TICKS_PER_DEGREES;
 
-    //Outtake Servo Positions
+    //Outtake Servo Positions In Degrees
     public static double
             RAIL_LEFT = 0, // Rail
             RAIL_CENTER = 0,
             RAIL_RIGHT = 0,
 
-            ARM_LEFT_DOWN = 0, // Arm Left
-            ARM_LEFT_READY = 0,
-            ARM_LEFT_UP = 0,
-            ARM_LEFT_LEVEL = 0,
-
-            ARM_RIGHT_DOWN = 0, // Arm Right
-            ARM_RIGHT_READY = 0,
-            ARM_RIGHT_UP = 0,
-            ARM_RIGHT_LEVEL = 0,
+            ARM_DOWN = 0, // Arms
+            ARM_GRAB = 0,
+            ARM_READY = 0,
+            ARM_OUT = 0,
 
             PIVOT_LEFT = 0, // Pivot
-            PIVOT_VERTICAL = 0,
+            PIVOT_CENTER = 0,
             PIVOT_RIGHT = 0,
 
             WRIST_LEFT = 0, // Wrist
-            WRIST_STRAIGHT = 0,
+            WRIST_CENTER = 0,
             WRIST_RIGHT = 0,
 
             CLAW_CLOSE = 0, // Claw
             CLAW_NEUTRAL = 0,
             CLAW_OPEN = 0,
-
-            OUTTAKE_LOCK_LOCK = 0, // Outtake lock
-            OUTTAKE_LOCK_UNLOCK = 0,
 
             DRONE_HOLD = 0, // Drone
             DRONE_RELEASE = 0;

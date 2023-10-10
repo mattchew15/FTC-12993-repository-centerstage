@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.system.accessory.Print;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.base.SetAuto;
 
 @Autonomous(group = "test")
 public class RedTeamPropDetection extends LinearOpMode {

@@ -19,8 +19,8 @@ public class Print {
             telemetry.addData("cy", hardware.getBlueCy());
         } else if (RED_AUTO) {
             telemetry.addData("Position", hardware.getRedPosition());
-            telemetry.addData("cx", hardware.getBlueCx());
-            telemetry.addData("cy", hardware.getBlueCy());
+            telemetry.addData("cx", hardware.getRedCx());
+            telemetry.addData("cy", hardware.getRedCy());
         }
     }
 

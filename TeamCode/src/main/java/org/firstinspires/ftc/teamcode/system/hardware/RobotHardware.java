@@ -7,6 +7,7 @@ import android.util.Size;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -35,14 +36,12 @@ public class RobotHardware {
     public ServoImplEx
             brushHeight,
             flap,
-            intakeLock,
-            rail,
+            lock,
             armLeft,
             armRight,
             pivot,
             wrist,
             claw,
-            outtakeLock,
             drone;
 
     private OpenCvWebcam blueWebcam, redWebcam;
@@ -60,21 +59,19 @@ public class RobotHardware {
         lift = hwMap.get(DcMotorEx.class, "lift");
         pitch = hwMap.get(DcMotorEx.class, "pitch");
 
-
-
         bottomRoller = hwMap.get(CRServo.class, "Bottom_Roller");
 
         brushHeight = hwMap.get(ServoImplEx.class, "Brush_Height");
         flap = hwMap.get(ServoImplEx.class, "Flap");
-        intakeLock = hwMap.get(ServoImplEx.class, "Intake_Lock");
-        rail = hwMap.get(ServoImplEx.class, "Rail");
+        lock = hwMap.get(ServoImplEx.class, "Lock");
         armLeft = hwMap.get(ServoImplEx.class, "Arm_Left");
         armRight = hwMap.get(ServoImplEx.class, "Arm_Right");
         pivot = hwMap.get(ServoImplEx.class, "Pivot");
         wrist = hwMap.get(ServoImplEx.class, "Wrist");
         claw = hwMap.get(ServoImplEx.class, "Claw");
-        outtakeLock = hwMap.get(ServoImplEx.class, "Outtake_Lock");
         drone = hwMap.get(ServoImplEx.class, "Drone");
+
+        armLeft.setDirection(Servo.Direction.REVERSE);
 
         initWebcam(hwMap);
     }
@@ -139,5 +136,4 @@ public class RobotHardware {
     public double getRedCy() { return redPipeline.getCy();}
 
     public AprilTagProcessor getAprilTag() { return aprilTag; }
-
 }
