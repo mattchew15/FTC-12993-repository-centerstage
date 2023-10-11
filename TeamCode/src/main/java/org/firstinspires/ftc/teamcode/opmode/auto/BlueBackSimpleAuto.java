@@ -56,8 +56,11 @@ public class BlueBackSimpleAuto extends LinearOpMode {
             // Main state machine
             switch (currentState) {
                 case DELAY:
-                    outtake.armState(OuttakeSubsystem.ArmState.GRAB);
-                    currentState = AutoState.BACKDROP_DRIVE;
+                    outtake.armState(OuttakeSubsystem.ArmState.READY);
+                    if (stateTimer > 5000) {
+                        currentState = AutoState.BACKDROP_DRIVE;
+                    }
+                    command.updateTimer();
                     break;
 
                 case BACKDROP_DRIVE:
@@ -76,6 +79,9 @@ public class BlueBackSimpleAuto extends LinearOpMode {
                         outtake.pivotState(OuttakeSubsystem.PivotState.RIGHT);
                         outtake.wristState(OuttakeSubsystem.WristState.RIGHT);
                         intake.extensionState(IntakeSubsystem.ExtensionState.RIGHT);
+                    }
+                    if () { // drive to position
+
                     }
                     outtake.armState(OuttakeSubsystem.ArmState.OUT);
                     outtake.pitchState(OuttakeSubsystem.PitchState.ANGLE_30);
