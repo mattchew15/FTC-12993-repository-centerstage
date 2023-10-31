@@ -21,6 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class RobotHardware {
+    //name changes
     public DcMotorEx
             FL,
             FR,
