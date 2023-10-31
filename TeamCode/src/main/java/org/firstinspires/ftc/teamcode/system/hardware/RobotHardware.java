@@ -21,6 +21,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class RobotHardware {
+
+
+
     //name changes
     public DcMotorEx
             FL,
@@ -37,7 +40,7 @@ public class RobotHardware {
     public ServoImplEx
             IntakeArmServo,
             IntakeFlapServo,
-            IntakeClip,
+            IntakeClipServo,
             OuttakeArmServoLeft,
             OuttakeArmServoRight,
             PivotServo,
@@ -54,6 +57,8 @@ public class RobotHardware {
         initMotorsServos(hwMap);
         initWebcam(hwMap);
         initAprilTag(hwMap);
+
+        //Also run the hardware setup functions in here
     }
 
     public void initMotorsServos(HardwareMap hwMap) {
@@ -70,7 +75,7 @@ public class RobotHardware {
 
         IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
         IntakeFlapServo = hwMap.get(ServoImplEx.class, "IntakeFlapS");
-        IntakeClip = hwMap.get(ServoImplEx.class, "IntakeClip");
+        IntakeClipServo = hwMap.get(ServoImplEx.class, "IntakeClipS");
         OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
         OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
         PivotServo = hwMap.get(ServoImplEx.class, "PivotS");

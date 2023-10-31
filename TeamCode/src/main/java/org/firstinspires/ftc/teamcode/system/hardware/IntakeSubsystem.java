@@ -2,43 +2,31 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.teamcode.system.accessory.PID;
+@Config
 public class IntakeSubsystem {
 
 RobotHardware robotHardware;
 
-    public enum IntakeSlidesMotorState {
-        RETRACT,
-        EXTEND,
-        LEFT,
-        CENTER,
-        RIGHT
-    }
+    // constants should be capitalized but oh well
+    public static double IntakeFlapOpenPos = 0.43, IntakeFlapClosedPos = 0.212;
+    public static double IntakeArmTopPos = 0.145, IntakeArmMiddlePos = 0.241, IntakeArmBasePos = 0.32;
+    public static double IntakeClipOpenPos = 0.43, IntakeClipHoldingPos = 0.212;
 
-    public enum IntakeState {
-        STOP,
-        INTAKE,
-        REVERSE,
-        DEPOSIT
+    final double intakeSlidethresholdDistance = 20;
+    final double intakeSlidethresholdDistanceNewThreshold = 4;
 
-    }
-
-    public enum BottomRollerState {
-        STOP,
-        INTAKE,
-        REVERSE,
-        DEPOSIT
-        }
-
-    public enum BrushHeightState {
-        INTAKE5,
-        INTAKE4,
-        INTAKE3,
-        INTAKE2,
-        INTAKE1,
-        DRIVE
+    // slightly more optimal to do enums - also means we will never double write
+    public enum IntakeArmServoState {
+        TOP_STACK,
+        MIDDLE_STACK,
+        BASE
     }
 
     public enum FlapState {
@@ -46,67 +34,80 @@ RobotHardware robotHardware;
         OPEN
     }
 
-    public enum LockState {
-        LOCK,
-        UNLOCK
+    public enum IntakeClipState {
+        HOLDING,
+        OPEN
     }
+    public static double intakeSlideKp = 0.01, intakeSlideKi = 0.00, intakeSlideKd = 0.0005, intakeSlideIntegralSumLimit = 10, intakeSlideKf = 0;
+    PID intakeSlidePID = new PID(intakeSlideKp,intakeSlideKi,intakeSlideKd,intakeSlideIntegralSumLimit,intakeSlideKf);
+
+    // define slide position and target as class members - intake slide position can be stored so its only read once
+    public double intakeSlidePosition;
+    int intakeSlideTarget;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
+    public void intakeHardwareSetup(){
+        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    public void intakeState(IntakeState state) {
-        switch (state) {
-            case STOP:
-                hardware.extension.setPower(INTAKE_STOP);
-                break;
-            case INTAKE:
-                hardware.extension.setPower(INTAKE_INTAKE);
-                break;
-            case REVERSE:
-                hardware.extension.setPower(INTAKE_REVERSE);
-                break;
-            case DEPOSIT:
-                hardware.extension.setPower(INTAKE_DEPOSIT);
-                break;
+    }
+
+    // handles all of the reads in this class
+    public void intakeReads(){
+        intakeSlidePosition = robotHardware.IntakeSlideMotor.getCurrentPosition();
+    }
+
+    public void intakeSlideMotorEncodersReset(){
+        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    // methods should be camel caps
+    public void intakeSpin(double speedDirection){
+        robotHardware.IntakeMotor.setPower(speedDirection);
+        robotHardware.BottomRollerServo.setPower(speedDirection * -1);
+    }
+
+    public void IntakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
+        intakeSlideTarget = targetRotations;
+        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
+        robotHardware.IntakeSlideMotor.setPower(output);
+    }
+
+    public void IntakeSlideInternalPID(int rotations, double maxSpeed){
+        intakeSlideTarget = rotations; // variable is public to this class?
+        robotHardware.IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
+        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotHardware.IntakeSlideMotor.setPower(maxSpeed);
+    }
+    public boolean intakeSlideTargetReached(){
+        if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
-    public void bottomRollerState(BottomRollerState state) {
-        switch (state) {
-            case STOP:
-                hardware.bottomRoller.setPower(BOTTOM_ROLLER_STOP);
-                break;
-            case INTAKE:
-                hardware.bottomRoller.setPower(BOTTOM_ROLLER_INTAKE);
-                break;
-            case REVERSE:
-                hardware.bottomRoller.setPower(BOTTOM_ROLLER_REVERSE);
-                break;
-            case DEPOSIT:
-                hardware.bottomRoller.setPower(BOTTOM_ROLLER_DEPOSIT);
-                break;
-        }
+    public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
+        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robotHardware.IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
-    public void brushHeightState(BrushHeightState state) {
+    public double intakeSlideError(){
+        return intakeSlidePID.returnError();
+    }
+
+    public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
-            case INTAKE5:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_5));
+            case TOP_STACK:
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmTopPos));
                 break;
-            case INTAKE4:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_4));
+            case MIDDLE_STACK:
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmMiddlePos));
                 break;
-            case INTAKE3:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_3));
-                break;
-            case INTAKE2:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_2));
-                break;
-            case INTAKE1:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_1));
-                break;
-            case DRIVE:
-                hardware.brushHeight.setPosition(degreesToTicks(BRUSH_HEIGHT_DRIVE));
+            case BASE:
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmBasePos));
                 break;
         }
     }
@@ -114,21 +115,21 @@ RobotHardware robotHardware;
     public void flapState(FlapState state) {
         switch (state) {
             case CLOSE:
-                hardware.flap.setPosition(degreesToTicks(FLAP_CLOSE));
+                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(IntakeFlapClosedPos));
                 break;
             case OPEN:
-                hardware.flap.setPosition(degreesToTicks(FLAP_OPEN));
+                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(IntakeFlapOpenPos));
                 break;
         }
     }
 
-    public void lockState(LockState state) {
+    public void intakeClipState(IntakeClipState state) {
         switch (state) {
-            case LOCK:
-                hardware.lock.setPosition(degreesToTicks(LOCK_LOCK));
+            case OPEN:
+                robotHardware.IntakeClipServo.setPosition(degreesToTicks(IntakeClipOpenPos));
                 break;
-            case UNLOCK:
-                hardware.lock.setPosition(degreesToTicks(LOCK_UNLOCK));
+            case HOLDING:
+                robotHardware.IntakeClipServo.setPosition(degreesToTicks(IntakeClipHoldingPos));
                 break;
         }
     }

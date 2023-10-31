@@ -27,107 +27,28 @@ public class Globals {
             FRONT_AUTO = false,
             BACK_AUTO = false;
 
-    // Intake Motor PID Gains
+    //Intake slides motor
     public static double
-            EXTENSION_P = 0,
-            EXTENSION_I = 0,
-            EXTENSION_D = 0,
-            EXTENSION_F = 0,
             EXTENSION_TICKS_PER_REVOLUTION = 146.44,
             EXTENSION_TICKS_PER_DEGREES = EXTENSION_TICKS_PER_REVOLUTION / 360,
             EXTENSION_SPOOL_RADIUS_CM = 2.15,
             EXTENSION_TICKS_PER_CM = EXTENSION_TICKS_PER_REVOLUTION / (2 * Math.PI * EXTENSION_SPOOL_RADIUS_CM);
 
-    // Intake Motor Positions In CM
+    // Outtake lift Motor
     public static double
-            EXTENSION_RETRACT_CM = 0,
-            EXTENSION_EXTEND_CM = 0,
-            EXTENSION_LEFT_CM = 0,
-            EXTENSION_CENTER_CM = 0,
-            EXTENSION_RIGHT_CM = 0,
-            EXTENSION_RETRACT = EXTENSION_RETRACT_CM * EXTENSION_TICKS_PER_CM,
-            EXTENSION_EXTEND = EXTENSION_EXTEND_CM * EXTENSION_TICKS_PER_CM,
-            EXTENSION_LEFT = EXTENSION_LEFT_CM * EXTENSION_TICKS_PER_CM,
-            EXTENSION_CENTER = EXTENSION_CENTER_CM * EXTENSION_TICKS_PER_CM,
-            EXTENSION_RIGHT = EXTENSION_RIGHT_CM * EXTENSION_TICKS_PER_CM;
-
-    // Intake Servo/Motor Power
-    public static double
-            INTAKE_STOP = 0, // Intake
-            INTAKE_INTAKE = 0,
-            INTAKE_REVERSE = 0,
-            INTAKE_DEPOSIT = 0,
-            BOTTOM_ROLLER_STOP = 0, // Bottom roller
-            BOTTOM_ROLLER_INTAKE = 0,
-            BOTTOM_ROLLER_REVERSE = 0,
-            BOTTOM_ROLLER_DEPOSIT = 0;
-
-    // Intake Servo Positions In Degrees
-    public static double
-            BRUSH_HEIGHT_TOP = 0, // Brush height
-            BRUSH_HEIGHT_MIDDLE = 0,
-            BRUSH_HEIGHT_BASE = 0,
-
-            FLAP_CLOSE = 0, // Flap
-            FLAP_OPEN = 0,
-
-            LOCK_LOCK = 0, // Lock
-            LOCK_UNLOCK = 0;
-
-    // Outtake Motor PID Gains
-    public static double
-            LIFT_P = 0, // Lift
-            LIFT_I = 0,
-            LIFT_D = 0,
-            LIFT_F = 0,
             LIFT_TICKS_PER_REVOLUTION = 103.8,
             LIFT_TICKS_PER_DEGREES = LIFT_TICKS_PER_REVOLUTION / 360, // Ticks per revolution / 360, 36
             LIFT_SPOOL_RADIUS_CM = 1.8,
             LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / (2 * Math.PI * LIFT_SPOOL_RADIUS_CM);
 
+    // Pitch
     public static double
-            PITCH_P = 0, // Pitch
-            PITCH_I = 0,
-            PITCH_D = 0,
-            PITCH_F = 0,
             PITCH_TICKS_PER_REVOLUTION = 3895.9,
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360;
 
-    // Outtake Motor Positions In CM/Degrees
-    public static double
-            LIFT_RETRACT_CM = 0, // Lift
-            LIFT_EXTEND_CM = 0,
-            LIFT_RETRACT = LIFT_RETRACT_CM * LIFT_TICKS_PER_CM,
-            LIFT_EXTEND = LIFT_EXTEND_CM * LIFT_TICKS_PER_CM;
-
-    public static double
-            PITCH_ANGLE_30_DEGREES = 0, // Pitch
-            PITCH_ANGLE_60_DEGREES = 0,
-            PITCH_ANGLE_30 = PITCH_ANGLE_30_DEGREES * PITCH_TICKS_PER_DEGREES,
-            PITCH_ANGLE_60 = PITCH_ANGLE_60_DEGREES * PITCH_TICKS_PER_DEGREES;
-
-    //Outtake Servo Positions In Degrees
-    public static double
-
-            ARM_DOWN = 0, // Arms
-            ARM_GRAB = 0,
-            ARM_READY = 0,
-            ARM_OUT = 0,
-
-            PIVOT_LEFT = 0, // Pivot
-            PIVOT_CENTER = 0,
-            PIVOT_RIGHT = 0,
-
-            WRIST_LEFT = 0, // Wrist
-            WRIST_CENTER = 0,
-            WRIST_RIGHT = 0,
-
-            CLAW_CLOSE = 0, // Claw
-            CLAW_NEUTRAL = 0,
-            CLAW_OPEN = 0,
-
-            DRONE_HOLD = 0, // Drone
-            DRONE_RELEASE = 0;
+    public static double degreestoTicksPitchMotor(double degrees){
+        return degrees * PITCH_TICKS_PER_DEGREES;
+    }
 
     // Inverse Kinematic Constants
     public static double
