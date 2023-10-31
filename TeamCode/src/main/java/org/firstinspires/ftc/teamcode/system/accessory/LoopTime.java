@@ -11,5 +11,4 @@ public class LoopTime {
         telemetry.addData("Loop Time", dt);
         prev_time = System.currentTimeMillis(); // this should possibly be run at the end of the loop to reset the time, might not work all packaged together
     }
-
 }

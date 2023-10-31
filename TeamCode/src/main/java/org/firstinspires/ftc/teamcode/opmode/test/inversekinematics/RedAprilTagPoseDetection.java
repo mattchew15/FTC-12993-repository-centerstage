@@ -5,15 +5,15 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.system.accessory.Print;
+import org.firstinspires.ftc.teamcode.system.accessory.PrintCamera;
 import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.system.base.SetAuto;
-import org.firstinspires.ftc.teamcode.system.inversekinematics.PixelPoseDetector;
+import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.accessory.inversekinematics.PixelPoseDetector;
 
 @TeleOp(group = "test")
 public class RedAprilTagPoseDetection extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
-    private final Print print = new Print();
+    private final PrintCamera print = new PrintCamera();
     private final PixelPoseDetector detector = new PixelPoseDetector();
 
     @Override

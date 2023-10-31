@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.base.SetAuto;
+import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
 @Autonomous(group = "test")
 public class RedVision extends LinearOpMode {

@@ -3,28 +3,16 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.accessory.Print;
-import org.firstinspires.ftc.teamcode.system.base.AutoCommand;
-import org.firstinspires.ftc.teamcode.system.base.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.base.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.accessory.PrintCamera;
+import org.firstinspires.ftc.teamcode.system.Sequences.AutoCommand;
 import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 
 @Config // Allows dashboard tune
 public class Globals {
-    public static Telemetry telemetry;
-
-    public final static RobotHardware hardware = new RobotHardware();
-    public final static Print print = new Print();
-    public final static Telemetry dashTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-    public final static IntakeSubsystem intake = new IntakeSubsystem();
-    public final static OuttakeSubsystem outtake = new OuttakeSubsystem();
-    public final static AutoCommand command = new AutoCommand();
-    public static ElapsedTime GlobalTimer = new ElapsedTime(System.nanoTime());
 
     // Auto Constants
     public static double
@@ -76,12 +64,9 @@ public class Globals {
 
     // Intake Servo Positions In Degrees
     public static double
-            BRUSH_HEIGHT_5 = 0, // Brush height
-            BRUSH_HEIGHT_4 = 0,
-            BRUSH_HEIGHT_3 = 0,
-            BRUSH_HEIGHT_2 = 0,
-            BRUSH_HEIGHT_1 = 0,
-            BRUSH_HEIGHT_DRIVE = 0,
+            BRUSH_HEIGHT_TOP = 0, // Brush height
+            BRUSH_HEIGHT_MIDDLE = 0,
+            BRUSH_HEIGHT_BASE = 0,
 
             FLAP_CLOSE = 0, // Flap
             FLAP_OPEN = 0,
@@ -98,8 +83,9 @@ public class Globals {
             LIFT_TICKS_PER_REVOLUTION = 103.8,
             LIFT_TICKS_PER_DEGREES = LIFT_TICKS_PER_REVOLUTION / 360, // Ticks per revolution / 360, 36
             LIFT_SPOOL_RADIUS_CM = 1.8,
-            LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / (2 * Math.PI * LIFT_SPOOL_RADIUS_CM),
+            LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / (2 * Math.PI * LIFT_SPOOL_RADIUS_CM);
 
+    public static double
             PITCH_P = 0, // Pitch
             PITCH_I = 0,
             PITCH_D = 0,
@@ -112,8 +98,9 @@ public class Globals {
             LIFT_RETRACT_CM = 0, // Lift
             LIFT_EXTEND_CM = 0,
             LIFT_RETRACT = LIFT_RETRACT_CM * LIFT_TICKS_PER_CM,
-            LIFT_EXTEND = LIFT_EXTEND_CM * LIFT_TICKS_PER_CM,
+            LIFT_EXTEND = LIFT_EXTEND_CM * LIFT_TICKS_PER_CM;
 
+    public static double
             PITCH_ANGLE_30_DEGREES = 0, // Pitch
             PITCH_ANGLE_60_DEGREES = 0,
             PITCH_ANGLE_30 = PITCH_ANGLE_30_DEGREES * PITCH_TICKS_PER_DEGREES,
@@ -121,9 +108,6 @@ public class Globals {
 
     //Outtake Servo Positions In Degrees
     public static double
-            RAIL_LEFT = 0, // Rail
-            RAIL_CENTER = 0,
-            RAIL_RIGHT = 0,
 
             ARM_DOWN = 0, // Arms
             ARM_GRAB = 0,

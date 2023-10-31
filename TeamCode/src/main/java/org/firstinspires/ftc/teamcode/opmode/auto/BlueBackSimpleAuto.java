@@ -5,9 +5,9 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.system.base.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.base.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.base.SetAuto;
+import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
 @Autonomous
 public class BlueBackSimpleAuto extends LinearOpMode {
@@ -80,7 +80,7 @@ public class BlueBackSimpleAuto extends LinearOpMode {
                         outtake.wristState(OuttakeSubsystem.WristState.RIGHT);
                         intake.extensionState(IntakeSubsystem.ExtensionState.RIGHT);
                     }
-                    if () { // drive to position
+                    if (true) { // drive to position
 
                     }
                     outtake.armState(OuttakeSubsystem.ArmState.OUT);

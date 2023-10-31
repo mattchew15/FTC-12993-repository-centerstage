@@ -5,8 +5,8 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.system.base.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.base.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @TeleOp
 public class HardwareTune extends LinearOpMode {

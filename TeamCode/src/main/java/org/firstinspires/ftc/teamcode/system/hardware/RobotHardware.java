@@ -22,61 +22,66 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class RobotHardware {
     public DcMotorEx
-            frontLeftDrive,
-            frontRightDrive,
-            backLeftDrive,
-            backRightDrive,
-            extension,
-            intake,
-            lift,
-            pitch;
+            FL,
+            FR,
+            BL,
+            BR,
+            IntakeSlideMotor,
+            IntakeMotor,
+            LiftMotor,
+            PitchMotor;
 
-    public CRServo bottomRoller;
+    public CRServo BottomRollerServo;
 
     public ServoImplEx
-            brushHeight,
-            flap,
-            lock,
-            armLeft,
-            armRight,
-            pivot,
-            wrist,
-            claw,
-            drone;
+            IntakeArmServo,
+            IntakeFlapServo,
+            IntakeClip,
+            OuttakeArmServoLeft,
+            OuttakeArmServoRight,
+            PivotServo,
+            WristServo,
+            ClawServo,
+            DroneServo;
 
     private OpenCvWebcam blueWebcam, redWebcam;
     private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
     private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
     private AprilTagProcessor aprilTag;
-
-    public void init(HardwareMap hwMap) {
-        frontLeftDrive = hwMap.get(DcMotorEx.class, "frontLeftMotor");
-        frontRightDrive = hwMap.get(DcMotorEx.class, "frontRightMotor");
-        backLeftDrive = hwMap.get(DcMotorEx.class, "backLeftMotor");
-        backRightDrive = hwMap.get(DcMotorEx.class, "backRightMotor");
-        extension = hwMap.get(DcMotorEx.class, "extensionMotor");
-        intake = hwMap.get(DcMotorEx.class, "intake");
-        lift = hwMap.get(DcMotorEx.class, "lift");
-        pitch = hwMap.get(DcMotorEx.class, "pitch");
-
-        bottomRoller = hwMap.get(CRServo.class, "Bottom_Roller");
-
-        brushHeight = hwMap.get(ServoImplEx.class, "Brush_Height");
-        flap = hwMap.get(ServoImplEx.class, "Flap");
-        lock = hwMap.get(ServoImplEx.class, "Lock");
-        armLeft = hwMap.get(ServoImplEx.class, "Arm_Left");
-        armRight = hwMap.get(ServoImplEx.class, "Arm_Right");
-        pivot = hwMap.get(ServoImplEx.class, "Pivot");
-        wrist = hwMap.get(ServoImplEx.class, "Wrist");
-        claw = hwMap.get(ServoImplEx.class, "Claw");
-        drone = hwMap.get(ServoImplEx.class, "Drone");
-
-        armLeft.setDirection(Servo.Direction.REVERSE);
-
+    
+    public void initializeHardware(HardwareMap hwMap){
+        initMotorsServos(hwMap);
         initWebcam(hwMap);
+        initAprilTag(hwMap);
     }
 
+    public void initMotorsServos(HardwareMap hwMap) {
+        FL = hwMap.get(DcMotorEx.class, "FL");
+        FR = hwMap.get(DcMotorEx.class, "FR");
+        BL = hwMap.get(DcMotorEx.class, "BL");
+        BR = hwMap.get(DcMotorEx.class, "BR");
+        IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSLideMotor");
+        IntakeMotor = hwMap.get(DcMotorEx.class, "IntakeMotor");
+        LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
+        PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
+
+        BottomRollerServo = hwMap.get(CRServo.class, "BottomRollerS");
+
+        IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
+        IntakeFlapServo = hwMap.get(ServoImplEx.class, "IntakeFlapS");
+        IntakeClip = hwMap.get(ServoImplEx.class, "IntakeClip");
+        OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
+        OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
+        PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
+        WristServo = hwMap.get(ServoImplEx.class, "WristS");
+        ClawServo = hwMap.get(ServoImplEx.class, "ClawS");
+        DroneServo = hwMap.get(ServoImplEx.class, "DroneS");
+
+        //OuttakeArmServoLeft.setDirection(Servo.Direction.REVERSE);
+    }
+    
     public void initWebcam(HardwareMap hwMap) {
+        
         int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
@@ -127,6 +132,8 @@ public class RobotHardware {
                 .build();
     }
 
+    
+    //Pipeline has to be in the same class as where webcam stuff is initialized
     public BlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
     public double getBlueCx() { return bluePipeline.getCx();}
     public double getBlueCy() { return bluePipeline.getCy();}
