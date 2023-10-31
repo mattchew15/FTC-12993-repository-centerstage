@@ -7,12 +7,11 @@ import android.util.Size;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -43,14 +42,15 @@ public class RobotHardware {
             IntakeClipServo,
             OuttakeArmServoLeft,
             OuttakeArmServoRight,
+            TurretServo,
             PivotServo,
             WristServo,
             ClawServo,
             DroneServo;
 
     private OpenCvWebcam blueWebcam, redWebcam;
-    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
-    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
+    private final ContourBlueTeamPropDetectorPipeline bluePipeline = new ContourBlueTeamPropDetectorPipeline();
+    private final ContourRedTeamPropDetectorPipeline redPipeline = new ContourRedTeamPropDetectorPipeline();
     private AprilTagProcessor aprilTag;
     
     public void initializeHardware(HardwareMap hwMap){
@@ -78,6 +78,7 @@ public class RobotHardware {
         IntakeClipServo = hwMap.get(ServoImplEx.class, "IntakeClipS");
         OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
         OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
+        TurretServo = hwMap.get(ServoImplEx.class, "TurretS");
         PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
         WristServo = hwMap.get(ServoImplEx.class, "WristS");
         ClawServo = hwMap.get(ServoImplEx.class, "ClawS");
@@ -140,11 +141,11 @@ public class RobotHardware {
 
     
     //Pipeline has to be in the same class as where webcam stuff is initialized
-    public BlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
+    public ContourBlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
     public double getBlueCx() { return bluePipeline.getCx();}
     public double getBlueCy() { return bluePipeline.getCy();}
 
-    public RedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
+    public ContourRedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
     public double getRedCx() { return redPipeline.getCx();}
     public double getRedCy() { return redPipeline.getCy();}
 

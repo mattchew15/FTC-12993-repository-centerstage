@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
 public class PrintCamera {
-    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
-    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
+    private final ContourBlueTeamPropDetectorPipeline bluePipeline = new ContourBlueTeamPropDetectorPipeline();
+    private final ContourRedTeamPropDetectorPipeline redPipeline = new ContourRedTeamPropDetectorPipeline();
 
     public void telemetryTeamProp() {
         if (BLUE_AUTO) {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.vision.Others;
+package org.firstinspires.ftc.teamcode.system.vision;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -8,7 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
+public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     public enum TeamPropPosition {
         LEFT,
         CENTER,
@@ -27,70 +27,55 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
 
     // Points A and B for 3 regions. Counting from left.
     private final Point
-            region1A = new Point(150, 200),
+            region1A = new Point(400, 500),
             region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
-            region2A = new Point(300, 100),
+            region2A = new Point(600, 400),
             region2B = new Point(region2A.x + regionWidth, region2A.y + regionHeight),
-            region3A = new Point(450, 200),
+            region3A = new Point(800, 500),
             region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
 
     // CB values in 3 rectangles.
-    private Mat region1Cb, region2Cb, region3Cb;
+    private Mat region1Cr, region2Cr, region3Cr;
 
     private final Mat
             YCrCb = new Mat(),
-            Cb = new Mat();
+            Cr = new Mat();
 
-    // Average Cb values in each rectangle.
+    // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
 
     // Default position is left.
     private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
-    // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
-    private void inputToCb(Mat input) {
+    // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
+    private void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cb, 2);
+        Core.extractChannel(YCrCb, Cr, 1);
     }
 
     @Override
     public void init(Mat firstFrame) {
         /*
-        To make sure the 'Cb' object is initialized, so the submats will still be linked.
-        If the object were to only be initialized in processFrame, then the submats would delink
+        To make sure the 'Cr' object is initialized, so the submats will still be linked
+        if the object were to only be initialized in processFrame, then the submats would delink
         because the back buffer would be re-allocated the first time a real frame was crunched.
          */
 
-        inputToCb(firstFrame);
+        inputToCr(firstFrame);
 
-        region1Cb = Cb.submat(new Rect(region1A, region1B));
-        region2Cb = Cb.submat(new Rect(region2A, region2B));
-        region3Cb = Cb.submat(new Rect(region3A, region3B));
+        region1Cr = Cr.submat(new Rect(region1A, region1B));
+        region2Cr = Cr.submat(new Rect(region2A, region2B));
+        region3Cr = Cr.submat(new Rect(region3A, region3B));
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        /*
-        Convert to YCrCb color space from RGB color space, since in RGB the chroma and luma are
-        intertwined. In YCrCB, they are separated in 3 channels:
-        Y, Luma channel (B&W),
-        Cr channel (records the difference from red),
-        Cb channel (records the difference from blue).
-        Because chroma and luma are not related in YCrCb, values in the Cr/Cb channels won't be
-        affected by differing light intensity.
-        After converted to YCrCb, just the Cb channel is extracted because team prop is blue.
-        Then take the average pixel value of the 3 different regions on that Cb channel.
-        We assume the brightest is the team prop.
-        Also draw blue rectangles on the screen showing where the regions are, as well as green
-        rectangle over the regions believed to be the team prop.
-         */
+        inputToCr(input);
 
-        inputToCb(input);
-
-        //Average pixel value of each Cb channel.
-        avg1 = (int) Core.mean(region1Cb).val[0];
-        avg2 = (int) Core.mean(region2Cb).val[0];
-        avg3 = (int) Core.mean(region3Cb).val[0];
+        //Average pixel value of each Cr channel.
+        avg1 = (int) Core.mean(region1Cr).val[0];
+        avg2 = (int) Core.mean(region2Cr).val[0];
+        avg3 = (int) Core.mean(region3Cr).val[0];
 
         //Draw rectangles showing regions. Simply visual aid.
         Imgproc.rectangle(input, region1A, region1B, blue, 2);

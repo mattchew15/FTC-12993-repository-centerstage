@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.accessory.PrintCamera;
-import org.firstinspires.ftc.teamcode.system.Sequences.AutoCommand;
-import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
 
 @Config // Allows dashboard tune
 public class Globals {
@@ -67,16 +61,16 @@ public class Globals {
             PIXEL_POSE_Y,
             PIXEL_POSE_Z;
 
-    public static BlueTeamPropDetectorPipeline.TeamPropPosition
-            BLUE_LEFT = BlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            BLUE_CENTER = BlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            BLUE_RIGHT = BlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static ContourBlueTeamPropDetectorPipeline.TeamPropPosition
+            BLUE_LEFT = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            BLUE_CENTER = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            BLUE_RIGHT = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             BLUE_POSITION = null;
 
-    public static RedTeamPropDetectorPipeline.TeamPropPosition
-            RED_LEFT = RedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            RED_CENTER = RedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            RED_RIGHT = RedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
+    public static ContourRedTeamPropDetectorPipeline.TeamPropPosition
+            RED_LEFT = ContourRedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
+            RED_CENTER = ContourRedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
+            RED_RIGHT = ContourRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
             RED_POSITION = null;
 
 }
