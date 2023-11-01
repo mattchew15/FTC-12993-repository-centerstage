@@ -39,7 +39,7 @@ public class OuttakeSubsystem {
             WRIST_TRANSFER_POS = 0.212,
             WRIST_SCORE_POS;
     public static double
-            CLAW_CLOSE_POS = 0.3,
+            CLAW_CLOSE_POS = 0.4,
             CLAW_OPEN_POS = 0.7;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
