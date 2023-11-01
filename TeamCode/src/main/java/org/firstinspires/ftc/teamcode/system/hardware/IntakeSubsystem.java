@@ -2,12 +2,21 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 @Config
 public class IntakeSubsystem {
 
-    RobotHardware robotHardware;
+    public DcMotorEx
+            IntakeSlideMotor,
+            IntakeMotor;
+    public ServoImplEx
+            IntakeArmServo,
+            IntakeFlapServo,
+            IntakeClipServo;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.48,
@@ -48,37 +57,42 @@ public class IntakeSubsystem {
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
+    public void initIntake(HardwareMap hwMap){
+        IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSLideMotor");
+        IntakeMotor = hwMap.get(DcMotorEx.class, "IntakeMotor");
+    }
+
     public void intakeHardwareSetup(){
-        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
     // handles all of the reads in this class
     public void intakeReads(){
-        intakeSlidePosition = robotHardware.IntakeSlideMotor.getCurrentPosition();
+        intakeSlidePosition = IntakeSlideMotor.getCurrentPosition();
     }
 
     public void intakeSlideMotorEncodersReset(){
-        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        IntakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     // methods should be camel caps
     public void intakeSpin(double speedDirection){
-        robotHardware.IntakeMotor.setPower(speedDirection);
+        IntakeMotor.setPower(speedDirection);
     }
 
     public void IntakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
         intakeSlideTarget = targetRotations;
-        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        robotHardware.IntakeSlideMotor.setPower(output);
+        IntakeSlideMotor.setPower(output);
     }
 
     public void IntakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = rotations; // variable is public to this class?
-        robotHardware.IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
-        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robotHardware.IntakeSlideMotor.setPower(maxSpeed);
+        IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
         if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
@@ -90,8 +104,8 @@ public class IntakeSubsystem {
     }
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
-        robotHardware.IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robotHardware.IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
     public double intakeSlideError(){
@@ -101,13 +115,13 @@ public class IntakeSubsystem {
     public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
             case TOP_STACK:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_TOP_POS));
+                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_TOP_POS));
                 break;
             case MIDDLE_STACK:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_MIDDLE_POS));
+                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_MIDDLE_POS));
                 break;
             case BASE:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_BASE_POS));
+                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_BASE_POS));
                 break;
         }
     }
@@ -115,10 +129,10 @@ public class IntakeSubsystem {
     public void intakeFlapServoState(IntakeFlapServoState state) {
         switch (state) {
             case CLOSE:
-                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_CLOSE_POS));
+                IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_CLOSE_POS));
                 break;
             case OPEN:
-                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_OPEN_POS));
+                IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_OPEN_POS));
                 break;
         }
     }
@@ -126,10 +140,10 @@ public class IntakeSubsystem {
     public void intakeClipServoState(IntakeClipServoState state) {
         switch (state) {
             case HOLDING:
-                robotHardware.IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_HOLDING_POS));
+                IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_HOLDING_POS));
                 break;
             case OPEN:
-                robotHardware.IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_OPEN_POS));
+                IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_OPEN_POS));
                 break;
         }
     }

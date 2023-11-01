@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -15,7 +16,11 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
 @Config // Allows dashboard to tune
 public class DriveBase {  // no constructor for this class
 
-    RobotHardware robotHardware;
+    public DcMotorEx
+            FL,
+            FR,
+            BL,
+            BR;
 
     //variable for the drivebase speed toggle;
     boolean PowerToggled;
@@ -41,20 +46,26 @@ public class DriveBase {  // no constructor for this class
         RELEASE
     }
 
+    public void initDrivebase(HardwareMap hwMap){
+        FL = hwMap.get(DcMotorEx.class, "FL");
+        FR = hwMap.get(DcMotorEx.class, "FR");
+        BL = hwMap.get(DcMotorEx.class, "BL");
+        BR = hwMap.get(DcMotorEx.class, "BR");
+    }
+
     // this could be run in robothardware
     public void motorsSetup(){
         // zero brake behavior means when motors aren't powered, they will auto brake
-        robotHardware.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robotHardware.BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robotHardware.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robotHardware.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //reverse correct motors
         //FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        robotHardware.FL.setDirection(DcMotorSimple.Direction.REVERSE); //DcMotorSimple class?
-        robotHardware.BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE); //DcMotorSimple class?
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
         //BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        robotHardware.IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE); // reveresed apparently
     }
 
     public void Drive(double LY, double LX, double RX) {
@@ -64,29 +75,29 @@ public class DriveBase {  // no constructor for this class
         double frontRightPower = (LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
         double backRightPower = (LY*PowerBase - LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
 
-        robotHardware.FL.setPower(frontLeftPower);
-        robotHardware.BL.setPower(backLeftPower);
-        robotHardware.FR.setPower(frontRightPower);
-        robotHardware.BR.setPower(backRightPower);
+        FL.setPower(frontLeftPower);
+        BL.setPower(backLeftPower);
+        FR.setPower(frontRightPower);
+        BR.setPower(backRightPower);
     }
 
 
 
     public void motorDirectionTest(double a, double b, double c, double d){
-        robotHardware.FL.setPower(a);
-        robotHardware.BL.setPower(b);
-        robotHardware.FR.setPower(c);
-        robotHardware.BR.setPower(d);
+        FL.setPower(a);
+        BL.setPower(b);
+        FR.setPower(c);
+        BR.setPower(d);
     }
     /*
     public int getMotorPosition(){
-        return robotHardware.FL.getCurrentPosition();
+        return FL.getCurrentPosition();
     }
      */
     public void runtoPositionTest(int Position){
-        robotHardware.FL.setTargetPosition(Position);
-        robotHardware.FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robotHardware.FL.setPower(1);
+        FL.setTargetPosition(Position);
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FL.setPower(1);
     }
 
     public void PowerToggle(boolean toggle) { // toggle code for a slow drive mode for fine adjustment
@@ -113,10 +124,10 @@ public class DriveBase {  // no constructor for this class
     public void droneState(DroneState state) {
         switch (state) {
             case HOLD:
-                robotHardware.DroneSero.setPosition(DroneServoHoldPos);
+                DroneSero.setPosition(DroneServoHoldPos);
                 break;
             case RELEASE:
-                robotHardware.DroneServo.setPosition(DroneServoReleasePos);
+                DroneServo.setPosition(DroneServoReleasePos);
                 break;
         }
     }

@@ -1,26 +1,21 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 // Old imports, some not needed
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.util.Angle;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.onbotjava.EditorSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
+import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
 
 @TeleOp(name = "PIDmotortest")
 public class PIDMotorTest extends LinearOpMode {
 
-    RobotHardware robotHardware = new RobotHardware();
+    DriveBase driveBase = new DriveBase();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem(); // test to see if you get a null pointer error if you remove this - to test if the robothardware.setupHardware is inefficient
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     LoopTime loopTime; // might have to create new instance of class instead of just declaring it (who knows)
@@ -43,7 +38,9 @@ public class PIDMotorTest extends LinearOpMode {
          */
 
         StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap); // idk what other parameters are needed here
-        robotHardware.initializeHardware(hardwareMap); //only need to do this once
+        outtakeSubsystem.initOuttake(hardwareMap);
+        intakeSubsystem.initIntake(hardwareMap);
+        driveBase.initDrivebase(hardwareMap);
 
         waitForStart();
         if (opModeIsActive()) {

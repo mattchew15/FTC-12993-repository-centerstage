@@ -4,12 +4,15 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @Config
 @TeleOp
 public class ServoTuner extends LinearOpMode {
-    RobotHardware robotHardware = new RobotHardware();
+
+    IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
 
     public static double
             INTAKE_ARM_POS = 0.48,
@@ -24,19 +27,20 @@ public class ServoTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        robotHardware.initializeHardware(hardwareMap);
+        outtakeSubsystem.initOuttake(hardwareMap);
+        intakeSubsystem.initIntake(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
-            robotHardware.IntakeArmServo.setPosition(INTAKE_ARM_POS);
-            robotHardware.IntakeFlapServo.setPosition(INTAKE_FLAP_POS);
-            robotHardware.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
-            robotHardware.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_POS);
-            robotHardware.OuttakeArmServoRight.setPosition(OUTTAKE_ARM_POS);
-            robotHardware.MiniTurretServo.setPosition(MINI_TURRET_POS);
-            robotHardware.PivotServo.setPosition(PIVOT_POS);
-            robotHardware.WristServo.setPosition(WRIST_POS);
-            robotHardware.ClawServo.setPosition(CLAW_POS);
+            intakeSubsystem.IntakeArmServo.setPosition(INTAKE_ARM_POS);
+            intakeSubsystem.IntakeFlapServo.setPosition(INTAKE_FLAP_POS);
+            intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
+            outtakeSubsystem.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_POS);
+            outtakeSubsystem.OuttakeArmServoRight.setPosition(OUTTAKE_ARM_POS);
+            outtakeSubsystem.MiniTurretServo.setPosition(MINI_TURRET_POS);
+            outtakeSubsystem.PivotServo.setPosition(PIVOT_POS);
+            outtakeSubsystem.WristServo.setPosition(WRIST_POS);
+            outtakeSubsystem.ClawServo.setPosition(CLAW_POS);
         }
     }
 }

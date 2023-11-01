@@ -4,13 +4,26 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
 @Config
 public class OuttakeSubsystem {
 
-    RobotHardware robotHardware;
+    public DcMotorEx
+            LiftMotor,
+            PitchMotor;
+
+    public ServoImplEx
+            OuttakeArmServoLeft,
+            OuttakeArmServoRight,
+            MiniTurretServo,
+            PivotServo,
+            WristServo,
+            ClawServo;
 
     public static double
             ARM_READY_POS = 0.93,
@@ -94,9 +107,21 @@ public class OuttakeSubsystem {
         OPEN
     }
 
+    public void initOuttake(HardwareMap hwMap){
+        LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
+        PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
+
+        OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
+        OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
+        MiniTurretServo = hwMap.get(ServoImplEx.class,"TurretS");
+        PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
+        WristServo = hwMap.get(ServoImplEx.class, "WristS");
+        ClawServo = hwMap.get(ServoImplEx.class, "ClawS");
+    }
+
     public void hardwareSetup(){
-        robotHardware.PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robotHardware.LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
+        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
 
         //OuttakeArmServo.setDirection(Servo.Direction.REVERSE);
         //turretPosition = 0; // these need to be initialized on setup or you will get null error??
@@ -105,39 +130,39 @@ public class OuttakeSubsystem {
     }
 
     public void outtakeReads(){
-        pitchPosition = robotHardware.PitchMotor.getCurrentPosition();
-        liftPosition = robotHardware.LiftMotor.getCurrentPosition();
+        pitchPosition = PitchMotor.getCurrentPosition();
+        liftPosition = LiftMotor.getCurrentPosition();
 
         //other things like distance sensors etc
     }
 
     public void encodersReset(){
-        robotHardware.PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robotHardware.LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void liftMotorRawControl(double manualcontrollift){
-        robotHardware.LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        robotHardware.LiftMotor.setPower(manualcontrollift * 0.75);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
+        LiftMotor.setPower(manualcontrollift * 0.75);
     }
 
     public void pitchMotorRawControl(double manualcontrolturret){
-        robotHardware.PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robotHardware.PitchMotor.setPower(manualcontrolturret * -0.4);
+        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        PitchMotor.setPower(manualcontrolturret * -0.4);
     }
 
     public void liftTo(int rotations, double motorPosition, double maxSpeed){
         liftTarget = rotations;
-        robotHardware.LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        robotHardware.LiftMotor.setPower(output);
+        LiftMotor.setPower(output);
     }
 
     public void pitchTo(double targetRotations, double motorPosition, double maxSpeed){
         pitchTarget = targetRotations;
-        robotHardware.PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        robotHardware.PitchMotor.setPower(output);
+        PitchMotor.setPower(output);
     }
 
     public boolean liftTargetReached(){
@@ -161,20 +186,20 @@ public class OuttakeSubsystem {
     public void armServoState(ArmServoState state) {
         switch (state) {
             case READY:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_READY_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_READY_POS);
+                OuttakeArmServoRight.setPosition(ARM_READY_POS);
+                OuttakeArmServoLeft.setPosition(ARM_READY_POS);
             break;
             case TRANSFER:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_TRANSFER_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_TRANSFER_POS);
+                OuttakeArmServoRight.setPosition(ARM_TRANSFER_POS);
+                OuttakeArmServoLeft.setPosition(ARM_TRANSFER_POS);
                 break;
             case SCORE_DOWN:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_SCORE_DOWN_POS);
+                OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
+                OuttakeArmServoLeft.setPosition(ARM_SCORE_DOWN_POS);
                 break;
             case SCORE_UP:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
+                OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
+                OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
                 break;
         }
     }
@@ -186,16 +211,16 @@ public class OuttakeSubsystem {
     public void miniTurretState(MiniTurretState state, double robotDegrees) { // set this last parameter to null if not being used
         switch (state) {
             case STRAIGHT:
-                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
+                MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
             case DIAGONAL_LEFT:
-                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);
+                MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);
                 break;
             case DIAGONAL_RIGHT:
-                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
+                MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
                 break;
             case POINT_TO_BACKDROP:
-                robotHardware.MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
+                MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
                 break;
         }
     }
@@ -203,25 +228,25 @@ public class OuttakeSubsystem {
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out
         switch (state) {
             case READY:
-                robotHardware.PivotServo.setPosition(PIVOT_READY_POS);
+                PivotServo.setPosition(PIVOT_READY_POS);
                 break;
             case DIAGONAL_LEFT:
-                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_POS);
+                PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_POS);
                 break;
             case DIAGONAL_RIGHT:
-                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_POS);
+                PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_POS);
                 break;
             case DIAGONAL_LEFT_FLIPPED:
-                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_FLIPPED_POS);
+                PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_FLIPPED_POS);
                 break;
             case DIAGONAL_RIGHT_FLIPPED:
-                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_FLIPPED_POS);
+                PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_FLIPPED_POS);
                 break;
             case SIDEWAYS_LEFT:
-                robotHardware.PivotServo.setPosition(PIVOT_SIDEWAYS_LEFT_POS);
+                PivotServo.setPosition(PIVOT_SIDEWAYS_LEFT_POS);
                 break;
             case SIDEWAYS_RIGHT:
-                robotHardware.PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
+                PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
                 break;
         }
     }
@@ -229,13 +254,13 @@ public class OuttakeSubsystem {
     public void wristServoState(WristServoState state) {
         switch (state) {
             case READY:
-                robotHardware.WristServo.setPosition(WRIST_READY_POS);
+                WristServo.setPosition(WRIST_READY_POS);
                 break;
             case TRANSFER:
-                robotHardware.WristServo.setPosition(WRIST_TRANSFER_POS);
+                WristServo.setPosition(WRIST_TRANSFER_POS);
                 break;
             case SCORE:
-                robotHardware.WristServo.setPosition(WRIST_SCORE_POS);
+                WristServo.setPosition(WRIST_SCORE_POS);
                 break;
         }
     }
@@ -243,10 +268,10 @@ public class OuttakeSubsystem {
     public void clawServoState(ClawServoState state) {
         switch (state) {
             case CLOSE:
-                robotHardware.ClawServo.setPosition(CLAW_CLOSE_POS);
+                ClawServo.setPosition(CLAW_CLOSE_POS);
                 break;
             case OPEN:
-                robotHardware.ClawServo.setPosition(CLAW_OPEN_POS);
+                ClawServo.setPosition(CLAW_OPEN_POS);
                 break;
         }
     }
