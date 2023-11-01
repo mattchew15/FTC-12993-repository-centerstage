@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
@@ -15,13 +12,35 @@ public class OuttakeSubsystem {
 
     RobotHardware robotHardware;
 
-    public static double ArmLeftReadyPos = 0.43, ArmLeftTransferPos = 0.212, ArmLeftScorePos = 0, ArmLeftScoreUpPos = 0;
-    public static double ArmRightReadyPos = 0.43, ArmRightTransferPos = 0.212, ArmRightScorePos = 0, ArmRightScoreUpPos = 0;
-
-    public static double PivotReadyPos = 0.145, PivotDiagonalLeftPos = 0.241, PivotDiagonalRightPos = 0.32, PivotDiagonalLeftFlippedPos = 0, PivotDiagonalRightFlippedPos;
-    public static double PivotSidewaysLeftPos = 0.145, PivotSidewaysRightPos = 0;
-    public static double WristReadyPos = 0.43, WristTransferPos = 0.212, WristScorePos;
-    public static double ClawOpenPos = 0.7, ClawClosedPos = 0.3;
+    public static double
+            ARM_LEFT_READY_POS = 0.43,
+            ARM_LEFT_TRANSFER_POS = 0.212,
+            ARM_LEFT_SCORE_POS = 0,
+            ARM_LEFT_SCORE_UP_POS = 0;
+    public static double
+            ARM_RIGHT_READY_POS = 0.43,
+            ARM_RIGHT_TRANSFER_POS = 0.212,
+            ARM_RIGHT_SCORE_POS = 0,
+            ARM_RIGHT_SCORE_UP_POS = 0;
+    public static double
+            TURRET_READY_POS = 0.5,
+            TURRET_DIAGONAL_LEFT_POS = 0.25,
+            TURRET_DIAGONAL_RIGHT_POS = 0.75;
+    public static double
+            PIVOT_READY_POS = 0.145,
+            PIVOT_DIAGONAL_LEFT_POS = 0.241,
+            PIVOT_DIAGONAL_RIGHT_POS = 0.32,
+            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS,
+            PIVOT_SIDEWAYS_LEFT_POS = 0.145,
+            PIVOT_SIDEWAYS_RIGHT_POS = 0;
+    public static double
+            WRIST_READY_POS = 0.43,
+            WRIST_TRANSFER_POS = 0.212,
+            WRIST_SCORE_POS;
+    public static double
+            CLAW_CLOSE_POS = 0.3,
+            CLAW_OPEN_POS = 0.7;
     public static double MiniTurretStraightPos = 0.7, MiniTurretLeftDiagonalPos = 0.3, MiniTurretRightDiagonalPos = 0.7;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
@@ -48,7 +67,13 @@ public class OuttakeSubsystem {
         SCORE_UP
     }
 
-    public enum PivotState {
+    public enum TurretServoState {
+        READY,
+        DIAGONAL_LEFT,
+        DIAGONAL_RIGHT
+    }
+
+    public enum PivotServoState {
         READY,
         DIAGONAL_LEFT,
         DIAGONAL_RIGHT,
@@ -64,13 +89,13 @@ public class OuttakeSubsystem {
         POINT_TO_BACKDROP
     }
 
-    public enum WristState {
+    public enum WristServoState {
         READY,
         TRANSFER,
         SCORE
     }
 
-    public enum ClawState { // might add more states here
+    public enum ClawServoState { // might add more states here
         CLOSE,
         OPEN
     }
@@ -139,62 +164,77 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void ArmServoState(ArmServoState state) {
+    public void armServoState(ArmServoState state) {
         switch (state) {
             case READY:
-                robotHardware.OuttakeArmServoRight.setPosition(ArmRightReadyPos);
-                robotHardware.OuttakeArmServoLeft.setPosition(ArmLeftReadyPos);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_READY_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_READY_POS);
             break;
             case TRANSFER:
-                robotHardware.OuttakeArmServoRight.setPosition(ArmRightTransferPos);
-                robotHardware.OuttakeArmServoLeft.setPosition(ArmLeftTransferPos);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_TRANSFER_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_TRANSFER_POS);
                 break;
             case SCORE:
-                robotHardware.OuttakeArmServoRight.setPosition(ArmRightScorePos);
-                robotHardware.OuttakeArmServoLeft.setPosition(ArmLeftScorePos);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_SCORE_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_SCORE_POS);
                 break;
             case SCORE_UP:
-                robotHardware.OuttakeArmServoRight.setPosition(ArmRightScoreUpPos);
-                robotHardware.OuttakeArmServoLeft.setPosition(ArmLeftScoreUpPos);
-                break;
-        }
-    }
-   public void PivotState(PivotState state) { // this is gonna be hard to control - but have a flip button but we can work it out
-        switch (state) {
-            case READY:
-                robotHardware.PivotServo.setPosition(PivotReadyPos);
-                break;
-            case DIAGONAL_LEFT:
-                robotHardware.PivotServo.setPosition(PivotDiagonalLeftPos);
-                break;
-            case DIAGONAL_RIGHT:
-                robotHardware.PivotServo.setPosition(PivotDiagonalRightPos);
-                break;
-            case DIAGONAL_LEFT_FLIPPED:
-                robotHardware.PivotServo.setPosition(PivotDiagonalLeftFlippedPos);
-                break;
-            case DIAGONAL_RIGHT_FLIPPED:
-                robotHardware.PivotServo.setPosition(PivotDiagonalRightFlippedPos);
-                break;
-            case SIDEWAYS_LEFT:
-                robotHardware.PivotServo.setPosition(PivotSidewaysLeftPos);
-                break;
-            case SIDEWAYS_RIGHT:
-                robotHardware.PivotServo.setPosition(PivotSidewaysRightPos);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_SCORE_UP_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_SCORE_UP_POS);
                 break;
         }
     }
 
-    public void wristState(WristState state) {
+    public void turretServoState(TurretServoState state) {
         switch (state) {
             case READY:
-                robotHardware.WristServo.setPosition(WristReadyPos);
+                robotHardware.TurretServo.setPosition(TURRET_READY_POS);
+                break;
+            case DIAGONAL_LEFT:
+                robotHardware.TurretServo.setPosition(TURRET_DIAGONAL_LEFT_POS);
+                break;
+            case DIAGONAL_RIGHT:
+                robotHardware.TurretServo.setPosition(TURRET_DIAGONAL_RIGHT_POS);
+                break;
+        }
+    }
+
+   public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out
+        switch (state) {
+            case READY:
+                robotHardware.PivotServo.setPosition(PIVOT_READY_POS);
+                break;
+            case DIAGONAL_LEFT:
+                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_POS);
+                break;
+            case DIAGONAL_RIGHT:
+                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_POS);
+                break;
+            case DIAGONAL_LEFT_FLIPPED:
+                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_FLIPPED_POS);
+                break;
+            case DIAGONAL_RIGHT_FLIPPED:
+                robotHardware.PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_FLIPPED_POS);
+                break;
+            case SIDEWAYS_LEFT:
+                robotHardware.PivotServo.setPosition(PIVOT_SIDEWAYS_LEFT_POS);
+                break;
+            case SIDEWAYS_RIGHT:
+                robotHardware.PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
+                break;
+        }
+    }
+
+    public void wristServoState(WristServoState state) {
+        switch (state) {
+            case READY:
+                robotHardware.WristServo.setPosition(WRIST_READY_POS);
                 break;
             case TRANSFER:
-                robotHardware.WristServo.setPosition(WristTransferPos);
+                robotHardware.WristServo.setPosition(WRIST_TRANSFER_POS);
                 break;
             case SCORE:
-                robotHardware.WristServo.setPosition(WristScorePos);
+                robotHardware.WristServo.setPosition(WRIST_SCORE_POS);
                 break;
         }
     }
@@ -221,16 +261,14 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void clawState(ClawState state) {
+    public void clawServoState(ClawServoState state) {
         switch (state) {
             case CLOSE:
-                robotHardware.ClawServo.setPosition(ClawClosedPos);
+                robotHardware.ClawServo.setPosition(CLAW_CLOSE_POS);
                 break;
             case OPEN:
-                robotHardware.ClawServo.setPosition(ClawOpenPos);
+                robotHardware.ClawServo.setPosition(CLAW_OPEN_POS);
                 break;
         }
     }
-
-
 }

@@ -98,7 +98,7 @@ public class RobotHardware {
                 @Override
                 public void onOpened() {
                     blueWebcam.setPipeline(bluePipeline);
-                    blueWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                    blueWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN);
                 }
 
                 @Override
@@ -112,7 +112,7 @@ public class RobotHardware {
                 @Override
                 public void onOpened() {
                     redWebcam.setPipeline(redPipeline);
-                    redWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                    redWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT);
                 }
 
                 @Override
@@ -135,7 +135,7 @@ public class RobotHardware {
         VisionPortal visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTag)
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(1280, 960))
                 .enableLiveView(false)
                 .build();
     }

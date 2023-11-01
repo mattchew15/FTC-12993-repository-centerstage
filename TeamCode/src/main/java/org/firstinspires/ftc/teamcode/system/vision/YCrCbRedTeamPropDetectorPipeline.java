@@ -22,16 +22,16 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
 
     // Values for location and size of rectangles.
     private final int
-            regionWidth = 40,
-            regionHeight = 40;
+            regionWidth = 100,
+            regionHeight = 100;
 
     // Points A and B for 3 regions. Counting from left.
     private final Point
-            region1A = new Point(400, 500),
+            region1A = new Point(340, 500),
             region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
-            region2A = new Point(600, 400),
+            region2A = new Point(590, 400),
             region2B = new Point(region2A.x + regionWidth, region2A.y + regionHeight),
-            region3A = new Point(800, 500),
+            region3A = new Point(840, 500),
             region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
 
     // CB values in 3 rectangles.
@@ -71,6 +71,7 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         inputToCr(input);
+
 
         //Average pixel value of each Cr channel.
         avg1 = (int) Core.mean(region1Cr).val[0];

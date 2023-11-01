@@ -21,20 +21,6 @@ public class Globals {
             FRONT_AUTO = false,
             BACK_AUTO = false;
 
-    //Intake slides motor
-    public static double
-            EXTENSION_TICKS_PER_REVOLUTION = 146.44,
-            EXTENSION_TICKS_PER_DEGREES = EXTENSION_TICKS_PER_REVOLUTION / 360,
-            EXTENSION_SPOOL_RADIUS_CM = 2.15,
-            EXTENSION_TICKS_PER_CM = EXTENSION_TICKS_PER_REVOLUTION / (2 * Math.PI * EXTENSION_SPOOL_RADIUS_CM);
-
-    // Outtake lift Motor
-    public static double
-            LIFT_TICKS_PER_REVOLUTION = 103.8,
-            LIFT_TICKS_PER_DEGREES = LIFT_TICKS_PER_REVOLUTION / 360, // Ticks per revolution / 360, 36
-            LIFT_SPOOL_RADIUS_CM = 1.8,
-            LIFT_TICKS_PER_CM = LIFT_TICKS_PER_REVOLUTION / (2 * Math.PI * LIFT_SPOOL_RADIUS_CM);
-
     // Pitch
     public static double
             PITCH_TICKS_PER_REVOLUTION = 3895.9,

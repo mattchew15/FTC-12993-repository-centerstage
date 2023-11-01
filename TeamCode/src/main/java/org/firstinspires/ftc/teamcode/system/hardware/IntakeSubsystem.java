@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 @Config
 public class IntakeSubsystem {
 
-RobotHardware robotHardware;
+    RobotHardware robotHardware;
 
-    // constants should be capitalized but oh well
-    public static double IntakeFlapOpenPos = 0.43, IntakeFlapClosedPos = 0.212;
-    public static double IntakeArmTopPos = 0.145, IntakeArmMiddlePos = 0.241, IntakeArmBasePos = 0.32;
-    public static double IntakeClipOpenPos = 0.43, IntakeClipHoldingPos = 0.212;
+    public static double
+            INTAKE_ARM_TOP_POS = 0.145,
+            INTAKE_ARM_MIDDLE_POS = 0.241,
+            INTAKE_ARM_BASE_POS = 0.32;
+    public static double
+            INTAKE_FLAP_CLOSE_POS = 0.212,
+            INTAKE_FLAP_OPEN_POS = 0.43;
+    public static double
+            INTAKE_CLIP_HOLDING_POS = 0.212,
+            INTAKE_CLIP_OPEN_POS = 0.43;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
@@ -29,12 +30,12 @@ RobotHardware robotHardware;
         BASE
     }
 
-    public enum FlapState {
+    public enum IntakeFlapServoState {
         CLOSE,
         OPEN
     }
 
-    public enum IntakeClipState {
+    public enum IntakeClipServoState {
         HOLDING,
         OPEN
     }
@@ -101,35 +102,35 @@ RobotHardware robotHardware;
     public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
             case TOP_STACK:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmTopPos));
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_TOP_POS));
                 break;
             case MIDDLE_STACK:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmMiddlePos));
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_MIDDLE_POS));
                 break;
             case BASE:
-                robotHardware.IntakeArmServo.setPosition(degreesToTicks(IntakeArmBasePos));
+                robotHardware.IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_BASE_POS));
                 break;
         }
     }
 
-    public void flapState(FlapState state) {
+    public void intakeFlapServoState(IntakeFlapServoState state) {
         switch (state) {
             case CLOSE:
-                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(IntakeFlapClosedPos));
+                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_CLOSE_POS));
                 break;
             case OPEN:
-                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(IntakeFlapOpenPos));
+                robotHardware.IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_OPEN_POS));
                 break;
         }
     }
 
-    public void intakeClipState(IntakeClipState state) {
+    public void intakeClipServoState(IntakeClipServoState state) {
         switch (state) {
-            case OPEN:
-                robotHardware.IntakeClipServo.setPosition(degreesToTicks(IntakeClipOpenPos));
-                break;
             case HOLDING:
-                robotHardware.IntakeClipServo.setPosition(degreesToTicks(IntakeClipHoldingPos));
+                robotHardware.IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_HOLDING_POS));
+                break;
+            case OPEN:
+                robotHardware.IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_OPEN_POS));
                 break;
         }
     }
