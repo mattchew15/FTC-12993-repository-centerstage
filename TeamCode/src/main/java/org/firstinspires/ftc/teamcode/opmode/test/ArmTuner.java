@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 @Config
 @TeleOp
 public class ArmTuner extends LinearOpMode {
-    RobotHardware robotHardware;
+    RobotHardware robotHardware = new RobotHardware();
 
     public static double
             OUTTAKE_ARM_LEFT_POS = 0.5,
