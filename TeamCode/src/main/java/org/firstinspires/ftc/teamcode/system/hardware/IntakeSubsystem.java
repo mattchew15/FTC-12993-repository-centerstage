@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -60,10 +61,16 @@ public class IntakeSubsystem {
     public void initIntake(HardwareMap hwMap){
         IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSLideMotor");
         IntakeMotor = hwMap.get(DcMotorEx.class, "IntakeMotor");
+
+        IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
+        IntakeClipServo = hwMap.get(ServoImplEx.class,"IntakeClipS");
+        IntakeFlapServo = hwMap.get(ServoImplEx.class,"IntakeFlapS");
+
     }
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 

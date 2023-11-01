@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.system.Sequences.TeleopSequence;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
+import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
@@ -14,14 +15,13 @@ import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 @TeleOp(name = "SimplicityDrive")
 public class SimplicityDrive extends LinearOpMode {
 
-
+    DriveBase driveBase = new DriveBase();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    RobotHardware robotHardware = new RobotHardware();
-    LoopTime loopTime;
-    TeleopSequence teleopSequence;
-
+    LoopTime loopTime = new LoopTime();
     ElapsedTime GlobalTimer;
+
+
 
 
     @Override
@@ -33,14 +33,19 @@ public class SimplicityDrive extends LinearOpMode {
          */
 
         StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap);
-        robotHardware.initializeHardware(hardwareMap);
+        outtakeSubsystem.initOuttake(hardwareMap);
+        intakeSubsystem.initIntake(hardwareMap);
+        driveBase.initDrivebase(hardwareMap);
+
 
         waitForStart();
         if (opModeIsActive()) {
 
             GlobalTimer = new ElapsedTime(System.nanoTime());
             GlobalTimer.reset();
-            robotHardware.setupHardware(); // this uses methods from the outtake and intake subsystem - are we creating multiple instances of the same class???
+            intakeSubsystem.intakeHardwareSetup();
+            outtakeSubsystem.hardwareSetup();
+            driveBase.drivebaseSetup();
 
             while (opModeIsActive()) {
 
@@ -51,9 +56,6 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if(gamepad1.a){
                     teleopSequence.things();
-                }
-                else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(100, outtakeSubsystem.liftPosition, 1);
                 }
 
                 location.update();

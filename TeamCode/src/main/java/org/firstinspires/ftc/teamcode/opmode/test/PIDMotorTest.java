@@ -49,6 +49,7 @@ public class PIDMotorTest extends LinearOpMode {
                 GlobalTimer.reset();
                 intakeSubsystem.intakeHardwareSetup();
                 outtakeSubsystem.hardwareSetup();
+                driveBase.drivebaseSetup();
 
             while (opModeIsActive()) {
 

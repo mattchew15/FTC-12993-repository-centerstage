@@ -54,7 +54,7 @@ public class DriveBase {  // no constructor for this class
     }
 
     // this could be run in robothardware
-    public void motorsSetup(){
+    public void drivebaseSetup(){
         // zero brake behavior means when motors aren't powered, they will auto brake
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
