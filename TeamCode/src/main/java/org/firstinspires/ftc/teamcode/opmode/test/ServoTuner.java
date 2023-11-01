@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 @Config
 @TeleOp
 public class ServoTuner extends LinearOpMode {
-    RobotHardware robotHardware;
+    RobotHardware robotHardware = new RobotHardware();
 
     public static double
             INTAKE_ARM_POS = 0.5,
@@ -24,6 +24,8 @@ public class ServoTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        robotHardware.initializeHardware(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
