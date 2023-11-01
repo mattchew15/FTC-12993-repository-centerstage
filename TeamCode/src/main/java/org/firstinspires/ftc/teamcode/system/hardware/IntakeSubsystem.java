@@ -122,13 +122,13 @@ public class IntakeSubsystem {
     public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
             case TOP_STACK:
-                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_TOP_POS));
+                IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
                 break;
             case MIDDLE_STACK:
-                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_MIDDLE_POS));
+                IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
                 break;
             case BASE:
-                IntakeArmServo.setPosition(degreesToTicks(INTAKE_ARM_BASE_POS));
+                IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;
         }
     }
@@ -136,10 +136,10 @@ public class IntakeSubsystem {
     public void intakeFlapServoState(IntakeFlapServoState state) {
         switch (state) {
             case CLOSE:
-                IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_CLOSE_POS));
+                IntakeFlapServo.setPosition(INTAKE_FLAP_CLOSE_POS);
                 break;
             case OPEN:
-                IntakeFlapServo.setPosition(degreesToTicks(INTAKE_FLAP_OPEN_POS));
+                IntakeFlapServo.setPosition(INTAKE_FLAP_OPEN_POS);
                 break;
         }
     }
@@ -147,10 +147,10 @@ public class IntakeSubsystem {
     public void intakeClipServoState(IntakeClipServoState state) {
         switch (state) {
             case HOLDING:
-                IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_HOLDING_POS));
+                IntakeClipServo.setPosition(INTAKE_CLIP_HOLDING_POS);
                 break;
             case OPEN:
-                IntakeClipServo.setPosition(degreesToTicks(INTAKE_CLIP_OPEN_POS));
+                IntakeClipServo.setPosition(INTAKE_CLIP_OPEN_POS);
                 break;
         }
     }

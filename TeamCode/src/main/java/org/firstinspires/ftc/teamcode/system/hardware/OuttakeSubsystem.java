@@ -47,8 +47,8 @@ public class OuttakeSubsystem {
             WRIST_TRANSFER_POS = 0.26,
             WRIST_SCORE_POS = 0.63;
     public static double
-            CLAW_CLOSE_POS = 0.4,
-            CLAW_OPEN_POS = 0.65;
+            CLAW_OPEN_POS = 0.4,
+            CLAW_CLOSE_POS = 0.65;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;

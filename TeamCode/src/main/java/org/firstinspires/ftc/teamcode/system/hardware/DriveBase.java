@@ -70,10 +70,10 @@ public class DriveBase {  // no constructor for this class
 
     public void Drive(double LY, double LX, double RX) {
         double denominator = Math.max(Math.abs(LY) + Math.abs(LX) + Math.abs(RX), 1);
-        double frontLeftPower = (LY*PowerBase - LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
-        double backLeftPower = (LY*PowerBase + LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
-        double frontRightPower = (LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
-        double backRightPower = (LY*PowerBase - LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
+        double frontLeftPower = (-LY*PowerBase + LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
+        double backLeftPower = (-LY*PowerBase - LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
+        double frontRightPower = (-LY*PowerBase - LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
+        double backRightPower = (-LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
 
         FL.setPower(frontLeftPower);
         BL.setPower(backLeftPower);
