@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.system.Sequences.TeleopSequence;
+import org.firstinspires.ftc.teamcode.system.Sequences.Sequences;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
@@ -21,7 +21,7 @@ public class SimplicityDrive extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
     ElapsedTime GlobalTimer;
 
-
+    Sequences sequences = new Sequences(intakeSubsystem,outtakeSubsystem,GlobalTimer);
 
 
     @Override
@@ -36,6 +36,7 @@ public class SimplicityDrive extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
+        sequences.setupSequences();
 
 
         waitForStart();
@@ -53,9 +54,12 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeReads(); // could change both of these into one method in robothardware
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
+                driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad2.left_stick_x);
+
+                sequences.transferGrab(gamepad1.right_bumper);
 
                 if(gamepad1.a){
-                    teleopSequence.things();
+                    sequences.startTransfer();
                 }
 
                 location.update();
