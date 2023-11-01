@@ -22,6 +22,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class RobotHardware {
 
+    IntakeSubsystem intakeSubsystem; // might have to pass this into the constructor
+    OuttakeSubsystem outtakeSubsystem;
 
 
     //name changes
@@ -58,8 +60,16 @@ public class RobotHardware {
         initMotorsServos(hwMap);
         initWebcam(hwMap);
         initAprilTag(hwMap);
-
         //Also run the hardware setup functions in here
+    }
+
+    public void setupHardware(){ // test to see if you can still run this method without getting null pointer exception if you don't create new instances in the opmode
+        intakeSubsystem.intakeHardwareSetup();
+        outtakeSubsystem.hardwareSetup();
+    }
+
+    public void readHardware(){ // could setup one read function using outtake
+
     }
 
     public void initMotorsServos(HardwareMap hwMap) {

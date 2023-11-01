@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 public class SetAuto {
 
     //Static methods that we can run at the start of the opmode - we can put our mirror stuff code in here
@@ -24,4 +26,5 @@ public class SetAuto {
         FRONT_AUTO = false;
         BACK_AUTO = false;
     }
+
 }
