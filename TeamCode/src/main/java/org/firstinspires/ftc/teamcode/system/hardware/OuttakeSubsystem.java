@@ -23,9 +23,9 @@ public class OuttakeSubsystem {
             ARM_RIGHT_SCORE_POS = 0,
             ARM_RIGHT_SCORE_UP_POS = 0;
     public static double
-            TURRET_READY_POS = 0.5,
-            TURRET_DIAGONAL_LEFT_POS = 0.25,
-            TURRET_DIAGONAL_RIGHT_POS = 0.75;
+            MINI_TURRET_STRAIGHT_POS = 0.7,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.3,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.7;
     public static double
             PIVOT_READY_POS = 0.145,
             PIVOT_DIAGONAL_LEFT_POS = 0.241,
@@ -41,7 +41,6 @@ public class OuttakeSubsystem {
     public static double
             CLAW_CLOSE_POS = 0.3,
             CLAW_OPEN_POS = 0.7;
-    public static double MiniTurretStraightPos = 0.7, MiniTurretLeftDiagonalPos = 0.3, MiniTurretRightDiagonalPos = 0.7;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -185,16 +184,23 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void turretServoState(TurretServoState state) {
+    public static double degreestoTicksMiniTurret(double degrees){
+        return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+    }
+
+    public void miniTurretState(MiniTurretState state, double robotDegrees) { // set this last parameter to null if not being used
         switch (state) {
-            case READY:
-                robotHardware.TurretServo.setPosition(TURRET_READY_POS);
+            case STRAIGHT:
+                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
             case DIAGONAL_LEFT:
-                robotHardware.TurretServo.setPosition(TURRET_DIAGONAL_LEFT_POS);
+                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);
                 break;
             case DIAGONAL_RIGHT:
-                robotHardware.TurretServo.setPosition(TURRET_DIAGONAL_RIGHT_POS);
+                robotHardware.MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
+                break;
+            case POINT_TO_BACKDROP:
+                robotHardware.MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
                 break;
         }
     }
@@ -235,28 +241,6 @@ public class OuttakeSubsystem {
                 break;
             case SCORE:
                 robotHardware.WristServo.setPosition(WRIST_SCORE_POS);
-                break;
-        }
-    }
-
-
-    public static double degreestoTicksMiniTurret(double degrees){
-        return MiniTurretStraightPos + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
-    }
-
-    public void miniTurretState(MiniTurretState state, double robotDegrees) { // set this last parameter to null if not being used
-        switch (state) {
-            case STRAIGHT:
-                robotHardware.MiniTurretServo.setPosition(MiniTurretStraightPos);
-                break;
-            case DIAGONAL_LEFT:
-                robotHardware.MiniTurretServo.setPosition(MiniTurretLeftDiagonalPos);
-                break;
-            case DIAGONAL_RIGHT:
-                robotHardware.MiniTurretServo.setPosition(MiniTurretRightDiagonalPos);
-                break;
-            case POINT_TO_BACKDROP:
-                robotHardware.MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
                 break;
         }
     }
