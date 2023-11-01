@@ -11,10 +11,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
 public class ArmTuner extends LinearOpMode {
     RobotHardware robotHardware = new RobotHardware();
 
-    public static double
-            OUTTAKE_ARM_LEFT_POS = 0.5,
-            OUTTAKE_ARM_RIGHT_POS = 0.5;
-
+    public static double OUTTAKE_ARM_POS = 0.5;
     @Override
     public void runOpMode() {
 
@@ -22,12 +19,11 @@ public class ArmTuner extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            if(gamepad1.a){
-                robotHardware.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_LEFT_POS);
-            }
-            else if (gamepad1.b){
-                robotHardware.OuttakeArmServoRight.setPosition(OUTTAKE_ARM_RIGHT_POS);
-            }
+            robotHardware.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_POS);
         }
     }
 }
+// verti
+// cal up
+// 0.31 right
+//

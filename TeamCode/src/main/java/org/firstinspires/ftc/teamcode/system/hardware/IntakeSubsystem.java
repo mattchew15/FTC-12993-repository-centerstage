@@ -10,12 +10,12 @@ public class IntakeSubsystem {
     RobotHardware robotHardware;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.145,
-            INTAKE_ARM_MIDDLE_POS = 0.241,
-            INTAKE_ARM_BASE_POS = 0.32;
+            INTAKE_ARM_TOP_POS = 0.48,
+            INTAKE_ARM_MIDDLE_POS = 0.53,
+            INTAKE_ARM_BASE_POS = 0.55;
     public static double
-            INTAKE_FLAP_CLOSE_POS = 0.212,
-            INTAKE_FLAP_OPEN_POS = 0.43;
+            INTAKE_FLAP_CLOSE_POS = 0.57,
+            INTAKE_FLAP_OPEN_POS = 0.3;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.212,
             INTAKE_CLIP_OPEN_POS = 0.43;

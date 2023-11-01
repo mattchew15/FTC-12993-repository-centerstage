@@ -13,31 +13,26 @@ public class OuttakeSubsystem {
     RobotHardware robotHardware;
 
     public static double
-            ARM_LEFT_READY_POS = 0.43,
-            ARM_LEFT_TRANSFER_POS = 0.212,
-            ARM_LEFT_SCORE_POS = 0,
-            ARM_LEFT_SCORE_UP_POS = 0;
+            ARM_READY_POS = 0.9,
+            ARM_TRANSFER_POS = 0.92,
+            ARM_SCORE_DOWN_POS = 0.22,
+            ARM_SCORE_UP_POS = 0.07;
     public static double
-            ARM_RIGHT_READY_POS = 0.43,
-            ARM_RIGHT_TRANSFER_POS = 0.212,
-            ARM_RIGHT_SCORE_POS = 0,
-            ARM_RIGHT_SCORE_UP_POS = 0;
+            MINI_TURRET_STRAIGHT_POS = 0.489,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.7,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.3,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.7;
+            PIVOT_READY_POS = 0.53,
+            PIVOT_DIAGONAL_LEFT_POS = 0.657,
+            PIVOT_DIAGONAL_RIGHT_POS = 0.399,
+            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.098,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.958,
+            PIVOT_SIDEWAYS_LEFT_POS = 0.808,
+            PIVOT_SIDEWAYS_RIGHT_POS = 0.25;
     public static double
-            PIVOT_READY_POS = 0.145,
-            PIVOT_DIAGONAL_LEFT_POS = 0.241,
-            PIVOT_DIAGONAL_RIGHT_POS = 0.32,
-            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0,
-            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS,
-            PIVOT_SIDEWAYS_LEFT_POS = 0.145,
-            PIVOT_SIDEWAYS_RIGHT_POS = 0;
-    public static double
-            WRIST_READY_POS = 0.43,
-            WRIST_TRANSFER_POS = 0.212,
-            WRIST_SCORE_POS;
+            WRIST_READY_POS = 0.26,
+            WRIST_TRANSFER_POS = 0.26,
+            WRIST_SCORE_POS = 0.63;
     public static double
             CLAW_CLOSE_POS = 0.4,
             CLAW_OPEN_POS = 0.7;
@@ -62,7 +57,7 @@ public class OuttakeSubsystem {
     public enum ArmServoState {
         READY,
         TRANSFER,
-        SCORE,
+        SCORE_DOWN,
         SCORE_UP
     }
 
@@ -166,20 +161,20 @@ public class OuttakeSubsystem {
     public void armServoState(ArmServoState state) {
         switch (state) {
             case READY:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_READY_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_READY_POS);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_READY_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_READY_POS);
             break;
             case TRANSFER:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_TRANSFER_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_TRANSFER_POS);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_TRANSFER_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_TRANSFER_POS);
                 break;
-            case SCORE:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_SCORE_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_SCORE_POS);
+            case SCORE_DOWN:
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_SCORE_DOWN_POS);
                 break;
             case SCORE_UP:
-                robotHardware.OuttakeArmServoRight.setPosition(ARM_RIGHT_SCORE_UP_POS);
-                robotHardware.OuttakeArmServoLeft.setPosition(ARM_LEFT_SCORE_UP_POS);
+                robotHardware.OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
+                robotHardware.OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
                 break;
         }
     }
