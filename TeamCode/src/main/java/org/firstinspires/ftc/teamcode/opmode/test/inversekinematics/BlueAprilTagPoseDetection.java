@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.test.inversekinematics;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
@@ -42,3 +43,5 @@ public class BlueAprilTagPoseDetection extends LinearOpMode {
 
     }
 }
+
+ */

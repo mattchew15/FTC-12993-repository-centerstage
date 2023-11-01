@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
@@ -115,3 +116,5 @@ public class BlueBackSimpleAuto extends LinearOpMode {
         }
     }
 }
+
+ */

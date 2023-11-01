@@ -50,7 +50,8 @@ public class PIDMotorTest extends LinearOpMode {
 
                 GlobalTimer = new ElapsedTime(System.nanoTime());
                 GlobalTimer.reset();
-                robotHardware.setupHardware(); // this uses methods from the outtake and intake subsystem - are we creating multiple instances of the same class???
+                intakeSubsystem.intakeHardwareSetup();
+                outtakeSubsystem.hardwareSetup();
 
             while (opModeIsActive()) {
 

@@ -36,7 +36,7 @@ public class RobotHardware {
             LiftMotor,
             PitchMotor;
 
-    public CRServo BottomRollerServo;
+    //public CRServo BottomRollerServo;
 
     public ServoImplEx
             IntakeArmServo,
@@ -58,13 +58,12 @@ public class RobotHardware {
     public void initializeHardware(HardwareMap hwMap){
         initMotorsServos(hwMap);
         initWebcam(hwMap);
-        initAprilTag(hwMap);
+        //initAprilTag(hwMap);
         //Also run the hardware setup functions in here
     }
 
     public void setupHardware(){ // test to see if you can still run this method without getting null pointer exception if you don't create new instances in the opmode
-        intakeSubsystem.intakeHardwareSetup();
-        outtakeSubsystem.hardwareSetup();
+
     }
 
     public void readHardware(){ // could setup one read function using outtake
@@ -81,8 +80,6 @@ public class RobotHardware {
         LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
         PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
 
-        BottomRollerServo = hwMap.get(CRServo.class, "BottomRollerS");
-
         IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
         IntakeFlapServo = hwMap.get(ServoImplEx.class, "IntakeFlapS");
         IntakeClipServo = hwMap.get(ServoImplEx.class, "IntakeClipS");
@@ -98,11 +95,10 @@ public class RobotHardware {
     }
     
     public void initWebcam(HardwareMap hwMap) {
-        
         int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
             blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -116,7 +112,7 @@ public class RobotHardware {
             });
         } else if (RED_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
             redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -131,6 +127,7 @@ public class RobotHardware {
         }
     }
 
+    /*
     public void initAprilTag(HardwareMap hwMap) {
         if (BLUE_AUTO) {
             blueWebcam.closeCameraDevice();
@@ -143,11 +140,13 @@ public class RobotHardware {
                 .build();
         VisionPortal visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTag)
-                .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
+                .setCamera(hwMap.get(WebcamName.class, "AprilTagWebcam))
                 .setCameraResolution(new Size(1280, 960))
                 .enableLiveView(false)
                 .build();
     }
+
+     */
 
     
     //Pipeline has to be in the same class as where webcam stuff is initialized

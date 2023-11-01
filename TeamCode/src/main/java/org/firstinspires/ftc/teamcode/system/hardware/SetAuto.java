@@ -26,5 +26,4 @@ public class SetAuto {
         FRONT_AUTO = false;
         BACK_AUTO = false;
     }
-
 }

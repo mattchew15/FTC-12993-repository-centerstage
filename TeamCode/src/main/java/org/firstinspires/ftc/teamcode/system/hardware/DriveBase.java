@@ -109,15 +109,16 @@ public class DriveBase {  // no constructor for this class
             PowerToggled = false;
         }
     }
-
+    /*
     public void droneState(DroneState state) {
         switch (state) {
             case HOLD:
-                robotHardware.DroneServo.setPosition(DroneServoHoldPos);
+                robotHardware.DroneSero.setPosition(DroneServoHoldPos);
                 break;
             case RELEASE:
                 robotHardware.DroneServo.setPosition(DroneServoReleasePos);
                 break;
         }
     }
+     */
 }

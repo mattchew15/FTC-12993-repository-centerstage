@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.Sequences;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
@@ -56,3 +57,4 @@ public class AutoCommand {
 
     }
 }
+ */

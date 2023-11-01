@@ -65,7 +65,6 @@ public class IntakeSubsystem {
     // methods should be camel caps
     public void intakeSpin(double speedDirection){
         robotHardware.IntakeMotor.setPower(speedDirection);
-        robotHardware.BottomRollerServo.setPower(speedDirection * -1);
     }
 
     public void IntakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
