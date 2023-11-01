@@ -2,15 +2,18 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
-import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.system.vision.BlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
 public class PrintCamera {
-    private final ContourBlueTeamPropDetectorPipeline bluePipeline = new ContourBlueTeamPropDetectorPipeline();
-    private final ContourRedTeamPropDetectorPipeline redPipeline = new ContourRedTeamPropDetectorPipeline();
+    private final BlueTeamPropDetectorPipeline bluePipeline = new BlueTeamPropDetectorPipeline();
+    private final RedTeamPropDetectorPipeline redPipeline = new RedTeamPropDetectorPipeline();
 
     public void telemetryTeamProp() {
         if (BLUE_AUTO) {
@@ -24,7 +27,7 @@ public class PrintCamera {
         }
     }
 
-    public void telemetryAprilTag() {
+    public void telemetryAprilTag(Telemetry telemetry) {
         List<AprilTagDetection> currentDetections = hardware.getAprilTag().getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 

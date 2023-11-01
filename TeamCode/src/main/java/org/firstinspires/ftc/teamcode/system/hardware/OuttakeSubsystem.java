@@ -22,6 +22,7 @@ public class OuttakeSubsystem {
     public static double PivotSidewaysLeftPos = 0.145, PivotSidewaysRightPos = 0;
     public static double WristReadyPos = 0.43, WristTransferPos = 0.212, WristScorePos;
     public static double ClawOpenPos = 0.7, ClawClosedPos = 0.3;
+    public static double MiniTurretStraightPos = 0.7, MiniTurretLeftDiagonalPos = 0.3, MiniTurretRightDiagonalPos = 0.7;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -55,6 +56,12 @@ public class OuttakeSubsystem {
         DIAGONAL_RIGHT_FLIPPED,
         SIDEWAYS_LEFT,
         SIDEWAYS_RIGHT
+    }
+    public enum MiniTurretState {
+        STRAIGHT,
+        DIAGONAL_LEFT,
+        DIAGONAL_RIGHT,
+        POINT_TO_BACKDROP
     }
 
     public enum WristState {
@@ -188,6 +195,28 @@ public class OuttakeSubsystem {
                 break;
             case SCORE:
                 robotHardware.WristServo.setPosition(WristScorePos);
+                break;
+        }
+    }
+
+
+    public static double degreestoTicksMiniTurret(double degrees){
+        return MiniTurretStraightPos + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+    }
+
+    public void miniTurretState(MiniTurretState state, double robotDegrees) { // set this last parameter to null if not being used
+        switch (state) {
+            case STRAIGHT:
+                robotHardware.MiniTurretServo.setPosition(MiniTurretStraightPos);
+                break;
+            case DIAGONAL_LEFT:
+                robotHardware.MiniTurretServo.setPosition(MiniTurretLeftDiagonalPos);
+                break;
+            case DIAGONAL_RIGHT:
+                robotHardware.MiniTurretServo.setPosition(MiniTurretRightDiagonalPos);
+                break;
+            case POINT_TO_BACKDROP:
+                robotHardware.MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
                 break;
         }
     }

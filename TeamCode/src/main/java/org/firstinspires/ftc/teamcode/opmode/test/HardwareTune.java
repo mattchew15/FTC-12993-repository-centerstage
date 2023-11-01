@@ -13,10 +13,10 @@ public class HardwareTune extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        hardware.init(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
+            /*
             intake.extensionState(IntakeSubsystem.ExtensionState.RETRACT);
             intake.extensionState(IntakeSubsystem.ExtensionState.EXTEND);
             intake.extensionState(IntakeSubsystem.ExtensionState.LEFT);
@@ -71,6 +71,7 @@ public class HardwareTune extends LinearOpMode {
 
             outtake.droneState(OuttakeSubsystem.DroneState.HOLD);
             outtake.droneState(OuttakeSubsystem.DroneState.RELEASE);
+             */
         }
     }
 }
