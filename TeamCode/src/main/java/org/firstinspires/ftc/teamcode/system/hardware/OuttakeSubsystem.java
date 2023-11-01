@@ -13,8 +13,8 @@ public class OuttakeSubsystem {
     RobotHardware robotHardware;
 
     public static double
-            ARM_READY_POS = 0.9,
-            ARM_TRANSFER_POS = 0.93,
+            ARM_READY_POS = 0.93,
+            ARM_TRANSFER_POS = 0.9,
             ARM_SCORE_DOWN_POS = 0.22,
             ARM_SCORE_UP_POS = 0.07;
     public static double
