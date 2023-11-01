@@ -59,7 +59,7 @@ public class PIDMotorTest extends LinearOpMode {
 
                 outtakeSubsystem.outtakeReads(); // read at the start of the loop
 
-                // can be condensed into the one class? - try it
+                // can be condensed into the one class? - try ita
                 dt = System.currentTimeMillis() - prev_time;
                 prev_time = System.currentTimeMillis();
                 telemetry.addData("Loop Time", dt);
