@@ -24,7 +24,7 @@ public class CameraHardware {
         int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
+            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
             blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -38,7 +38,7 @@ public class CameraHardware {
             });
         } else if (RED_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
+            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
             redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {

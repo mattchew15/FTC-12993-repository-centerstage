@@ -14,7 +14,7 @@ public class RedTeamPropDetection extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        SetAuto.setBlueAuto();
+        SetAuto.setRedAuto();
         cameraHardware.initWebcam(hardwareMap);
 
         while(!isStarted()) {
