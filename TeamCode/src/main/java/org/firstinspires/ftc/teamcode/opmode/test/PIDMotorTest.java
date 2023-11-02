@@ -37,7 +37,7 @@ public class PIDMotorTest extends LinearOpMode {
         PhotonCore.enable();
          */
 
-        StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap); // idk what other parameters are needed here
+       // StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap); // idk what other parameters are needed here
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
@@ -65,7 +65,7 @@ public class PIDMotorTest extends LinearOpMode {
                     outtakeSubsystem.liftTo(100, outtakeSubsystem.liftPosition, 1);
                 }
 
-                location.update();
+              //  location.update();
                 telemetry.update();
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();

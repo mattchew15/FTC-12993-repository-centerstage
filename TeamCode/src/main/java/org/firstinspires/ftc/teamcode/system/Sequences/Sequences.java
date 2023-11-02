@@ -31,7 +31,7 @@ public class Sequences {
 
     TransferGrabState transferGrabState;
 
-   public void transferGrab(boolean dropBtn){
+   public void transferGrab(boolean dropBtn){ // pass in timer as a parameter??
         switch (transferGrabState){
             case PIXEL_GRAB:
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.TRANSFER);

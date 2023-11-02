@@ -157,12 +157,25 @@ public class OuttakeSubsystem {
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         LiftMotor.setPower(output);
     }
+    public void liftToInternalPID(int rotations, double maxSpeed){
+        liftTarget = rotations;
+        LiftMotor.setTargetPosition(liftTarget);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LiftMotor.setPower(maxSpeed);
+    }
 
     public void pitchTo(double targetRotations, double motorPosition, double maxSpeed){
         pitchTarget = targetRotations;
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         PitchMotor.setPower(output);
+    }
+    public void pitchToInternalPID(int rotations, double maxSpeed){
+        pitchTarget = rotations;
+        //telemetry.addData("lifttarget", liftTarget);
+        PitchMotor.setTargetPosition(liftTarget);
+        PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        PitchMotor.setPower(maxSpeed);
     }
 
     public boolean liftTargetReached(){

@@ -70,8 +70,7 @@ public class IntakeSubsystem {
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        //IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     // handles all of the reads in this class
@@ -88,14 +87,14 @@ public class IntakeSubsystem {
         IntakeMotor.setPower(speedDirection);
     }
 
-    public void IntakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
+    public void intakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
         intakeSlideTarget = targetRotations;
         IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         IntakeSlideMotor.setPower(output);
     }
 
-    public void IntakeSlideInternalPID(int rotations, double maxSpeed){
+    public void intakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

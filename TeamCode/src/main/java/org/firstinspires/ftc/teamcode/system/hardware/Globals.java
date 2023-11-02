@@ -26,6 +26,11 @@ public class Globals {
             PITCH_TICKS_PER_REVOLUTION = 3895.9,
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360;
 
+    public static int
+            SIXTY_DEGREE_TICKS = 400,
+
+            INTAKE_SLIDE_EXTENDO_TELEOP = 500;
+
     public static double degreestoTicksPitchMotor(double degrees){
         return degrees * PITCH_TICKS_PER_DEGREES;
     }
