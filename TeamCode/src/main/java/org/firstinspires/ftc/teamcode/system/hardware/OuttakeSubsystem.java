@@ -28,6 +28,7 @@ public class OuttakeSubsystem {
     public static double
             ARM_READY_POS = 0.93,
             ARM_TRANSFER_POS = 0.9,
+            ARM_PREEXTEND_POS = 0.87,
             ARM_SCORE_DOWN_POS = 0.22,
             ARM_SCORE_UP_POS = 0.07;
     public static double
@@ -44,7 +45,7 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.25;
     public static double
             WRIST_READY_POS = 0.26,
-            WRIST_TRANSFER_POS = 0.26,
+            WRIST_TRANSFER_POS = 0.28,
             WRIST_SCORE_POS = 0.63;
     public static double
             CLAW_OPEN_POS = 0.4,
@@ -59,8 +60,8 @@ public class OuttakeSubsystem {
     final double pitchthresholdDistance = degreestoTicksPitchMotor(2);
     final double liftthresholdDistance = 22;
 
-    double pitchTarget;
-    int liftTarget;
+    public int pitchTarget;
+    public int liftTarget;
 
     public double pitchPosition;
     public double liftPosition;
@@ -70,6 +71,7 @@ public class OuttakeSubsystem {
     public enum ArmServoState {
         READY,
         TRANSFER,
+        PRE_EXTEND,
         SCORE_DOWN,
         SCORE_UP
     }
@@ -164,7 +166,7 @@ public class OuttakeSubsystem {
         LiftMotor.setPower(maxSpeed);
     }
 
-    public void pitchTo(double targetRotations, double motorPosition, double maxSpeed){
+    public void pitchTo(int targetRotations, double motorPosition, double maxSpeed){
         pitchTarget = targetRotations;
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
@@ -206,6 +208,10 @@ public class OuttakeSubsystem {
                 OuttakeArmServoRight.setPosition(ARM_TRANSFER_POS);
                 OuttakeArmServoLeft.setPosition(ARM_TRANSFER_POS);
                 break;
+            case PRE_EXTEND:
+                OuttakeArmServoRight.setPosition(ARM_PREEXTEND_POS);
+                OuttakeArmServoLeft.setPosition(ARM_PREEXTEND_POS);
+                break;
             case SCORE_DOWN:
                 OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
                 OuttakeArmServoLeft.setPosition(ARM_SCORE_DOWN_POS);
@@ -221,7 +227,7 @@ public class OuttakeSubsystem {
         return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
-    public void miniTurretState(MiniTurretState state, double robotDegrees) { // set this last parameter to null if not being used
+    public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used
         switch (state) {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
@@ -233,9 +239,13 @@ public class OuttakeSubsystem {
                 MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
                 break;
             case POINT_TO_BACKDROP:
-                MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
+                //removed this stupid shit
                 break;
         }
+    }
+
+    public void miniTurretPointToBackdrop(double robotDegrees){
+        MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
     }
 
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out

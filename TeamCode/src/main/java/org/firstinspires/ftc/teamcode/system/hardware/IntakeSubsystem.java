@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -20,9 +19,11 @@ public class IntakeSubsystem {
             IntakeClipServo;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.48,
-            INTAKE_ARM_MIDDLE_POS = 0.53,
-            INTAKE_ARM_BASE_POS = 0.55;
+            INTAKE_ARM_5_POS = 0.48,
+            INTAKE_ARM_4_POS,
+            INTAKE_ARM_3_POS = 0.53,
+            INTAKE_ARM_2_POS,
+            INTAKE_ARM_1_POS = 0.55;
     public static double
             INTAKE_FLAP_CLOSE_POS = 0.57,
             INTAKE_FLAP_OPEN_POS = 0.3;
@@ -35,9 +36,11 @@ public class IntakeSubsystem {
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeArmServoState {
-        TOP_STACK,
-        MIDDLE_STACK,
-        BASE
+        HEIGHT_5,
+        HEIGHT_4,
+        HEIGHT_3,
+        HEIGHT_2,
+        HEIGHT_1
     }
 
     public enum IntakeFlapServoState {
@@ -120,14 +123,20 @@ public class IntakeSubsystem {
 
     public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
-            case TOP_STACK:
-                IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
+            case HEIGHT_5:
+                IntakeArmServo.setPosition(INTAKE_ARM_5_POS);
                 break;
-            case MIDDLE_STACK:
-                IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
+            case HEIGHT_4:
+                IntakeArmServo.setPosition(INTAKE_ARM_4_POS);
                 break;
-            case BASE:
-                IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
+            case HEIGHT_3:
+                IntakeArmServo.setPosition(INTAKE_ARM_3_POS);
+                break;
+            case HEIGHT_2:
+                IntakeArmServo.setPosition(INTAKE_ARM_2_POS);
+                break;
+            case HEIGHT_1:
+                IntakeArmServo.setPosition(INTAKE_ARM_1_POS);
                 break;
         }
     }

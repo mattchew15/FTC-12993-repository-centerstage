@@ -7,11 +7,11 @@ public class ToggleUpDown {
     public int CycleState;
     public int CycleLimit;
 
-    public ToggleUpDown(int cycleLimit){ // constructor means we don't need to run additional function
+    public ToggleUpDown(int cycleLimit, int cycleState){ // constructor means we don't need to run additional function
         CycleDown = false;
         CycleUp = false;
-        CycleState = 0;
-        this.CycleLimit = cycleLimit;
+        CycleState = cycleState; // this can be modified
+        this.CycleLimit = cycleLimit; // whereas this will stay the same
 
     }
 
@@ -34,8 +34,8 @@ public class ToggleUpDown {
         else {
             CycleDown = false;
         }
-        if (CycleState < 0){
-            CycleState = 0;
+        if (CycleState < 1){
+            CycleState = 1;
         }
         if (CycleState > CycleLimit){
             CycleState = CycleLimit;
