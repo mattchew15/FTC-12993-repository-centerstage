@@ -21,18 +21,24 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
             green = new Scalar(0, 255, 0);
 
     // Values for location and size of rectangles.
-    private final int
+    public static final int
             regionWidth = 100,
-            regionHeight = 100;
+            regionHeight = 100,
+            region1A_x = 340,
+            region1A_y = 500,
+            region2A_x = 590,
+            region2A_y = 400,
+            region3A_x = 840,
+            region3A_y = 500;
 
     // Points A and B for 3 regions. Counting from left.
     private final Point
-            region1A = new Point(340, 500),
-            region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
-            region2A = new Point(590, 400),
-            region2B = new Point(region2A.x + regionWidth, region2A.y + regionHeight),
-            region3A = new Point(840, 500),
-            region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
+            region1A = new Point(region1A_x, region1A_y),
+            region1B = new Point(region1A_x + regionWidth, region1A_y + regionHeight),
+            region2A = new Point(region2A_x, region2A_y),
+            region2B = new Point(region2A_x + regionWidth, region2A_y + regionHeight),
+            region3A = new Point(region3A_x, region3A_y),
+            region3B = new Point(region3A_x + regionWidth, region3A_y + regionHeight);
 
     // CB values in 3 rectangles.
     private Mat region1Cr, region2Cr, region3Cr;
@@ -101,8 +107,4 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     }
 
     public TeamPropPosition getPosition() { return position; }
-
-    public int getAvg1() { return avg1; }
-    public int getAvg2() { return avg2; }
-    public int getAvg3() { return avg3; }
 }

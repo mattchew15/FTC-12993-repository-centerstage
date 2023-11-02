@@ -15,13 +15,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CameraHardware {
 
-
     private OpenCvWebcam blueWebcam, redWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
     private AprilTagProcessor aprilTag;
-
-
 
     public void initWebcam(HardwareMap hwMap) {
         int cameraMonitorViewId;
@@ -56,6 +53,14 @@ public class CameraHardware {
         }
     }
 
+    public void closeWebcam() {
+        if (BLUE_AUTO) {
+            blueWebcam.closeCameraDevice();
+        } else if (RED_AUTO) {
+            redWebcam.closeCameraDevice();
+        }
+    }
+
     /*
     public void initAprilTag(HardwareMap hwMap) {
         if (BLUE_AUTO) {
@@ -77,11 +82,6 @@ public class CameraHardware {
 
      */
 
-    
     //Pipeline has to be in the same class as where webcam stuff is initialized
-    public YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
-
-    public YCrCbRedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
-
     public AprilTagProcessor getAprilTag() { return aprilTag; }
 }

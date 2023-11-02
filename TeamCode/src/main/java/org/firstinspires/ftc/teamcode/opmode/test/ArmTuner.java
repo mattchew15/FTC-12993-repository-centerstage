@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @Config
-@TeleOp
+@TeleOp(group = "Tune")
 public class ArmTuner extends LinearOpMode {
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
 

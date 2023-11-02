@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 @Config // Allows dashboard tune
 public class Globals {
@@ -47,16 +49,6 @@ public class Globals {
             PIXEL_POSE_Y,
             PIXEL_POSE_Z;
 
-    public static ContourBlueTeamPropDetectorPipeline.TeamPropPosition
-            BLUE_LEFT = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            BLUE_CENTER = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            BLUE_RIGHT = ContourBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
-            BLUE_POSITION = null;
-
-    public static ContourRedTeamPropDetectorPipeline.TeamPropPosition
-            RED_LEFT = ContourRedTeamPropDetectorPipeline.TeamPropPosition.LEFT,
-            RED_CENTER = ContourRedTeamPropDetectorPipeline.TeamPropPosition.CENTER,
-            RED_RIGHT = ContourRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT,
-            RED_POSITION = null;
+    public static YCrCbRedTeamPropDetectorPipeline.TeamPropPosition RED_POSITION = null;
 
 }
