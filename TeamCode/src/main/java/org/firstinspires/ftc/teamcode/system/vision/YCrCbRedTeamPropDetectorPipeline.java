@@ -21,7 +21,7 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
             green = new Scalar(0, 255, 0);
 
     // Values for location and size of rectangles.
-    public static final int
+    private final int
             regionWidth = 100,
             regionHeight = 100,
             region1A_x = 340,
@@ -43,15 +43,14 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     // CB values in 3 rectangles.
     private Mat region1Cr, region2Cr, region3Cr;
 
+    public static volatile TeamPropPosition RED_POSITION = TeamPropPosition.LEFT;
+
     private final Mat
             YCrCb = new Mat(),
             Cr = new Mat();
 
     // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
-
-    // Default position is left.
-    private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
     // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
     private void inputToCr(Mat input) {
@@ -78,7 +77,6 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToCr(input);
 
-
         //Average pixel value of each Cr channel.
         avg1 = (int) Core.mean(region1Cr).val[0];
         avg2 = (int) Core.mean(region2Cr).val[0];
@@ -93,18 +91,16 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if (max == avg1) {
-            position = TeamPropPosition.LEFT;
+            RED_POSITION = TeamPropPosition.LEFT;
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
-            position = TeamPropPosition.CENTER;
+            RED_POSITION = TeamPropPosition.CENTER;
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            position = TeamPropPosition.RIGHT;
+            RED_POSITION = TeamPropPosition.RIGHT;
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
         return input;
     }
-
-    public TeamPropPosition getPosition() { return position; }
 }

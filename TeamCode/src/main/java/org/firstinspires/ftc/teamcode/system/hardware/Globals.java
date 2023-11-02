@@ -49,6 +49,4 @@ public class Globals {
             PIXEL_POSE_Y,
             PIXEL_POSE_Z;
 
-    public static YCrCbRedTeamPropDetectorPipeline.TeamPropPosition RED_POSITION = null;
-
 }
