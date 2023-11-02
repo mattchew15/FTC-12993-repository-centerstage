@@ -23,19 +23,27 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     // Values for location and size of rectangles.
     private final int
             regionWidth = 100,
-            regionHeight = 100;
+            regionHeight = 100,
+            region1A_x = 340,
+            region1A_y = 500,
+            region2A_x = 590,
+            region2A_y = 400,
+            region3A_x = 840,
+            region3A_y = 500;
 
     // Points A and B for 3 regions. Counting from left.
     private final Point
-            region1A = new Point(340, 500),
-            region1B = new Point(region1A.x + regionWidth, region1A.y + regionHeight),
-            region2A = new Point(590, 400),
-            region2B = new Point(region2A.x + regionWidth, region2A.y + regionHeight),
-            region3A = new Point(840, 500),
-            region3B = new Point(region3A.x + regionWidth, region3A.y + regionHeight);
+            region1A = new Point(region1A_x, region1A_y),
+            region1B = new Point(region1A_x + regionWidth, region1A_y + regionHeight),
+            region2A = new Point(region2A_x, region2A_y),
+            region2B = new Point(region2A_x + regionWidth, region2A_y + regionHeight),
+            region3A = new Point(region3A_x, region3A_y),
+            region3B = new Point(region3A_x + regionWidth, region3A_y + regionHeight);
 
     // CB values in 3 rectangles.
     private Mat region1Cr, region2Cr, region3Cr;
+
+    public static volatile TeamPropPosition RED_POSITION = TeamPropPosition.LEFT;
 
     private final Mat
             YCrCb = new Mat(),
@@ -43,9 +51,6 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
 
     // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
-
-    // Default position is left.
-    private volatile TeamPropPosition position = TeamPropPosition.LEFT;
 
     // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
     private void inputToCr(Mat input) {
@@ -72,7 +77,6 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToCr(input);
 
-
         //Average pixel value of each Cr channel.
         avg1 = (int) Core.mean(region1Cr).val[0];
         avg2 = (int) Core.mean(region2Cr).val[0];
@@ -87,22 +91,16 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if (max == avg1) {
-            position = TeamPropPosition.LEFT;
+            RED_POSITION = TeamPropPosition.LEFT;
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
-            position = TeamPropPosition.CENTER;
+            RED_POSITION = TeamPropPosition.CENTER;
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            position = TeamPropPosition.RIGHT;
+            RED_POSITION = TeamPropPosition.RIGHT;
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
         return input;
     }
-
-    public TeamPropPosition getPosition() { return position; }
-
-    public int getAvg1() { return avg1; }
-    public int getAvg2() { return avg2; }
-    public int getAvg3() { return avg3; }
 }

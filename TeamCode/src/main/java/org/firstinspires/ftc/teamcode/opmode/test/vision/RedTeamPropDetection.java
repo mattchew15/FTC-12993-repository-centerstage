@@ -1,36 +1,33 @@
-/*
 package org.firstinspires.ftc.teamcode.opmode.test.vision;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RED_POSITION;
+import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.system.accessory.PrintCamera;
-import org.firstinspires.ftc.teamcode.system.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
-@Autonomous(group = "test")
+@TeleOp(group = "Vision")
 public class RedTeamPropDetection extends LinearOpMode {
-    private final RobotHardware hardware = new RobotHardware();
-    private final PrintCamera print = new PrintCamera();
+    CameraHardware cameraHardware = new CameraHardware();
 
     @Override
     public void runOpMode() {
         SetAuto.setRedAuto();
-        hardware.initWebcam(hardwareMap);
-
-        RED_POSITION = hardware.getRedPosition();
+        cameraHardware.initWebcam(hardwareMap);
 
         while(!isStarted()) {
-            print.telemetryTeamProp();
+            telemetry.addData("Position", RED_POSITION);
             telemetry.update();
         }
+
+        cameraHardware.closeWebcam();
 
         waitForStart();
 
         while(opModeIsActive()) {
-            print.telemetryTeamProp();
+            telemetry.addData("Position", RED_POSITION);
             telemetry.update();
         }
 
@@ -38,5 +35,3 @@ public class RedTeamPropDetection extends LinearOpMode {
 
     }
 }
-
- */

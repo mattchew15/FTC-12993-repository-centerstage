@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @Config
-@TeleOp
+@TeleOp(group = "Tune")
 public class ServoTuner extends LinearOpMode {
 
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();

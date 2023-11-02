@@ -15,19 +15,16 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CameraHardware {
 
-
     private OpenCvWebcam blueWebcam, redWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
     private AprilTagProcessor aprilTag;
 
-
-
     public void initWebcam(HardwareMap hwMap) {
         int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
+            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
             blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -41,7 +38,7 @@ public class CameraHardware {
             });
         } else if (RED_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
+            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
             redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -53,6 +50,14 @@ public class CameraHardware {
                 public void onError(int errorCode) {
                 }
             });
+        }
+    }
+
+    public void closeWebcam() {
+        if (BLUE_AUTO) {
+            blueWebcam.closeCameraDevice();
+        } else if (RED_AUTO) {
+            redWebcam.closeCameraDevice();
         }
     }
 
@@ -77,11 +82,6 @@ public class CameraHardware {
 
      */
 
-    
     //Pipeline has to be in the same class as where webcam stuff is initialized
-    public YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition getBluePosition() { return bluePipeline.getPosition(); }
-
-    public YCrCbRedTeamPropDetectorPipeline.TeamPropPosition getRedPosition() { return redPipeline.getPosition(); }
-
     public AprilTagProcessor getAprilTag() { return aprilTag; }
 }
