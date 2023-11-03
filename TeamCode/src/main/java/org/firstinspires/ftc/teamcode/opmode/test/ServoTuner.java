@@ -17,12 +17,12 @@ public class ServoTuner extends LinearOpMode {
     public static double
             INTAKE_ARM_POS = 0.48,
             INTAKE_FLAP_POS = 0.57,
-            INTAKE_CLIP_POS = 0.5,
-            OUTTAKE_ARM_POS = 0.93,
+            INTAKE_CLIP_POS = 0.75,
+            OUTTAKE_ARM_POS = 0.92,
             MINI_TURRET_POS = 0.489,
             PIVOT_POS = 0.53,
             WRIST_POS = 0.26,
-            CLAW_POS = 0.7;
+            CLAW_POS = 0.6;
 
     @Override
     public void runOpMode() {

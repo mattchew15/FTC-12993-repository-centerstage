@@ -19,17 +19,17 @@ public class IntakeSubsystem {
             IntakeClipServo;
 
     public static double
-            INTAKE_ARM_5_POS = 0.48,
+            INTAKE_ARM_5_POS = 0.43,
             INTAKE_ARM_4_POS,
-            INTAKE_ARM_3_POS = 0.53,
+            INTAKE_ARM_3_POS = 0.48,
             INTAKE_ARM_2_POS,
-            INTAKE_ARM_1_POS = 0.55;
+            INTAKE_ARM_1_POS = 0.5;
     public static double
             INTAKE_FLAP_CLOSE_POS = 0.57,
             INTAKE_FLAP_OPEN_POS = 0.3;
     public static double
-            INTAKE_CLIP_HOLDING_POS = 0.212,
-            INTAKE_CLIP_OPEN_POS = 0.43;
+            INTAKE_CLIP_HOLDING_POS = 0.5,
+            INTAKE_CLIP_OPEN_POS = 0.75;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
