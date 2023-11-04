@@ -58,8 +58,8 @@ public class OuttakeSubsystem {
     PID liftPID = new PID(LiftKp,LiftKi,LiftKd,LiftIntegralSumLimit,LiftKf);
     PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,PitchFeedforward);
 
-    final double pitchthresholdDistance = degreestoTicksPitchMotor(2); // could change this to a number in ticks
-    final double liftthresholdDistance = 22;
+    final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
+    final double LIFT_THRESHOLD_DISTANCE = 22;
 
     public int pitchTarget;
     public int liftTarget;
@@ -145,14 +145,14 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void liftMotorRawControl(double manualcontrollift){
+    public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        LiftMotor.setPower(manualcontrollift * 0.75);
+        LiftMotor.setPower(manualControlLift * 0.75);
     }
 
-    public void pitchMotorRawControl(double manualcontrolturret){
+    public void pitchMotorRawControl(double manualControlTurret){
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        PitchMotor.setPower(manualcontrolturret * -0.4);
+        PitchMotor.setPower(manualControlTurret * -0.4);
     }
 
     public void liftTo(int rotations, double motorPosition, double maxSpeed){
@@ -185,21 +185,29 @@ public class OuttakeSubsystem {
     }
 
     public boolean liftTargetReached(){
-        if (liftPosition > (liftTarget - liftthresholdDistance) && liftPosition < (liftTarget+liftthresholdDistance)){ //liftthresholdDistance, simplify with Math.abs
+        if (liftPosition > (liftTarget - LIFT_THRESHOLD_DISTANCE) && liftPosition < (liftTarget+ LIFT_THRESHOLD_DISTANCE)){ //LIFT_THRESHOLD_DISTANCE, simplify with Math.abs
             return true;
         }
         else{
             return false;
         }
     }
+    public boolean liftTargetReachedR() // Simple version than the above one
+    {
+        return (Math.abs(liftTarget - liftPosition) < LIFT_THRESHOLD_DISTANCE);
+    }
 
     public boolean pitchTargetReached(){
-        if (pitchPosition < (pitchTarget + pitchthresholdDistance) && pitchPosition > (pitchTarget-pitchthresholdDistance)){
+        if (pitchPosition < (pitchTarget + PITCH_THRESHOLD_DISTANCE) && pitchPosition > (pitchTarget- PITCH_THRESHOLD_DISTANCE)){
             return true;
         }
         else{
             return false;
         }
+    }
+    public boolean pitchTargetReachedR() // Simple version than the above one
+    {
+        return (Math.abs(pitchTarget - pitchPosition) < PITCH_THRESHOLD_DISTANCE);
     }
 
     public void armServoState(ArmServoState state) {

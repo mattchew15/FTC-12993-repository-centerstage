@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLoca
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
 import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpDown;
+import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpOrDown;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
@@ -29,17 +30,18 @@ public class SimplicityDrive extends LinearOpMode {
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
-    //Accessories
-    LoopTime loopTime = new LoopTime();
-    ToggleUpDown intakeStackToggle = new ToggleUpDown(3, 0); // starting cycle state should = 0
-    ToggleUpDown miniTurretPositionToggle = new ToggleUpDown(3, 0); // one starts at the centre
-    Toggle pivotFlipToggle = new Toggle();
-
     ElapsedTime GlobalTimer;
     double sequenceTimer;
     int liftTarget;
     int pitchTarget;
     boolean pitching;
+
+    //Accessories
+    LoopTime loopTime = new LoopTime();
+    ToggleUpDown intakeStackToggle = new ToggleUpDown(3, 0); // starting cycle state should = 0
+    ToggleUpDown miniTurretPositionToggle = new ToggleUpDown(3, 0); // one starts at the centre
+    Toggle pivotFlipToggle = new Toggle();
+    ToggleUpOrDown fineAdjustSlides = new ToggleUpOrDown(100,100, liftTarget);
 
     enum OuttakeState { // could make these private?
         READY,
@@ -135,6 +137,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeClipHoldorNotHold(-3);
                 intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.CLOSE);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
                 pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
 
@@ -156,17 +159,19 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE:
                 intakeSubsystem.intakeSpin(1);
-
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
 
                 if (gamepad2.right_trigger > 0.2 || intakeSubsystem.intakeColourSensorDetect()) { // or a sensor detects this
                     outtakeState = OuttakeState.INTAKE_TO_TRANSFER; //reverses intake
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                 }
                 break;
 
             case INTAKE_EXTENDO:
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 60) { // power draw reasons
                     intakeSubsystem.intakeSlideTo(INTAKE_SLIDE_EXTENDO_TELEOP, intakeSubsystem.intakeSlidePosition, 1);
@@ -175,6 +180,7 @@ public class SimplicityDrive extends LinearOpMode {
                         if (gamepad2.right_trigger > 0.2 || intakeSubsystem.intakeColourSensorDetect()) { // or a sensor detects this
                             outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                             sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                            intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                         }
                     }
                 }
@@ -198,7 +204,8 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSpin(0.7);
                 if (GlobalTimer.milliseconds() - sequenceTimer > 300) {
                     outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.CLOSE);
-                    if (GlobalTimer.milliseconds() - sequenceTimer > 700){
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 600){
+                        intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                         outtakeState = OuttakeState.TRANSFER_END;
                         sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                         intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.OPEN);
@@ -220,11 +227,14 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case OUTTAKE_ADJUST:
+                fineAdjustSlides.upToggle(gamepad2.right_bumper);
+                fineAdjustSlides.downToggle(gamepad2.left_bumper);
+
                 if (GlobalTimer.milliseconds() - sequenceTimer > 100){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
                 }
                 if (GlobalTimer.milliseconds() - sequenceTimer > 300){
-                    outtakeSubsystem.liftTo(liftTarget, outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.liftTo(fineAdjustSlides.OffsetTargetPosition, outtakeSubsystem.liftPosition,1);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 400){
                         outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.SCORE);
                         miniTurretAdjust();
@@ -260,6 +270,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSlideInternalPID(-3,1);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
 
                 if (!outtakeSubsystem.pitchTargetReached()){
                     outtakeSubsystem.liftTo(LIFT_HITS_WHILE_PITCHING_THRESHOLD, outtakeSubsystem.liftPosition,1);
@@ -352,21 +363,26 @@ public class SimplicityDrive extends LinearOpMode {
         if (gamepad2.y || gamepad1.y){
             liftTarget = LIFT_HIGH_POSITION_TICKS;
             pitchTarget = SIXTY_DEGREE_TICKS;
+            fineAdjustSlides.clearOffset(liftTarget); // delete this if you want the offset position to be remembered
         } else if (gamepad2.x || gamepad1.x){
             if (pitching){
                 liftTarget = LIFT_MEDIUM_POSITION_PITCHING_TICKS;
                 pitchTarget = PITCH_MID_DEGREE_TICKS;
+                fineAdjustSlides.clearOffset(liftTarget);
             } else if (!pitching){
                 pitchTarget = SIXTY_DEGREE_TICKS;
                 liftTarget = LIFT_MEDIUM_POSITION_TICKS;
+                fineAdjustSlides.clearOffset(liftTarget);
             }
         } else if (gamepad2.a || gamepad1.a){
             if (pitching){
                 liftTarget = LIFT_LOW_POSITION_PITCHING_TICKS;
                 pitchTarget = PITCH_LOW_DEGREE_TICKS;
+                fineAdjustSlides.clearOffset(liftTarget);
             } else if (!pitching){
                 liftTarget = LIFT_LOW_POSITION_TICKS;
                 pitchTarget = SIXTY_DEGREE_TICKS;
+                fineAdjustSlides.clearOffset(liftTarget);
             }
         }
     }
@@ -410,18 +426,28 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     boolean gamepad1RightTrigger(){
+
+        /*
         if (gamepad1.right_trigger > GAMEPAD_TRIGGER_THRESHOLD){
             return true;
         } else {
             return false;
         }
+        */
+        // old version above if any problems happen, if works delete it
+        return (gamepad1.right_trigger > GAMEPAD_TRIGGER_THRESHOLD);
     }
     boolean gamepad1LeftTrigger() {
+        /*
         if (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD) {
             return true;
         } else {
             return false;
         }
+        */
+        // old version above if any problems happen, if works delete it
+
+        return (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD);
     }
 }
 

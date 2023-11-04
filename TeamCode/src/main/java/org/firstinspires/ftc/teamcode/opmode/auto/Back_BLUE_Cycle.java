@@ -20,7 +20,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
 
 @Autonomous(name = "Back Red Cycle Auto", group = "Autonomous")
-public class Back_RED_Cycle extends LinearOpMode {
+public class Back_BLUE_Cycle extends LinearOpMode {
 
     // class members
     ElapsedTime GlobalTimer;
@@ -28,14 +28,14 @@ public class Back_RED_Cycle extends LinearOpMode {
 
     int numCycles;
     int spikePosition; // either 1,2 or 3 - lotus change
-    
+
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     CameraHardware cameraHardware = new CameraHardware();
     SampleMecanumDrive drive;
     //Accessories
     LoopTime loopTime = new LoopTime();
-    
+
     enum AutoState {
         DELAY,
         PRELOAD_DRIVE,
@@ -56,14 +56,14 @@ public class Back_RED_Cycle extends LinearOpMode {
 
 
     AutoState currentState;
-    
-      
+
+
     // Define our start pose
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SetAuto.setRedAuto();
+        SetAuto.setBlueAuto();
 
         // initialize hardware
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -80,7 +80,7 @@ public class Back_RED_Cycle extends LinearOpMode {
         Pose2d startPose = new Pose2d(StartPoseX,StartPoseY*S,StartPoseHeading*S+A);
 
         // functions runs on start
-        
+
         // Set inital pose
         drive.setPoseEstimate(startPose);
 
@@ -113,11 +113,11 @@ public class Back_RED_Cycle extends LinearOpMode {
         autoTimer = GlobalTimer.milliseconds();
 
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
-        
+
         currentState = AutoState.DELAY; // this go here?
         autoTimer = 0;
         numCycles = 0;
-        
+
         //camera.stopStreaming(); // reduces loop times
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -142,9 +142,9 @@ public class Back_RED_Cycle extends LinearOpMode {
             drive.update();
             telemetry.update();
         }
-        
+
     }
-    
+
     public void autoSequence(){
         Pose2d poseEstimate = drive.getPoseEstimate();
         switch (currentState) {
@@ -201,7 +201,7 @@ public class Back_RED_Cycle extends LinearOpMode {
                 break;
             case PARK:
 
-               if (!drive.isBusy()){
+                if (!drive.isBusy()){
                     currentState = AutoState.IDLE; // doesn't have to drive anywhere, already in position hopefully
                 }
 

@@ -18,7 +18,8 @@ public class IntakeSubsystem {
     public ServoImplEx
             IntakeArmServo,
             IntakeFlapServo,
-            IntakeClipServo;
+            IntakeClipServo,
+            IntakePixelHolderServo;
     public ColorSensor IntakeColourSensor;
 
     public static double
@@ -32,6 +33,9 @@ public class IntakeSubsystem {
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
             INTAKE_CLIP_OPEN_POS = 0.75;
+    public static double
+            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.6,
+            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.3;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
@@ -53,6 +57,12 @@ public class IntakeSubsystem {
         HOLDING,
         OPEN
     }
+
+    public enum IntakePixelHolderState {
+        HOLDING,
+        OPEN
+    }
+
     public static double intakeSlideKp = 0.01, intakeSlideKi = 0.00, intakeSlideKd = 0.0005, intakeSlideIntegralSumLimit = 10, intakeSlideKf = 0;
     PID intakeSlidePID = new PID(intakeSlideKp,intakeSlideKi,intakeSlideKd,intakeSlideIntegralSumLimit,intakeSlideKf);
 
@@ -70,6 +80,7 @@ public class IntakeSubsystem {
         IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
         IntakeClipServo = hwMap.get(ServoImplEx.class,"IntakeClipS");
         IntakeFlapServo = hwMap.get(ServoImplEx.class,"IntakeFlapS");
+        IntakePixelHolderServo = hwMap.get(ServoImplEx.class,"IntakePixelHolderS");
         IntakeColourSensor = hwMap.get(ColorSensor.class,"IntakeColourSensor");
     }
 
@@ -167,6 +178,17 @@ public class IntakeSubsystem {
                 break;
             case OPEN:
                 IntakeClipServo.setPosition(INTAKE_CLIP_OPEN_POS);
+                break;
+        }
+    }
+
+    public void intakePixelHolderServoState(IntakePixelHolderState state) {
+        switch (state) {
+            case HOLDING:
+                IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_HOLDING_POS);
+                break;
+            case OPEN:
+                IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_OPEN_POS);
                 break;
         }
     }
