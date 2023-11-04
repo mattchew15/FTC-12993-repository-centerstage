@@ -37,20 +37,20 @@ public class OuttakeSubsystem {
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
             MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            PIVOT_READY_POS = 0.535,
-            PIVOT_DIAGONAL_LEFT_POS = 0.657,
-            PIVOT_DIAGONAL_RIGHT_POS = 0.399,
-            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.098,
-            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.958,
-            PIVOT_SIDEWAYS_LEFT_POS = 0.808,
-            PIVOT_SIDEWAYS_RIGHT_POS = 0.25;
+            PIVOT_READY_POS = 0.5,
+            PIVOT_DIAGONAL_LEFT_POS = 0.627,
+            PIVOT_DIAGONAL_RIGHT_POS = 0.369,
+            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.068,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.928,
+            PIVOT_SIDEWAYS_LEFT_POS = 0.778,
+            PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             WRIST_READY_POS = 0.285,
             WRIST_TRANSFER_POS = 0.287,
             WRIST_SCORE_POS = 0.55;
     public static double
-            CLAW_OPEN_POS = 0.35,
-            CLAW_CLOSE_POS = 0.6;
+            CLAW_OPEN_POS = 0.45,
+            CLAW_CLOSE_POS = 0.75;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
