@@ -28,12 +28,13 @@ public class Globals {
             PITCH_TICKS_PER_REVOLUTION = 3895.9,
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
 
-            GAMEPAD_TRIGGER_THRESHOLD = 0.2;
+            GAMEPAD_TRIGGER_THRESHOLD = 0.2,
+            A;
 
     public static int
-            SIXTY_DEGREE_TICKS = 400,
-            PITCH_LOW_DEGREE_TICKS = 600, //guesses at this point
-            PITCH_MID_DEGREE_TICKS = 500,
+            SIXTY_DEGREE_TICKS = 0,
+            PITCH_LOW_DEGREE_TICKS = 800, //guesses at this point
+            PITCH_MID_DEGREE_TICKS = 400,
 
             INTAKE_SLIDE_EXTENDO_TELEOP = 500,
 
@@ -43,11 +44,16 @@ public class Globals {
 
             LIFT_MEDIUM_POSITION_PITCHING_TICKS = 580,
             LIFT_LOW_POSITION_PITCHING_TICKS = 300,
-            LIFT_HITS_WHILE_PITCHING_THRESHOLD = 200;
+            LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
 
+            S; // the side multiplier to change sides for autonomous
 
     public static double degreestoTicksPitchMotor(double degrees){
         return degrees * PITCH_TICKS_PER_DEGREES;
+    }
+
+    public static double ticksToDegreePitchMotor (double ticks){
+        return ticks/PITCH_TICKS_PER_DEGREES;
     }
 
     // Inverse Kinematic Constants

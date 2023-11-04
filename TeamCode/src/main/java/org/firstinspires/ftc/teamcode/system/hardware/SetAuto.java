@@ -10,13 +10,15 @@ public class SetAuto {
     public static void setBlueAuto() {
         BLUE_AUTO = true;
         RED_AUTO = false;
+        S = -1; // multiply turrets
+        A = Math.toRadians(180); // flip rr coordinates
     }
 
     public static void setRedAuto() {
         BLUE_AUTO = false;
         RED_AUTO = true;
     }
-
+    /*
     public static void setFrontAuto() {
         FRONT_AUTO = true;
         BACK_AUTO = false;
@@ -26,4 +28,5 @@ public class SetAuto {
         FRONT_AUTO = false;
         BACK_AUTO = false;
     }
+     */
 }
