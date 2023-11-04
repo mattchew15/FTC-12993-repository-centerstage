@@ -76,6 +76,7 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         inputToCb(input);
+        //Core.flip(input, input, 0);
 
         //Average pixel value of each Cb channel.
         avg1 = (int) Core.mean(region1Cb).val[0];
