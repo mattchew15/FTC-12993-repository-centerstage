@@ -37,7 +37,7 @@ public class OuttakeSubsystem {
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
             MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            PIVOT_READY_POS = 0.5,
+            PIVOT_READY_POS = 0.502,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
             PIVOT_DIAGONAL_RIGHT_POS = 0.369,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.068,

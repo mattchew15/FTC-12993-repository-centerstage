@@ -27,15 +27,15 @@ public class IntakeSubsystem {
             INTAKE_ARM_MIDDLE_POS = 0.48,
             INTAKE_ARM_BASE_POS = 0.5;
     public static double
-            INTAKE_FLAP_CLOSE_POS = 0.58,
-            INTAKE_FLAP_CLOSEHARD_POS = 0.59,
-            INTAKE_FLAP_OPEN_POS = 0.3;
+            INTAKE_FLAP_CLOSE_POS = 0.6,
+            INTAKE_FLAP_CLOSEHARD_POS = 0.62,
+            INTAKE_FLAP_OPEN_POS = 0.38;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
             INTAKE_CLIP_OPEN_POS = 0.75;
     public static double
-            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.6,
-            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.3;
+            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.58,
+            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.36;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
 
-@Autonomous(name = "Back Red Cycle Auto", group = "Autonomous")
+@Autonomous(name = "Back Blue Cycle Auto", group = "Autonomous")
 public class Back_BLUE_Cycle extends LinearOpMode {
 
     // class members
