@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -29,7 +27,7 @@ public class IntakeSubsystem {
     public static double
             INTAKE_FLAP_CLOSE_POS = 0.6,
             INTAKE_FLAP_CLOSEHARD_POS = 0.62,
-            INTAKE_FLAP_OPEN_POS = 0.38;
+            INTAKE_FLAP_OPEN_POS = 0.365;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
             INTAKE_CLIP_OPEN_POS = 0.75;
@@ -85,8 +83,7 @@ public class IntakeSubsystem {
     }
 
     public void intakeHardwareSetup(){
-        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     // handles all of the reads in this class
@@ -114,7 +111,7 @@ public class IntakeSubsystem {
 
     public void intakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
         intakeSlideTarget = targetRotations;
-        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         IntakeSlideMotor.setPower(-output);
     }
@@ -122,7 +119,7 @@ public class IntakeSubsystem {
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
-        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
@@ -135,7 +132,7 @@ public class IntakeSubsystem {
     }
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
-        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 

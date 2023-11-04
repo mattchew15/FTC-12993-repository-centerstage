@@ -51,11 +51,11 @@ public class PIDMotorTest extends LinearOpMode {
 
                 GlobalTimer = new ElapsedTime(System.nanoTime());
                 GlobalTimer.reset();
-                intakeSubsystem.intakeHardwareSetup();
+               // intakeSubsystem.intakeHardwareSetup();
                 outtakeSubsystem.hardwareSetup();
                 driveBase.drivebaseSetup();
                 outtakeSubsystem.encodersReset();
-                intakeSubsystem.intakeSlideMotorEncodersReset(); // makesure its dcEX not dcmotor :(((
+              //  intakeSubsystem.intakeSlideMotorEncodersReset(); // makesure its dcEX not dcmotor :(((
 
 
             while (opModeIsActive()) {
@@ -88,7 +88,7 @@ public class PIDMotorTest extends LinearOpMode {
                 }else if (gamepad1.dpad_right){
                     intakeSubsystem.intakeSlideInternalPID(100,0.7);
                 }
-                //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
+                intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);

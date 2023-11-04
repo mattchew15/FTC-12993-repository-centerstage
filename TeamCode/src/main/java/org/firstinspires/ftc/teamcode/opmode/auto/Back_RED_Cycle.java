@@ -15,9 +15,11 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
+import static org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline.BLUE_POSITION;
 
 @Autonomous(name = "Back Red Cycle Auto", group = "Autonomous")
 public class Back_RED_Cycle extends LinearOpMode {
@@ -27,15 +29,15 @@ public class Back_RED_Cycle extends LinearOpMode {
     double autoTimer;
 
     int numCycles;
-    int spikePosition; // either 1,2 or 3 - lotus change
-    
+
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     CameraHardware cameraHardware = new CameraHardware();
     SampleMecanumDrive drive;
     //Accessories
     LoopTime loopTime = new LoopTime();
-    
+
+
     enum AutoState {
         DELAY,
         PRELOAD_DRIVE,
@@ -56,14 +58,31 @@ public class Back_RED_Cycle extends LinearOpMode {
 
 
     AutoState currentState;
-    
-      
+
+    Pose2d startPose;
+
+    Trajectory PreloadDrive1, PreloadDrive2, PreloadDrive3;
+
+
     // Define our start pose
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        drive = new SampleMecanumDrive(hardwareMap); // road drive class
         SetAuto.setRedAuto();
+
+        startPose = new Pose2d(StartPoseX,StartPoseY*S,StartPoseHeading*S+A);
+
+        PreloadDrive1 = drive.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d( PreloadPose1X,PreloadPose1Y*S, PreloadPose1Heading*S+A))
+                .build();
+        PreloadDrive2 = drive.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(PreloadPose2X,PreloadPose2Y*S, PreloadPose2Heading*S+A))
+                .build();
+        PreloadDrive3 = drive.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(PreloadPose3X,PreloadPose3Y*S,PreloadPose3Heading*S+A))
+                .build();
 
         // initialize hardware
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -73,11 +92,10 @@ public class Back_RED_Cycle extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         cameraHardware.initWebcam(hardwareMap);
-        drive = new SampleMecanumDrive(hardwareMap); // road drive class
 
 
         // out cone stack position
-        Pose2d startPose = new Pose2d(StartPoseX,StartPoseY*S,StartPoseHeading*S+A);
+
 
         // functions runs on start
         
@@ -85,16 +103,6 @@ public class Back_RED_Cycle extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         // trajectories that aren't changing should all be here
-
-        Trajectory PreloadDrive1 = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d( PreloadPose1X,PreloadPose1Y*S, PreloadPose1Heading*S+A))
-                .build();
-        Trajectory PreloadDrive2 = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(PreloadPose2X,PreloadPose2Y*S, PreloadPose2Heading*S+A))
-                .build();
-        Trajectory PreloadDrive3 = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(PreloadPose3X,PreloadPose3Y*S,PreloadPose3Heading*S+A))
-                .build();
 
         while (!isStarted()) { // initialization loop
             outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.CLOSE);
@@ -135,6 +143,7 @@ public class Back_RED_Cycle extends LinearOpMode {
 
             autoSequence();
 
+
             //xPosition = poseEstimate.getX();              // could put the x,y and heading into globals
             //yPosition = poseEstimate.getY();
             //headingPosition = poseEstimate.getHeading();
@@ -154,7 +163,16 @@ public class Back_RED_Cycle extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 3000){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
-                    //drive.followTrajectoryAsync(PreloadDrive);
+                    if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                        drive.followTrajectoryAsync(PreloadDrive1);
+                        telemetry.addLine("left");
+                    } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                        drive.followTrajectoryAsync(PreloadDrive2);
+                        telemetry.addLine("center");
+                    } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                        drive.followTrajectoryAsync(PreloadDrive3);
+                        telemetry.addLine("right");
+                    }
                 }
                 break;
             case PRELOAD_DRIVE:
@@ -167,15 +185,16 @@ public class Back_RED_Cycle extends LinearOpMode {
                 break;
 
             case OUT_AFTER_PRELOAD_DRIVE:
-                if (spikePosition == 1){
+                if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                     intakeSubsystem.intakeSlideTo(100, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);
-                } else if (spikePosition == 2){
+                } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                     intakeSubsystem.intakeSlideTo(200, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);
-                } else if (spikePosition == 3){
+                    telemetry.addLine();
+                } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                     intakeSubsystem.intakeSlideTo(300, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);

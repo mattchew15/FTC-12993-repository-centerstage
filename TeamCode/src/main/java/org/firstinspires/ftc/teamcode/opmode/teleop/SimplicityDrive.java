@@ -91,6 +91,7 @@ public class SimplicityDrive extends LinearOpMode {
             intakeSubsystem.intakeHardwareSetup();
             outtakeSubsystem.hardwareSetup();
             outtakeSubsystem.encodersReset();
+
             intakeSubsystem.intakeSlideMotorEncodersReset();
             driveBase.drivebaseSetup();
             pitching = false; // are we pitching initially? probably
@@ -103,6 +104,8 @@ public class SimplicityDrive extends LinearOpMode {
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
+
 
                 outtakeSequence();
 
@@ -118,6 +121,9 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addLine("");
                 telemetry.addData("IntakeStackHeight", intakeStackToggle.CycleState);
                 telemetry.addData("MiniTurretPosition", miniTurretPositionToggle.CycleState);
+                telemetry.addLine("");
+                telemetry.addData("Pitching?", pitching);
+                telemetry.addLine("");
 
                 telemetry.update();
                 //clears the cache at the end of the loop
@@ -134,12 +140,13 @@ public class SimplicityDrive extends LinearOpMode {
                 liftTarget = 0; // this isn't the lift target in this state but rather for when we are fine adjusting lift
                 pitchTarget = SIXTY_DEGREE_TICKS;
 
-                intakeClipHoldorNotHold(-3);
-                intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.CLOSE);
+                intakeClipHoldorNotHold(-5);
+                if (GlobalTimer.milliseconds() - sequenceTimer > 200){
+                    intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.CLOSE);
+                }
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
-                pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
 
                 if (gamepad1.right_bumper) {
                     outtakeState = OuttakeState.INTAKE;
@@ -189,9 +196,9 @@ public class SimplicityDrive extends LinearOpMode {
             case INTAKE_TO_TRANSFER:
 
                 //intakeSubsystem.intakeSpin(-0.7); // helps the slides go in cos of bottom roller?
-                intakeClipHoldorNotHold(-3);
+                intakeClipHoldorNotHold(-8);
 
-                if (intakeSubsystem.intakeSlidePosition < 7 && GlobalTimer.milliseconds() - sequenceTimer > 150){ // could tune this more finely
+                if (intakeSubsystem.intakeSlidePosition < 5 && GlobalTimer.milliseconds() - sequenceTimer > 150){ // could tune this more finely
                     outtakeState = OuttakeState.TRANSFER_START;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -201,7 +208,7 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.TRANSFER);
                 outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.TRANSFER);
                 intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.CLOSE_HARD);
-                intakeSubsystem.intakeSpin(0.7);
+                intakeSubsystem.intakeSpin(0);
                 if (GlobalTimer.milliseconds() - sequenceTimer > 300) {
                     outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.CLOSE);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 600){
@@ -341,18 +348,19 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     public void intakeClipHoldorNotHold(int slideToPosition){
-        if (intakeSubsystem.intakeSlidePosition < 5) {
+        if (intakeSubsystem.intakeSlidePosition < 2) {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
             intakeSubsystem.intakeSlideMotorRawControl(0);
         } else {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
             intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+            telemetry.addLine("We are here");
         }
     }
 
     public void readyOuttake(){
         outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1); // internalPID uses less power draw - integral term is better
-        outtakeSubsystem.liftToInternalPID(0,1);
+        outtakeSubsystem.liftToInternalPID(-4,1);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT); // need to create another method to point to backdrop so i don't need to pass through zero each time
         outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.READY);

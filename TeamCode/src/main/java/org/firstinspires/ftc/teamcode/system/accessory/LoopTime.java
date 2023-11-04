@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class LoopTime {
+public class LoopTime { // Do you need to cache 2 variables instead of just time.reset()
     double dt;
     double prev_time;
 

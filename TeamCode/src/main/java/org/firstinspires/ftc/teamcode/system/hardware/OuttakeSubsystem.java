@@ -46,11 +46,11 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             WRIST_READY_POS = 0.285,
-            WRIST_TRANSFER_POS = 0.287,
+            WRIST_TRANSFER_POS = 0.283,
             WRIST_SCORE_POS = 0.55;
     public static double
             CLAW_OPEN_POS = 0.45,
-            CLAW_CLOSE_POS = 0.75;
+            CLAW_CLOSE_POS = 0.74;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -192,7 +192,7 @@ public class OuttakeSubsystem {
             return false;
         }
     }
-    public boolean liftTargetReachedR() // Simple version than the above one
+    public boolean liftTargetReachedR() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(liftTarget - liftPosition) < LIFT_THRESHOLD_DISTANCE);
     }
@@ -205,7 +205,7 @@ public class OuttakeSubsystem {
             return false;
         }
     }
-    public boolean pitchTargetReachedR() // Simple version than the above one
+    public boolean pitchTargetReachedR() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(pitchTarget - pitchPosition) < PITCH_THRESHOLD_DISTANCE);
     }
@@ -235,7 +235,7 @@ public class OuttakeSubsystem {
         }
     }
 
-    public static double degreestoTicksMiniTurret(double degrees){
+    public static double degreesToTicksMiniTurret(double degrees){
         return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
@@ -257,7 +257,7 @@ public class OuttakeSubsystem {
     }
 
     public void miniTurretPointToBackdrop(double robotDegrees){
-        MiniTurretServo.setPosition(degreestoTicksMiniTurret(robotDegrees));
+        MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
     }
 
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out
