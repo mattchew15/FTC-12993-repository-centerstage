@@ -26,17 +26,17 @@ public class OuttakeSubsystem {
             ClawServo;
 
     public static double
-            ARM_READY_POS = 0.93,
-            ARM_TRANSFER_POS = 0.9,
-            ARM_PREEXTEND_POS = 0.87,
+            ARM_READY_POS = 0.92,
+            ARM_TRANSFER_POS = 0.82,
+            ARM_PREEXTEND_POS = 0.78,
             ARM_SCORE_DOWN_POS = 0.22,
-            ARM_SCORE_UP_POS = 0.07;
+            ARM_SCORE_UP_POS = 0.16;
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.489,
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
             MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            PIVOT_READY_POS = 0.53,
+            PIVOT_READY_POS = 0.535,
             PIVOT_DIAGONAL_LEFT_POS = 0.657,
             PIVOT_DIAGONAL_RIGHT_POS = 0.399,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.098,

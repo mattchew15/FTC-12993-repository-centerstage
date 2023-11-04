@@ -25,7 +25,7 @@ public class IntakeSubsystem {
             INTAKE_ARM_2_POS,
             INTAKE_ARM_1_POS = 0.5;
     public static double
-            INTAKE_FLAP_CLOSE_POS = 0.57,
+            INTAKE_FLAP_CLOSE_POS = 0.58,
             INTAKE_FLAP_OPEN_POS = 0.3;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
