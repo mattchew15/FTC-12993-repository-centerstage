@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -27,10 +28,10 @@ public class OuttakeSubsystem {
 
     public static double
             ARM_READY_POS = 0.93,
-            ARM_TRANSFER_POS = 0.9,
-            ARM_PREEXTEND_POS = 0.87,
+            ARM_TRANSFER_POS = 0.86,
+            ARM_PREEXTEND_POS = 0.78,
             ARM_SCORE_DOWN_POS = 0.22,
-            ARM_SCORE_UP_POS = 0.07;
+            ARM_SCORE_UP_POS = 0.16;
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.489,
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
@@ -44,8 +45,8 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_LEFT_POS = 0.808,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.25;
     public static double
-            WRIST_READY_POS = 0.27,
-            WRIST_TRANSFER_POS = 0.27,
+            WRIST_READY_POS = 0.285,
+            WRIST_TRANSFER_POS = 0.287,
             WRIST_SCORE_POS = 0.55;
     public static double
             CLAW_OPEN_POS = 0.35,
@@ -57,7 +58,7 @@ public class OuttakeSubsystem {
     PID liftPID = new PID(LiftKp,LiftKi,LiftKd,LiftIntegralSumLimit,LiftKf);
     PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,PitchFeedforward);
 
-    final double pitchthresholdDistance = degreestoTicksPitchMotor(2);
+    final double pitchthresholdDistance = degreestoTicksPitchMotor(2); // could change this to a number in ticks
     final double liftthresholdDistance = 22;
 
     public int pitchTarget;
@@ -125,6 +126,7 @@ public class OuttakeSubsystem {
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
 
+        PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //OuttakeArmServo.setDirection(Servo.Direction.REVERSE);
         //turretPosition = 0; // these need to be initialized on setup or you will get null error??
         //liftPosition = 0;
@@ -132,8 +134,8 @@ public class OuttakeSubsystem {
     }
 
     public void outtakeReads(){
-        pitchPosition = PitchMotor.getCurrentPosition();
-        liftPosition = LiftMotor.getCurrentPosition();
+        pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
+        liftPosition = -LiftMotor.getCurrentPosition();
 
         //other things like distance sensors etc
     }
@@ -157,7 +159,7 @@ public class OuttakeSubsystem {
         liftTarget = rotations;
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        LiftMotor.setPower(output);
+        LiftMotor.setPower(-output);
     }
     public void liftToInternalPID(int rotations, double maxSpeed){
         liftTarget = rotations;
@@ -165,23 +167,25 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotor.setPower(maxSpeed);
     }
-
+    /*
     public void pitchTo(int targetRotations, double motorPosition, double maxSpeed){
         pitchTarget = targetRotations;
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         PitchMotor.setPower(output);
     }
+
+     */
     public void pitchToInternalPID(int rotations, double maxSpeed){
         pitchTarget = rotations;
         //telemetry.addData("lifttarget", liftTarget);
-        PitchMotor.setTargetPosition(liftTarget);
+        PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         PitchMotor.setPower(maxSpeed);
     }
 
     public boolean liftTargetReached(){
-        if (liftPosition > (liftTarget - liftthresholdDistance) && liftPosition < (liftTarget+liftthresholdDistance)){ //liftthresholdDistance
+        if (liftPosition > (liftTarget - liftthresholdDistance) && liftPosition < (liftTarget+liftthresholdDistance)){ //liftthresholdDistance, simplify with Math.abs
             return true;
         }
         else{
@@ -227,7 +231,7 @@ public class OuttakeSubsystem {
         return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
-    public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used
+    public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);

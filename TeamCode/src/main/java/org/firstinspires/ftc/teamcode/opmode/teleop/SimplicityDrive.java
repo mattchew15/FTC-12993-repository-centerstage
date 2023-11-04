@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,6 +15,10 @@ import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.graphics.Path;
+import android.provider.Settings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @TeleOp(name = "SimplicityDrive")
@@ -26,8 +31,8 @@ public class SimplicityDrive extends LinearOpMode {
 
     //Accessories
     LoopTime loopTime = new LoopTime();
-    ToggleUpDown intakeStackToggle = new ToggleUpDown(4, 0); // starting cycle state = 0
-    ToggleUpDown miniTurretPositionToggle = new ToggleUpDown(2, 1); // one starts at the centre
+    ToggleUpDown intakeStackToggle = new ToggleUpDown(3, 0); // starting cycle state should = 0
+    ToggleUpDown miniTurretPositionToggle = new ToggleUpDown(3, 0); // one starts at the centre
     Toggle pivotFlipToggle = new Toggle();
 
     ElapsedTime GlobalTimer;
@@ -54,18 +59,26 @@ public class SimplicityDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         /*
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
          */
 
-        StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap,null,null); // set last 2 values to null?
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
+               module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+             } //
+
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
         outtakeState = OuttakeState.READY;
 
+        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncVels = new ArrayList<>(); // idk what this is for but this is what sample mecanum drive does to set localizer
+
+        StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap,lastTrackingEncPositions,lastTrackingEncVels);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -75,8 +88,11 @@ public class SimplicityDrive extends LinearOpMode {
             sequenceTimer = GlobalTimer.milliseconds(); // sets up timer for caching
             intakeSubsystem.intakeHardwareSetup();
             outtakeSubsystem.hardwareSetup();
+            outtakeSubsystem.encodersReset();
+            intakeSubsystem.intakeSlideMotorEncodersReset();
             driveBase.drivebaseSetup();
             pitching = false; // are we pitching initially? probably
+            miniTurretPositionToggle.CycleState = 2;
 
             while (opModeIsActive()) {
 
@@ -93,8 +109,13 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchPosition);
+                telemetry.addData("PitchPositionDegrees", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
                 telemetry.addLine("");
                 telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
+                telemetry.addData("Colour Sensor", intakeSubsystem.colourSensorValue);
+                telemetry.addLine("");
+                telemetry.addData("IntakeStackHeight", intakeStackToggle.CycleState);
+                telemetry.addData("MiniTurretPosition", miniTurretPositionToggle.CycleState);
 
                 telemetry.update();
                 //clears the cache at the end of the loop
@@ -117,12 +138,18 @@ public class SimplicityDrive extends LinearOpMode {
                 setIntakeArmHeight();
                 pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
 
-                if (gamepad1.right_bumper || gamepad2.b) {
+                if (gamepad1.right_bumper) {
                     outtakeState = OuttakeState.INTAKE;
                 }
                 else if (gamepad1.left_bumper) {
                     outtakeState = OuttakeState.INTAKE_EXTENDO;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                }
+
+                if (gamepad1.b||gamepad2.b){
+                    intakeSubsystem.intakeSpin(-1);
+                } else {
+                    intakeSubsystem.intakeSpin(0);
                 }
 
                 break;
@@ -132,7 +159,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 setIntakeArmHeight();
 
-                if (gamepad2.right_trigger > 0.2) { // or a sensor detects this
+                if (gamepad2.right_trigger > 0.2 || intakeSubsystem.intakeColourSensorDetect()) { // or a sensor detects this
                     outtakeState = OuttakeState.INTAKE_TO_TRANSFER; //reverses intake
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -145,7 +172,7 @@ public class SimplicityDrive extends LinearOpMode {
                     intakeSubsystem.intakeSlideTo(INTAKE_SLIDE_EXTENDO_TELEOP, intakeSubsystem.intakeSlidePosition, 1);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 200){
                         intakeSubsystem.intakeSpin(1);
-                        if (gamepad2.right_trigger > 0.2) { // or a sensor detects this
+                        if (gamepad2.right_trigger > 0.2 || intakeSubsystem.intakeColourSensorDetect()) { // or a sensor detects this
                             outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                             sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                         }
@@ -155,10 +182,10 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE_TO_TRANSFER:
 
-                intakeSubsystem.intakeSpin(-0.7); // helps the slides go in cos of bottom roller?
+                //intakeSubsystem.intakeSpin(-0.7); // helps the slides go in cos of bottom roller?
                 intakeClipHoldorNotHold(-3);
 
-                if (intakeSubsystem.intakeSlidePosition < 2 && GlobalTimer.milliseconds() - sequenceTimer > 150){ // could tune this more finely
+                if (intakeSubsystem.intakeSlidePosition < 7 && GlobalTimer.milliseconds() - sequenceTimer > 150){ // could tune this more finely
                     outtakeState = OuttakeState.TRANSFER_START;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -166,13 +193,16 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.TRANSFER);
-
-                if (GlobalTimer.milliseconds() - sequenceTimer > 50) {
+                outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.TRANSFER);
+                intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.CLOSE_HARD);
+                intakeSubsystem.intakeSpin(0.7);
+                if (GlobalTimer.milliseconds() - sequenceTimer > 300) {
                     outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.CLOSE);
-                    if (GlobalTimer.milliseconds() - sequenceTimer > 300){
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 700){
                         outtakeState = OuttakeState.TRANSFER_END;
                         sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                         intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.OPEN);
+
                     }
                 }
                 break;
@@ -180,6 +210,8 @@ public class SimplicityDrive extends LinearOpMode {
             case TRANSFER_END:
                 outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.TRANSFER);
                 if (GlobalTimer.milliseconds() - sequenceTimer > 30){
+                    intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.OPEN);
+
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.PRE_EXTEND);
                     if ((liftTarget != 0 || pitchTarget!=0) && GlobalTimer.milliseconds() - sequenceTimer > 150) { // basically if we have selected a scoring position
                         outtakeState = OuttakeState.OUTTAKE_ADJUST;
@@ -188,13 +220,20 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case OUTTAKE_ADJUST:
-                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
-                outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.SCORE);
-
-                outtakeSubsystem.liftTo(liftTarget, outtakeSubsystem.liftPosition,1);
-
+                if (GlobalTimer.milliseconds() - sequenceTimer > 100){
+                    outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
+                }
+                if (GlobalTimer.milliseconds() - sequenceTimer > 300){
+                    outtakeSubsystem.liftTo(liftTarget, outtakeSubsystem.liftPosition,1);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 400){
+                        outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.SCORE);
+                        miniTurretAdjust();
+                    }
+                }
                 if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
+                } else{
+                    outtakeSubsystem.pitchToInternalPID(200,1);
                 }
 
                 pivotAdjust();
@@ -204,11 +243,12 @@ public class SimplicityDrive extends LinearOpMode {
                 if (gamepad1.right_bumper) {
                     outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.OPEN);
                     sequenceTimer = GlobalTimer.milliseconds();// reset timer
+                    outtakeState = OuttakeState.DEPOSIT;
                 }
                 break;
 
             case DEPOSIT:  // idk what this case does
-                if (GlobalTimer.milliseconds() - sequenceTimer > 300){ // 300 ms wait after dropping
+                if (GlobalTimer.milliseconds() - sequenceTimer > 400){ // 300 ms wait after dropping
                     outtakeState = OuttakeState.RETURN;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -218,18 +258,25 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeFlapServoState(IntakeSubsystem.IntakeFlapServoState.OPEN);
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1);
                 intakeSubsystem.intakeSlideInternalPID(-3,1);
-                if (GlobalTimer.milliseconds() - sequenceTimer > 50 && intakeSubsystem.intakeSlideTargetReached()){ // make sure the flap is open
-                    outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
-                    outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.OPEN);
-                }
+                outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
+
                 if (!outtakeSubsystem.pitchTargetReached()){
                     outtakeSubsystem.liftTo(LIFT_HITS_WHILE_PITCHING_THRESHOLD, outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
+                    outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.SCORE);
                 } else {
                     outtakeSubsystem.liftToInternalPID(0,1);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 50 && intakeSubsystem.intakeSlideTargetReached()){ // make sure the flap is open
+                        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+                        outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.OPEN);
+                        outtakeSubsystem.wristServoState(OuttakeSubsystem.WristServoState.READY);
+                    }
                 }
 
                 if (outtakeSubsystem.liftPosition < 5){
                         outtakeState = OuttakeState.READY; //:)
+                        sequenceTimer = GlobalTimer.milliseconds();
                 }
 
                 intakeStackToggle.CycleState = 0; // sets the stack height to default
@@ -258,12 +305,13 @@ public class SimplicityDrive extends LinearOpMode {
 
         // this happens constantly throughout the loop
         if ((gamepad2.b || gamepad1.b) && (outtakeState != OuttakeState.READY)){
+            intakeSubsystem.intakeSpin(-1);
             outtakeState = OuttakeState.RETURN; // if b is pressed at any state then return to ready
             pivotFlipToggle.ToggleMode = false; // returning should put thing like this to default
             intakeStackToggle.CycleState = 0;
             miniTurretPositionToggle.CycleState = 1; // reset turret to straight
         }
-        if (gamepad2.options){ // shouldn't need a toggle function for this
+        if (gamepad2.share){ // shouldn't need a toggle function for this
             outtakeState = OuttakeState.MANUAL_ENCODER_RESET;
         }
         liftPositionChange();
@@ -272,27 +320,17 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void setIntakeArmHeight(){ // Change this shit that lotus messed up
         intakeStackToggle.cycleToggleUpDown(gamepad2.right_bumper,gamepad2.left_bumper);
-        switch (intakeStackToggle.CycleState) {
-            case 0:
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.HEIGHT_1);
-                break;
-            case 1:
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.HEIGHT_2);
-                break;
-            case 2:
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.HEIGHT_3);
-                break;
-            case 3:
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.HEIGHT_4);
-                break;
-            case 4:
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.HEIGHT_5);
-                break;
+        if (intakeStackToggle.CycleState == 1){
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+        } else if (intakeStackToggle.CycleState == 2){
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
+        } else if (intakeStackToggle.CycleState == 3){
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
         }
     }
 
     public void intakeClipHoldorNotHold(int slideToPosition){
-        if (intakeSubsystem.intakeSlidePosition > -5) {
+        if (intakeSubsystem.intakeSlidePosition < 5) {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
             intakeSubsystem.intakeSlideMotorRawControl(0);
         } else {
@@ -354,11 +392,11 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     void miniTurretAdjust(){
-        if (miniTurretPositionToggle.CycleState == 0){
+        if (miniTurretPositionToggle.CycleState == 1){
             outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.DIAGONAL_LEFT);
-        } else if (miniTurretPositionToggle.CycleState == 1) {
-            outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
         } else if (miniTurretPositionToggle.CycleState == 2) {
+            outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+        } else if (miniTurretPositionToggle.CycleState == 3) {
             outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.DIAGONAL_RIGHT);
         }
     }

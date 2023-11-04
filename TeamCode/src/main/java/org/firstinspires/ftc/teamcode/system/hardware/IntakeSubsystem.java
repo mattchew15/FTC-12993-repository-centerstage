@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,15 +19,15 @@ public class IntakeSubsystem {
             IntakeArmServo,
             IntakeFlapServo,
             IntakeClipServo;
+    public ColorSensor IntakeColourSensor;
 
     public static double
-            INTAKE_ARM_5_POS = 0.43,
-            INTAKE_ARM_4_POS,
-            INTAKE_ARM_3_POS = 0.48,
-            INTAKE_ARM_2_POS,
-            INTAKE_ARM_1_POS = 0.5;
+            INTAKE_ARM_TOP_POS = 0.43,
+            INTAKE_ARM_MIDDLE_POS = 0.48,
+            INTAKE_ARM_BASE_POS = 0.5;
     public static double
-            INTAKE_FLAP_CLOSE_POS = 0.57,
+            INTAKE_FLAP_CLOSE_POS = 0.58,
+            INTAKE_FLAP_CLOSEHARD_POS = 0.59,
             INTAKE_FLAP_OPEN_POS = 0.3;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
@@ -36,16 +38,15 @@ public class IntakeSubsystem {
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeArmServoState {
-        HEIGHT_5,
-        HEIGHT_4,
-        HEIGHT_3,
-        HEIGHT_2,
-        HEIGHT_1
+        TOP,
+        MIDDLE,
+        BASE
     }
 
     public enum IntakeFlapServoState {
         CLOSE,
-        OPEN
+        OPEN,
+        CLOSE_HARD
     }
 
     public enum IntakeClipServoState {
@@ -57,18 +58,19 @@ public class IntakeSubsystem {
 
     // define slide position and target as class members - intake slide position can be stored so its only read once
     public double intakeSlidePosition;
-    int intakeSlideTarget;
+    public int intakeSlideTarget;
+    public double colourSensorValue;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
     public void initIntake(HardwareMap hwMap){
-        IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSLideMotor");
+        IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSlideMotor");
         IntakeMotor = hwMap.get(DcMotorEx.class, "IntakeMotor");
 
         IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
         IntakeClipServo = hwMap.get(ServoImplEx.class,"IntakeClipS");
         IntakeFlapServo = hwMap.get(ServoImplEx.class,"IntakeFlapS");
-
+        IntakeColourSensor = hwMap.get(ColorSensor.class,"IntakeColourSensor");
     }
 
     public void intakeHardwareSetup(){
@@ -78,11 +80,20 @@ public class IntakeSubsystem {
 
     // handles all of the reads in this class
     public void intakeReads(){
-        intakeSlidePosition = IntakeSlideMotor.getCurrentPosition();
+        intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
+        colourSensorValue = IntakeColourSensor.alpha();
     }
 
     public void intakeSlideMotorEncodersReset(){
-        IntakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        IntakeSlideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public boolean intakeColourSensorDetect(){
+        if (colourSensorValue > 200){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // methods should be camel caps
@@ -94,7 +105,7 @@ public class IntakeSubsystem {
         intakeSlideTarget = targetRotations;
         IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        IntakeSlideMotor.setPower(output);
+        IntakeSlideMotor.setPower(-output);
     }
 
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
@@ -123,20 +134,14 @@ public class IntakeSubsystem {
 
     public void intakeArmServoState(IntakeArmServoState state) {
         switch (state) {
-            case HEIGHT_5:
-                IntakeArmServo.setPosition(INTAKE_ARM_5_POS);
+            case TOP:
+                IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
                 break;
-            case HEIGHT_4:
-                IntakeArmServo.setPosition(INTAKE_ARM_4_POS);
+            case MIDDLE:
+                IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
                 break;
-            case HEIGHT_3:
-                IntakeArmServo.setPosition(INTAKE_ARM_3_POS);
-                break;
-            case HEIGHT_2:
-                IntakeArmServo.setPosition(INTAKE_ARM_2_POS);
-                break;
-            case HEIGHT_1:
-                IntakeArmServo.setPosition(INTAKE_ARM_1_POS);
+            case BASE:
+                IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;
         }
     }
@@ -148,6 +153,9 @@ public class IntakeSubsystem {
                 break;
             case OPEN:
                 IntakeFlapServo.setPosition(INTAKE_FLAP_OPEN_POS);
+                break;
+            case CLOSE_HARD:
+                IntakeFlapServo.setPosition(INTAKE_FLAP_CLOSEHARD_POS);
                 break;
         }
     }
