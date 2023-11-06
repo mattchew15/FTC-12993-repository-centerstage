@@ -6,9 +6,13 @@ import com.acmerobotics.dashboard.config.Config;
 public class AutoGlobals {
 
     public static double
-        StartPoseY = -59,
-        StartPoseX = 12,
-        StartPoseHeading = 0,
+        StartPoseYBackdrop = -59,
+        StartPoseXBackdrop = 12,
+        StartPoseHeadingBackdrop = 0,
+
+        StartPoseYAudience = -59,
+        StartPoseXAudience = -38,
+        StartPoseHeadingAudience = 0,
 
         PreloadPose1X = 35,
         PreloadPose1Y = -32,

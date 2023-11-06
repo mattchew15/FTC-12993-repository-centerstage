@@ -8,18 +8,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.opmode.teleop.SimplicityDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline.BLUE_POSITION;
+import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 @Autonomous(name = "Back Red Cycle Auto", group = "Autonomous")
 public class Back_RED_Cycle extends LinearOpMode {
@@ -72,7 +71,7 @@ public class Back_RED_Cycle extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap); // road drive class
         SetAuto.setRedAuto();
 
-        startPose = new Pose2d(StartPoseX,StartPoseY*S,StartPoseHeading*S+A);
+        startPose = new Pose2d(StartPoseXBackdrop, StartPoseYBackdrop *S, StartPoseHeadingBackdrop *S+A);
 
         PreloadDrive1 = drive.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d( PreloadPose1X,PreloadPose1Y*S, PreloadPose1Heading*S+A))
@@ -163,13 +162,13 @@ public class Back_RED_Cycle extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 3000){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
-                    if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                    if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                         drive.followTrajectoryAsync(PreloadDrive1);
                         telemetry.addLine("left");
-                    } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                         drive.followTrajectoryAsync(PreloadDrive2);
                         telemetry.addLine("center");
-                    } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                         drive.followTrajectoryAsync(PreloadDrive3);
                         telemetry.addLine("right");
                     }
@@ -185,16 +184,16 @@ public class Back_RED_Cycle extends LinearOpMode {
                 break;
 
             case OUT_AFTER_PRELOAD_DRIVE:
-                if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                     intakeSubsystem.intakeSlideTo(100, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);
-                } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                     intakeSubsystem.intakeSlideTo(200, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);
                     telemetry.addLine();
-                } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                     intakeSubsystem.intakeSlideTo(300, intakeSubsystem.intakeSlidePosition,1);
                     outtakeSubsystem.liftTo(140,outtakeSubsystem.liftPosition,1);
                     outtakePreload(poseEstimate);

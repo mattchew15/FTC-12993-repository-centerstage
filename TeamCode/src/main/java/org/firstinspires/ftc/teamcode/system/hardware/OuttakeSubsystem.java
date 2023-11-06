@@ -28,7 +28,7 @@ public class OuttakeSubsystem {
 
     public static double
             ARM_READY_POS = 0.93,
-            ARM_TRANSFER_POS = 0.86,
+            ARM_TRANSFER_POS = 0.85,
             ARM_PREEXTEND_POS = 0.78,
             ARM_SCORE_DOWN_POS = 0.22,
             ARM_SCORE_UP_POS = 0.16;
@@ -46,10 +46,10 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             WRIST_READY_POS = 0.285,
-            WRIST_TRANSFER_POS = 0.283,
+            WRIST_TRANSFER_POS = 0.289,
             WRIST_SCORE_POS = 0.55;
     public static double
-            CLAW_OPEN_POS = 0.45,
+            CLAW_OPEN_POS = 0.463,
             CLAW_CLOSE_POS = 0.74;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;

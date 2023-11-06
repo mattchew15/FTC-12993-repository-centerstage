@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.opmode.teleop.SimplicityDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
@@ -77,7 +76,7 @@ public class Back_BLUE_Cycle extends LinearOpMode {
 
 
         // out cone stack position
-        Pose2d startPose = new Pose2d(StartPoseX,StartPoseY*S,StartPoseHeading*S+A);
+        Pose2d startPose = new Pose2d(StartPoseXBackdrop, StartPoseYBackdrop *S, StartPoseHeadingBackdrop *S+A);
 
         // functions runs on start
 
