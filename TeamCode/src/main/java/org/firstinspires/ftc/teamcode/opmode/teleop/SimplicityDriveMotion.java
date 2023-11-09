@@ -1,30 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.qualcomm.hardware.lynx.LynxModule;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
+
 import org.firstinspires.ftc.teamcode.system.accessory.FullStateFeedback;
-import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
-import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
-import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpDown;
-import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpOrDown;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
-import android.graphics.Path;
-import android.provider.Settings;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
+@Config
 @TeleOp(name = "SimplicityDrive")
 public class SimplicityDriveMotion extends LinearOpMode {
 
@@ -34,9 +23,9 @@ public class SimplicityDriveMotion extends LinearOpMode {
         END
     }
     // Full state feedback
-    double kPos = 0.01, kVel = 0.01;
+    public static double kPos = 0.01, kVel = 0.01;
     // Feed forward
-    double kP = 0.1, kV = 0.01, kA = 0;
+    public static double kP = 0.1, kV = 0.01, kA = 0;
     //Subsystems
     DriveBase driveBase = new DriveBase();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
