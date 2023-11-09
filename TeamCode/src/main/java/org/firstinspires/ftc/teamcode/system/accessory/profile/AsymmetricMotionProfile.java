@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode.system.accessory.profile;
 
 import androidx.annotation.NonNull;
 
-public class MotionProfile {
+public class AsymmetricMotionProfile
+{
     public double initialPosition;
     public double finalPosition;
     public double distance;
@@ -17,7 +18,7 @@ public class MotionProfile {
     public ProfileState state = new ProfileState();
     public ProfileConstraints constraints;
 
-    public MotionProfile(double initialPosition, double finalPosition, ProfileConstraints constraints) {
+    public AsymmetricMotionProfile(double initialPosition, double finalPosition, ProfileConstraints constraints) {
         if (finalPosition < initialPosition) {
             flipped = true;
             this.originalPos = initialPosition;
@@ -34,6 +35,7 @@ public class MotionProfile {
         t3 = constraints.velo / constraints.decel;
         t2 = Math.abs(distance) / constraints.velo - (t1 + t3) / 2;
 
+        // If the steady part is less than zero set it to zero, triangular profile
         if (t2 < 0) {
             this.t2 = 0;
 
@@ -56,8 +58,10 @@ public class MotionProfile {
         totalTime = t1 + t2 + t3;
     }
 
+    // This seems wrong check with mason...
     public ProfileState calculate(final double time) {
-        double position, velocity, acceleration, stage_time;
+        double position, velocity, acceleration, stage_time, startTime;
+        startTime = time;
         if (time <= t1) {
             stage_time = time;
             acceleration = constraints.accel;
@@ -80,6 +84,7 @@ public class MotionProfile {
         }
 
         // TODO fix later since something went so fucking wrong here, kookyBotz annotation
+        // this seems right
         if (time <= totalTime) {
             if (flipped) {
                 state.x = originalPos - position;

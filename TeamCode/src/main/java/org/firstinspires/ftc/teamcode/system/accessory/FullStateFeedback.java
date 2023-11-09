@@ -11,6 +11,7 @@ public class FullStateFeedback
     You can even extend this method by adding additional states.
     Combined with feedforward control you will have an incredibly robust controller.
      */
+
     ElapsedTime timer = new ElapsedTime();
     double k1,k2;
     double vel, prevPos;
@@ -32,7 +33,8 @@ public class FullStateFeedback
 
     }
 
-    // Use this if already have the current velocity of the motor
+    // Use this if already have the current velocity of the motor, motor.getVelocity
+    // Don't use this as it will probably overflow
     public double updateWithError(double target, double position, double targetVel, double velocity)
     {
         double error = target - position;

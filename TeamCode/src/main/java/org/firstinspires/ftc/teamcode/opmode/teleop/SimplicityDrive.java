@@ -463,6 +463,14 @@ public class SimplicityDrive extends LinearOpMode {
 
         return (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD);
     }
+    boolean gamepad2RightTrigger(){
+        return (gamepad2.right_trigger > GAMEPAD_TRIGGER_THRESHOLD);
+    }
+    boolean gamepad2LeftTrigger() {
+        return (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD);
+    }
+
+
 }
 
 

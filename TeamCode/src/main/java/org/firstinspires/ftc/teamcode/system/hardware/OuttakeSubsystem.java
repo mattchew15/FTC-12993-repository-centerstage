@@ -310,4 +310,10 @@ public class OuttakeSubsystem {
                 break;
         }
     }
+    public void rawLift(double pow)
+    {
+        // The manual control lift is weighted this is different.
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LiftMotor.setPower(pow);
+    }
 }
