@@ -59,8 +59,7 @@ public class AsymmetricMotionProfile
     }
 
     public ProfileState calculate(final double time) {
-        double position, velocity, acceleration, stage_time, startTime;
-        startTime = time;
+        double position, velocity, acceleration, stage_time;
         if (time <= t1) {
             stage_time = time;
             acceleration = constraints.accel;

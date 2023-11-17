@@ -27,19 +27,25 @@ public class FullStateFeedback
         double errorVel = targetVel - vel;
         double update = (error * k1) + (errorVel * k2);
 
-        prevPos = position;
+        this.prevPos = position;
         timer.reset();
         return update;
 
     }
 
+
     // Use this if already have the current velocity of the motor, motor.getVelocity
     // Don't use this as it will probably overflow
-    public double updateWithError(double target, double position, double targetVel, double velocity)
+    public double updateWithError(double error, double position, double targetVel)
     {
-        double error = target - position;
-        double errorVel = targetVel - velocity;
-        return (error * k1) + (errorVel * k2);
+        vel = (position - prevPos) / timer.seconds();
+        double errorVel = targetVel - vel;
+        double update = (error * k1) + (errorVel * k2);
+
+        this.prevPos = position;
+        timer.reset();
+        return update;
+
     }
 
 }

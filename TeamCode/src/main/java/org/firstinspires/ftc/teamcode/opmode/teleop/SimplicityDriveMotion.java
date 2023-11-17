@@ -37,7 +37,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
     ElapsedTime GlobalTimer = new ElapsedTime();
     ToggleR toggle = new ToggleR();
     // Don't use the constructor with the telemetry in final
-    FeedForward feedForward = new FeedForward(FeedForward.FeedForwardMode.CONSTANT, 0.03, 0.05, telemetry);
+    FeedForward feedForward = new FeedForward(FeedForward.FeedForwardMode.CONSTANT, 0.03, 0.05);
     double target;
 
     @Override
@@ -66,6 +66,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
             {
                 target = 200;
                 feedForward.resetTime();
+                feedForward.updateTarget(200);
 
             }
             if (toggle.mode(gamepad1.b))
@@ -98,7 +99,8 @@ public class SimplicityDriveMotion extends LinearOpMode {
             feedForward.setProfile(profileSlider);
             feedForward.setTarget(target);
             feedForward.setPos(outtakeSubsystem.liftPosition);
-            double output = feedForward.calculate();
+            feedForward.reads(outtakeSubsystem.liftPosition, profileSlider);
+            double output = feedForward.calculateFeedForward();
 
             double x = profileSlider.state.x;
             double v = profileSlider.state.v;

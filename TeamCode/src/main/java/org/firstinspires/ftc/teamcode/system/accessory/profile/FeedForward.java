@@ -5,6 +5,7 @@ import androidx.core.math.MathUtils;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.system.accessory.FullStateFeedback;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
 /** This will handle the output if you want to use a motion profile,
@@ -38,6 +39,7 @@ public class FeedForward
     private Telemetry telemetry;
     private FeedForwardMode mode = FeedForwardMode.NULL;
     private boolean reached = false;
+    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.01, 0.02);
 
     /**
      * Use this constructor at the final code
@@ -63,7 +65,7 @@ public class FeedForward
 
     /** This does calculations using the feedforward, this does not take any parameter but you
      * need to call reads() before hand, and updateTarget()*/
-    public double calculate()
+    public double calculateFeedForward()
     { // should return the output after using the profile and the pid and the feedforward
         double targetOffSet = target - position;
         if (timer == null)
@@ -103,6 +105,26 @@ public class FeedForward
             telemetry.addData("Time at calc", timer.time());
             telemetry.update();
         }
+        return pow;
+    }
+    public double calculateFullState()
+    {
+        // should return the output after using the profile and the pid and the feedforward
+        double targetOffSet = target - position;
+        if (profile != null)
+        {
+            this.state = profile.calculate(timer.time());
+            this.target = state.x + (targetOffSet);
+        }
+        if (pid != null)
+        {
+            // Ngl this might work or not
+            this.pow = calculatePID(target + targetOffSet, position);
+            // Maybe only target here???
+            this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v);
+            this.pow = MathUtils.clamp(pow, -1, 1);
+        }
+        this.reached = Math.abs((target + targetOffSet) - position) < tolerance;
         return pow;
     }
 
