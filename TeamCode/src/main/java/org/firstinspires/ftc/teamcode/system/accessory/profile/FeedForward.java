@@ -23,7 +23,7 @@ public class FeedForward
         ANGLE_SIN
     }
 
-    ElapsedTime timer;
+    private ElapsedTime timer;
     private ProfileState state;
     private double minFeedForward = 0.0;
     private double maxFeedForward = 0.0;
@@ -109,6 +109,10 @@ public class FeedForward
     public void setPID(double kp, double ki, double kd)
     {
         this.pid = new PID(kp, ki, kd, 0,0);
+    }
+    public void setPID(double kp, double ki, double kd, double integralSumLimit)
+    {
+        this.pid = new PID(kp, ki, kd, integralSumLimit, 0);
     }
     private double calculatePID(double target, double position)
     {
