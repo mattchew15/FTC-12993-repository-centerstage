@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
+/** This will handle the output if you want to use a motion profile,
+ * To initialize in init: PID, Tolerance, MaxOutput
+ * To loop: update target, create a profile, read, and output
+ */
 public class FeedForward
 {
 
@@ -35,6 +39,12 @@ public class FeedForward
     private FeedForwardMode mode = FeedForwardMode.NULL;
     private boolean reached = false;
 
+    /**
+     * Use this constructor at the final code
+     * @param mode The mode of the feedforward
+     * @param min The min feedforward value
+     * @param max The max feedforward value when you update the feedforward, this doesn't cap the current feedforward
+     */
     public FeedForward(FeedForwardMode mode, double min, double max)
     {
         this.mode = mode;
@@ -51,6 +61,8 @@ public class FeedForward
         this.telemetry = telemetry;
     }
 
+    /** This does calculations using the feedforward, this does not take any parameter but you
+     * need to call reads() before hand, and updateTarget()*/
     public double calculate()
     { // should return the output after using the profile and the pid and the feedforward
         double targetOffSet = target - position;
@@ -120,7 +132,7 @@ public class FeedForward
     {
         this.maxOutput = max;
     }
-    public boolean getReached()
+    public boolean hasReached()
     {
         return reached;
     }
@@ -146,6 +158,19 @@ public class FeedForward
         {
             timer.reset();
         }
+    }
+    /** Loop reads before calculating the output */
+    public void reads(double pos, AsymmetricMotionProfile profile)
+    {
+        setProfile(profile);
+        setPos(pos);
+    }
+
+    /** Use this to set the new target and also reset the timer */
+    public void updateTarget(double target)
+    {
+        setTarget(target);
+        resetTime();
     }
 
 }

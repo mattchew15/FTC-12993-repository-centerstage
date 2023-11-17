@@ -58,7 +58,6 @@ public class AsymmetricMotionProfile
         totalTime = t1 + t2 + t3;
     }
 
-    // This seems wrong check with mason...
     public ProfileState calculate(final double time) {
         double position, velocity, acceleration, stage_time, startTime;
         startTime = time;
@@ -83,8 +82,8 @@ public class AsymmetricMotionProfile
             position = finalPosition;
         }
 
-        // TODO fix later since something went so fucking wrong here, kookyBotz annotation
-        // this seems right
+        // fix later since something went so fucking wrong here, Mason annotation
+        // this seems right tho
         if (time <= totalTime) {
             if (flipped) {
                 state.x = originalPos - position;

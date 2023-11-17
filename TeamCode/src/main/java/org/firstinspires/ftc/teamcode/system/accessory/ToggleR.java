@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class ToggleR
 {
-    private boolean toggle, toggleMode;
+    private boolean toggleMode;
     public ToggleR()
     {
-        this.toggle = false;
         this.toggleMode = false;
     }
 
@@ -16,19 +15,13 @@ public class ToggleR
             if (!toggleMode)
             {
                 toggleMode = true;
-                toggle = true;
-            }
-            else
-            {
-                toggle = false;
+                return true;
             }
         }
         else
         {
-            toggle = false;
             toggleMode = false;
         }
-        return toggle;
-
+        return false;
     }
 }
