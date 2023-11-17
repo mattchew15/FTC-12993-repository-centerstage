@@ -135,7 +135,7 @@ public class OuttakeSubsystem {
 
     public void outtakeReads(){
         pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
-        liftPosition = -LiftMotor.getCurrentPosition();
+        liftPosition = -LiftMotor.getCurrentPosition(); // Why the fuck the lift is not just reversed???
 
         //other things like distance sensors etc
     }
@@ -314,6 +314,6 @@ public class OuttakeSubsystem {
     {
         // The manual control lift is weighted this is different.
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LiftMotor.setPower(pow);
+        LiftMotor.setPower(-pow);
     }
 }

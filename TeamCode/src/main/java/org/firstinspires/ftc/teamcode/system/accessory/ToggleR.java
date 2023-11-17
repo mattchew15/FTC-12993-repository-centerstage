@@ -25,6 +25,7 @@ public class ToggleR
         }
         else
         {
+            toggle = false;
             toggleMode = false;
         }
         return toggle;
