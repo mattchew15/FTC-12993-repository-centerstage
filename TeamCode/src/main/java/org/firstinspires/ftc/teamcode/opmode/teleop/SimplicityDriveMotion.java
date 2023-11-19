@@ -24,20 +24,20 @@ public class SimplicityDriveMotion extends LinearOpMode {
     // Full state feedback
     public static double kPos = 0.2, kVel = 0.2;
     // Feed forward
-    public static double kP = 0.015, kI = 0.0, kD = 0.00006;
+    public static double kP = 0.015, kI = 0.0001, kD = 0.00006, kF = 0.01;
     //LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     //Subsystems
     DriveBase driveBase = new DriveBase();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     AsymmetricMotionProfile profileSlider;
-    public static ProfileConstraints profileSliderConstraints = new ProfileConstraints(2000, 1950, 950);
-    // Max ticks of the motor is like 2800, 1150rpm, 19.16 rps, 145 ticks/rev, = 2778
+    public static ProfileConstraints profileSliderConstraints = new ProfileConstraints(11000, 11000, 11000);
+    // Max ticks of the motor is like 2800, 1150rpm, 19.16 rps, 145 ticks/rev, = 2779 is the max vel ticks/second, accel should be vel / time(s)
     FullStateFeedback fullStateFeedback = new FullStateFeedback(kPos, kVel); // this should be delt inside the profile calculation
     ElapsedTime GlobalTimer = new ElapsedTime();
     ToggleR toggle = new ToggleR();
     // Don't use the constructor with the telemetry in final
-    FeedForward feedForward = new FeedForward(FeedForward.FeedForwardMode.CONSTANT, 0.03, 0.05);
+    public static FeedForward feedForward = new FeedForward(FeedForward.FeedForwardMode.CONSTANT, 0.04, 0.06);
     double target;
 
     @Override
@@ -50,7 +50,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
         GlobalTimer.startTime();
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
-        feedForward.setPID(kP, kI, kD);
+        feedForward.setPID(kP, kI, kD, 10);
 
 
         waitForStart();
@@ -66,8 +66,6 @@ public class SimplicityDriveMotion extends LinearOpMode {
             {
                 target = 200;
                 feedForward.resetTime();
-                feedForward.updateTarget(200);
-
             }
             if (toggle.mode(gamepad1.b))
             {
@@ -100,7 +98,8 @@ public class SimplicityDriveMotion extends LinearOpMode {
             feedForward.setTarget(target);
             feedForward.setPos(outtakeSubsystem.liftPosition);
             feedForward.reads(outtakeSubsystem.liftPosition, profileSlider);
-            double output = feedForward.calculateFeedForward();
+            double output = feedForward.calculateFullState();
+            //double output = feedForward.calculateFeedForward();
 
             double x = profileSlider.state.x;
             double v = profileSlider.state.v;

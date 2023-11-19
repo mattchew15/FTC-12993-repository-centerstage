@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.system.accessory.profile;
 
 import androidx.core.math.MathUtils;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,10 +13,9 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
  * To initialize in init: PID, Tolerance, MaxOutput
  * To loop: update target, create a profile, read, and output
  */
+@Config
 public class FeedForward
 {
-
-
     public enum FeedForwardMode
     {
         NULL,
@@ -39,7 +39,7 @@ public class FeedForward
     private Telemetry telemetry;
     private FeedForwardMode mode = FeedForwardMode.NULL;
     private boolean reached = false;
-    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.01, 0.02);
+    public static FullStateFeedback fullStateFeedback = new FullStateFeedback(0.0001, 0.0004);
 
     /**
      * Use this constructor at the final code
@@ -111,6 +111,14 @@ public class FeedForward
     {
         // should return the output after using the profile and the pid and the feedforward
         double targetOffSet = target - position;
+        if (timer == null)
+        {
+            timer = new ElapsedTime();
+            if (telemetry != null)
+            {
+                telemetry.addData("Time", "Initiated");
+            }
+        }
         if (profile != null)
         {
             this.state = profile.calculate(timer.time());
@@ -121,7 +129,7 @@ public class FeedForward
             // Ngl this might work or not
             this.pow = calculatePID(target + targetOffSet, position);
             // Maybe only target here???
-            this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v);
+            this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
             this.pow = MathUtils.clamp(pow, -1, 1);
         }
         this.reached = Math.abs((target + targetOffSet) - position) < tolerance;
@@ -136,6 +144,12 @@ public class FeedForward
     {
         this.pid = new PID(kp, ki, kd, integralSumLimit, 0);
     }
+    // Don't really do this the kF makes the profile overshoot
+    public void setPID(double kp, double ki, double kd, double integralSumLimit, double kf)
+    {
+        this.pid = new PID(kp, ki, kd, integralSumLimit, kf);
+    }
+
     private double calculatePID(double target, double position)
     {
         return pid.update(target, position, maxOutput);

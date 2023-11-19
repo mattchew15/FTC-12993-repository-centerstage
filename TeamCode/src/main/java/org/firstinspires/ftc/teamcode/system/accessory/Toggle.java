@@ -18,7 +18,7 @@ public class Toggle {
                 } else {
                     ToggleMode = true;
                 }
-                 Toggled = true;
+                Toggled = true;
             }
         }
         else {

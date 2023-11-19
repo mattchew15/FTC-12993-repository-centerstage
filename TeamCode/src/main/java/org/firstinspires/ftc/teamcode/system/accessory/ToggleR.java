@@ -2,26 +2,27 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class ToggleR
 {
-    private boolean toggleMode;
+    private boolean toggleMode, toggled;
     public ToggleR()
     {
         this.toggleMode = false;
+        this.toggled = false;
     }
 
     public boolean mode(boolean btn)
     {
         if (btn)
         {
-            if (!toggleMode)
+            if (!toggled)
             {
-                toggleMode = true;
-                return true;
+                toggleMode = !toggleMode;
+                toggled = true;
             }
         }
         else
         {
-            toggleMode = false;
+            toggled = false;
         }
-        return false;
+        return toggleMode;
     }
 }

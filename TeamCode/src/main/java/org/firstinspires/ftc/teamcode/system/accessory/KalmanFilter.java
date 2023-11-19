@@ -25,6 +25,7 @@ public class KalmanFilter
     // This regard a single input single output system so it is simplified
     public double filter(double firstSensor, double secondSensor)
     {
+        // Todo: u is wrong, very very wrong
         // Get the reading of the first sensor (ex. change of pos in odometry)
         u = firstSensor;
         x = x_previous + u; // Predicted current state, given by previous state + the previous output
