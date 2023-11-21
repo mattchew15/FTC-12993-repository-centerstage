@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.accessory.kalmanStuff.Michael;
+/*package org.firstinspires.ftc.teamcode.system.accessory.kalmanStuff.Michael;
 import static org.firstinspires.ftc.teamcode.system.accessory.kalmanStuff.Michael.Relocalizer.Side.BLUE;
 import static org.firstinspires.ftc.teamcode.system.accessory.kalmanStuff.Michael.Relocalizer.Side.RED;
 
@@ -54,7 +54,7 @@ public class Relocalizer {
             telemetry.addData("Last Reading", asyncSensor.getLastMeasurementTimestamp());
 
             if(gamepad1.a){
-                asyncSensor.setSensorAccuracyMode(AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY);*/
+                asyncSensor.setSensorAccuracyMode(AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY);
         this.side = side;
     }
     public void setAngleEstimate(double angle) {
@@ -156,7 +156,7 @@ public class Relocalizer {
             }
             return new Pose2d(999, 0, 0 );
         }
-    */
+    another block here
     public Pose2d relocalize(){
         boolean F = true, L = true, R = true, S = true, b = true;
         if (distF.getDistance(DistanceUnit.INCH) > 100) F = false;
@@ -246,3 +246,4 @@ public class Relocalizer {
         return distL.getDistance(DistanceUnit.INCH);
     }
 }
+*/
