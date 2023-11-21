@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.accessory;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+// TODO: I can merge this right?
 public class FullStateFeedback
 {
     /*
@@ -15,6 +15,8 @@ public class FullStateFeedback
     ElapsedTime timer = new ElapsedTime();
     double k1,k2;
     double vel, prevPos;
+    /**@param k1 Positional gain
+     * @param k2 Velocity gain*/
     public FullStateFeedback(double k1, double k2)
     {
         this.k1 = k1; // Positional gain
