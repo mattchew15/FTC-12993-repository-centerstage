@@ -36,6 +36,7 @@ public class Kalman2 {
         this.pose = new SimpleMatrix[]{pose,STARTING_COVARIANCE};
     }
 
+    //TODO: This make it possible to just call update and then getPos()?
     public void update(SimpleMatrix update, SimpleMatrix obs){
         if (update != null && obs == null)
         {
@@ -51,6 +52,7 @@ public class Kalman2 {
         }
     }
 
+    // TODO: how to get the update matrix? would it be a matrix of the distance covered?
     public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update) {
         // TODO: are this values used?
         // set up
@@ -74,6 +76,7 @@ public class Kalman2 {
                 {0, 0.2, 0},
                 {0, 0, 0.9}
         });
+        // Is this mult necessary
         P = F.mult(prevCov).mult(F.transpose()).plus(Q);
 
         // calculate
@@ -116,6 +119,7 @@ public class Kalman2 {
                 {0.0001}
         });
         i = z.minus(H.mult(pred[0]).plus(w));
+        // TODO how to find these values?
         //sensor noise matrix
         SimpleMatrix Q = new SimpleMatrix(new double[][]{
                 {0.2588293736, 0, 0},
@@ -139,7 +143,7 @@ public class Kalman2 {
         SimpleMatrix[] correction = correction(prediction, obs);
         return correction;
     }
-
+    // TODO: why is this in degrees, pose2d returns a angle in radians
     private double angleWrap(double input) {
         input %= 360;
         if (input > 180) input -= 360;
@@ -153,3 +157,4 @@ public class Kalman2 {
         return new Pose2d(x, y, z);
     }
 }
+// TODO: how to implement in road runner? substitute the
