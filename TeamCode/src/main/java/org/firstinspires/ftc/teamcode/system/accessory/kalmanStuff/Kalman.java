@@ -7,9 +7,20 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.ejml.simple.SimpleMatrix;
 public class Kalman
 {
-    //TODO: Check math
+/*
+    MATRIX SIZES
+Y = 3x1
+X = 3x1
+K = 3x3
+H = 3x3
+Q = 3x3
+P = 3x3
+R = 3x3
+I = 3x3
+*/
+    //TODO: Check math and maybe do a new prediction function(DOES NOT USE ODO as update), discuss this with sully tomorrow
     public SimpleMatrix[] pose;
-    private final SimpleMatrix STARTING_COVARIANCE = new SimpleMatrix(new double[][]
+    private SimpleMatrix STARTING_COVARIANCE = new SimpleMatrix(new double[][]
     {
             {0.1, 0, 0}, // x covariance
             {0, 0.01, 0}, // y covariance
@@ -21,7 +32,28 @@ public class Kalman
     // H is the sensor transitional matrix, it indicates the which values we can directly measure with the sensor
     // so if using april tage identity? and if distance sensor only x?=
     private SimpleMatrix H = SimpleMatrix.identity(3);
-    private SimpleMatrix P; // system covariance
+    private SimpleMatrix P; // system covarianceS
+    private SimpleMatrix w = new SimpleMatrix(new double[][] // Process noise for the prediction, can it be ignored? Gonna make it 0 for now
+            {
+            {0.0},
+            {0.0},
+            {0.0}
+        });
+    // Sensor noise
+    // TODO how to find these values? Michael said he found a sensor noise paper or something like that
+    private SimpleMatrix R = new SimpleMatrix(new double[][]
+        {
+            {0.20, 0, 0},
+            {0, 0.2, 0},
+            {0, 0, 0, 0.01}
+        });
+    // Covariance gain for the model
+    private SimpleMatrix Q = new SimpleMatrix(new double[][]
+            {
+                    {0.3, 0, 0},
+                    {0, 0.2, 0},
+                    {0, 0, 0.9}
+            });
 
 
     public Kalman(SimpleMatrix[] pose)
@@ -41,15 +73,6 @@ public class Kalman
     public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update)
     {
         SimpleMatrix prevCov = prev[1];
-
-        //Todo make setter, loss of power of the system, make this global possibly final
-        //Covariance gain for the model
-        SimpleMatrix Q = new SimpleMatrix(new double[][]
-                {
-                        {0.3, 0, 0},
-                        {0, 0.2, 0},
-                        {0, 0, 0.9}
-                });
         // Projects covariance
         P = (A.mult(prevCov).mult(A.transpose())).plus(Q);
 
@@ -75,37 +98,24 @@ public class Kalman
     {
         SimpleMatrix predCov = pred[1]; // gets the predicted cov index in pose[1]
 
-        // the state from the observation
+        // the state from the observation, needs to be local
         SimpleMatrix z = new SimpleMatrix(new double[][]
         {
             {observation.get(0,0)},
             {observation.get(1, 0)},
             {observation.get(2, 0)}
         });
-        // Process noise for the prediction, can it be ignored? prob not
-        SimpleMatrix w = new SimpleMatrix(new double[][]
-        {
-            {0.4},
-            {0.4},
-            {0.0001}
-        });
 
-        // Current difference between sensor and pred, given by sensor - (predicted + process noise)
+        // Current difference between sensor and pred, given by sensor - (H * predicted + process noise)
         SimpleMatrix i = z.minus(H.mult(pred[0]).plus(w));;
-
-        // Sensor noise
-        // TODO how to find these values? Michael said he found a sensor noise paper or something like that
-        SimpleMatrix R = new SimpleMatrix(new double[][]
-                {
-                        {0.20, 0, 0},
-                        {0, 0.2, 0},
-                        {0, 0, 0, 0.01}
-                });
 
         //bottom part of the kalman gain, use invert
         SimpleMatrix S = H.mult(predCov).mult(H.transpose()).plus(R);
+
         // Kalman gain
+        // TODO possible math logic error, matrix division
         SimpleMatrix K = predCov.mult(H.transpose().mult(S.invert()));
+
         // The actual pos
         SimpleMatrix correct = pred[0].plus(K.mult(i));
         // wraps the angle
@@ -113,7 +123,7 @@ public class Kalman
         // Updates the covariance
         // What is I on the formulas?? seems like the identity matrix but not sure anymore, was michael code correct? don't seem like, my formula should be better
         // SimpleMatrix correctCov = predCov.minus(K.mult(H).mult(predCov));
-        SimpleMatrix correctCov = predCov.mult(SimpleMatrix.identity(3).minus(K).mult(H));
+        SimpleMatrix correctCov = predCov.mult(SimpleMatrix.identity(3).minus(K.mult(H)));
         return new SimpleMatrix[]{correct, correctCov};
     }
 
@@ -199,5 +209,40 @@ public class Kalman
                 });
         }
     }
-
+    public void setSTARTING_COVARIANCE(double cov1, double cov2, double cov3)
+    {
+         this.STARTING_COVARIANCE = new SimpleMatrix(new double[][]
+                {
+                        {cov1, 0, 0}, // x covariance
+                        {0, cov2, 0}, // y covariance
+                        {0, 0, cov3} // heading covariance
+                });
+    }
+    public void setProcessNoise(double n1, double n2, double n3)
+    {
+        this.w = new SimpleMatrix(new double[][]
+                {
+                        {n1},
+                        {n2},
+                        {n3}
+                });
+    }
+    public void setSensorNoise(double n1, double n2, double n3)
+    {
+        this.R = new SimpleMatrix(new double[][]
+            {
+                    {n1, 0, 0},
+                    {0, n2, 0},
+                    {0, 0, 0, n3}
+            });
+    }
+    public void setCovarianceGain(double c1, double c2, double c3)
+    {
+        this.Q = new SimpleMatrix(new double[][]
+                {
+                        {c1, 0, 0},
+                        {0, c2, 0},
+                        {0, 0, c3}
+                });
+    }
 }
