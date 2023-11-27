@@ -35,8 +35,8 @@ public class OuttakeSubsystem {
 
     public static double
             ARM_READY_POS = 0.93,
-            ARM_TRANSFER_POS = 0.85,
-            ARM_PREEXTEND_POS = 0.78,
+            ARM_UPRIGHT_POS = 0.85,
+            ARM_SCORE_HALF_DOWN_POS = 0.78,
             ARM_SCORE_DOWN_POS = 0.22,
             ARM_SCORE_UP_POS = 0.16;
     public static double
@@ -85,8 +85,8 @@ public class OuttakeSubsystem {
     //Servo stuff
     public enum ArmServoState {
         READY,
-        TRANSFER,
-        PRE_EXTEND,
+        UPRIGHT,
+        SCORE_HALF_DOWN,
         SCORE_DOWN,
         SCORE_UP
     }
@@ -109,7 +109,9 @@ public class OuttakeSubsystem {
 
     public enum GripperServoState { // might add more states here
         GRIP,
-        OPEN
+        OPEN,
+        TOP_OPEN,
+        BOTTOM_OPEN
     }
 
     public void initOuttake(HardwareMap hwMap){
@@ -220,13 +222,13 @@ public class OuttakeSubsystem {
                 OuttakeArmServoRight.setPosition(ARM_READY_POS);
                 OuttakeArmServoLeft.setPosition(ARM_READY_POS);
             break;
-            case TRANSFER:
-                OuttakeArmServoRight.setPosition(ARM_TRANSFER_POS);
-                OuttakeArmServoLeft.setPosition(ARM_TRANSFER_POS);
+            case UPRIGHT:
+                OuttakeArmServoRight.setPosition(ARM_UPRIGHT_POS);
+                OuttakeArmServoLeft.setPosition(ARM_UPRIGHT_POS);
                 break;
-            case PRE_EXTEND:
-                OuttakeArmServoRight.setPosition(ARM_PREEXTEND_POS);
-                OuttakeArmServoLeft.setPosition(ARM_PREEXTEND_POS);
+            case SCORE_HALF_DOWN:
+                OuttakeArmServoRight.setPosition(ARM_SCORE_HALF_DOWN_POS);
+                OuttakeArmServoLeft.setPosition(ARM_SCORE_HALF_DOWN_POS);
                 break;
             case SCORE_DOWN:
                 OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
@@ -298,6 +300,12 @@ public class OuttakeSubsystem {
                 break;
             case OPEN:
                 GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
+                GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
+                break;
+            case TOP_OPEN:
+                GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
+                break;
+            case BOTTOM_OPEN:
                 GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
                 break;
         }

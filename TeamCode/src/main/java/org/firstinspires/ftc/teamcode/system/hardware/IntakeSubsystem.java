@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 @Config
 public class IntakeSubsystem {
@@ -22,6 +25,9 @@ public class IntakeSubsystem {
     public ColorSensor
             IntakeColourSensorFront,
             IntakeColourSensorBack;
+
+    public AnalogInput
+            IntakeChuteArmEncoder;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.43,
@@ -42,6 +48,14 @@ public class IntakeSubsystem {
     final double intakeSlidethresholdDistanceNewThreshold = 4;
 
     // slightly more optimal to do enums - also means we will never double write
+    public enum IntakeSpinState {
+        INTAKE,
+        SPIT_OUT,
+        REVERSE
+    }
+    public IntakeSpinState intakeSpinState;
+    double intakeTimer; // annoying i have to make it a class member
+
     public enum IntakeArmServoState {
         TOP,
         MIDDLE,
@@ -72,6 +86,8 @@ public class IntakeSubsystem {
     public int intakeSlideTarget;
     public double frontColourSensorValue;
     public double backColourSensorValue;
+    public double intakeChuteArmPosition;
+    public double intakeCurrent;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
@@ -85,6 +101,7 @@ public class IntakeSubsystem {
         IntakePixelHolderServo = hwMap.get(ServoImplEx.class,"IntakePixelHolderS");
         IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
+        IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
     }
 
     public void intakeHardwareSetup(){
@@ -94,9 +111,11 @@ public class IntakeSubsystem {
     // handles all of the reads in this class
     public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
+        intakeChuteArmPosition = getIntakeChuteArmPos();
         if (intakingState){ // pass in state
             frontColourSensorValue = IntakeColourSensorFront.red(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.red();
+            intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
         }
     }
 
@@ -104,15 +123,37 @@ public class IntakeSubsystem {
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public boolean frontIntakeColourSensorDetect(){
-        return frontColourSensorValue > 200;
+    public boolean pixelsInIntake(){
+        return (frontColourSensorValue > 200) && (backColourSensorValue > 200); // should work
     }
 
-    public boolean backIntakeColourSensorDetect(){
-        return backColourSensorValue > 200;
+    public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
+        double position = IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
+        return position;
     }
+
 
     // methods should be camel caps
+
+    public void intakePixels(double timer) {
+        switch (intakeSpinState) {
+            case INTAKE:
+                intakeSpin(1);
+                break;
+            case SPIT_OUT:
+                intakeTimer = timer; // resets the timer so it will reverse for a little bit
+                intakeSpinState = IntakeSpinState.REVERSE;
+                break;
+            case REVERSE:
+                intakeSpin(-1);
+                if (timer - intakeTimer > 50) {
+                    intakeSpinState = IntakeSpinState.INTAKE;
+                }
+                break;
+        }
+    }
+
+
     public void intakeSpin(double speedDirection){
         IntakeMotor.setPower(speedDirection);
     }

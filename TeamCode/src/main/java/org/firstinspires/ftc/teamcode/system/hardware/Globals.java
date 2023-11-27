@@ -29,10 +29,11 @@ public class Globals {
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
-            A;
+            A; // angle offset for autonmous
 
     public static int
             SIXTY_DEGREE_TICKS = 0,
+            UPRIGHT_PITCH_TICKS = -300,
             PITCH_LOW_DEGREE_TICKS = 800, //guesses at this point
             PITCH_MID_DEGREE_TICKS = 400,
 

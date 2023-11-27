@@ -105,7 +105,6 @@ public class Audience_RED_CYCLE extends LinearOpMode {
         // trajectories that aren't changing should all be here
 
         while (!isStarted()) { // initialization loop
-            outtakeSubsystem.clawServoState(OuttakeSubsystem.ClawServoState.CLOSE);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
             telemetry.update();
         }
@@ -130,7 +129,7 @@ public class Audience_RED_CYCLE extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             // Reading at the start of the loop
-            intakeSubsystem.intakeReads();
+            intakeSubsystem.intakeReads(false);
 
             // Print pose to telemetry
             loopTime.updateLoopTime(telemetry);
