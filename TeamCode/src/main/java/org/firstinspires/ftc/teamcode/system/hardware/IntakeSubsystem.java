@@ -15,19 +15,22 @@ public class IntakeSubsystem {
             IntakeMotor;
     public ServoImplEx
             IntakeArmServo,
-            IntakeFlapServo,
+            IntakeChuteArmServo,
             IntakeClipServo,
             IntakePixelHolderServo;
-    public ColorSensor IntakeColourSensor;
+
+    public ColorSensor
+            IntakeColourSensorFront,
+            IntakeColourSensorBack;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.43,
             INTAKE_ARM_MIDDLE_POS = 0.48,
             INTAKE_ARM_BASE_POS = 0.5;
     public static double
-            INTAKE_FLAP_CLOSE_POS = 0.6,
-            INTAKE_FLAP_CLOSEHARD_POS = 0.62,
-            INTAKE_FLAP_OPEN_POS = 0.365;
+            INTAKE_CHUTE_ARM_READY_POS = 0.6,
+            INTAKE_CHUTE_ARM_HALFUP_POS = 0.62,
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.365;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
             INTAKE_CLIP_OPEN_POS = 0.75;
@@ -45,10 +48,10 @@ public class IntakeSubsystem {
         BASE
     }
 
-    public enum IntakeFlapServoState {
-        CLOSE,
-        OPEN,
-        CLOSE_HARD
+    public enum IntakeChuteServoState {
+        READY,
+        HALF_UP,
+        TRANSFER
     }
 
     public enum IntakeClipServoState {
@@ -67,7 +70,8 @@ public class IntakeSubsystem {
     // define slide position and target as class members - intake slide position can be stored so its only read once
     public double intakeSlidePosition;
     public int intakeSlideTarget;
-    public double colourSensorValue;
+    public double frontColourSensorValue;
+    public double backColourSensorValue;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
@@ -77,9 +81,10 @@ public class IntakeSubsystem {
 
         IntakeArmServo = hwMap.get(ServoImplEx.class, "IntakeArmS");
         IntakeClipServo = hwMap.get(ServoImplEx.class,"IntakeClipS");
-        IntakeFlapServo = hwMap.get(ServoImplEx.class,"IntakeFlapS");
+        IntakeChuteArmServo = hwMap.get(ServoImplEx.class,"IntakeChuteS");
         IntakePixelHolderServo = hwMap.get(ServoImplEx.class,"IntakePixelHolderS");
-        IntakeColourSensor = hwMap.get(ColorSensor.class,"IntakeColourSensor");
+        IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
+        IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
     }
 
     public void intakeHardwareSetup(){
@@ -87,21 +92,24 @@ public class IntakeSubsystem {
     }
 
     // handles all of the reads in this class
-    public void intakeReads(){
+    public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
-        colourSensorValue = IntakeColourSensor.alpha();
+        if (intakingState){ // pass in state
+            frontColourSensorValue = IntakeColourSensorFront.red(); // could be something else
+            backColourSensorValue = IntakeColourSensorBack.red();
+        }
     }
 
     public void intakeSlideMotorEncodersReset(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public boolean intakeColourSensorDetect(){
-        if (colourSensorValue > 200){
-            return true;
-        } else {
-            return false;
-        }
+    public boolean frontIntakeColourSensorDetect(){
+        return frontColourSensorValue > 200;
+    }
+
+    public boolean backIntakeColourSensorDetect(){
+        return backColourSensorValue > 200;
     }
 
     // methods should be camel caps
@@ -154,16 +162,16 @@ public class IntakeSubsystem {
         }
     }
 
-    public void intakeFlapServoState(IntakeFlapServoState state) {
+    public void intakeChuteArmServoState(IntakeChuteServoState state) {
         switch (state) {
-            case CLOSE:
-                IntakeFlapServo.setPosition(INTAKE_FLAP_CLOSE_POS);
+            case READY:
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_READY_POS);
                 break;
-            case OPEN:
-                IntakeFlapServo.setPosition(INTAKE_FLAP_OPEN_POS);
+            case HALF_UP:
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_HALFUP_POS);
                 break;
-            case CLOSE_HARD:
-                IntakeFlapServo.setPosition(INTAKE_FLAP_CLOSEHARD_POS);
+            case TRANSFER:
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_TRANSFER_POS);
                 break;
         }
     }

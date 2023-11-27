@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.CoordinatesLogic;
@@ -22,6 +23,10 @@ public class DriveBase {  // no constructor for this class
             BL,
             BR;
 
+    public ServoImplEx
+            ClimbHolderServo,
+            DroneServo;
+
     //variable for the drivebase speed toggle;
     boolean PowerToggled;
     double PowerBase = 1;
@@ -29,6 +34,8 @@ public class DriveBase {  // no constructor for this class
     double PowerStrafe = 1.05;
 
     public static double DroneServoReleasePos = 0.43, DroneServoHoldPos = 0.212;
+    public static double ClimbServoReleasePos = 0.43, ClimbServoHoldPos = 0.212;
+
 
     public static double DrivebaseXKp = 0.22, DrivebaseXKi = 0.00, DrivebaseXKd = 0.018, DrivebaseXIntegralSumLimit = 10, DrivebaseXKf = 0;
     public static double DrivebaseYKp = 0.22, DrivebaseYKi = 0.00, DrivebaseYKd = 0.018, DrivebaseYIntegralSumLimit = 10, DrivebaseYKf = 0;
@@ -46,11 +53,19 @@ public class DriveBase {  // no constructor for this class
         RELEASE
     }
 
+    public enum ClimbState {
+        HOLD,
+        RELEASE
+    }
+
     public void initDrivebase(HardwareMap hwMap){
         FL = hwMap.get(DcMotorEx.class, "FL");
         FR = hwMap.get(DcMotorEx.class, "FR");
         BL = hwMap.get(DcMotorEx.class, "BL");
         BR = hwMap.get(DcMotorEx.class, "BR");
+
+        ClimbHolderServo = hwMap.get(ServoImplEx.class, "ClimbHolderS");
+        DroneServo = hwMap.get(ServoImplEx.class, "DroneS");
     }
 
     // this could be run in robothardware
@@ -120,16 +135,26 @@ public class DriveBase {  // no constructor for this class
             PowerToggled = false;
         }
     }
-    /*
+
     public void droneState(DroneState state) {
         switch (state) {
             case HOLD:
-                DroneSero.setPosition(DroneServoHoldPos);
+                DroneServo.setPosition(DroneServoHoldPos);
                 break;
             case RELEASE:
                 DroneServo.setPosition(DroneServoReleasePos);
                 break;
         }
     }
-     */
+    public void climbState(ClimbState state) {
+        switch (state) {
+            case HOLD:
+                ClimbHolderServo.setPosition(ClimbServoHoldPos);
+                break;
+            case RELEASE:
+                ClimbHolderServo.setPosition(ClimbServoReleasePos);
+                break;
+        }
+    }
+
 }

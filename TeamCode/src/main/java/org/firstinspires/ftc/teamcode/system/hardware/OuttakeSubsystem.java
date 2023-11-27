@@ -6,9 +6,11 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
@@ -26,8 +28,10 @@ public class OuttakeSubsystem {
             OuttakeArmServoRight,
             MiniTurretServo,
             PivotServo,
-            WristServo,
-            ClawServo;
+            GripperTopServo,
+            GripperBottomServo;
+
+    public DistanceSensor OuttakeDistanceSensor;
 
     public static double
             ARM_READY_POS = 0.93,
@@ -48,12 +52,10 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_LEFT_POS = 0.778,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
-            WRIST_READY_POS = 0.285,
-            WRIST_TRANSFER_POS = 0.289,
-            WRIST_SCORE_POS = 0.55;
-    public static double
-            CLAW_OPEN_POS = 0.463,
-            CLAW_CLOSE_POS = 0.74;
+            GRIPPER_TOP_OPEN_POS,
+            GRIPPER_TOP_GRIP_POS,
+            GRIPPER_BOTTOM_OPEN_POS,
+            GRIPPER_BOTTOM_GRIP_POS;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -69,6 +71,8 @@ public class OuttakeSubsystem {
 
     public double pitchPosition;
     public double liftPosition;
+    public double outtakeDistanceSensorValue;
+
     // The profile stuff
     public static double kPos = 0.2, kVel = 0.2;
     public static double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
@@ -78,7 +82,6 @@ public class OuttakeSubsystem {
     private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileSliderConstraints);
     private ProfileSubsystem profileSubsystem;
 
-
     //Servo stuff
     public enum ArmServoState {
         READY,
@@ -86,12 +89,6 @@ public class OuttakeSubsystem {
         PRE_EXTEND,
         SCORE_DOWN,
         SCORE_UP
-    }
-
-    public enum TurretServoState {
-        READY,
-        DIAGONAL_LEFT,
-        DIAGONAL_RIGHT
     }
 
     public enum PivotServoState {
@@ -110,14 +107,8 @@ public class OuttakeSubsystem {
         POINT_TO_BACKDROP
     }
 
-    public enum WristServoState {
-        READY,
-        TRANSFER,
-        SCORE
-    }
-
-    public enum ClawServoState { // might add more states here
-        CLOSE,
+    public enum GripperServoState { // might add more states here
+        GRIP,
         OPEN
     }
 
@@ -127,10 +118,11 @@ public class OuttakeSubsystem {
 
         OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
         OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
-        MiniTurretServo = hwMap.get(ServoImplEx.class,"TurretS");
+        MiniTurretServo = hwMap.get(ServoImplEx.class,"MiniTurretS");
         PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
-        WristServo = hwMap.get(ServoImplEx.class, "WristS");
-        ClawServo = hwMap.get(ServoImplEx.class, "ClawS");
+        GripperTopServo = hwMap.get(ServoImplEx.class, "GripperTopS");
+        GripperBottomServo = hwMap.get(ServoImplEx.class, "GripperBottomS");
+        OuttakeDistanceSensor = hwMap.get(DistanceSensor.class, "OuttakeDistanceSensor");
     }
 
     public void hardwareSetup(){
@@ -138,21 +130,18 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
 
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        //OuttakeArmServo.setDirection(Servo.Direction.REVERSE);
-        //turretPosition = 0; // these need to be initialized on setup or you will get null error??
-        //liftPosition = 0;
-        //intakeSlidePosition = 0;
     }
     public void softwareSetup()
     {
         profileSubsystem = new ProfileSubsystem(PLiftPID);
     }
 
-    public void outtakeReads(){
+    public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
         pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
         liftPosition = -LiftMotor.getCurrentPosition();
-
-        //other things like distance sensors etc
+        if (dropReadyState){
+            outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
+        }
     }
 
     public void encodersReset(){
@@ -301,27 +290,15 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void wristServoState(WristServoState state) {
+    public void gripperServoState(GripperServoState state) {
         switch (state) {
-            case READY:
-                WristServo.setPosition(WRIST_READY_POS);
-                break;
-            case TRANSFER:
-                WristServo.setPosition(WRIST_TRANSFER_POS);
-                break;
-            case SCORE:
-                WristServo.setPosition(WRIST_SCORE_POS);
-                break;
-        }
-    }
-
-    public void clawServoState(ClawServoState state) {
-        switch (state) {
-            case CLOSE:
-                ClawServo.setPosition(CLAW_CLOSE_POS);
+            case GRIP:
+                GripperTopServo.setPosition(GRIPPER_TOP_GRIP_POS);
+                GripperBottomServo.setPosition(GRIPPER_BOTTOM_GRIP_POS);
                 break;
             case OPEN:
-                ClawServo.setPosition(CLAW_OPEN_POS);
+                GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
+                GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
                 break;
         }
     }
