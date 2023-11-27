@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
+import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
+import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
 
 @Config
 public class OuttakeSubsystem {
@@ -66,6 +69,14 @@ public class OuttakeSubsystem {
 
     public double pitchPosition;
     public double liftPosition;
+    // The profile stuff
+    public static double kPos = 0.2, kVel = 0.2;
+    public static double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
+    private PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
+    public static ProfileConstraints profileSliderConstraints = new ProfileConstraints(11000, 11000, 11000);
+    // TODO: make a new constructor, to pass a pid object
+    private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileSliderConstraints);
+    private ProfileSubsystem profileSubsystem;
 
 
     //Servo stuff
@@ -132,10 +143,14 @@ public class OuttakeSubsystem {
         //liftPosition = 0;
         //intakeSlidePosition = 0;
     }
+    public void softwareSetup()
+    {
+        profileSubsystem = new ProfileSubsystem(PLiftPID);
+    }
 
     public void outtakeReads(){
         pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
-        liftPosition = -LiftMotor.getCurrentPosition(); // Why the fuck the lift is not just reversed???
+        liftPosition = -LiftMotor.getCurrentPosition();
 
         //other things like distance sensors etc
     }
@@ -315,5 +330,22 @@ public class OuttakeSubsystem {
         // The manual control lift is weighted this is different.
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LiftMotor.setPower(-pow);
+    }
+    public void profileSetUp()
+    {
+        profileSubsystem.setProfile(liftProfile);
+        profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
+        profileSubsystem.setMaxOutput(1); // not a necessary write
+    }
+    public double profileCalculate()
+    {
+        profileSubsystem.setPos(liftPosition);
+        return profileSubsystem.calculateFullState();
+
+    }
+    public void setFullStateGains(double kPos, double kVel)
+    {
+        OuttakeSubsystem.kPos = kPos;
+        OuttakeSubsystem.kVel = kVel;
     }
 }

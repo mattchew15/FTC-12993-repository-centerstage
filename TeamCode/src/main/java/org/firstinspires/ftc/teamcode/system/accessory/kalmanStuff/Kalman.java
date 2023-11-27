@@ -49,11 +49,11 @@ I = 3x3
         });
     // Covariance gain for the model
     private SimpleMatrix Q = new SimpleMatrix(new double[][]
-            {
-                    {0.3, 0, 0},
-                    {0, 0.2, 0},
-                    {0, 0, 0.9}
-            });
+        {
+            {0.3, 0, 0},
+            {0, 0.2, 0},
+            {0, 0, 0.9}
+        });
 
 
     public Kalman(SimpleMatrix[] pose)
@@ -70,7 +70,7 @@ I = 3x3
     }
 
     // Gets the previous state(always this.pose) and the update matrix should be just RR value; this to work it needs a change (should be the difference between previous and current, use RR)
-    public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update)
+    public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update, boolean OdoOnly)
     {
         SimpleMatrix prevCov = prev[1];
         // Projects covariance
@@ -90,6 +90,30 @@ I = 3x3
                         {predHeading}
                     }),
                     P
+                };
+    }
+    // Use this, it adds the update matrix to the pose
+    public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update)
+    {
+        SimpleMatrix prevCov = prev[1];
+        // Projects covariance
+        P = (A.mult(prevCov).mult(A.transpose())).plus(Q);
+
+        // pass the calculated values to the pose style matrix
+        double predX = prev[0].get(0,0) + update.get(0, 0);
+        double predY = prev[0].get(2,0) + update.get(1,0);
+        double predHeading = prev[0].get(3,0) + angleWrap(update.get(2,0)); // wraps the angle ]-180, 180[
+
+        // Return a matrix on the pose style
+        return new SimpleMatrix[]
+                {
+                        new SimpleMatrix(new double[][]
+                                {
+                                        {predX},
+                                        {predY},
+                                        {predHeading}
+                                }),
+                        P
                 };
     }
 
@@ -163,26 +187,26 @@ I = 3x3
     /** This return a 3x1 matrix, use this for the all the matrix and stuff*/
     public SimpleMatrix poseToMatrix(Pose2d pose2d)
     {
-        SimpleMatrix matrix = new SimpleMatrix(new double[][]
+        return new SimpleMatrix(new double[][]
                 {
-                    {pose2d.getX()},
-                    {pose2d.getY()},
-                    {pose2d.getHeading()}
+                        {pose2d.getX()},
+                        {pose2d.getY()},
+                        {pose2d.getHeading()}
                 });
-        return matrix;
     }
+
     /** This returns a 3x1 matrix with the first value (x), use this for the sensor stuff*/
     public SimpleMatrix doubleToMatrix(double val)
     {
-        SimpleMatrix matrix = new SimpleMatrix(new double[][]
+        return new SimpleMatrix(new double[][]
                 {
-                        {val},
-                        {0},
-                        {0}
+                    {val},
+                    {0},
+                    {0}
                 });
-        return matrix;
     }
 
+    /** H should always be an identity*/
     public void setH(double v1, double v2, double v3)
     {
         this.H = new SimpleMatrix(new double[][]
@@ -192,6 +216,7 @@ I = 3x3
             {0, 0, v3}
     });
     }
+    /** Use this*/
     public void setH(boolean all)
     {
         if (all)
@@ -222,9 +247,9 @@ I = 3x3
     {
         this.w = new SimpleMatrix(new double[][]
                 {
-                        {n1},
-                        {n2},
-                        {n3}
+                        {n1, 0, 0},
+                        {0, n2, 0},
+                        {0, 0, n3}
                 });
     }
     public void setSensorNoise(double n1, double n2, double n3)
@@ -243,6 +268,19 @@ I = 3x3
                         {c1, 0, 0},
                         {0, c2, 0},
                         {0, 0, c3}
+                });
+    }
+
+    /** Get the new pose2d and take of the previous pose given by the filter, this generate an update matrix */
+    public SimpleMatrix getUpdateMatrix(Pose2d pose2d)
+    {
+        SimpleMatrix newPose = poseToMatrix(pose2d);
+
+        return new SimpleMatrix(new double[][]
+                {
+                        {newPose.get(0,0) - pose[0].get(0,0)},
+                        {newPose.get(1, 0) - pose[0].get(1, 0)},
+                        {newPose.get(2, 0) - pose[0].get(2, 0)}
                 });
     }
 }

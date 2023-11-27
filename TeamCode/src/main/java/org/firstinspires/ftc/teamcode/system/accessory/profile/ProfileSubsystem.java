@@ -14,14 +14,15 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
  * To loop: update target, create a profile, read, and output
  */
 @Config
-public class FeedForward
+public class ProfileSubsystem
 {
-    public enum FeedForwardMode
+    public enum SubsystemMode
     {
         NULL,
         CONSTANT,
         ANGLE_COS,
-        ANGLE_SIN
+        ANGLE_SIN,
+        FullState
     }
 
     private ElapsedTime timer;
@@ -37,24 +38,40 @@ public class FeedForward
     private PID pid;
     private AsymmetricMotionProfile profile;
     private Telemetry telemetry;
-    private FeedForwardMode mode = FeedForwardMode.NULL;
+    private SubsystemMode mode = SubsystemMode.NULL;
     private boolean reached = false;
-    public static FullStateFeedback fullStateFeedback = new FullStateFeedback(0.0001, 0.0004);
+    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.0001, 0.0004);
 
     /**
      * Use this constructor at the final code
+     *
      * @param mode The mode of the feedforward
-     * @param min The min feedforward value
-     * @param max The max feedforward value when you update the feedforward, this doesn't cap the current feedforward
+     * @param min  The min feedforward value
+     * @param max  The max feedforward value when you update the feedforward, this doesn't cap the current feedforward
      */
-    public FeedForward(FeedForwardMode mode, double min, double max)
+    public ProfileSubsystem(SubsystemMode mode, double min, double max)
     {
         this.mode = mode;
         this.minFeedForward = min;
         this.maxFeedForward = max;
         this.currentFeedForward = minFeedForward;
     }
-    public FeedForward(FeedForwardMode mode, double min, double max, Telemetry telemetry)
+
+    public ProfileSubsystem(SubsystemMode mode)
+    {
+        this.mode = mode;
+    }
+
+    public ProfileSubsystem()
+    {
+
+    }
+    public ProfileSubsystem(PID pid)
+    {
+        this.pid = pid;
+    }
+
+    public ProfileSubsystem(SubsystemMode mode, double min, double max, Telemetry telemetry)
     {
         this.mode = mode;
         this.minFeedForward = min;
@@ -63,10 +80,13 @@ public class FeedForward
         this.telemetry = telemetry;
     }
 
-    /** This does calculations using the feedforward, this does not take any parameter but you
-     * need to call reads() before hand, and updateTarget()*/
+    /**
+     * This does calculations using the feedforward, this does not take any parameter but you
+     * need to call reads() before hand, and update Target()
+     */
     public double calculateFeedForward()
-    { // should return the output after using the profile and the pid and the feedforward
+    {
+        // should return the output after using the profile and the pid and the feedforward
         double targetOffSet = target - position;
         if (timer == null)
         {
@@ -107,6 +127,8 @@ public class FeedForward
         }
         return pow;
     }
+
+    // I could probably merge with the feedforward
     public double calculateFullState()
     {
         // should return the output after using the profile and the pid and the feedforward
@@ -126,9 +148,8 @@ public class FeedForward
         }
         if (pid != null)
         {
-            // Ngl this might work or not
+            // Ngl this might work or not, it does...
             this.pow = calculatePID(target + targetOffSet, position);
-            // Maybe only target here???
             this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
             this.pow = MathUtils.clamp(pow, -1, 1);
         }
@@ -138,13 +159,15 @@ public class FeedForward
 
     public void setPID(double kp, double ki, double kd)
     {
-        this.pid = new PID(kp, ki, kd, 0,0);
+        this.pid = new PID(kp, ki, kd, 0, 0);
     }
+
     public void setPID(double kp, double ki, double kd, double integralSumLimit)
     {
         this.pid = new PID(kp, ki, kd, integralSumLimit, 0);
     }
-    // Don't really do this the kF makes the profile overshoot
+
+    // Don't really do this as the kF makes the profile overshoot
     public void setPID(double kp, double ki, double kd, double integralSumLimit, double kf)
     {
         this.pid = new PID(kp, ki, kd, integralSumLimit, kf);
@@ -154,12 +177,14 @@ public class FeedForward
     {
         return pid.update(target, position, maxOutput);
     }
+
     public void setFeedforward(double min)
     {
         this.minFeedForward = min;
         currentFeedForward = minFeedForward;
     }
-    public void updateMode(FeedForwardMode mode)
+
+    public void setMode(SubsystemMode mode)
     {
         this.mode = mode;
     }
@@ -168,30 +193,37 @@ public class FeedForward
     {
         this.profile = profile;
     }
+
     public void setMaxOutput(double max)
     {
         this.maxOutput = max;
     }
+
     public boolean hasReached()
     {
         return reached;
     }
+
     public void setPos(double pos)
     {
         this.position = pos;
     }
+
     public void setTolerance(double tolerance)
     {
         this.tolerance = tolerance;
     }
+
     public void setTarget(double target)
     {
         this.target = target;
     }
+
     public void updateFeedforward(double percentage)
     {
         this.currentFeedForward = minFeedForward + (maxFeedForward - minFeedForward) * percentage;
     }
+
     public void resetTime()
     {
         if (timer != null)
@@ -199,18 +231,28 @@ public class FeedForward
             timer.reset();
         }
     }
-    /** Loop reads before calculating the output */
+
+    /**
+     * Loop reads before calculating the output
+     */
     public void reads(double pos, AsymmetricMotionProfile profile)
     {
-        setProfile(profile);
         setPos(pos);
+        calculateFullState();
     }
 
-    /** Use this to set the new target and also reset the timer */
+    /**
+     * Use this to set the new target and also reset the timer
+     */
     public void updateTarget(double target)
     {
         setTarget(target);
         resetTime();
+    }
+
+    public void setFullStateFeedback(double kPos, double kVel)
+    {
+        this.fullStateFeedback = new FullStateFeedback(kPos, kVel);
     }
 
 }

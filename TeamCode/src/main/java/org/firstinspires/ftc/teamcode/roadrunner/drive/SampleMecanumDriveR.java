@@ -305,11 +305,10 @@ public class SampleMecanumDriveR extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
-    // Get the the update matrix and the observation??
-    // TODO check this shit, like does this update kalman.pose?
-    public Pose2d getPoseKF(Pose2d poseUpdate, Pose2d obs)
+    /**Get the observation matrix returns a pose2d object*/
+    public Pose2d getPoseKF(Pose2d obs)
     {
-        SimpleMatrix update = kalman.poseToMatrix(poseUpdate);
+        SimpleMatrix update = kalman.getUpdateMatrix(getPoseEstimate());
         SimpleMatrix observation = kalman.poseToMatrix(obs);
         kalman.update(update, observation);
         return kalman.getPose();

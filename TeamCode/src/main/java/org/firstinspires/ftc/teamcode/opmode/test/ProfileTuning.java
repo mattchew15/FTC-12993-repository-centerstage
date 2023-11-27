@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
-import org.firstinspires.ftc.teamcode.system.accessory.profile.FeedForward;
+import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
@@ -22,7 +22,7 @@ public class ProfileTuning extends LinearOpMode
     public static double fMin = 0, fMax = 0;
     public static boolean reverse;
     private double target, position;
-    private FeedForward feedForward;
+    private ProfileSubsystem profileSubsystem;
     private AsymmetricMotionProfile profile;
     private ProfileConstraints constraints;
     private OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
@@ -54,19 +54,19 @@ public class ProfileTuning extends LinearOpMode
                 if (reverse)
                 {
                     target = 0;
-                    feedForward.resetTime();
+                    profileSubsystem.resetTime();
                 } else
                 {
                     target = distance;
-                    feedForward.resetTime();
+                    profileSubsystem.resetTime();
                 }
                 renew = false;
             }
-            feedForward.setProfile(profile);
-            feedForward.setTarget(target);
-            feedForward.setPos(outtakeSubsystem.liftPosition);
-            feedForward.reads(outtakeSubsystem.liftPosition, profile);
-            double output = feedForward.calculateFullState();
+            profileSubsystem.setProfile(profile);
+            profileSubsystem.setTarget(target);
+            profileSubsystem.setPos(outtakeSubsystem.liftPosition);
+            profileSubsystem.reads(outtakeSubsystem.liftPosition, profile);
+            double output = profileSubsystem.calculateFullState();
 
 
         }
@@ -76,7 +76,7 @@ public class ProfileTuning extends LinearOpMode
 
         this.constraints = new ProfileConstraints(vel, accel, decel);
         this.profile = new AsymmetricMotionProfile(position, target, constraints);
-        this.feedForward = new FeedForward(FeedForward.FeedForwardMode.CONSTANT, fMin, fMax);
-        feedForward.setPID(kP, kI, kD, integralSum, kF);
+        this.profileSubsystem = new ProfileSubsystem(ProfileSubsystem.SubsystemMode.CONSTANT, fMin, fMax);
+        profileSubsystem.setPID(kP, kI, kD, integralSum, kF);
     }
 }
