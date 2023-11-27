@@ -53,7 +53,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
         // Yeah i know it is crappy it is just for testing the profiles
         while (opModeIsActive() && !isStopRequested())
         {
-            outtakeSubsystem.outtakeReads();
+            outtakeSubsystem.outtakeReads(false);
             outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
             // Implementation needs a toggle so it doesn't keep resetting the time
 
@@ -114,6 +114,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
             telemetry.update();
         }
     }
+
 }
 
 

@@ -74,13 +74,13 @@ public class OuttakeSubsystem {
     public double outtakeDistanceSensorValue;
 
     // The profile stuff
-    public static double kPos = 0.2, kVel = 0.2;
-    public static double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
-    private PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
-    public static ProfileConstraints profileSliderConstraints = new ProfileConstraints(11000, 11000, 11000);
+    private double kPos = 0.2, kVel = 0.2;
+    private double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
+    private final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
+    private ProfileConstraints profileLiftConstraints = new ProfileConstraints(11000, 11000, 11000);
     // TODO: make a new constructor, to pass a pid object
     private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileSliderConstraints);
-    private ProfileSubsystem profileSubsystem;
+    private ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
 
     //Servo stuff
     public enum ArmServoState {
@@ -132,10 +132,6 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
 
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-    public void softwareSetup()
-    {
-        profileSubsystem = new ProfileSubsystem(PLiftPID);
     }
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
@@ -322,15 +318,21 @@ public class OuttakeSubsystem {
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
     }
-    public double profileCalculate()
+    public void profileCalculate()
     {
+        liftProfile = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
+        profileSubsystem.setTarget(liftTarget);
         profileSubsystem.setPos(liftPosition);
-        return profileSubsystem.calculateFullState();
-
+        rawLift(profileSubsystem.calculateFullState());
     }
     public void setFullStateGains(double kPos, double kVel)
     {
-        OuttakeSubsystem.kPos = kPos;
-        OuttakeSubsystem.kVel = kVel;
+        this.kPos = kPos;
+        this.kVel = kVel;
+    }
+    public double updateTargetProfile(int liftTarget)
+    {
+        profileSubsystem.resetTime();
+        this.liftTarget = liftTarget;
     }
 }

@@ -92,7 +92,7 @@ I = 3x3
                     P
                 };
     }
-    // Use this, it adds the update matrix to the pose
+    // Use this if using getUpdateMatrix(), it adds the update matrix to the pose
     public SimpleMatrix[] prediction(SimpleMatrix[] prev, SimpleMatrix update)
     {
         SimpleMatrix prevCov = prev[1];

@@ -132,6 +132,7 @@ public class ProfileSubsystem
     public double calculateFullState()
     {
         // should return the output after using the profile and the pid and the feedforward
+        // Is the targetOffSet
         double targetOffSet = target - position;
         if (timer == null)
         {
