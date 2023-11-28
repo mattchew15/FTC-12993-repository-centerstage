@@ -34,15 +34,15 @@ public class IntakeSubsystem {
             INTAKE_ARM_MIDDLE_POS = 0.48,
             INTAKE_ARM_BASE_POS = 0.5;
     public static double
-            INTAKE_CHUTE_ARM_READY_POS = 0.6,
-            INTAKE_CHUTE_ARM_HALFUP_POS = 0.62,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.365;
+            INTAKE_CHUTE_ARM_READY_POS = 0.15,
+            INTAKE_CHUTE_ARM_HALFUP_POS = 0.38,
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.7;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.5,
             INTAKE_CLIP_OPEN_POS = 0.75;
     public static double
-            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.58,
-            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.36;
+            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.42,
+            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.83;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
@@ -124,7 +124,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 200) && (backColourSensorValue > 200); // should work
+        return (frontColourSensorValue > 300) && (backColourSensorValue > 6T00); // should work
     }
 
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly

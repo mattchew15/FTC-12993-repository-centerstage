@@ -150,18 +150,20 @@ public class SimplicityDrive extends LinearOpMode {
 
                 intakeClipHoldorNotHold(-5);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
+                if (GlobalTimer.milliseconds() - sequenceTimer > 100){
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                    if (gamepad1.right_bumper) {
+                        outtakeState = OuttakeState.INTAKE;
+                    } else if (gamepad1.left_bumper) {
+                        outtakeState = OuttakeState.INTAKE_EXTENDO;
+                        sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                    }
+
+                }
 
                 setIntakeArmHeight();
-
-                if (gamepad1.right_bumper) {
-                    outtakeState = OuttakeState.INTAKE;
-                } else if (gamepad1.left_bumper) {
-                    outtakeState = OuttakeState.INTAKE_EXTENDO;
-                    sequenceTimer = GlobalTimer.milliseconds(); // resets timer
-                }
 
                 if (gamepad1.b||gamepad2.b){
                     intakeSubsystem.intakeSpin(-1);
@@ -226,8 +228,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                if ((GlobalTimer.milliseconds() - sequenceTimer > 300 && intakeSubsystem.intakeChuteArmPosition > 90) || GlobalTimer.milliseconds() > 1000) {
-                    outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
+                if ((GlobalTimer.milliseconds() - sequenceTimer > 300 && intakeSubsystem.intakeChuteArmPosition < 140) || GlobalTimer.milliseconds() > 1000) {
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                     outtakeState = OuttakeState.TRANSFER_END;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
@@ -241,11 +242,14 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case TRANSFER_END:
-                if (GlobalTimer.milliseconds() - sequenceTimer > 150){ // enough time for grippers to close
-                    intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
-                    if (GlobalTimer.milliseconds() - sequenceTimer > 300){
-                        if (liftTarget != 0 || pitchTarget!=0) { // basically if we have selected a scoring position
-                            outtakeState = OuttakeState.OUTTAKE_ADJUST;
+                if (GlobalTimer.milliseconds() - sequenceTimer > 100){ // delay for the transfer to push in
+                    outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 250){ // enough time for grippers to close
+                        intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
+                        if (GlobalTimer.milliseconds() - sequenceTimer > 400){
+                            if (liftTarget != 0 || pitchTarget!=0) { // basically if we have selected a scoring position
+                                outtakeState = OuttakeState.OUTTAKE_ADJUST;
+                            }
                         }
                     }
                 }
@@ -306,7 +310,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSlideInternalPID(-3,1);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
