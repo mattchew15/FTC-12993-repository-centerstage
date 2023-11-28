@@ -59,7 +59,7 @@ public class SampleMecanumDriveR extends MecanumDrive {
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(DriveConstants.MAX_ACCEL);
 
     private SimpleMatrix posekf = new SimpleMatrix(new double[][]{});
-    private Kalman kalman = new Kalman(posekf);
+    public Kalman kalman = new Kalman(posekf); // this should be public
     private TrajectoryFollower follower;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
@@ -309,8 +309,10 @@ public class SampleMecanumDriveR extends MecanumDrive {
     public Pose2d getPoseKF(Pose2d obs)
     {
         SimpleMatrix update = kalman.getUpdateMatrix(getPoseEstimate());
-        SimpleMatrix observation = kalman.poseToMatrix(obs);
+        SimpleMatrix observation = Kalman.poseToMatrix(obs);
         kalman.update(update, observation);
+        // This should not be necessary
+        posekf = Kalman.poseToMatrix(kalman.getPose());
         return kalman.getPose();
     }
 }

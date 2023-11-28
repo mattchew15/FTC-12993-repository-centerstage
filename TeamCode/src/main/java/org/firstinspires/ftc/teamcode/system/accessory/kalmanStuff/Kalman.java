@@ -185,7 +185,7 @@ I = 3x3
     }
 
     /** This return a 3x1 matrix, use this for the all the matrix and stuff*/
-    public SimpleMatrix poseToMatrix(Pose2d pose2d)
+    public static SimpleMatrix poseToMatrix(Pose2d pose2d)
     {
         return new SimpleMatrix(new double[][]
                 {
