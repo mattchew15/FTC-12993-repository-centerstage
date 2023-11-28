@@ -1,4 +1,4 @@
-
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -239,6 +239,8 @@ public class Back_RED_Cycle extends LinearOpMode {
         outtakeSubsystem.pitchToInternalPID(650,1);
     }
 }
+
+ */
 
 
 

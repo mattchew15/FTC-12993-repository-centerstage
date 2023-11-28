@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
 
@@ -196,3 +197,5 @@ public class Audience_RED_CYCLE extends LinearOpMode {
         }
     }
 }
+
+ */

@@ -24,7 +24,7 @@ public class PivotClawTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             outtakeSubsystem.PivotServo.setPosition(PIVOT_POS);
-            outtakeSubsystem.ClawServo.setPosition(CLAW_POS);
+            //outtakeSubsystem.ClawServo.setPosition(CLAW_POS);
         }
     }
 }
