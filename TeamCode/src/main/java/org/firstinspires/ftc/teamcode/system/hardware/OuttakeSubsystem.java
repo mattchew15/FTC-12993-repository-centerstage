@@ -79,7 +79,7 @@ public class OuttakeSubsystem {
     private final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
     private ProfileConstraints profileLiftConstraints = new ProfileConstraints(11000, 11000, 11000);
     // TODO: make a new constructor, to pass a pid object
-    private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileSliderConstraints);
+    private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
     private ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
 
     //Servo stuff
