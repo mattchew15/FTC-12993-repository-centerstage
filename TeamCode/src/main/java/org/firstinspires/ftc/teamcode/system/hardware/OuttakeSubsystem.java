@@ -330,7 +330,7 @@ public class OuttakeSubsystem {
         this.kPos = kPos;
         this.kVel = kVel;
     }
-    public double updateTargetProfile(int liftTarget)
+    public void updateTargetProfile(int liftTarget)
     {
         profileSubsystem.resetTime();
         this.liftTarget = liftTarget;
