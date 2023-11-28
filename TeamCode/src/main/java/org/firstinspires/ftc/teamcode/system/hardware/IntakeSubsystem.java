@@ -128,8 +128,7 @@ public class IntakeSubsystem {
     }
 
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
-        double position = IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
-        return position;
+        return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
     }
 
 
@@ -172,12 +171,13 @@ public class IntakeSubsystem {
         IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
-        if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
+        //    return true;
+        //}
+        //else{
+        //    return false;
+        //}
+        return  Math.abs(intakeSlideTarget - intakeSlidePosition) < intakeSlidethresholdDistance;
     }
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
