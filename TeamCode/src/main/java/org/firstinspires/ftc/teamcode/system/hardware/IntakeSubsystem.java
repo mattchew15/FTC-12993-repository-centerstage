@@ -124,7 +124,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 300) && (backColourSensorValue > 6T00); // should work
+        return (frontColourSensorValue > 300) && (backColourSensorValue > 600); // should work
     }
 
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
