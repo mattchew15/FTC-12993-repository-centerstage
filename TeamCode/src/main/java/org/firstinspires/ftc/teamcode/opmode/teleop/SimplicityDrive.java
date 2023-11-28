@@ -81,7 +81,7 @@ public class SimplicityDrive extends LinearOpMode {
         driveBase.initDrivebase(hardwareMap);
         outtakeState = OuttakeState.READY;
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncPositions = new ArrayList<>(); //
         List<Integer> lastTrackingEncVels = new ArrayList<>(); // idk what this is for but this is what sample mecanum drive does to set localizer
 
         StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap,lastTrackingEncPositions,lastTrackingEncVels);

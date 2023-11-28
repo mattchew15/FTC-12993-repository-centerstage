@@ -46,7 +46,7 @@ public class ProfileTuning extends LinearOpMode
         waitForStart();
         while (opModeIsActive() && !isStopRequested())
         {
-            outtakeSubsystem.outtakeReads();
+            outtakeSubsystem.outtakeReads(false);
             outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
             update();
             if (renew)

@@ -41,12 +41,15 @@ public class ServoTuner extends LinearOpMode {
             intakeSubsystem.IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_POS);
             intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
             intakeSubsystem.IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_POS);
+            /*
             outtakeSubsystem.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_POS);
             outtakeSubsystem.OuttakeArmServoRight.setPosition(OUTTAKE_ARM_POS);
             outtakeSubsystem.MiniTurretServo.setPosition(MINI_TURRET_POS);
             outtakeSubsystem.PivotServo.setPosition(PIVOT_POS);
             outtakeSubsystem.GripperTopServo.setPosition(GRIPPER_TOP_POS);
             outtakeSubsystem.GripperBottomServo.setPosition(GRIPPER_BOTTOM_POS);
+             */
+
             driveBase.ClimbHolderServo.setPosition(CLIMB_HOLDER_POS);
             driveBase.DroneServo.setPosition(DRONE_POS);
         }
