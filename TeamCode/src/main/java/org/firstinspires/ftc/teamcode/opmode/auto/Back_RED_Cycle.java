@@ -259,7 +259,7 @@ public class Back_RED_Cycle extends LinearOpMode {
             case AFTER_GRAB_OFF_STACK:
                 intakeSubsystem.intakeSpin(1);
                 if (GlobalTimer.milliseconds() - autoTimer > 200){
-                    if (intakeSubsystem.frontColourSensorValue > 1000 || GlobalTimer.milliseconds() - autoTimer > 500) {
+                    if (intakeSubsystem.pixelsInIntake() || GlobalTimer.milliseconds() - autoTimer > 500) {
                         autoTimer = GlobalTimer.milliseconds(); // resets timer
                         currentState = AutoState.TRANSFER_PIXEL;
                         intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);

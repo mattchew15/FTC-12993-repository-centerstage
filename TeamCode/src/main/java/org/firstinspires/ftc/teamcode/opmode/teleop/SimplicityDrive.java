@@ -230,8 +230,8 @@ public class SimplicityDrive extends LinearOpMode {
 
             case AFTER_INTAKE:
                 intakeSubsystem.intakeSpin(1);
-                if (GlobalTimer.milliseconds() - sequenceTimer > 200){
-                    if (intakeSubsystem.frontColourSensorValue > 1000) {
+                if (GlobalTimer.milliseconds() - sequenceTimer > 150){
+                    if (intakeSubsystem.pixelsInIntake()){ // has to be both because if the second one slides downthe front one will read
                         sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                         outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                     }
