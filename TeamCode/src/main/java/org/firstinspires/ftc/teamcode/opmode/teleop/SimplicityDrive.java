@@ -41,6 +41,7 @@ public class SimplicityDrive extends LinearOpMode {
     boolean usedTriggers;
     boolean droppedRight;
     boolean droppedLeft;
+    boolean climbAdjustIntakeSlides;
 
     //Accessories
     LoopTime loopTime = new LoopTime();
@@ -402,15 +403,31 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case CLIMB_START:  // idk what this case does
-                outtakeSubsystem.pitchToInternalPID(UPRIGHT_PITCH_TICKS, 1);
+                if (GlobalTimer.milliseconds() - sequenceTimer > 300){
+                    driveBase.climbState(DriveBase.ClimbState.RELEASE);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 500){
+                        outtakeSubsystem.pitchToInternalPID(UPRIGHT_PITCH_TICKS, 1);
+                    }
+                } else {
+                    outtakeSubsystem.pitchToInternalPID(PITCH_MID_DEGREE_TICKS, 1);
+                }
 
-                if (gamepad2.right_bumper && outtakeSubsystem.pitchTargetReached()){
+                if (gamepad1.right_bumper){
                     outtakeState = OuttakeState.CLIMB_END;
+                    intakeSubsystem.intakeSlideInternalPID(250,1); // sets the slides target so following logic works
                 }
                 break;
             case CLIMB_END:  // idk what this case does
-                outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS, 1);
-                intakeSubsystem.intakeSlideTo(100,intakeSubsystem.intakeSlidePosition,1); // balances the robot out
+                outtakeSubsystem.pitchToInternalPID(2000, 1);
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                if (!climbAdjustIntakeSlides){
+                    intakeSubsystem.intakeSlideInternalPID(250,1);
+                    if (intakeSubsystem.intakeSlideTargetReached()){
+                        climbAdjustIntakeSlides = true;
+                    }
+                } else {
+                    intakeSubsystem.intakeSlideMotorRawControl(gamepad1.left_trigger * 0.5 - gamepad1.right_trigger * 0.5); // balances the robot out
+                }
                 break;
         }
 
@@ -431,7 +448,9 @@ public class SimplicityDrive extends LinearOpMode {
             }
             if (gamepad1.dpad_down && outtakeState == OuttakeState.READY){
                 outtakeState = OuttakeState.CLIMB_START;
-                driveBase.climbState(DriveBase.ClimbState.RELEASE);
+                sequenceTimer = GlobalTimer.milliseconds();
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                climbAdjustIntakeSlides = false;
             }
         }
 
