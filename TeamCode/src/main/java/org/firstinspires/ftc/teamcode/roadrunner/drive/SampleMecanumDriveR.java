@@ -305,7 +305,7 @@ public class SampleMecanumDriveR extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
-    /**Get the observation matrix returns a pose2d object*/
+    /**Get the observation pose2d returns the filtered pose2d object*/
     public Pose2d getPoseKF(Pose2d obs)
     {
         SimpleMatrix update = kalman.getUpdateMatrix(getPoseEstimate());

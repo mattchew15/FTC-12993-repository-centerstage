@@ -74,11 +74,11 @@ public class OuttakeSubsystem {
     public double outtakeDistanceSensorValue;
 
     // The profile stuff
-    private double kPos = 0.2, kVel = 0.2;
-    private double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
+    private double kPos, kVel;
+    private final double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
     private final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
-    private ProfileConstraints profileLiftConstraints = new ProfileConstraints(11000, 11000, 11000);
-    // TODO: make a new constructor, to pass a pid object
+    private final double velConstrain = 5000, accelConstrain = 5000, decelConstrain = 5000;
+    private ProfileConstraints profileLiftConstraints = new ProfileConstraints(velConstrain, accelConstrain, decelConstrain);
     private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
     private ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
 
@@ -186,28 +186,28 @@ public class OuttakeSubsystem {
         PitchMotor.setPower(maxSpeed);
     }
 
-    public boolean liftTargetReached(){
-        if (liftPosition > (liftTarget - LIFT_THRESHOLD_DISTANCE) && liftPosition < (liftTarget+ LIFT_THRESHOLD_DISTANCE)){ //LIFT_THRESHOLD_DISTANCE, simplify with Math.abs
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-    public boolean liftTargetReachedR() // Simple version than the above one, should improve loop times
+    //public boolean liftTargetReachedOld(){
+    //    if (liftPosition > (liftTarget - LIFT_THRESHOLD_DISTANCE) && liftPosition < (liftTarget+ LIFT_THRESHOLD_DISTANCE)){ //LIFT_THRESHOLD_DISTANCE, simplify with Math.abs
+    //        return true;
+    //    }
+    //    else{
+    //        return false;
+    //    }
+    //}
+    public boolean liftTargetReached() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(liftTarget - liftPosition) < LIFT_THRESHOLD_DISTANCE);
     }
 
-    public boolean pitchTargetReached(){
-        if (pitchPosition < (pitchTarget + PITCH_THRESHOLD_DISTANCE) && pitchPosition > (pitchTarget- PITCH_THRESHOLD_DISTANCE)){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-    public boolean pitchTargetReachedR() // Simple version than the above one, should improve loop times
+    //public boolean pitchTargetReachedOld(){
+    //    if (pitchPosition < (pitchTarget + PITCH_THRESHOLD_DISTANCE) && pitchPosition > (pitchTarget- PITCH_THRESHOLD_DISTANCE)){
+    //        return true;
+    //    }
+    //    else{
+    //        return false;
+    //    }
+    //}
+    public boolean pitchTargetReached() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(pitchTarget - pitchPosition) < PITCH_THRESHOLD_DISTANCE);
     }
@@ -309,7 +309,7 @@ public class OuttakeSubsystem {
     public void rawLift(double pow)
     {
         // The manual control lift is weighted this is different.
-        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // not a necessary write
         LiftMotor.setPower(-pow);
     }
     public void profileSetUp()
@@ -317,6 +317,7 @@ public class OuttakeSubsystem {
         profileSubsystem.setProfile(liftProfile);
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
+        profileSubsystem.setFullStateFeedback(kPos, kVel);
     }
     public void profileCalculate()
     {
