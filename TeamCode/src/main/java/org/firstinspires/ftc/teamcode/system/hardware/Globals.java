@@ -37,7 +37,8 @@ public class Globals {
             PITCH_LOW_DEGREE_TICKS = 800, //guesses at this point
             PITCH_MID_DEGREE_TICKS = 400,
 
-            INTAKE_SLIDE_EXTENDO_TELEOP = 500,
+            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
+            INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 400,
 
             LIFT_HIGH_POSITION_TICKS = 800,
             LIFT_MEDIUM_POSITION_TICKS = 450,

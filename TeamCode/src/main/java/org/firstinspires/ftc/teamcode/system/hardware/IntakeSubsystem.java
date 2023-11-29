@@ -30,16 +30,16 @@ public class IntakeSubsystem {
             IntakeChuteArmEncoder;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.43,
-            INTAKE_ARM_MIDDLE_POS = 0.48,
-            INTAKE_ARM_BASE_POS = 0.5;
+            INTAKE_ARM_TOP_POS = 0.47,
+            INTAKE_ARM_MIDDLE_POS = 0.425,
+            INTAKE_ARM_BASE_POS = 0.37;
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.15,
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.38,
             INTAKE_CHUTE_ARM_TRANSFER_POS = 0.7;
     public static double
-            INTAKE_CLIP_HOLDING_POS = 0.5,
-            INTAKE_CLIP_OPEN_POS = 0.75;
+            INTAKE_CLIP_HOLDING_POS = 0.53,
+            INTAKE_CLIP_OPEN_POS = 0.84;
     public static double
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.42,
             INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.83;
@@ -106,6 +106,7 @@ public class IntakeSubsystem {
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSpinState = IntakeSpinState.INTAKE;
     }
 
     // handles all of the reads in this class
@@ -124,7 +125,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 300) && (backColourSensorValue > 600); // should work
+        return (frontColourSensorValue > 1000) && (backColourSensorValue > 2500); // should work
     }
 
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
@@ -165,7 +166,7 @@ public class IntakeSubsystem {
     }
 
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
-        intakeSlideTarget = rotations; // variable is public to this class?
+        intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         IntakeSlideMotor.setPower(maxSpeed);
