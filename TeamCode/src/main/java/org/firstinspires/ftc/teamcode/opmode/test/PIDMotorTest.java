@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 
 @TeleOp(name = "PIDmotortest")
@@ -55,7 +56,7 @@ public class PIDMotorTest extends LinearOpMode {
                 outtakeSubsystem.hardwareSetup();
                 driveBase.drivebaseSetup();
                 outtakeSubsystem.encodersReset();
-              //  intakeSubsystem.intakeSlideMotorEncodersReset(); // makesure its dcEX not dcmotor :(((
+                intakeSubsystem.intakeSlideMotorEncodersReset();
 
 
             while (opModeIsActive()) {
@@ -70,17 +71,17 @@ public class PIDMotorTest extends LinearOpMode {
                     outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(100, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftTo(LIFT_HIGH_POSITION_TICKS, outtakeSubsystem.liftPosition, 1);
                 } else if (gamepad1.y) {
-                    outtakeSubsystem.pitchToInternalPID(0,0.5);
+                    outtakeSubsystem.pitchToInternalPID(0,0.6);
                 } else if (gamepad1.x){
-                    outtakeSubsystem.pitchToInternalPID(10,0.5);
+                    outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,0.6);
                 }
 
                 else if (gamepad1.dpad_down){
-                    outtakeSubsystem.liftToInternalPID(100,0.5);
+                    outtakeSubsystem.liftToInternalPID(-100,1);
                 }else if (gamepad1.dpad_up){
-                    outtakeSubsystem.liftToInternalPID(0,0.5);
+                    outtakeSubsystem.liftToInternalPID(0,1);
                 }
 
                 else if (gamepad1.dpad_left){
@@ -88,7 +89,7 @@ public class PIDMotorTest extends LinearOpMode {
                 }else if (gamepad1.dpad_right){
                     intakeSubsystem.intakeSlideInternalPID(100,0.7);
                 }
-                intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
+                //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);

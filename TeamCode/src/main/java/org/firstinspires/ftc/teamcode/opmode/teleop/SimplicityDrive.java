@@ -35,8 +35,12 @@ public class SimplicityDrive extends LinearOpMode {
     double sequenceTimer;
     int liftTarget;
     int pitchTarget;
+    int intakeTarget;
     int armTarget;
     boolean pitching;
+    boolean usedTriggers;
+    boolean droppedRight;
+    boolean droppedLeft;
 
     //Accessories
     LoopTime loopTime = new LoopTime();
@@ -48,7 +52,7 @@ public class SimplicityDrive extends LinearOpMode {
         READY,
         INTAKE_EXTENDO,
         INTAKE,
-        INTAKE_REVERSE,
+        AFTER_INTAKE,
         INTAKE_TO_TRANSFER,
         TRANSFER_START,
         TRANSFER_END,
@@ -105,7 +109,7 @@ public class SimplicityDrive extends LinearOpMode {
             while (opModeIsActive()) {
 
                 outtakeSubsystem.outtakeReads(false); //we dont use distance sensor in tele
-                intakeSubsystem.intakeReads(outtakeState == OuttakeState.INTAKE);
+                intakeSubsystem.intakeReads(outtakeState == OuttakeState.INTAKE || outtakeState == OuttakeState.AFTER_INTAKE || outtakeState == OuttakeState.INTAKE_EXTENDO);
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
@@ -146,6 +150,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 readyOuttake();
                 liftTarget = 0; // this isn't the lift target in this state but rather for when we are fine adjusting lift
+                intakeTarget = 0;
                 pitchTarget = SIXTY_DEGREE_TICKS;
 
                 intakeClipHoldorNotHold(-5);
@@ -156,8 +161,15 @@ public class SimplicityDrive extends LinearOpMode {
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                     if (gamepad1.right_bumper) {
                         outtakeState = OuttakeState.INTAKE;
-                    } else if (gamepad1.left_bumper) {
+                    } else if (gamepad1.left_trigger > 0.2){
+                       if (gamepad1.left_bumper) {
+                            outtakeState = OuttakeState.INTAKE_EXTENDO;
+                            intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE;
+                            sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                        }
+                    } else if (gamepad1.left_bumper){
                         outtakeState = OuttakeState.INTAKE_EXTENDO;
+                        intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_FAR;
                         sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                     }
 
@@ -176,16 +188,19 @@ public class SimplicityDrive extends LinearOpMode {
             case INTAKE:
                 intakeClipHoldorNotHold(-5);
                 intakeSubsystem.intakePixels(GlobalTimer.milliseconds());
-                if (intakeSubsystem.intakeCurrent > 4){ // 10 amps is assumed stalling - should tune
+                if (intakeSubsystem.intakeCurrent > 7){ // 10 amps is assumed stalling - should tune
                     intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                 }
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
 
-                if (gamepad2.right_trigger > 0.2 || intakeSubsystem.pixelsInIntake()) { // need to tune colour sensor thresholds
-                    outtakeState = OuttakeState.INTAKE_TO_TRANSFER; //reverses intake
+                if (intakeSubsystem.backColourSensorValue > 1000) { // need to tune colour sensor thresholds
+                    outtakeState = OuttakeState.AFTER_INTAKE; //reverses intake
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
-                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                }
+                if (gamepad1.right_trigger > 0.2){
+                    sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                    outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                 }
                 break;
 
@@ -194,32 +209,54 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 60) { // power draw reasons
-                    intakeSubsystem.intakeSlideTo(INTAKE_SLIDE_EXTENDO_TELEOP, intakeSubsystem.intakeSlidePosition, 1);
+                    intakeSubsystem.intakeSlideTo(intakeTarget, intakeSubsystem.intakeSlidePosition, 1);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 200){
                         intakeSubsystem.intakePixels(GlobalTimer.milliseconds());
-                        if (intakeSubsystem.intakeCurrent > 4){ // 10 amps is assumed stalling - should tune
+                        if (intakeSubsystem.intakeCurrent > 6){ // 10 amps is assumed stalling - should tune
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                         }
-                        if (gamepad2.right_trigger > 0.2 || intakeSubsystem.pixelsInIntake()) { // or a sensor detects this
-                            outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
+                        if (intakeSubsystem.backColourSensorValue > 2500) { // or a sensor detects this
+                            outtakeState = OuttakeState.AFTER_INTAKE;
                             sequenceTimer = GlobalTimer.milliseconds(); // resets timer
-                            intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                        }
+                        if (gamepad1.right_trigger > 0.2){
+                            sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                            outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                         }
                     }
                 }
                 break;
 
-            case INTAKE_TO_TRANSFER:
-                intakeClipHoldorNotHold(-8); // backs up intake slides into robot
-                if (GlobalTimer.milliseconds() - sequenceTimer > 100) { // time for intake holder to close
-                    if (GlobalTimer.milliseconds() - sequenceTimer > 150){
-                        intakeSubsystem.intakeSpin(0.3); // helps chute arm go up
-                        intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP); // if the intake slides are retracting
+            case AFTER_INTAKE:
+                intakeSubsystem.intakeSpin(1);
+                if (GlobalTimer.milliseconds() - sequenceTimer > 200){
+                    if (intakeSubsystem.frontColourSensorValue > 1000) {
+                        sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                        outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
                     }
-                } else {
-                    intakeSubsystem.intakeSpin(-0.7); // reverse intake
+                    if (gamepad1.right_trigger > 0.2){
+                        sequenceTimer = GlobalTimer.milliseconds(); // resets timer
+                        outtakeState = OuttakeState.INTAKE_TO_TRANSFER;
+                    }
                 }
-                if (intakeSubsystem.intakeSlidePosition < 5 && GlobalTimer.milliseconds() - sequenceTimer > 150){ // could tune this more finely
+
+                break;
+
+            case INTAKE_TO_TRANSFER:
+                if (GlobalTimer.milliseconds() - sequenceTimer > 200){ // gives time for pixels to orientate
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 300) { // time for intake holder to close
+                        if (GlobalTimer.milliseconds() - sequenceTimer > 350){
+                            intakeSubsystem.intakeSpin(0.3); // helps chute arm go up
+                            intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP); // if the intake slides are retracting
+                        }else {
+                            intakeSubsystem.intakeSpin(-0.7); // reverse intake
+                        }
+                    }
+                }
+                intakeClipHoldorNotHold(-8); // backs up intake slides into robot
+
+                if (intakeSubsystem.intakeSlidePosition < 5 && GlobalTimer.milliseconds() - sequenceTimer > 400){ // could tune this more finely
                     outtakeState = OuttakeState.TRANSFER_START;
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
@@ -228,13 +265,13 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                if ((GlobalTimer.milliseconds() - sequenceTimer > 300 && intakeSubsystem.intakeChuteArmPosition < 140) || GlobalTimer.milliseconds() > 1000) {
+                if (((GlobalTimer.milliseconds() - sequenceTimer > 300) && (intakeSubsystem.intakeChuteArmPosition < 160)) || (GlobalTimer.milliseconds() - sequenceTimer > 500)) { //((GlobalTimer.milliseconds() - sequenceTimer > 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || GlobalTimer.milliseconds() > 2000
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                     outtakeState = OuttakeState.TRANSFER_END;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
 
-                if (GlobalTimer.milliseconds() > 100){
+                if (GlobalTimer.milliseconds() - sequenceTimer > 300){
                     intakeSubsystem.intakeSpin(0);
                 } else {
                   intakeSubsystem.intakeSpin(0.3); // helps chute go up
@@ -247,6 +284,7 @@ public class SimplicityDrive extends LinearOpMode {
                     if (GlobalTimer.milliseconds() - sequenceTimer > 250){ // enough time for grippers to close
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                         if (GlobalTimer.milliseconds() - sequenceTimer > 400){
+                            intakeSubsystem.intakeSpin(0);
                             if (liftTarget != 0 || pitchTarget!=0) { // basically if we have selected a scoring position
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
                             }
@@ -264,9 +302,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
 
                 outtakeSubsystem.liftTo(fineAdjustSlides.OffsetTargetPosition, outtakeSubsystem.liftPosition,1);
-                if (GlobalTimer.milliseconds() - sequenceTimer > 350){ // ensure the arm is all the way out
-                    miniTurretAdjust();
-                }
+
 
                 if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
@@ -279,28 +315,39 @@ public class SimplicityDrive extends LinearOpMode {
 
                 // deposit logic
                 if (gamepad1.left_trigger > 0.2) {
+                    usedTriggers = true;
                     if (gamepad1.right_bumper){
-                       outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
-                       sequenceTimer = GlobalTimer.milliseconds();// reset timer
-                        outtakeState = OuttakeState.DEPOSIT;
+                       outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
+                       droppedRight = true;
                     }
                     if (gamepad1.left_bumper) {
-                        outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
-                        sequenceTimer = GlobalTimer.milliseconds();// reset timer
-                        outtakeState = OuttakeState.DEPOSIT;
+                        droppedLeft = true;
+                        outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
                     }
-                } else if (gamepad1.right_bumper) {
+                    if (droppedLeft && droppedRight){
+                        outtakeState = OuttakeState.DEPOSIT;
+                        sequenceTimer = GlobalTimer.milliseconds();// reset timer
+                    }
+                } else if (gamepad1.right_bumper && !usedTriggers) {
                     sequenceTimer = GlobalTimer.milliseconds();// reset timer
                     outtakeState = OuttakeState.DEPOSIT;
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                }
+
+
+                if (GlobalTimer.milliseconds() - sequenceTimer > 350){ // ensure the arm is all the way out
+                    if (usedTriggers)
+                        miniTurretAdjust();
                 }
                 break;
 
             case DEPOSIT:  // idk what this case does
 
-                if (GlobalTimer.milliseconds() - sequenceTimer > 850 || gamepad1.right_bumper){ // test if manual reset is ok
-                    outtakeState = OuttakeState.RETURN;
-                    sequenceTimer = GlobalTimer.milliseconds(); // resets time
+                if (GlobalTimer.milliseconds() - sequenceTimer > 200){ // test if manual reset is ok
+                    if (gamepad1.right_bumper || GlobalTimer.milliseconds() - sequenceTimer > 400) {
+                        outtakeState = OuttakeState.RETURN;
+                        sequenceTimer = GlobalTimer.milliseconds(); // resets time
+                    }
                 }
                 break;
 
@@ -312,22 +359,25 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
-                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                 intakeSubsystem.intakeSpin(-0.3);
 
                 if (!outtakeSubsystem.pitchTargetReached()){
-                    outtakeSubsystem.liftTo(LIFT_HITS_WHILE_PITCHING_THRESHOLD, outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.liftToInternalPID(LIFT_HITS_WHILE_PITCHING_THRESHOLD, 1);
                 } else {
                     outtakeSubsystem.liftToInternalPID(0,1);
                 }
 
-                if (outtakeSubsystem.liftPosition < 5){
+                if (outtakeSubsystem.liftPosition < 80 && GlobalTimer.milliseconds() - sequenceTimer > 200){ // lets slides ramming trick take over
                         outtakeState = OuttakeState.READY; //:)
+                        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                         sequenceTimer = GlobalTimer.milliseconds();
 
                         //having these here means dont repeatedly set things so its more optimized
                         intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.INTAKE;
+                        usedTriggers = false;
+                        droppedRight = false;
+                        droppedLeft = false;
                 }
 
                 break;
@@ -411,7 +461,12 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void readyOuttake(){
         outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1); // internalPID uses less power draw - integral term is better
-        outtakeSubsystem.liftToInternalPID(-6,1);
+        if (outtakeSubsystem.liftPosition < 10){
+            outtakeSubsystem.liftToInternalPID(-6,1);
+            telemetry.addLine("Normal lift position");
+        } else {
+            outtakeSubsystem.liftToInternalPID(-200,1);
+        }
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT); // need to create another method to point to backdrop so i don't need to pass through zero each time
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);

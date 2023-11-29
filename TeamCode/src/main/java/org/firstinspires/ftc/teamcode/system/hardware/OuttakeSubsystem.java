@@ -34,15 +34,15 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.93,
-            ARM_UPRIGHT_POS = 0.85,
-            ARM_SCORE_HALF_DOWN_POS = 0.78,
-            ARM_SCORE_DOWN_POS = 0.22,
-            ARM_SCORE_UP_POS = 0.16;
+            ARM_READY_POS = 0.88,
+            ARM_UPRIGHT_POS = 0.4,
+            ARM_SCORE_HALF_DOWN_POS = 0.1,
+            ARM_SCORE_DOWN_POS = 0.18,
+            ARM_SCORE_UP_POS = 0;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.489,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.4,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
+            MINI_TURRET_STRAIGHT_POS = 0.5,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.38,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.62;
     public static double
             PIVOT_READY_POS = 0.502,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
@@ -52,10 +52,10 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_LEFT_POS = 0.778,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
-            GRIPPER_TOP_OPEN_POS,
-            GRIPPER_TOP_GRIP_POS,
-            GRIPPER_BOTTOM_OPEN_POS,
-            GRIPPER_BOTTOM_GRIP_POS;
+            GRIPPER_TOP_OPEN_POS = 0.88,
+            GRIPPER_TOP_GRIP_POS = 0.74,
+            GRIPPER_BOTTOM_OPEN_POS = 0.25,
+            GRIPPER_BOTTOM_GRIP_POS = 0.37;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -136,7 +136,7 @@ public class OuttakeSubsystem {
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
         pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
-        liftPosition = -LiftMotor.getCurrentPosition();
+        liftPosition = LiftMotor.getCurrentPosition();
         if (dropReadyState){
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
@@ -161,7 +161,7 @@ public class OuttakeSubsystem {
         liftTarget = rotations;
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        LiftMotor.setPower(-output);
+        LiftMotor.setPower(output);
     }
     public void liftToInternalPID(int rotations, double maxSpeed){
         liftTarget = rotations;
