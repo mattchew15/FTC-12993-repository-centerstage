@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
@@ -81,8 +82,15 @@ public class OuttakeSubsystem {
     private ProfileConstraints profileLiftConstraints = new ProfileConstraints(velConstrain, accelConstrain, decelConstrain);
     private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
     private ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
+    private double liftProfilePosition;
 
-    //Servo stuff
+    // servos profile stuff
+    private double armTarget, armPos; // armPos is the previous target
+    private ProfileConstraints profileArmConstraints = new ProfileConstraints(1000, 1000, 1000);
+    private AsymmetricMotionProfile armProfile;
+    private ElapsedTime armProfileTimer = new ElapsedTime();
+
+
     public enum ArmServoState {
         READY,
         UPRIGHT,
@@ -236,6 +244,26 @@ public class OuttakeSubsystem {
                 break;
         }
     }
+    public void armServoProfileState(ArmServoState state) {
+        switch (state) {
+            case READY:
+                setArmTarget(ARM_READY_POS);
+                break;
+            case UPRIGHT:
+                setArmTarget(ARM_UPRIGHT_POS);
+                break;
+            case SCORE_HALF_DOWN:
+                setArmTarget(ARM_SCORE_HALF_DOWN_POS);
+                break;
+            case SCORE_DOWN:
+                setArmTarget(ARM_SCORE_DOWN_POS);
+                break;
+            case SCORE_UP:
+                setArmTarget(ARM_SCORE_UP_POS);
+                break;
+        }
+        calculateArmProfile();
+    }
 
     public static double degreesToTicksMiniTurret(double degrees){
         return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
@@ -312,28 +340,47 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // not a necessary write
         LiftMotor.setPower(-pow);
     }
-    public void profileSetUp()
+    public void profileLiftSetUp()
     {
         profileSubsystem.setProfile(liftProfile);
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
     }
-    public void profileCalculate()
+    public void profileLiftCalculate()
     {
-        liftProfile = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
+        liftProfile = new AsymmetricMotionProfile(liftProfilePosition, liftTarget, profileLiftConstraints);
         profileSubsystem.setTarget(liftTarget);
-        profileSubsystem.setPos(liftPosition);
+        profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID
         rawLift(profileSubsystem.calculateFullState());
     }
-    public void setFullStateGains(double kPos, double kVel)
+    public void setLiftFullStateGains(double kPos, double kVel)
     {
         this.kPos = kPos;
         this.kVel = kVel;
     }
-    public void updateTargetProfile(int liftTarget)
+    public void updateLiftTargetProfile(int liftTarget)
     {
+        liftProfilePosition = liftPosition;
         profileSubsystem.resetTime();
         this.liftTarget = liftTarget;
     }
+
+    public void calculateArmProfile()
+    {
+        armProfile = new AsymmetricMotionProfile(armTarget ,armPos , profileArmConstraints);
+        armProfile.calculate(armProfileTimer.time());
+        double pos = armProfile.state.x;
+        OuttakeArmServoRight.setPosition(pos);
+        OuttakeArmServoLeft.setPosition(pos);
+    }
+    public void setArmTarget(double armTarget)
+    {
+        // this.armPos = OuttakeArmServoLeft.getPosition();
+        this.armPos = this.armTarget;
+        this.armTarget = armTarget;
+        armProfileTimer.reset();
+    }
+
+
 }
