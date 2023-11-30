@@ -6,13 +6,18 @@ import com.acmerobotics.dashboard.config.Config;
 public class AutoGlobals {
 
     public static double
+
+        xPosition,
+        yPosition,
+        headingPosition,
+
+        SlowerVelocityConstraintIntake = 15,
+        SlowerVelocityConstraintDeposit = 15,
+        SlowerVelocityConstraintDepositFaster = 25,
+
         StartPoseYBackdrop = -59,
         StartPoseXBackdrop = 12,
-        StartPoseHeadingBackdrop = 0,
-
-        StartPoseYAudience = -59,
-        StartPoseXAudience = -38,
-        StartPoseHeadingAudience = 0,
+        StartPoseHeadingBackdrop = Math.toRadians(180),
 
         PreloadPose1X = 35,
         PreloadPose1Y = -32,
@@ -26,8 +31,12 @@ public class AutoGlobals {
         PreloadPose3Y = -38,
         PreloadPose3Heading = Math.toRadians(170),
 
-        ParkMiddleX = 45,
-        ParkeMiddleY = -14;
+        MiddleLaneY = -36,
+        LaneOffset = 24,
+
+        ParkX = 45,
+        ParkMiddleY = -14,
+        ParkWallY = -54;
 
 
 }
