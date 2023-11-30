@@ -58,7 +58,7 @@ public class SampleMecanumDriveR extends MecanumDrive {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(DriveConstants.MAX_ACCEL);
 
-    private SimpleMatrix posekf = new SimpleMatrix(new double[][]{});
+    private SimpleMatrix posekf = new SimpleMatrix(new double[][]{{0},{0},{0}});
     public Kalman kalman = new Kalman(posekf); // this should be public
     private TrajectoryFollower follower;
 
