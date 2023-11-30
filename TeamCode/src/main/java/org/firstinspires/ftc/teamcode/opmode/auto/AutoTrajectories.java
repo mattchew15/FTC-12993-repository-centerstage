@@ -14,11 +14,10 @@ public class AutoTrajectories {
 
     public SampleMecanumDrive drive; // if it throw null pointer exception make a hardware object and do this. in constructor
 
-    public AutoTrajectories (HardwareMap hardwareMap){
-        drive = new SampleMecanumDrive(hardwareMap);
+    public AutoTrajectories (){
+
+
     }
-
-
     Pose2d startPoseBack = new Pose2d(12, -59 *S, Math.toRadians(180) *S+A); // don't need to global variable as much with this setup
     Pose2d startPoseFront = new Pose2d(-38, -59 *S, Math.toRadians(180) *S+A); // don't need to global variable as much with this setup
 
@@ -26,66 +25,74 @@ public class AutoTrajectories {
     Pose2d preload2Pose = new Pose2d(PreloadPose2X,PreloadPose2Y*S, PreloadPose2Heading*S+A);
     Pose2d preload3Pose = new Pose2d(PreloadPose3X,PreloadPose3Y*S,PreloadPose3Heading*S+A);
 
+    Trajectory PreloadDrive1, PreloadDrive2, PreloadDrive3, driveIntoStackAfterBackPreload1,
+            driveIntoStackAfterBackPreload2, driveIntoStackAfterBackPreload3, PreloadDrive1Front,
+            PreloadDrive2Front, PreloadDrive3Front, AfterPreloadDrive1Front, AfterPreloadDrive2Front,
+            AfterPreloadDrive3Front;
 
-    // static trajectories - might have to make these public
-    Trajectory PreloadDrive1 = drive.trajectoryBuilder(startPoseBack)
-            .lineToLinearHeading(preload1Pose)
-            .build();
-    Trajectory PreloadDrive2 = drive.trajectoryBuilder(startPoseBack)
-            .lineToLinearHeading(preload2Pose)
-            .build();
-    Trajectory PreloadDrive3 = drive.trajectoryBuilder(startPoseBack)
-            .lineToLinearHeading(preload3Pose)
-            .build();
+    public void init(HardwareMap hardwareMap)
+    {
+        drive = new SampleMecanumDrive(hardwareMap);
 
-    Trajectory driveIntoStackAfterBackPreload1 = drive.trajectoryBuilder(PreloadDrive1.end())
-            .splineToConstantHeading(new Vector2d(34, -33), Math.toRadians(-110)) // end tangent affects path alot
-            .splineToConstantHeading(new Vector2d(23, MiddleLaneY), Math.toRadians(180))
-            .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
-            .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
-            .build();
+        // static trajectories - might have to make these public
+         PreloadDrive1 = drive.trajectoryBuilder(startPoseBack)
+                .lineToLinearHeading(preload1Pose)
+                .build();
+         PreloadDrive2 = drive.trajectoryBuilder(startPoseBack)
+                .lineToLinearHeading(preload2Pose)
+                .build();
+         PreloadDrive3 = drive.trajectoryBuilder(startPoseBack)
+                .lineToLinearHeading(preload3Pose)
+                .build();
 
-    Trajectory driveIntoStackAfterBackPreload2 = drive.trajectoryBuilder(PreloadDrive2.end())
-            .splineToConstantHeading(new Vector2d(34, MiddleLaneY), Math.toRadians(180)) // end tangent affects path alot
-            .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
-            .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
-            .build();
+         driveIntoStackAfterBackPreload1 = drive.trajectoryBuilder(PreloadDrive1.end())
+                .splineToConstantHeading(new Vector2d(34, -33), Math.toRadians(-110)) // end tangent affects path alot
+                .splineToConstantHeading(new Vector2d(23, MiddleLaneY), Math.toRadians(180))
+                .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
+                .build();
 
-    Trajectory driveIntoStackAfterBackPreload3 = drive.trajectoryBuilder(PreloadDrive3.end())
-            .splineToConstantHeading(new Vector2d(30, MiddleLaneY), Math.toRadians(180)) // end tangent affects path alot
-            // .splineToConstantHeading(new Vector2d(23, MiddleLaneY), Math.toRadians(180))
-            .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
-            .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)),SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
-            .build();
+        driveIntoStackAfterBackPreload2 = drive.trajectoryBuilder(PreloadDrive2.end())
+                .splineToConstantHeading(new Vector2d(34, MiddleLaneY), Math.toRadians(180)) // end tangent affects path alot
+                .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
+                .build();
 
-
-    Trajectory PreloadDrive1Front = drive.trajectoryBuilder(startPoseFront)
-            .lineToLinearHeading(new Pose2d(-56, -24, Math.toRadians(-180))) // hardest one closest to stack
-            .build();
-
-    Trajectory PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
-            .lineToLinearHeading(new Pose2d(-47, -24, Math.toRadians(-180)))
-            .build();
-
-    Trajectory PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
-            .lineToLinearHeading(new Pose2d(-38, -24, Math.toRadians(-180)))
-            .build();
+        driveIntoStackAfterBackPreload3 = drive.trajectoryBuilder(PreloadDrive3.end())
+                .splineToConstantHeading(new Vector2d(30, MiddleLaneY), Math.toRadians(180)) // end tangent affects path alot
+                // .splineToConstantHeading(new Vector2d(23, MiddleLaneY), Math.toRadians(180))
+                .lineToSplineHeading(new Pose2d(-20, MiddleLaneY, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-37, MiddleLaneY, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
+                .build();
 
 
-    Trajectory AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
-            .lineToLinearHeading(new Pose2d(-54, -37, Math.toRadians(-180))) // hardest one closest to stack
-            .build();
-    Trajectory AfterPreloadDrive2Front = drive.trajectoryBuilder(PreloadDrive2Front.end())
-            .lineToLinearHeading(new Pose2d(-45, -37, Math.toRadians(-180))) // hardest one closest to stack
-            .build();
-    Trajectory AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
-            .lineToLinearHeading(new Pose2d(-38, -37, Math.toRadians(-180))) // hardest one closest to stack
-            .build();
+        PreloadDrive1Front = drive.trajectoryBuilder(startPoseFront)
+                .lineToLinearHeading(new Pose2d(-56, -24, Math.toRadians(-180))) // hardest one closest to stack
+                .build();
 
-    
+        PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
+                .lineToLinearHeading(new Pose2d(-47, -24, Math.toRadians(-180)))
+                .build();
+
+        PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
+                .lineToLinearHeading(new Pose2d(-38, -24, Math.toRadians(-180)))
+                .build();
+
+
+        AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
+                .lineToLinearHeading(new Pose2d(-54, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .build();
+        AfterPreloadDrive2Front = drive.trajectoryBuilder(PreloadDrive2Front.end())
+                .lineToLinearHeading(new Pose2d(-45, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .build();
+        AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
+                .lineToLinearHeading(new Pose2d(-38, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .build();
+
+    }
 
 
     /* //shouldn't need to do this if drive is public :)

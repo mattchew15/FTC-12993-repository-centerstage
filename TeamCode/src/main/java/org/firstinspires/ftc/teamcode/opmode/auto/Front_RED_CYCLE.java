@@ -66,7 +66,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        autoTrajectories = new AutoTrajectories(hardwareMap); // road drive class
+        autoTrajectories = new AutoTrajectories(); // road drive class
         SetAuto.setRedAuto();
 
 
@@ -78,6 +78,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         cameraHardware.initWebcam(hardwareMap);
+        autoTrajectories.init(hardwareMap);
 
 
         // functions runs on start

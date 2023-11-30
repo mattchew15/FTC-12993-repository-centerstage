@@ -67,7 +67,7 @@ public class Back_RED_Cycle extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        autoTrajectories = new AutoTrajectories(hardwareMap); // road drive class
+        autoTrajectories = new AutoTrajectories(); // road drive class
         SetAuto.setRedAuto();
 
 
