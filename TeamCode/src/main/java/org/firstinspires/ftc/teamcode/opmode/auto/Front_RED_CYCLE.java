@@ -308,17 +308,17 @@ public class Front_RED_CYCLE extends LinearOpMode {
                                 } else {
                                     intakeSubsystem.intakeSlideTo(0, intakeSubsystem.intakeSlidePosition, 1); // line above may limit speed of drop
                                 }
-                                if (xPosition > 25.5 && outtakeSubsystem.liftTargetReached()) { // // || xPosition > 35 this could make it faster on the first cycle
+                                if (!autoTrajectories.drive.isBusy() && outtakeSubsystem.liftTargetReached()) { // // || xPosition > 35 this could make it faster on the first cycle
                                     // line above determines when we drop the pixels
                                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                                     numCycles += 1;
                                     autoTimer = GlobalTimer.milliseconds();
 
                                     if (numCycles == 1){
-                                        autoTrajectories.driveIntoStackStraight(poseEstimate,10,2); // something in this line
+                                        autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.driveIntoStackStraightMIDDLE); // not a live trajectory for this one
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 2){
-                                        autoTrajectories.driveIntoStackStraight(poseEstimate,10,2);
+                                        autoTrajectories.driveIntoStackStraight(poseEstimate,10,2); // might cause an issue here
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 3){
                                         autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,20);

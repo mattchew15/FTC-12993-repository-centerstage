@@ -123,6 +123,13 @@ public class OuttakeSubsystem {
         BOTTOM_OPEN
     }
 
+    public enum OuttakeResetState {
+        UP,
+        DOWN,
+        IDLE
+    }
+    public OuttakeResetState outtakeResetState;
+
     public void initOuttake(HardwareMap hwMap){
         LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
         PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
@@ -158,7 +165,7 @@ public class OuttakeSubsystem {
 
     public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        LiftMotor.setPower(manualControlLift * 1);
+        LiftMotor.setPower(manualControlLift * -1);
     }
 
     public void pitchMotorRawControl(double manualControlTurret){
@@ -172,6 +179,29 @@ public class OuttakeSubsystem {
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         LiftMotor.setPower(output);
     }
+
+
+    public void resetOuttake() {
+        switch (outtakeResetState) {
+            case UP:
+                liftTo(170, liftPosition, 1);
+                if (liftTargetReached()){
+                    outtakeResetState = OuttakeResetState.DOWN;
+                }
+                break;
+            case DOWN:
+                liftToInternalPID(-200, 1);
+                if (liftPosition < 5){
+                    liftToInternalPID(0, 1);
+                    outtakeResetState = OuttakeResetState.IDLE;
+                }
+                break;
+            case IDLE:
+
+                break;
+        }
+    }
+
     public void liftToInternalPID(int rotations, double maxSpeed){
         liftTarget = rotations;
         LiftMotor.setTargetPosition(liftTarget);

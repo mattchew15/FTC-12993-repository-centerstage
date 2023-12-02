@@ -56,6 +56,7 @@ public class IntakeSubsystem {
         REVERSE
     }
     public IntakeSpinState intakeSpinState;
+
     double intakeTimer; // annoying i have to make it a class member
 
     public enum IntakeArmServoState {

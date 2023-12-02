@@ -27,7 +27,7 @@ public class AutoTrajectories {
     Trajectory PreloadDrive1, PreloadDrive2, PreloadDrive3, driveIntoStackAfterBackPreload1,
             driveIntoStackAfterBackPreload2, driveIntoStackAfterBackPreload3, PreloadDrive1Front,
             PreloadDrive2Front, PreloadDrive3Front, AfterPreloadDrive1Front, AfterPreloadDrive2Front,
-            AfterPreloadDrive3Front;
+            AfterPreloadDrive3Front, driveIntoStackStraightMIDDLE, outtakeDriveMiddlePathLIVE;
 
     public void init(HardwareMap hardwareMap)
     {
@@ -90,6 +90,13 @@ public class AutoTrajectories {
                 .lineToLinearHeading(new Pose2d(-38, FrontPreloadY, Math.toRadians(180))) // hardest one closest to stack
                 .build();
 
+        driveIntoStackStraightMIDDLE = drive.trajectoryBuilder(outtakeDriveMiddlePathLIVE.end())
+                .lineToSplineHeading(new Pose2d(10, MiddleLaneY, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-16, MiddleLaneY), Math.toRadians(180)) // end tangent affects path alot\
+                .lineTo(new Vector2d(-36, MiddleLaneY), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // seperates trajectories
+                .build();
+
     }
 
 
@@ -103,23 +110,23 @@ public class AutoTrajectories {
 
     // might have to make multiple of these maybe
     public void driveIntoStackStraight(Pose2d startTrajectory, double slowerVelocityIntoStack, int trussMiddleStage){ // generates a live trajectory
-        Trajectory driveIntoStack = drive.trajectoryBuilder(startTrajectory)
+        Trajectory driveIntoStackStraightLIVE = drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(10, MiddleLaneY + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset)), Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(-16, MiddleLaneY+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset))), Math.toRadians(180)) // end tangent affects path alot\
                 .lineTo(new Vector2d(-36, MiddleLaneY + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset))), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // seperates trajectories
                 .build();
-        drive.followTrajectoryAsync(driveIntoStack);
+        drive.followTrajectoryAsync(driveIntoStackStraightLIVE);
     }
 
     public void outtakeDriveMiddlePath(Pose2d startTrajectory, double slowerVelocityIntoBackdrop){ // generates a live trajectory
-        Trajectory outtakeDriveMiddlePath = drive.trajectoryBuilder(startTrajectory)
+         outtakeDriveMiddlePathLIVE = drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(-10, MiddleLaneY, Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(4, MiddleLaneY), Math.toRadians(0)) // end tangent of path
                 .lineTo(new Vector2d(27.5, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // slower portion of spline
                 .build();
-        drive.followTrajectoryAsync(outtakeDriveMiddlePath);
+        drive.followTrajectoryAsync(outtakeDriveMiddlePathLIVE);
     }
     public void outtakeDriveTurnEndPath(Pose2d startTrajectory, double slowerVelocityIntoBackdrop, double endAngle, int trussMiddleStage){ // generates a live trajectory
         Trajectory outtakeDriveTurnEndPath = drive.trajectoryBuilder(startTrajectory)

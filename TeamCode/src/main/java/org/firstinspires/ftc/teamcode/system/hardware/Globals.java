@@ -34,7 +34,7 @@ public class Globals {
     public static int
             SIXTY_DEGREE_TICKS = 0,
             UPRIGHT_PITCH_TICKS = -300,
-            PITCH_LOW_DEGREE_TICKS = 1100,
+            PITCH_LOW_DEGREE_TICKS = 1000,
             PITCH_MID_DEGREE_TICKS = 400,
 
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
