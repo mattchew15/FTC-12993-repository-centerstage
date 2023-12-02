@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
@@ -135,7 +136,11 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
+                telemetry.addLine("");
                 telemetry.addData("IntakeMotor Current", intakeSubsystem.intakeCurrent);
+                telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+                telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+                telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
                 telemetry.addLine("");
                 telemetry.addData("IntakeChuteArmPosition", intakeSubsystem.intakeChuteArmPosition);
                 telemetry.addLine("");
@@ -210,7 +215,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE:
                 intakeClipHoldorNotHold(-5);
-                intakeSubsystem.intakePixels(GlobalTimer.milliseconds());
+                intakeSubsystem.intakeSpin(1);
                 if (false){ // 10 amps is assumed stalling - should tune
                     intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                 }
@@ -234,7 +239,6 @@ public class SimplicityDrive extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - sequenceTimer > 90) { // power draw reasons
                     intakeSubsystem.intakeSlideTo(intakeTarget, intakeSubsystem.intakeSlidePosition, 1);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 200){
-                        intakeSubsystem.intakePixels(GlobalTimer.milliseconds());
                         if (false){ // 10 amps is assumed stalling - should tune
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                         }
@@ -269,7 +273,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - sequenceTimer > 70){ // gives time for pixels to orientate
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 240) { // time for intake holder to close
-                        if (GlobalTimer.milliseconds() - sequenceTimer > 350){
+                        if (GlobalTimer.milliseconds() - sequenceTimer > 400){
                             intakeSubsystem.intakeSpin(0.35); // helps chute arm go up
                             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP); // if the intake slides are retracting
                         }else {
@@ -279,7 +283,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                 intakeClipHoldorNotHold(-8); // backs up intake slides into robot
 
-                if (intakeSubsystem.intakeSlidePosition < 5 && GlobalTimer.milliseconds() - sequenceTimer > 400){ // could tune this more finely
+                if (intakeSubsystem.intakeSlidePosition < 5 && GlobalTimer.milliseconds() - sequenceTimer > 420){ // could tune this more finely
                     outtakeState = OuttakeState.TRANSFER_START;
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
@@ -288,7 +292,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                if ((GlobalTimer.milliseconds() - sequenceTimer > 450)) { //((GlobalTimer.milliseconds() - sequenceTimer > 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || GlobalTimer.milliseconds() > 2000
+                if ((GlobalTimer.milliseconds() - sequenceTimer > 600)) { //((GlobalTimer.milliseconds() - sequenceTimer > 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || GlobalTimer.milliseconds() > 2000
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                     outtakeState = OuttakeState.TRANSFER_END;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
@@ -324,7 +328,7 @@ public class SimplicityDrive extends LinearOpMode {
                     armAdjust(); // depends on the pitch the arm will go to position
                 }
 
-              //  outtakeSubsystem.liftTo(fineAdjustSlides.OffsetTargetPosition, outtakeSubsystem.liftPosition,1);
+               outtakeSubsystem.liftTo(fineAdjustSlides.OffsetTargetPosition, outtakeSubsystem.liftPosition,1);
 
 
                 if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
@@ -401,9 +405,9 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSpin(-0.3);
 
                 if (!outtakeSubsystem.pitchTargetReached()){
-                   // outtakeSubsystem.liftToInternalPID(LIFT_HITS_WHILE_PITCHING_THRESHOLD, 1);
+                    outtakeSubsystem.liftToInternalPID(LIFT_HITS_WHILE_PITCHING_THRESHOLD, 1);
                 } else {
-                 //   outtakeSubsystem.liftToInternalPID(0,1);
+                   outtakeSubsystem.liftToInternalPID(0,1);
                 }
 
                 if (outtakeSubsystem.liftPosition < 80 && GlobalTimer.milliseconds() - sequenceTimer > 130){ // lets slides ramming trick take over
@@ -537,11 +541,11 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void readyOuttake(){
         outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1); // internalPID uses less power draw - integral term is better
-        if (outtakeSubsystem.liftPosition < 10){
-          //  outtakeSubsystem.liftToInternalPID(-6,1);
+        if (outtakeSubsystem.liftPosition < 4){
+           outtakeSubsystem.liftToInternalPID(0,1);
             telemetry.addLine("Normal lift position");
         } else {
-          //  outtakeSubsystem.liftToInternalPID(-200,1);
+          outtakeSubsystem.liftToInternalPID(-200,1);
         }
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT); // need to create another method to point to backdrop so i don't need to pass through zero each time
@@ -567,7 +571,7 @@ public class SimplicityDrive extends LinearOpMode {
                 fineAdjustSlides.clearOffset(liftTarget);
 
             }
-        } else if (gamepad2.a || gamepad1.a){
+        } else if ((gamepad2.a || gamepad1.a) && pitchTarget != PITCH_MID_DEGREE_TICKS){ // so you can't knock stuff of the backdrop
             if (pitching){
                 liftTarget = LIFT_LOW_POSITION_PITCHING_TICKS;
                 armTarget = 1;

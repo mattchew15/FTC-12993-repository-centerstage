@@ -67,28 +67,27 @@ public class AutoTrajectories {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))// slower portion of spline
                 .build();
 
-
         PreloadDrive1Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-56, -24, Math.toRadians(180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-56, -18, Math.toRadians(175))) // hardest one closest to stack
                 .build();
 
         PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-47, -24, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-47, -18, Math.toRadians(175)))
                 .build();
 
         PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-38, -24, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-41, -18, Math.toRadians(175)))
                 .build();
 
 
         AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
-                .lineToLinearHeading(new Pose2d(-54, -37, Math.toRadians(180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-54, FrontPreloadY, Math.toRadians(180))) // hardest one closest to stack
                 .build();
         AfterPreloadDrive2Front = drive.trajectoryBuilder(PreloadDrive2Front.end())
-                .lineToLinearHeading(new Pose2d(-45, -37, Math.toRadians(180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-45, FrontPreloadY, Math.toRadians(180))) // hardest one closest to stack
                 .build();
         AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
-                .lineToLinearHeading(new Pose2d(-38, -37, Math.toRadians(180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-38, FrontPreloadY, Math.toRadians(180))) // hardest one closest to stack
                 .build();
 
     }
@@ -117,7 +116,7 @@ public class AutoTrajectories {
         Trajectory outtakeDriveMiddlePath = drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(-10, MiddleLaneY, Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(15, MiddleLaneY), Math.toRadians(0)) // end tangent of path
-                .lineTo(new Vector2d(20, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineTo(new Vector2d(23, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // slower portion of spline
                 .build();
         drive.followTrajectoryAsync(outtakeDriveMiddlePath);
