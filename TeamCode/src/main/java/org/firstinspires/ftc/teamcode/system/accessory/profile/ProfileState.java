@@ -6,7 +6,7 @@ public class ProfileState {
     public double a = 0;
 
     public ProfileState(double x, double v, double a) {
-        this.x = x;
+        this.x = x;//this.x = x;
         this.v = v;
         this.a = a;
     }

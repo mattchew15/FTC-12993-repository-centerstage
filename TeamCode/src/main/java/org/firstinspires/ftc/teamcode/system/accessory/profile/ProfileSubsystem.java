@@ -26,7 +26,7 @@ public class ProfileSubsystem
     }
 
     private ElapsedTime timer;
-    private ProfileState state;
+    public ProfileState state;
     private double minFeedForward = 0.0;
     private double maxFeedForward = 0.0;
     private double currentFeedForward = 0.0;
@@ -84,7 +84,7 @@ public class ProfileSubsystem
      * This does calculations using the feedforward, this does not take any parameter but you
      * need to call reads() before hand, and update Target()
      */
-    public double calculateFeedForward()
+    public double calculate()
     {
         // should return the output after using the profile and the pid and the feedforward
         double targetOffSet = target - position;
@@ -115,6 +115,11 @@ public class ProfileSubsystem
                 case ANGLE_SIN:
                     this.pow += currentFeedForward * Math.sin(position);
                     break;
+                case FullState:
+                    this.pow = calculatePID(target + targetOffSet, position);
+                    this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
+                    this.pow = MathUtils.clamp(pow, -1, 1);
+                    break;
                 default:
             }
             this.pow = MathUtils.clamp(pow, -1, 1);
@@ -127,7 +132,7 @@ public class ProfileSubsystem
         }
         return pow;
     }
-
+/*
     // I could probably merge with the feedforward
     public double calculateFullState()
     {
@@ -154,9 +159,10 @@ public class ProfileSubsystem
             this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
             this.pow = MathUtils.clamp(pow, -1, 1);
         }
-        this.reached = Math.abs((target + targetOffSet) - position) < tolerance;
+        this.reached = (Math.abs((target + targetOffSet) - position) < tolerance);
         return pow;
     }
+    */
 
     public void setPID(double kp, double ki, double kd)
     {
@@ -179,8 +185,9 @@ public class ProfileSubsystem
         return pid.update(target, position, maxOutput);
     }
 
-    public void setFeedforward(double min)
+    public void setFeedforward(double min, SubsystemMode mode)
     {
+        this.mode = mode;
         this.minFeedForward = min;
         currentFeedForward = minFeedForward;
     }
@@ -232,28 +239,25 @@ public class ProfileSubsystem
             timer.reset();
         }
     }
-
-    /**
-     * Loop reads before calculating the output
-     */
-    public void reads(double pos, AsymmetricMotionProfile profile)
+    public double getTime()
     {
-        setPos(pos);
-        calculateFullState();
-    }
-
-    /**
-     * Use this to set the new target and also reset the timer
-     */
-    public void updateTarget(double target)
-    {
-        setTarget(target);
-        resetTime();
+        return timer.time();
     }
 
     public void setFullStateFeedback(double kPos, double kVel)
     {
         this.fullStateFeedback = new FullStateFeedback(kPos, kVel);
+    }
+
+    // maybe now it will work, if it does, just call this after calculate
+    public double getX()
+    {
+        //TODO: return profile.calculate(timer.time()).x;
+        return profile.state.x;
+    }
+    public void initState()
+    {
+        state = new ProfileState(0, 0, 0);
     }
 
 }

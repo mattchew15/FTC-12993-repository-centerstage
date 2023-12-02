@@ -1,4 +1,4 @@
-
+/*
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -114,6 +114,113 @@ public class SimplicityDriveMotion extends LinearOpMode {
             telemetry.addData("Output", output);
             telemetry.addData("Target", target);
             telemetry.addData("SliderPos", outtakeSubsystem.liftPosition);
+            telemetry.update();
+        }
+    }
+
+}
+*/
+
+package org.firstinspires.ftc.teamcode.opmode.teleop;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+import org.firstinspires.ftc.teamcode.system.accessory.ToggleR;
+import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
+
+
+@Config
+@TeleOp(name = "SimplicityDriveMotion", group = "TestR")
+public class SimplicityDriveMotion extends LinearOpMode {
+
+
+    // Feed forward
+    public static double kP = 0.015, kI = 0.0001, kD = 0.00006;
+    //LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
+    //Subsystems
+    DriveBase driveBase = new DriveBase();
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
+    // Max ticks of the motor is like 2800, 1150rpm, 19.16 rps, 145 ticks/rev, = 2779 is the max vel ticks/second, accel should be vel / time(s)
+    ElapsedTime GlobalTimer = new ElapsedTime();
+    ToggleR toggle = new ToggleR();
+    // Don't use the constructor with the telemetry in final
+    double target;
+    private int cyclesInSync;
+
+    @Override
+    public void runOpMode() throws InterruptedException
+    {
+        outtakeSubsystem.initOuttake(hardwareMap);
+        driveBase.initDrivebase(hardwareMap);
+        driveBase.drivebaseSetup();
+        GlobalTimer.reset();
+        GlobalTimer.startTime();
+        outtakeSubsystem.hardwareSetup();
+        outtakeSubsystem.encodersReset();
+        outtakeSubsystem.setLiftFullStateGains(0.0001, 0.0004);
+        outtakeSubsystem.profileLiftSetUp();
+        waitForStart();
+
+        // Yeah i know it is crappy it is just for testing the profiles
+        while (opModeIsActive() && !isStopRequested())
+        {
+            outtakeSubsystem.outtakeReads(false);
+            outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
+            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+            // Implementation needs a toggle so it doesn't keep resetting the time
+
+            if (gamepad1.a)
+            {
+               outtakeSubsystem.updateLiftTargetProfile(200);
+            }
+            if (gamepad1.b)
+            {
+               outtakeSubsystem.updateLiftTargetProfile(400);
+
+            }
+            if (gamepad1.y)
+            {
+               outtakeSubsystem.updateLiftTargetProfile(600);
+
+            }
+            if (gamepad1.x)
+            {
+                outtakeSubsystem.updateLiftTargetProfile(0);
+
+            }
+            if (gamepad1.dpad_left)
+            {
+                outtakeSubsystem.rawLift(0);
+            }
+            double output = outtakeSubsystem.profileLiftCalculateFeedForward();
+
+            driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            // Debug telemetry,
+            //telemetry.addData("Toggle", toggle.mode(gamepad1.right_bumper));
+            telemetry.addData("X", outtakeSubsystem.profileSubsystem.getX()); // Think as this as a function
+            // telemetry.addData("V", v);
+            // telemetry.addData("A", a);
+            telemetry.addData("Output Feedforward", output);
+            telemetry.addData("Output FullState", outtakeSubsystem.profileLiftCalculate());
+            telemetry.addData("Target", outtakeSubsystem.liftTarget);
+            telemetry.addData("SliderPos", outtakeSubsystem.liftPosition);
+            telemetry.addData("LiftProfile Pos", outtakeSubsystem.liftProfileStartingPosition);
+            telemetry.addData("Has reached", outtakeSubsystem.profileSubsystem.hasReached());
+            telemetry.addData("Timer profile", outtakeSubsystem.profileSubsystem.getTime());
+            boolean sync = false;
+            if (outtakeSubsystem.profileSubsystem.hasReached() && Math.abs(outtakeSubsystem.liftTarget - outtakeSubsystem.liftPosition) < 20)
+            {
+                sync = true;
+                cyclesInSync += 1;
+            }
+            telemetry.addData("Sync", sync);
+            telemetry.addData("Cycles in sync", cyclesInSync);
+            telemetry.addData("Error", Math.abs(outtakeSubsystem.liftPosition - outtakeSubsystem.profileSubsystem.getX()));
             telemetry.update();
         }
     }
