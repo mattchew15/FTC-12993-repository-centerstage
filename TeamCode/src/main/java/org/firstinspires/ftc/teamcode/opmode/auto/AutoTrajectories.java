@@ -106,7 +106,7 @@ public class AutoTrajectories {
         Trajectory driveIntoStack = drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(-20, MiddleLaneY + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset)), Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(-30, MiddleLaneY+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset))), Math.toRadians(180)) // end tangent affects path alot\
-                .lineTo(new Vector2d(-37, MiddleLaneY + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset))), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineTo(new Vector2d(-35, MiddleLaneY + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset: LaneOffset))), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // seperates trajectories
                 .build();
         drive.followTrajectoryAsync(driveIntoStack);
@@ -116,7 +116,7 @@ public class AutoTrajectories {
         Trajectory outtakeDriveMiddlePath = drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(-10, MiddleLaneY, Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(15, MiddleLaneY), Math.toRadians(0)) // end tangent of path
-                .lineTo(new Vector2d(23, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineTo(new Vector2d(26, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // slower portion of spline
                 .build();
         drive.followTrajectoryAsync(outtakeDriveMiddlePath);

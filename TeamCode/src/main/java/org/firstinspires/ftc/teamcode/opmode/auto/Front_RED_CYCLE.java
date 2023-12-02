@@ -54,6 +54,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
         DROP,
         GRAB_OFF_STACK,
         AFTER_GRAB_OFF_STACK,
+        AFTER_GRAB_OFF_STACK_TOP,
         OUTTAKE_PIXEL_NO_INTAKE_SLIDES,
         PARK,
         IDLE,
@@ -247,7 +248,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
                 intakeSubsystem.intakeSlideInternalPID(-3,1);
                 if (GlobalTimer.milliseconds() - autoTimer > 100){ // time for pixel holder to close
-                    if (intakeSubsystem.intakeSlidePosition < 10){
+                    if (intakeSubsystem.intakeSlidePosition < 100){
                         intakeSubsystem.intakeSpin(0.5);
                         if (intakeSubsystem.intakeSlidePosition < 5){
                             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
@@ -260,10 +261,9 @@ public class Front_RED_CYCLE extends LinearOpMode {
                         }
                     } else {
                         intakeSubsystem.intakeSpin(-1);
-
                     }
                 } else {
-                    intakeSubsystem.intakeSpin(1); // this doesn't happen for very long
+                    intakeSubsystem.intakeSpin(0.5); // this doesn't happen for very long
                 }
 
 
@@ -274,18 +274,22 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     if (GlobalTimer.milliseconds() - autoTimer > 330){ // time for grippers to close
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
-                        outtakeSubsystem.liftTo(700,outtakeSubsystem.liftPosition,1);
-                        outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
+                        outtakeSubsystem.liftTo(725,outtakeSubsystem.liftPosition,1);
+                        outtakeSubsystem.pitchToInternalPID(1000,1);
                         if (GlobalTimer.milliseconds() - autoTimer > 400){
                             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_DOWN); // slides go out before arm so transfer is good
                             if (GlobalTimer.milliseconds() - autoTimer > 1000){ // once chute is down
                                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
-                                if (teamPropLocation == 1){
+                                if (numCycles == 0){
+                                    if (teamPropLocation == 1){
+                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                    } else if (teamPropLocation == 2){
+                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
+                                    } else if (teamPropLocation == 3){
+                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                    }
+                                } else {
                                     outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
-                                } else if (teamPropLocation == 2){
-                                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
-                                } else if (teamPropLocation == 3){
-                                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
                                 }
                                 intakeSubsystem.intakeSlideTo(250, intakeSubsystem.intakeSlidePosition, 1); // line above may limit speed of drop
                                 if (!autoTrajectories.drive.isBusy() && outtakeSubsystem.liftTargetReached()) { // // || xPosition > 35 this could make it faster on the first cycle
@@ -295,10 +299,10 @@ public class Front_RED_CYCLE extends LinearOpMode {
                                     autoTimer = GlobalTimer.milliseconds();
 
                                     if (numCycles == 1){
-                                        autoTrajectories.driveIntoStackStraight(poseEstimate,20,2);
+                                        autoTrajectories.driveIntoStackStraight(poseEstimate,10,2);
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 2){
-                                        autoTrajectories.driveIntoStackStraight(poseEstimate,20,2);
+                                        autoTrajectories.driveIntoStackStraight(poseEstimate,10,2);
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 3){
                                         autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,20);
@@ -321,11 +325,12 @@ public class Front_RED_CYCLE extends LinearOpMode {
                         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                         if (numCycles == 1){
-                            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
+                            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                         } else if (numCycles == 2){
-                            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
-                        } else if (numCycles == 4){
+                            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
+                        } else if (numCycles == 3){
                             // make intake arm height correct
+                            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                         }
                         currentState = AutoState.GRAB_OFF_STACK;
                         autoTimer = GlobalTimer.milliseconds();
@@ -340,6 +345,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS, 1);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
                 outtakeSubsystem.liftToInternalPID(0,1);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
 
@@ -347,18 +353,21 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
 
-                if (xPosition < -25){ //
-                    intakeSubsystem.intakeSlideTo(680, intakeSubsystem.intakeSlidePosition,1);
-                    if (xPosition < -35) {
+                if (xPosition < 5){ //
+                    intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
+                    if (xPosition < -12) {
                         intakeSubsystem.intakeSpin(1);
-                        if (intakeSubsystem.backColourSensorValue > 2500 || !autoTrajectories.drive.isBusy()){ // do stuff with sensor to make better
-                            currentState = AutoState.AFTER_GRAB_OFF_STACK;
-                            autoTimer = GlobalTimer.milliseconds();
-                            if (numCycles > 2) {
-
-                            } else {
-                                autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20);
-                            }
+                        if (!autoTrajectories.drive.isBusy()){ // do stuff with sensor to make better
+                                if (numCycles == 1) {
+                                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
+                                }
+                                currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                                autoTimer = GlobalTimer.milliseconds();
+                                if (numCycles > 2) {
+                                   // intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
+                                } else {
+                                    autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20);
+                                }
                         }
                     }
                 }
@@ -367,8 +376,8 @@ public class Front_RED_CYCLE extends LinearOpMode {
             // might need to make another state for the colour sensors similar to teleop
             case AFTER_GRAB_OFF_STACK:
                 intakeSubsystem.intakeSpin(1);
-                if (GlobalTimer.milliseconds() - autoTimer > 200){
-                    if (intakeSubsystem.pixelsInIntake() || GlobalTimer.milliseconds() - autoTimer > 500) {
+                if (numCycles == 1? (GlobalTimer.milliseconds() - autoTimer > 200): (GlobalTimer.milliseconds() - autoTimer > 500)){
+                    if (intakeSubsystem.pixelsInIntake() || numCycles == 1? (GlobalTimer.milliseconds() - autoTimer > 500): (GlobalTimer.milliseconds() - autoTimer > 800)) {
                         autoTimer = GlobalTimer.milliseconds(); // resets timer
                         currentState = AutoState.TRANSFER_PIXEL;
                         intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
