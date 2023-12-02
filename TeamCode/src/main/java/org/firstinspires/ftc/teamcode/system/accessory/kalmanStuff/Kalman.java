@@ -45,7 +45,7 @@ I = 3x3
         {
             {0.20, 0, 0},
             {0, 0.2, 0},
-            {0, 0, 0, 0.01}
+            {0, 0, 0.01}
         });
     // Covariance gain for the model
     private SimpleMatrix Q = new SimpleMatrix(new double[][]
@@ -258,7 +258,7 @@ I = 3x3
             {
                     {n1, 0, 0},
                     {0, n2, 0},
-                    {0, 0, 0, n3}
+                    {0, 0, n3}
             });
     }
     public void setCovarianceGain(double c1, double c2, double c3)
