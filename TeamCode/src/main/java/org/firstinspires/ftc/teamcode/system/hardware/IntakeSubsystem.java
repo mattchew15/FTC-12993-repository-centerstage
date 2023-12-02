@@ -30,7 +30,9 @@ public class IntakeSubsystem {
             IntakeChuteArmEncoder;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.472,
+            INTAKE_ARM_TOP_POS = 0.485,
+            INTAKE_ARM_VERY_TOP_POS = 0.49,
+            INTAKE_ARM_FOUR_POS = 0.47,
             INTAKE_ARM_MIDDLE_POS = 0.425,
             INTAKE_ARM_BASE_POS = 0.37;
     public static double
@@ -58,6 +60,8 @@ public class IntakeSubsystem {
 
     public enum IntakeArmServoState {
         TOP,
+        VERY_TOP,
+        FOUR,
         MIDDLE,
         BASE
     }
@@ -198,6 +202,11 @@ public class IntakeSubsystem {
             case MIDDLE:
                 IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
                 break;
+            case VERY_TOP:
+                IntakeArmServo.setPosition(INTAKE_ARM_VERY_TOP_POS);
+                break;
+            case FOUR:
+                IntakeArmServo.setPosition(INTAKE_ARM_FOUR_POS);
             case BASE:
                 IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;

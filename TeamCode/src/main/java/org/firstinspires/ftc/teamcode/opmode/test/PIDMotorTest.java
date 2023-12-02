@@ -61,7 +61,7 @@ public class PIDMotorTest extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                outtakeSubsystem.outtakeReads(false); // read at the start of the loop
+                outtakeSubsystem.outtakeReads(true); // read at the start of the loop
                 intakeSubsystem.intakeReads(true);
 
                 // can be condensed into the one class? - try ita
@@ -93,6 +93,7 @@ public class PIDMotorTest extends LinearOpMode {
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
+                telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
                 telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchPosition);
                 telemetry.addLine("");
