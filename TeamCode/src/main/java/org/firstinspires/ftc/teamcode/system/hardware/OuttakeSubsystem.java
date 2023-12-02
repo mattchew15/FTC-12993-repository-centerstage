@@ -75,18 +75,19 @@ public class OuttakeSubsystem {
     public double outtakeDistanceSensorValue;
 
     // The profile stuff
-    private double kPos, kVel;
-    private final double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
-    private final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
-    private final double velConstrain = 5000, accelConstrain = 5000, decelConstrain = 5000;
-    private ProfileConstraints profileLiftConstraints = new ProfileConstraints(velConstrain, accelConstrain, decelConstrain);
-    private AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
-    private ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
-    private double liftProfilePosition;
+    public double kPos, kVel;
+    public final double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
+    public final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
+    public final double velConstrain = 300, accelConstrain = 500, decelConstrain = 300;
+    public ProfileConstraints profileLiftConstraints = new ProfileConstraints(velConstrain, accelConstrain, decelConstrain);
+    // Make private after tuning
+    public AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
+    public ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
+    public double liftProfileStartingPosition, liftProfilePosition;
 
     // servos profile stuff
     private double armTarget, armPos; // armPos is the previous target
-    private ProfileConstraints profileArmConstraints = new ProfileConstraints(1000, 1000, 1000);
+    private ProfileConstraints profileArmConstraints = new ProfileConstraints(300, 500, 300);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
 
@@ -351,7 +352,7 @@ public class OuttakeSubsystem {
     {
         // The manual control lift is weighted this is different.
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // not a necessary write
-        LiftMotor.setPower(-pow);
+        LiftMotor.setPower(pow);
     }
     public void profileLiftSetUp()
     {
@@ -359,13 +360,34 @@ public class OuttakeSubsystem {
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
+        profileSubsystem.initState();
     }
-    public void profileLiftCalculate()
+    public double profileLiftCalculate()
     {
-        liftProfile = new AsymmetricMotionProfile(liftProfilePosition, liftTarget, profileLiftConstraints);
+        liftProfile = new AsymmetricMotionProfile(liftProfileStartingPosition, liftTarget, profileLiftConstraints);
+        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.CONSTANT);
+        profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
+        profileSubsystem.setMaxOutput(1); // not a necessary write
+        profileSubsystem.setFullStateFeedback(kPos, kVel);
+        profileSubsystem.initState(); // this might fuck up
         profileSubsystem.setTarget(liftTarget);
         profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID
-        rawLift(profileSubsystem.calculateFullState());
+        double output = profileSubsystem.calculate();
+        rawLift(output);
+        return output;
+    }
+    public double profileLiftCalculateFeedForward()
+    {
+        profileSubsystem.setFeedforward(0.04, ProfileSubsystem.SubsystemMode.CONSTANT);
+        profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
+        profileSubsystem.setMaxOutput(1); // not a necessary write
+        profileSubsystem.setFullStateFeedback(kPos, kVel);
+        profileSubsystem.initState();
+        profileSubsystem.setTarget(liftTarget);
+        profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID TODO: try making this the state.x or passing the state.x as the profile pos
+        double output = profileSubsystem.calculate();
+        rawLift(output);
+        return output;
     }
     public void setLiftFullStateGains(double kPos, double kVel)
     {
@@ -374,7 +396,9 @@ public class OuttakeSubsystem {
     }
     public void updateLiftTargetProfile(int liftTarget)
     {
-        liftProfilePosition = liftPosition;
+        liftProfile = new AsymmetricMotionProfile(liftProfileStartingPosition, liftTarget, profileLiftConstraints);
+        profileSubsystem.setProfile(liftProfile);
+        liftProfileStartingPosition = liftPosition;
         profileSubsystem.resetTime();
         this.liftTarget = liftTarget;
     }
