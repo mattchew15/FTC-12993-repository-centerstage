@@ -238,6 +238,7 @@ public class SimplicityDrive extends LinearOpMode {
                 setIntakeArmHeight();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 90) { // power draw reasons
                     intakeSubsystem.intakeSlideTo(intakeTarget, intakeSubsystem.intakeSlidePosition, 1);
+                    intakeSubsystem.intakeSpin(1);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 200){
                         if (false){ // 10 amps is assumed stalling - should tune
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
