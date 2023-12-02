@@ -35,11 +35,11 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.88,
+            ARM_READY_POS = 0.885,
             ARM_UPRIGHT_POS = 0.4,
             ARM_SCORE_HALF_DOWN_POS = 0.1,
             ARM_SCORE_DOWN_POS = 0.18,
-            ARM_SCORE_UP_POS = 0;
+            ARM_SCORE_UP_POS = 0.05;
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.5,
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.38,
@@ -54,9 +54,9 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             GRIPPER_TOP_OPEN_POS = 0.88,
-            GRIPPER_TOP_GRIP_POS = 0.74,
+            GRIPPER_TOP_GRIP_POS = 0.73,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
-            GRIPPER_BOTTOM_GRIP_POS = 0.37;
+            GRIPPER_BOTTOM_GRIP_POS = 0.38;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -157,7 +157,7 @@ public class OuttakeSubsystem {
 
     public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        LiftMotor.setPower(manualControlLift * 0.75);
+        LiftMotor.setPower(manualControlLift * 1);
     }
 
     public void pitchMotorRawControl(double manualControlTurret){
@@ -266,7 +266,18 @@ public class OuttakeSubsystem {
     }
 
     public static double degreesToTicksMiniTurret(double degrees){
-        return MINI_TURRET_STRAIGHT_POS + degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+        return MINI_TURRET_STRAIGHT_POS - degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+    }
+    public double angleWrap(double radians) {
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+
+        // keep in mind that the result is in radians
+        return radians;
     }
 
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
@@ -287,7 +298,9 @@ public class OuttakeSubsystem {
     }
 
     public void miniTurretPointToBackdrop(double robotDegrees){
-        MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
+        if (Math.abs(robotDegrees) < 63){
+            MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
+        }
     }
 
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out

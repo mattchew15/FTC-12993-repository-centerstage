@@ -30,15 +30,15 @@ public class IntakeSubsystem {
             IntakeChuteArmEncoder;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.47,
+            INTAKE_ARM_TOP_POS = 0.472,
             INTAKE_ARM_MIDDLE_POS = 0.425,
             INTAKE_ARM_BASE_POS = 0.37;
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.15,
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.38,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.7;
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.8;
     public static double
-            INTAKE_CLIP_HOLDING_POS = 0.53,
+            INTAKE_CLIP_HOLDING_POS = 0.58,
             INTAKE_CLIP_OPEN_POS = 0.84;
     public static double
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.42,
@@ -114,8 +114,8 @@ public class IntakeSubsystem {
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         intakeChuteArmPosition = getIntakeChuteArmPos();
         if (intakingState){ // pass in state
-            frontColourSensorValue = IntakeColourSensorFront.red(); // could be something else
-            backColourSensorValue = IntakeColourSensorBack.red();
+            frontColourSensorValue = IntakeColourSensorFront.argb(); // could be something else
+            backColourSensorValue = IntakeColourSensorBack.argb();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
         }
     }
@@ -125,7 +125,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 1000) && (backColourSensorValue > 2500); // should work
+        return (frontColourSensorValue < 0) && (backColourSensorValue < 0); // should work
     }
 
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly

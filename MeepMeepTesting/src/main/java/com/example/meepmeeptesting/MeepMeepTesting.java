@@ -24,7 +24,7 @@ public class MeepMeepTesting {
                                 .lineToSplineHeading(new Pose2d(0, -36, Math.toRadians(180)))
                                 .splineToSplineHeading(new Pose2d(5, -36, Math.toRadians(180)), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(27, -36, Math.toRadians(160)))
-                                .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(160))) // slower portion of spline
+                                .lineToSplineHeading(new Pose2d(36, -30, Math.toRadians(160))) // slower portion of spline
 
                                 .lineToSplineHeading(new Pose2d(-20, -36, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(-30, -36), Math.toRadians(180)) // end tangent affects path alot\

@@ -31,7 +31,7 @@ public class AutoGlobals {
         PreloadPose3Y = -38,
         PreloadPose3Heading = Math.toRadians(170),
 
-        MiddleLaneY = -36,
+        MiddleLaneY = -30,
         LaneOffset = 24,
 
         ParkX = 45,

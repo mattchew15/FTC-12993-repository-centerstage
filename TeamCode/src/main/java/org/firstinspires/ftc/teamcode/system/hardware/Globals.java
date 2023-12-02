@@ -34,18 +34,18 @@ public class Globals {
     public static int
             SIXTY_DEGREE_TICKS = 0,
             UPRIGHT_PITCH_TICKS = -300,
-            PITCH_LOW_DEGREE_TICKS = 800, //guesses at this point
+            PITCH_LOW_DEGREE_TICKS = 1100,
             PITCH_MID_DEGREE_TICKS = 400,
 
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
-            INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 400,
+            INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
 
-            LIFT_HIGH_POSITION_TICKS = 800,
-            LIFT_MEDIUM_POSITION_TICKS = 450,
-            LIFT_LOW_POSITION_TICKS = 100,
+            LIFT_HIGH_POSITION_TICKS = 600,
+            LIFT_MEDIUM_POSITION_TICKS = 400,
+            LIFT_LOW_POSITION_TICKS = 70,
 
             LIFT_MEDIUM_POSITION_PITCHING_TICKS = 580,
-            LIFT_LOW_POSITION_PITCHING_TICKS = 300,
+            LIFT_LOW_POSITION_PITCHING_TICKS = 690,
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
 
             S; // the side multiplier to change sides for autonomous

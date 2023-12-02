@@ -15,11 +15,10 @@ public class AutoTrajectories {
     public SampleMecanumDrive drive; // if it throw null pointer exception make a hardware object and do this. in constructor
 
     public AutoTrajectories (){
-
-
     }
+
     Pose2d startPoseBack = new Pose2d(12, -59 *S, Math.toRadians(180) *S+A); // don't need to global variable as much with this setup
-    Pose2d startPoseFront = new Pose2d(-38, -59 *S, Math.toRadians(180) *S+A); // don't need to global variable as much with this setup
+    Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180)); // don't need to global variable as much with this setup
 
     Pose2d preload1Pose = new Pose2d(PreloadPose1X,PreloadPose1Y*S, PreloadPose1Heading*S+A); // not necessary lol
     Pose2d preload2Pose = new Pose2d(PreloadPose2X,PreloadPose2Y*S, PreloadPose2Heading*S+A);
@@ -70,26 +69,26 @@ public class AutoTrajectories {
 
 
         PreloadDrive1Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-56, -24, Math.toRadians(-180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-56, -24, Math.toRadians(180))) // hardest one closest to stack
                 .build();
 
         PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-47, -24, Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-47, -24, Math.toRadians(180)))
                 .build();
 
         PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-38, -24, Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-38, -24, Math.toRadians(180)))
                 .build();
 
 
         AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
-                .lineToLinearHeading(new Pose2d(-54, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-54, -37, Math.toRadians(180))) // hardest one closest to stack
                 .build();
         AfterPreloadDrive2Front = drive.trajectoryBuilder(PreloadDrive2Front.end())
-                .lineToLinearHeading(new Pose2d(-45, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-45, -37, Math.toRadians(180))) // hardest one closest to stack
                 .build();
         AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
-                .lineToLinearHeading(new Pose2d(-38, -37, Math.toRadians(-180))) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-38, -37, Math.toRadians(180))) // hardest one closest to stack
                 .build();
 
     }
@@ -116,9 +115,9 @@ public class AutoTrajectories {
 
     public void outtakeDriveMiddlePath(Pose2d startTrajectory, double slowerVelocityIntoBackdrop){ // generates a live trajectory
         Trajectory outtakeDriveMiddlePath = drive.trajectoryBuilder(startTrajectory)
-                .lineToSplineHeading(new Pose2d(0, MiddleLaneY, Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(27, MiddleLaneY), Math.toRadians(0)) // end tangent of path
-                .lineTo(new Vector2d(32, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToSplineHeading(new Pose2d(-10, MiddleLaneY, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(15, MiddleLaneY), Math.toRadians(0)) // end tangent of path
+                .lineTo(new Vector2d(20, MiddleLaneY),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // slower portion of spline
                 .build();
         drive.followTrajectoryAsync(outtakeDriveMiddlePath);
