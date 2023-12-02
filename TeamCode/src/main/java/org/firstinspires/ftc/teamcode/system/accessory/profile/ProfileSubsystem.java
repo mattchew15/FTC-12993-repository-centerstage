@@ -40,7 +40,7 @@ public class ProfileSubsystem
     private Telemetry telemetry;
     private SubsystemMode mode = SubsystemMode.NULL;
     private boolean reached = false;
-    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.0001, 0.0004);
+    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.00001, 0.00004);
 
     /**
      * Use this constructor at the final code

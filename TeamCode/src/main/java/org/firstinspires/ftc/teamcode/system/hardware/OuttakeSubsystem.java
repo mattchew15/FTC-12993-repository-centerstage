@@ -76,9 +76,9 @@ public class OuttakeSubsystem {
 
     // The profile stuff
     public double kPos, kVel;
-    public final double LiftPKp = 0.015, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
+    public final double LiftPKp = 0.003, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
     public final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
-    public final double velConstrain = 500, accelConstrain = 300, decelConstrain = 300;
+    public static double velConstrain = 4400, accelConstrain = 3700, decelConstrain = 4200;
     public ProfileConstraints profileLiftConstraints = new ProfileConstraints(velConstrain, accelConstrain, decelConstrain);
     // Make private after tuning
     public AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
@@ -87,7 +87,7 @@ public class OuttakeSubsystem {
 
     // servos profile stuff
     private double armTarget, armPos; // armPos is the previous target
-    private ProfileConstraints profileArmConstraints = new ProfileConstraints(500, 300, 300);
+    private ProfileConstraints profileArmConstraints = new ProfileConstraints(500, 500, 500);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
 
@@ -365,7 +365,7 @@ public class OuttakeSubsystem {
     public double profileLiftCalculate()
     {
         liftProfile = new AsymmetricMotionProfile(liftProfileStartingPosition, liftTarget, profileLiftConstraints);
-        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.CONSTANT);
+        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.FullState);
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
@@ -417,6 +417,14 @@ public class OuttakeSubsystem {
         this.armPos = this.armTarget;
         this.armTarget = armTarget;
         armProfileTimer.reset();
+    }
+    public double getArmX()
+    {
+        return armProfile.state.x;
+    }
+    public double getArmPos()
+    {
+        return armPos;
     }
 
 

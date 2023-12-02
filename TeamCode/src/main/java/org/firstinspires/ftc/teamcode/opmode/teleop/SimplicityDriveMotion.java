@@ -167,7 +167,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
         GlobalTimer.startTime();
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
-        outtakeSubsystem.setLiftFullStateGains(0.0001, 0.0004);
+        outtakeSubsystem.setLiftFullStateGains(0.00001, 0.00004);
         outtakeSubsystem.profileLiftSetUp();
         waitForStart();
 
@@ -219,18 +219,13 @@ public class SimplicityDriveMotion extends LinearOpMode {
             telemetry.addData("Output FullState", outtakeSubsystem.profileLiftCalculate());
             telemetry.addData("Target", outtakeSubsystem.liftTarget);
             telemetry.addData("SliderPos", outtakeSubsystem.liftPosition);
-            telemetry.addData("LiftProfile Pos", outtakeSubsystem.liftProfileStartingPosition);
+            telemetry.addData("LiftProfile StartPos", outtakeSubsystem.liftProfileStartingPosition);
             telemetry.addData("Has reached", outtakeSubsystem.profileSubsystem.hasReached());
             telemetry.addData("Timer profile", outtakeSubsystem.profileSubsystem.getTime());
-            boolean sync = false;
-            if (outtakeSubsystem.profileSubsystem.hasReached() && Math.abs(outtakeSubsystem.liftTarget - outtakeSubsystem.liftPosition) < 40)
-            {
-                sync = true;
-                cyclesInSync += 1;
-            }
-            telemetry.addData("Sync", sync);
-            telemetry.addData("Cycles in sync", cyclesInSync);
             telemetry.addData("Error", Math.abs(outtakeSubsystem.liftPosition - outtakeSubsystem.profileSubsystem.getX()));
+
+            telemetry.addData("Arm X", outtakeSubsystem.getArmX());
+            telemetry.addData("Arm pos", outtakeSubsystem.getArmPos());
             telemetry.update();
         }
     }
