@@ -32,7 +32,7 @@ public class IntakeSubsystem {
     public static double
             INTAKE_ARM_TOP_POS = 0.485,
             INTAKE_ARM_VERY_TOP_POS = 0.49,
-            INTAKE_ARM_FOUR_POS = 0.47,
+            INTAKE_ARM_FOUR_POS = 0.483,
             INTAKE_ARM_MIDDLE_POS = 0.425,
             INTAKE_ARM_BASE_POS = 0.37;
     public static double
@@ -44,7 +44,7 @@ public class IntakeSubsystem {
             INTAKE_CLIP_OPEN_POS = 0.84;
     public static double
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.42,
-            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.83;
+            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.82;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;

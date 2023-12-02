@@ -76,10 +76,10 @@ public class Globals {
             PIXEL_POSE_Z;
 
     public static double angleWrap(double radians) {
-        while (radians > Math.PI) {
+        if (radians > Math.PI) {
             radians -= 2 * Math.PI;
         }
-        while (radians < -Math.PI) {
+        else if (radians < -Math.PI) {
             radians += 2 * Math.PI;
         }
 
