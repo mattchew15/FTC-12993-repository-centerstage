@@ -35,9 +35,6 @@ public class FullStateFeedback
 
     }
 
-
-    // Use this if already have the current velocity of the motor, motor.getVelocity
-    // Don't use this as it will probably overflow
     public double updateWithError(double error, double position, double targetVel)
     {
         vel = (position - prevPos) / timer.seconds();
@@ -48,6 +45,11 @@ public class FullStateFeedback
         timer.reset();
         return update;
 
+    }
+    public void setGains(double k1, double k2)
+    {
+        this.k1 = k1; // Positional gain
+        this.k2 = k2; // Velocity gain
     }
 
 }

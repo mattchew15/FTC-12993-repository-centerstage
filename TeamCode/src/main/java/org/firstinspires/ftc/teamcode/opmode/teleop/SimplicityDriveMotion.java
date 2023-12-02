@@ -123,7 +123,9 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -148,13 +150,17 @@ public class SimplicityDriveMotion extends LinearOpMode {
     // Max ticks of the motor is like 2800, 1150rpm, 19.16 rps, 145 ticks/rev, = 2779 is the max vel ticks/second, accel should be vel / time(s)
     ElapsedTime GlobalTimer = new ElapsedTime();
     ToggleR toggle = new ToggleR();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
     // Don't use the constructor with the telemetry in final
     double target;
     private int cyclesInSync;
+    OuttakeSubsystem.ArmServoState armState = OuttakeSubsystem.ArmServoState.READY;
+    private double armTarget;
 
     @Override
     public void runOpMode() throws InterruptedException
     {
+        telemetry = new MultipleTelemetry(this.telemetry, dashboard.getTelemetry());
         outtakeSubsystem.initOuttake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
@@ -162,7 +168,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
         GlobalTimer.startTime();
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
-        outtakeSubsystem.setLiftFullStateGains(0.0001, 0.0004);
+        outtakeSubsystem.setLiftFullStateGains(0.00001, 0.00004);
         outtakeSubsystem.profileLiftSetUp();
         waitForStart();
 
@@ -171,21 +177,22 @@ public class SimplicityDriveMotion extends LinearOpMode {
         {
             outtakeSubsystem.outtakeReads(false);
             outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
-            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+            //outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+            outtakeSubsystem.armServoProfileState(armState);
             // Implementation needs a toggle so it doesn't keep resetting the time
 
             if (gamepad1.a)
             {
-               outtakeSubsystem.updateLiftTargetProfile(200);
+                outtakeSubsystem.updateLiftTargetProfile(200);
             }
             if (gamepad1.b)
             {
-               outtakeSubsystem.updateLiftTargetProfile(400);
+                outtakeSubsystem.updateLiftTargetProfile(400);
 
             }
             if (gamepad1.y)
             {
-               outtakeSubsystem.updateLiftTargetProfile(600);
+                outtakeSubsystem.updateLiftTargetProfile(600);
 
             }
             if (gamepad1.x)
@@ -195,32 +202,35 @@ public class SimplicityDriveMotion extends LinearOpMode {
             }
             if (gamepad1.dpad_left)
             {
-                outtakeSubsystem.rawLift(0);
+                armState = OuttakeSubsystem.ArmServoState.UPRIGHT;
+                armTarget = OuttakeSubsystem.ARM_UPRIGHT_POS;
             }
+            if (gamepad1.dpad_right)
+            {
+                armState = OuttakeSubsystem.ArmServoState.READY;
+                armTarget = OuttakeSubsystem.ARM_READY_POS;
+            }
+
             double output = outtakeSubsystem.profileLiftCalculateFeedForward();
 
             driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+
             // Debug telemetry,
-            //telemetry.addData("Toggle", toggle.mode(gamepad1.right_bumper));
             telemetry.addData("X", outtakeSubsystem.profileSubsystem.getX()); // Think as this as a function
-            // telemetry.addData("V", v);
-            // telemetry.addData("A", a);
             telemetry.addData("Output Feedforward", output);
             telemetry.addData("Output FullState", outtakeSubsystem.profileLiftCalculate());
             telemetry.addData("Target", outtakeSubsystem.liftTarget);
             telemetry.addData("SliderPos", outtakeSubsystem.liftPosition);
-            telemetry.addData("LiftProfile Pos", outtakeSubsystem.liftProfileStartingPosition);
+            telemetry.addData("LiftProfile StartPos", outtakeSubsystem.liftProfileStartingPosition);
             telemetry.addData("Has reached", outtakeSubsystem.profileSubsystem.hasReached());
             telemetry.addData("Timer profile", outtakeSubsystem.profileSubsystem.getTime());
-            boolean sync = false;
-            if (outtakeSubsystem.profileSubsystem.hasReached() && Math.abs(outtakeSubsystem.liftTarget - outtakeSubsystem.liftPosition) < 20)
-            {
-                sync = true;
-                cyclesInSync += 1;
-            }
-            telemetry.addData("Sync", sync);
-            telemetry.addData("Cycles in sync", cyclesInSync);
             telemetry.addData("Error", Math.abs(outtakeSubsystem.liftPosition - outtakeSubsystem.profileSubsystem.getX()));
+
+            telemetry.addData("Arm X", outtakeSubsystem.getArmX());
+            telemetry.addData("Arm pos", outtakeSubsystem.getArmPos());
+            telemetry.addData("Arm target", armState);
+            telemetry.addData("Error", Math.abs(outtakeSubsystem.getArmPos() - outtakeSubsystem.getArmX()));
             telemetry.update();
         }
     }

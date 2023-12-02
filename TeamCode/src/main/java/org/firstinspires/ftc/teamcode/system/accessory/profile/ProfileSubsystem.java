@@ -40,7 +40,7 @@ public class ProfileSubsystem
     private Telemetry telemetry;
     private SubsystemMode mode = SubsystemMode.NULL;
     private boolean reached = false;
-    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.0001, 0.0004);
+    private FullStateFeedback fullStateFeedback = new FullStateFeedback(0.00001, 0.00004);
 
     /**
      * Use this constructor at the final code
@@ -79,11 +79,6 @@ public class ProfileSubsystem
         this.currentFeedForward = minFeedForward;
         this.telemetry = telemetry;
     }
-
-    /**
-     * This does calculations using the feedforward, this does not take any parameter but you
-     * need to call reads() before hand, and update Target()
-     */
     public double calculate()
     {
         // should return the output after using the profile and the pid and the feedforward
@@ -116,20 +111,14 @@ public class ProfileSubsystem
                     this.pow += currentFeedForward * Math.sin(position);
                     break;
                 case FullState:
-                    this.pow = calculatePID(target + targetOffSet, position);
                     this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
-                    this.pow = MathUtils.clamp(pow, -1, 1);
                     break;
                 default:
+
             }
             this.pow = MathUtils.clamp(pow, -1, 1);
         }
         this.reached = Math.abs((target + targetOffSet) - position) < tolerance;
-        if (telemetry != null)
-        {
-            telemetry.addData("Time at calc", timer.time());
-            telemetry.update();
-        }
         return pow;
     }
 /*
@@ -252,7 +241,7 @@ public class ProfileSubsystem
     // maybe now it will work, if it does, just call this after calculate
     public double getX()
     {
-        //TODO: return profile.calculate(timer.time()).x;
+        //The bottom one works without having to call calculate() one more time: return profile.calculate(timer.time()).x;
         return profile.state.x;
     }
     public void initState()
