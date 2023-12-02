@@ -155,6 +155,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
     double target;
     private int cyclesInSync;
     OuttakeSubsystem.ArmServoState armState = OuttakeSubsystem.ArmServoState.READY;
+    private double armTarget;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -202,10 +203,12 @@ public class SimplicityDriveMotion extends LinearOpMode {
             if (gamepad1.dpad_left)
             {
                 armState = OuttakeSubsystem.ArmServoState.UPRIGHT;
+                armTarget = OuttakeSubsystem.ARM_UPRIGHT_POS;
             }
             if (gamepad1.dpad_right)
             {
                 armState = OuttakeSubsystem.ArmServoState.READY;
+                armTarget = OuttakeSubsystem.ARM_READY_POS;
             }
 
             double output = outtakeSubsystem.profileLiftCalculateFeedForward();
@@ -226,6 +229,8 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
             telemetry.addData("Arm X", outtakeSubsystem.getArmX());
             telemetry.addData("Arm pos", outtakeSubsystem.getArmPos());
+            telemetry.addData("Arm target", armState);
+            telemetry.addData("Error", Math.abs(outtakeSubsystem.getArmPos() - outtakeSubsystem.getArmX()));
             telemetry.update();
         }
     }

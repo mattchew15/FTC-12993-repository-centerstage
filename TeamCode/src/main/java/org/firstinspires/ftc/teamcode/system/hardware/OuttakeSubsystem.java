@@ -83,7 +83,7 @@ public class OuttakeSubsystem {
     // Make private after tuning
     public AsymmetricMotionProfile liftProfile  = new AsymmetricMotionProfile(liftPosition, liftTarget, profileLiftConstraints);
     public ProfileSubsystem profileSubsystem = new ProfileSubsystem(PLiftPID);
-    public double liftProfileStartingPosition, liftProfilePosition;
+    public double liftProfileStartingPosition;
 
     // servos profile stuff
     private double armTarget, armPos; // armPos is the previous target

@@ -111,7 +111,6 @@ public class ProfileSubsystem
                     this.pow += currentFeedForward * Math.sin(position);
                     break;
                 case FullState:
-                    this.pow = calculatePID(target + targetOffSet, position);
                     this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
                     break;
                 default:
