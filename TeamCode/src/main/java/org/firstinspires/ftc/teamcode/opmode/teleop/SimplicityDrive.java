@@ -48,7 +48,7 @@ public class SimplicityDrive extends LinearOpMode {
     double headingPosition;
     boolean topIsRight;
     boolean topIsLeft;
-    boolean lockLowPosition;
+  //  boolean lockLowPosition;
 
     //Accessories
     LoopTime loopTime = new LoopTime();
@@ -113,7 +113,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             driveBase.drivebaseSetup();
             pitching = true;
-            lockLowPosition = false;
+          //  lockLowPosition = false;
             miniTurretPositionToggle.CycleState = 2; //straight position
             armTarget = 3;
 
@@ -179,7 +179,7 @@ public class SimplicityDrive extends LinearOpMode {
             case READY:
 
                 if (gamepad2.right_bumper){
-                    lockLowPosition = true;
+                  //  lockLowPosition = true;
                 }
 
                 readyOuttake();
@@ -459,11 +459,16 @@ public class SimplicityDrive extends LinearOpMode {
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 }
 
-                if (gamepad2.right_bumper){
+                if (gamepad2.dpad_up){
                     outtakeSubsystem.encodersReset();
                     intakeSubsystem.intakeSlideMotorEncodersReset();
                     outtakeState = OuttakeState.PITCH_RESET;
                     sequenceTimer = GlobalTimer.milliseconds();
+                } else if (gamepad2.dpad_up){
+                outtakeSubsystem.encodersReset();
+                intakeSubsystem.intakeSlideMotorEncodersReset();
+                //outtakeState = OuttakeState.PITCH_RESET;
+                sequenceTimer = GlobalTimer.milliseconds();
                 }
                 break;
 
@@ -496,8 +501,8 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.pitchToInternalPID(2000, 1);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 if (!climbAdjustIntakeSlides){
-                    intakeSubsystem.intakeSlideInternalPID(250,1);
-                    if (GlobalTimer.milliseconds() - sequenceTimer > 300){
+                    intakeSubsystem.intakeSlideInternalPID(390,1);
+                    if (GlobalTimer.milliseconds() - sequenceTimer > 1000){
                         climbAdjustIntakeSlides = true;
                     }
                 } else {
@@ -538,7 +543,7 @@ public class SimplicityDrive extends LinearOpMode {
         } else if (gamepad2.x){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
         } else if (gamepad2.y){
-            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         }
     }
 
@@ -589,7 +594,7 @@ public class SimplicityDrive extends LinearOpMode {
                 fineAdjustSlides.clearOffset(liftTarget);
 
             }
-        } else if ((gamepad2.a || gamepad1.a) && pitchTarget != PITCH_MID_DEGREE_TICKS && lockLowPosition){ // so you can't knock stuff of the backdrop
+        } else if ((gamepad2.a || gamepad1.a) && pitchTarget != PITCH_MID_DEGREE_TICKS){ // so you can't knock stuff of the backdrop
             if (pitching){
                 liftTarget = LIFT_LOW_POSITION_PITCHING_TICKS;
                 armTarget = 1;

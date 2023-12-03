@@ -19,7 +19,7 @@ public class AutoGlobals {
         StartPoseXBackdrop = 12,
         StartPoseHeadingBackdrop = Math.toRadians(180),
 
-        FrontPreloadY = -35,
+        FrontPreloadY = -37,
 
         PreloadPose1X = 35,
         PreloadPose1Y = -32,
@@ -33,8 +33,8 @@ public class AutoGlobals {
         PreloadPose3Y = -38,
         PreloadPose3Heading = Math.toRadians(170),
 
-        MiddleLaneY = -30,
-        LaneOffset = 26,
+        MiddleLaneY = -31,
+        LaneOffset = 29,
 
         ParkX = 45,
         ParkMiddleY = -14,

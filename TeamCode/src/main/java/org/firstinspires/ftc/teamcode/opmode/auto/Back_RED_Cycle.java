@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -91,6 +92,7 @@ public class Back_RED_Cycle extends LinearOpMode {
         while (!isStarted()) { // initialization loop
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             telemetry.update();
         }
 
@@ -146,7 +148,7 @@ public class Back_RED_Cycle extends LinearOpMode {
         switch (currentState) {
             case DELAY:
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
+                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.UPRIGHT);
                 if (GlobalTimer.milliseconds() - autoTimer > 3000){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
@@ -166,7 +168,9 @@ public class Back_RED_Cycle extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
+                if (GlobalTimer.milliseconds() - autoTimer > 300) {
+                    outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
+                }
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 if (poseEstimate.getY() > -25){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
@@ -238,7 +242,7 @@ public class Back_RED_Cycle extends LinearOpMode {
                         if (intakeSubsystem.backColourSensorValue > 2500 || !autoTrajectories.drive.isBusy()){ // do stuff with sensor to make better
                             currentState = AutoState.AFTER_GRAB_OFF_STACK;
                             autoTimer = GlobalTimer.milliseconds();
-                            autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20);
+                            autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20, 26.5, MiddleLaneY);
                         }
                     }
                 }
@@ -363,6 +367,8 @@ public class Back_RED_Cycle extends LinearOpMode {
     }
 }
 
+
+ */
 
 
 
