@@ -208,6 +208,7 @@ public class IntakeSubsystem {
                 break;
             case FOUR:
                 IntakeArmServo.setPosition(INTAKE_ARM_FOUR_POS);
+                break;
             case BASE:
                 IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;

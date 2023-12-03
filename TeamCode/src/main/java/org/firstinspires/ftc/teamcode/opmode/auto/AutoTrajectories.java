@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
+//import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
 
 public class AutoTrajectories {
 
@@ -16,6 +16,44 @@ public class AutoTrajectories {
 
     public AutoTrajectories (){
     }
+
+    public static double
+
+    xPosition,
+    yPosition,
+    headingPosition,
+
+    SlowerVelocityConstraintIntake = 15,
+    SlowerVelocityConstraintDeposit = 15,
+    SlowerVelocityConstraintDepositFaster = 25,
+
+    StartPoseYBackdrop = -59,
+    StartPoseXBackdrop = 12,
+    StartPoseHeadingBackdrop = Math.toRadians(180),
+
+    FrontPreloadY = -37,
+
+    PreloadPose1X = 35,
+            PreloadPose1Y = -32,
+            PreloadPose1Heading = Math.toRadians(180),
+
+    PreloadPose2X = 35,
+            PreloadPose2Y = -35,
+            PreloadPose2Heading = Math.toRadians(175),
+
+    PreloadPose3X = 35,
+            PreloadPose3Y = -38,
+            PreloadPose3Heading = Math.toRadians(170),
+
+    MiddleLaneY = -31,
+            LaneOffset = 29,
+
+    ParkX = 45,
+            ParkMiddleY = -14,
+            ParkWallY = -54;
+
+
+    public static Pose2d poseEstimate;
 
     Pose2d startPoseBack = new Pose2d(12, -59 *S, Math.toRadians(180) *S+A); // don't need to global variable as much with this setup
     Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180)); // don't need to global variable as much with this setup

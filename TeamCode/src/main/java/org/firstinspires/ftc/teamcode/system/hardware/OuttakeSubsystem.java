@@ -257,7 +257,7 @@ public class OuttakeSubsystem {
             case READY:
                 OuttakeArmServoRight.setPosition(ARM_READY_POS);
                 OuttakeArmServoLeft.setPosition(ARM_READY_POS);
-            break;
+                break;
             case UPRIGHT:
                 OuttakeArmServoRight.setPosition(ARM_UPRIGHT_POS);
                 OuttakeArmServoLeft.setPosition(ARM_UPRIGHT_POS);

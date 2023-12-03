@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-import static org.firstinspires.ftc.teamcode.opmode.auto.AutoGlobals.*;
+import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
@@ -33,7 +33,6 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
     int numCycles;
     int teamPropLocation;
-    int liftTarget;
     double correctedHeading;
 
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
@@ -62,7 +61,6 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
 
     AutoState currentState;
-    Pose2d poseEstimate;
 
     // Define our start pose
 
@@ -96,10 +94,13 @@ public class Front_RED_CYCLE extends LinearOpMode {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
             if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
+                teamPropLocation = 1;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
+                teamPropLocation = 2;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
+                teamPropLocation = 3;
             }
             telemetry.update();
         }
@@ -121,11 +122,11 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY); // don't touch this at all in auto
-
-
-        currentState = AutoState.DELAY;
         autoTimer = 0;
         numCycles = 0;
+
+        currentState = AutoState.DELAY;
+
 
         cameraHardware.closeWebcam(); // reduces loop times
 
@@ -174,19 +175,20 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
                     if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                        teamPropLocation = 1;
+
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
                     } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                        teamPropLocation = 2;
+
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
                         telemetry.addLine("center");
                     } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                        teamPropLocation = 3;
+
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");
                     }
                 }
+
                 break;
             case PRELOAD_DRIVE:
                 intakeSubsystem.intakeSlideInternalPID(0,1);
