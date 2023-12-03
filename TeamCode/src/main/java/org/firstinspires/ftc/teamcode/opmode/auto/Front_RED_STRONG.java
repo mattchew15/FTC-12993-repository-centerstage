@@ -25,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetec
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
 
-@Autonomous(name = "Front Red Cycle Auto", group = "Autonomous")
+@Autonomous(name = "Front Red Strong Auto", group = "Autonomous")
 public class Front_RED_STRONG extends LinearOpMode {
     // class members
     ElapsedTime GlobalTimer;

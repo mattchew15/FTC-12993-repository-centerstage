@@ -280,7 +280,7 @@ public class AutoSequences {
                     changeStates = true;
                     autoTimer = GlobalTimer.milliseconds();
                     if (numCycles > 2) {
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,22,150,3);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,22,150, 29,3);
                     } else {
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,22, 25.5, MiddleLaneY);
                     }

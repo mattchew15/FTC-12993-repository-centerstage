@@ -155,7 +155,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
             telemetry.addData("x Position", xPosition);
             telemetry.addData("y Position", yPosition);
             telemetry.addData("heading", headingPosition);
-            correctedHeading = angleWrap(Math.toDegrees(headingPosition));
+            correctedHeading = angleWrap(Math.toDegrees(headingPosition) - 180);
 
 
             autoTrajectories.drive.update();
@@ -171,6 +171,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.UPRIGHT);
                 outtakeSubsystem.pitchToInternalPID(680,1);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                 if (GlobalTimer.milliseconds() - autoTimer > 0){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
@@ -211,7 +212,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
             case PLACE_AND_INTAKE:
                 intakeSubsystem.intakeSpin(1);
                 if (teamPropLocation == 1){
-                    intakeSubsystem.intakeSlideTo(100, intakeSubsystem.intakeSlidePosition,1);
+                    intakeSubsystem.intakeSlideTo(50, intakeSubsystem.intakeSlidePosition,1);
                 } else if (teamPropLocation == 2){
                     intakeSubsystem.intakeSlideTo(295, intakeSubsystem.intakeSlidePosition,1);
                 } else if (teamPropLocation == 3){
@@ -246,7 +247,15 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
                 if (yPosition < -27.5){
                    // autoTrajectories.outtakeDriveMiddlePath(poseEstimate, 20);
-                    autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20, 30, -30);
+                    if (teamPropLocation == 2){
+                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,20, 30, -30);
+                    } else if (teamPropLocation == 1){
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,20, 170,30, 2);
+                    } else if (teamPropLocation == 3){
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,20, -170,30, 2);
+
+                    }
+
                     autoTimer = GlobalTimer.milliseconds();
                     currentState = AutoState.TRANSFER_PIXEL;
                 }
@@ -254,7 +263,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
             case TRANSFER_PIXEL:
 
-                intakeSubsystem.intakeSlideInternalPID(-3,1);
+                intakeSubsystem.intakeSlideInternalPID(-6,1);
                 if (GlobalTimer.milliseconds() - autoTimer > 170){ // time for pixel holder to close
                     if (GlobalTimer.milliseconds() - autoTimer > 350){
                         intakeSubsystem.intakeSpin(0.5);
@@ -278,9 +287,9 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 break;
 
             case OUTTAKE_PIXEL:
-                if (GlobalTimer.milliseconds() - autoTimer > 550 ){ // wait for chute to go in properly
+                if (numCycles == 0? GlobalTimer.milliseconds() - autoTimer > 300: GlobalTimer.milliseconds() - autoTimer > 500 ){ // wait for chute to go in properly
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-                    if (GlobalTimer.milliseconds() - autoTimer > 650){ // time for grippers to close
+                    if (GlobalTimer.milliseconds() - autoTimer > 630){ // time for grippers to close
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
                         if (numCycles == 0){
@@ -289,21 +298,21 @@ public class Front_RED_CYCLE extends LinearOpMode {
                             //outtakeSubsystem.liftTo(699,outtakeSubsystem.liftPosition,1);
                         } else if (numCycles == 1){
                             //outtakeSubsystem.liftTo(725,outtakeSubsystem.liftPosition,1);
-                            outtakeSubsystem.updateLiftTargetProfile(690);
+                            outtakeSubsystem.updateLiftTargetProfile(650);
                             outtakeSubsystem.pitchToInternalPID(980,1);
                         } else if (numCycles == 2){
                             outtakeSubsystem.updateLiftTargetProfile(729);
                             //outtakeSubsystem.liftTo(738,outtakeSubsystem.liftPosition,1);
                             outtakeSubsystem.pitchToInternalPID(840,1);
                         } else if (numCycles == 3){
-                            outtakeSubsystem.updateLiftTargetProfile(738);
+                            outtakeSubsystem.updateLiftTargetProfile(780);
                             //outtakeSubsystem.liftTo(738,outtakeSubsystem.liftPosition,1);
                             outtakeSubsystem.pitchToInternalPID(900,1);
                         }
                         outtakeSubsystem.profileLiftCalculate();
-                        if (GlobalTimer.milliseconds() - autoTimer > 950){
+                        if (GlobalTimer.milliseconds() - autoTimer > 730){
                             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_DOWN); // slides go out before arm so transfer is good
-                            if (GlobalTimer.milliseconds() - autoTimer > 1150){ // once chute is down
+                            if (GlobalTimer.milliseconds() - autoTimer > 920){ // once chute is down
                                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                                 if (numCycles == 0){
                                     if (teamPropLocation == 1){
@@ -329,8 +338,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                                     autoTimer = GlobalTimer.milliseconds();
 
                                     if (numCycles == 1){
-                                        autoTrajectories.driveIntoStackStraight(poseEstimate,12,2); // might cause an issue here
-                                        //  autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.driveIntoStackStraightMIDDLE); // not a live trajectory for this one
+                                        autoTrajectories.driveIntoStackStraight(poseEstimate,8,2); // might cause an issue here
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 2){
                                         autoTrajectories.driveIntoStackStraight(poseEstimate,18,2); // might cause an issue here
@@ -390,14 +398,14 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
                     if (xPosition < -12) {
                         intakeSubsystem.intakeSpin(1);
-                        if (xPosition < -35.2){ // do stuff with sensor to make better
+                        if (!autoTrajectories.drive.isBusy()){ // do stuff with sensor to make better
 
                                 currentState = AutoState.AFTER_GRAB_OFF_STACK;
                                 autoTimer = GlobalTimer.milliseconds();
                                 if (numCycles > 2) {
-                                   autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,22,150,3);
+                                   autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,20,130,31,3);
                                 } else {
-                                    autoTrajectories.outtakeDriveMiddlePath(poseEstimate,22, 25.5, MiddleLaneY);
+                                    autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 26.3, MiddleLaneY);
                                 }
                         }
                     }
