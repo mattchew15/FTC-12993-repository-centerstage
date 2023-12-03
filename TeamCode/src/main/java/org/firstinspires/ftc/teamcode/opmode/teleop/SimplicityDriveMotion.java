@@ -213,6 +213,13 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
             double output = outtakeSubsystem.profileLiftCalculateFeedForward();
 
+            if (gamepad1.left_trigger > 0.1)
+            {
+                if (outtakeSubsystem.liftTarget == 0 && !outtakeSubsystem.profileSubsystem.hasReached())
+                {
+                    outtakeSubsystem.rawLift(-1);
+                }
+            }
             driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
 
