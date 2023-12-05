@@ -6,16 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDriveR;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDriveKF;
 
 @Config
 @TeleOp(name = "LocalizationTestKF", group = "TestR")
 public class SimplicityDriveLocalizationTest extends LinearOpMode
 {
-    SampleMecanumDriveR drive;
+    SampleMecanumDriveKF drive;
 
-    public static double startCov1 = 0.1, startCov2 = 0.1, startCov3 = 0.1;
+    public static double startCov1 = 0.01, startCov2 = 0.01, startCov3 = 0.01;
     public static double gainCov1 = 0.1, gainCov2 = 0.1, gainCov3 = 0.1;
     public static double processNoise1 = 0.1, processNoise2 = 0.1, processNoise3 = 0.1;
     public static double sensorNoise1 = 0.1, sensorNoise2 = 0.1, sensorNoise3 = 0.1;
@@ -23,7 +22,7 @@ public class SimplicityDriveLocalizationTest extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        drive = new SampleMecanumDriveR(hardwareMap);
+        drive = new SampleMecanumDriveKF(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveSetUp();
         waitForStart();

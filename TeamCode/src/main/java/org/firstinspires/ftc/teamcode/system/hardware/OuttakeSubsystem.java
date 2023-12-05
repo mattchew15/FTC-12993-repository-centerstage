@@ -35,16 +35,15 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 1,
-            ARM_UPRIGHT_POS = 0.51,
-            ARM_SCORE_HALF_DOWN_POS = 0.195,
-            ARM_SCORE_DOWN_POS = 0.275,
-            ARM_SCORE_UP_POS = 0.105,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
+            ARM_READY_POS = 0.885,
+            ARM_UPRIGHT_POS = 0.4,
+            ARM_SCORE_HALF_DOWN_POS = 0.1,
+            ARM_SCORE_DOWN_POS = 0.18,
+            ARM_SCORE_UP_POS = 0.05;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.48,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.35,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
+            MINI_TURRET_STRAIGHT_POS = 0.5,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.38,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.62;
     public static double
             PIVOT_READY_POS = 0.502,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
@@ -76,7 +75,7 @@ public class OuttakeSubsystem {
     public double outtakeDistanceSensorValue;
 
     // The profile stuff
-    public double kPos, kVel;
+    public double kPos = 0.0001, kVel = 0.0001;
     public final double LiftPKp = 0.0038, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
     public final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
     public static double velConstrain = 5000, accelConstrain = 4900, decelConstrain = 4800;
@@ -88,10 +87,11 @@ public class OuttakeSubsystem {
 
     // servos profile stuff
     private double armTarget, armPos; // armPos is the previous target
-    private ProfileConstraints profileArmConstraints = new ProfileConstraints(500, 500, 500);
+    public static double armVelConstrain = 0.1, armAccelConstrain = 0.1, armDecelConstrain = 0.1;
+    private ProfileConstraints profileArmConstraints = new ProfileConstraints(armVelConstrain, armAccelConstrain, armDecelConstrain);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
-
+    public boolean updateTarget = false;
 
     public enum ArmServoState {
         READY,
@@ -99,6 +99,7 @@ public class OuttakeSubsystem {
         SCORE_HALF_DOWN,
         SCORE_DOWN,
         SCORE_UP,
+        NULL,
         SCORE_PURPLE
     }
 
@@ -276,29 +277,29 @@ public class OuttakeSubsystem {
                 OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
                 OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
                 break;
-            case SCORE_PURPLE:
-                OuttakeArmServoRight.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
-                OuttakeArmServoLeft.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
-                break;
         }
     }
     public void armServoProfileState(ArmServoState state) {
         switch (state) {
             case READY:
-                setArmTarget(ARM_READY_POS);
+                if (updateTarget) setArmTarget(ARM_READY_POS);
                 break;
             case UPRIGHT:
-                setArmTarget(ARM_UPRIGHT_POS);
+                if (updateTarget) setArmTarget(ARM_UPRIGHT_POS);
                 break;
             case SCORE_HALF_DOWN:
-                setArmTarget(ARM_SCORE_HALF_DOWN_POS);
+                if (updateTarget) setArmTarget(ARM_SCORE_HALF_DOWN_POS);
                 break;
             case SCORE_DOWN:
-                setArmTarget(ARM_SCORE_DOWN_POS);
+                if (updateTarget) setArmTarget(ARM_SCORE_DOWN_POS);
                 break;
             case SCORE_UP:
-                setArmTarget(ARM_SCORE_UP_POS);
+                if (updateTarget) setArmTarget(ARM_SCORE_UP_POS);
                 break;
+            case NULL:
+                updateTarget = false;
+                break;
+
         }
         calculateArmProfile();
     }
@@ -402,7 +403,7 @@ public class OuttakeSubsystem {
     public double profileLiftCalculate()
     {
         liftProfile = new AsymmetricMotionProfile(liftProfileStartingPosition, liftTarget, profileLiftConstraints);
-        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.CONSTANT);
+        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.FullState);
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
@@ -410,7 +411,7 @@ public class OuttakeSubsystem {
         profileSubsystem.setTarget(liftTarget);
         profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID
         double output = profileSubsystem.calculate();
-        rawLift(output);
+        //rawLift(output);
         return output;
     }
     public double profileLiftCalculateFeedForward()
