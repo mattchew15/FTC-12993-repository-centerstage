@@ -125,8 +125,8 @@ public class IntakeSubsystem {
         intakeChuteArmPosition = getIntakeChuteArmPos();
         frontLimitSwitchValue = !FrontLimitSwitch.getState();
         if (intakingState){ // pass in state
-            frontColourSensorValue = IntakeColourSensorFront.argb(); // could be something else
-            backColourSensorValue = IntakeColourSensorBack.argb();
+            frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
+            backColourSensorValue = IntakeColourSensorBack.alpha();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
             intakeVelocity = IntakeMotor.getVelocity();
         }
@@ -137,9 +137,8 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue < 0) && (backColourSensorValue < 0); // should work
+        return (frontColourSensorValue > 350) && (backColourSensorValue > 2500); // should work
     }
-
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
     }

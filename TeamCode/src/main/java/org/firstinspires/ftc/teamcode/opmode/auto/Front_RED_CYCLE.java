@@ -252,7 +252,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 }
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1);
-                if (GlobalTimer.milliseconds() - autoTimer > 150){
+                if (GlobalTimer.milliseconds() - autoTimer > 100){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 }
                 break;
@@ -262,7 +262,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 intakeSubsystem.intakeSpin(-1);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
-                if (yPosition < -27.5){
+                if (yPosition < -26.5){
                    // autoTrajectories.outtakeDriveMiddlePath(poseEstimate, 20);
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
@@ -279,7 +279,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 break;
 
             case TRANSFER_PIXEL:
-
+                outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 intakeSubsystem.intakeSlideInternalPID(-6,1);
                 if (GlobalTimer.milliseconds() - autoTimer > 100){ // time for pixel holder to close
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
@@ -456,7 +456,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                             autoTimer = GlobalTimer.milliseconds();
                             autoTimer = GlobalTimer.milliseconds();
                             if (numCycles > 2) {
-                               autoTrajectories.outtakeDriveTurnEndPathChangeX(poseEstimate,15,160,31,10.4,3);
+                               autoTrajectories.outtakeDriveTurnEndPathChangeX(poseEstimate,15,155,31,10.4,3);
                             } else {
                                 autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
                             }

@@ -55,9 +55,9 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             GRIPPER_TOP_OPEN_POS = 0.88,
-            GRIPPER_TOP_GRIP_POS = 0.73,
+            GRIPPER_TOP_GRIP_POS = 0.725,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
-            GRIPPER_BOTTOM_GRIP_POS = 0.38;
+            GRIPPER_BOTTOM_GRIP_POS = 0.385;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
