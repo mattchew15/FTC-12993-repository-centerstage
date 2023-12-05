@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
-import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneY;
+import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEstimate;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
@@ -59,6 +59,8 @@ public class AutoSequences {
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY); // don't touch this at all in auto
         autoTimer = 0;
         numCycles = 0;
+        outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
+        autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
     }
 
     public void delayState(double delaytime){
@@ -282,7 +284,7 @@ public class AutoSequences {
                     if (numCycles > 2) {
                         autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,22,150, 29,3);
                     } else {
-                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,22, 25.5, MiddleLaneY);
+                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,22, 25.5, MiddleLaneYDeposit);
                     }
                 }
             }
