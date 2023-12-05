@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -28,11 +29,12 @@ public class IntakeSubsystem {
 
     public AnalogInput
             IntakeChuteArmEncoder;
+    public DigitalChannel FrontLimitSwitch;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.485,
-            INTAKE_ARM_VERY_TOP_POS = 0.49,
-            INTAKE_ARM_FOUR_POS = 0.483,
+            INTAKE_ARM_TOP_POS = 0.479,
+            INTAKE_ARM_VERY_TOP_POS = 0.481,
+            INTAKE_ARM_FOUR_POS = 0.477,
             INTAKE_ARM_MIDDLE_POS = 0.425,
             INTAKE_ARM_BASE_POS = 0.37;
     public static double
@@ -91,8 +93,10 @@ public class IntakeSubsystem {
     public int intakeSlideTarget;
     public double frontColourSensorValue;
     public double backColourSensorValue;
+    public boolean frontLimitSwitchValue;
     public double intakeChuteArmPosition;
     public double intakeCurrent;
+    public double intakeVelocity;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
@@ -107,6 +111,7 @@ public class IntakeSubsystem {
         IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
         IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
+        FrontLimitSwitch = hwMap.get(DigitalChannel.class, "FrontLimitSwitch");
     }
 
     public void intakeHardwareSetup(){
@@ -118,10 +123,12 @@ public class IntakeSubsystem {
     public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         intakeChuteArmPosition = getIntakeChuteArmPos();
+        frontLimitSwitchValue = !FrontLimitSwitch.getState();
         if (intakingState){ // pass in state
             frontColourSensorValue = IntakeColourSensorFront.argb(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.argb();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
+            intakeVelocity = IntakeMotor.getVelocity();
         }
     }
 

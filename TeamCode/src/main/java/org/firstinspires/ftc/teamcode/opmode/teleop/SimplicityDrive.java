@@ -264,6 +264,7 @@ public class SimplicityDrive extends LinearOpMode {
             case AFTER_INTAKE:
 
                 intakeSubsystem.intakeSpin(1);
+                setIntakeArmHeight();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 140){
                     if (intakeSubsystem.pixelsInIntake()){ // has to be both because if the second one slides downthe front one will read
                         sequenceTimer = GlobalTimer.milliseconds(); // resets timer
@@ -530,6 +531,7 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeState = OuttakeState.CLIMB_START;
                 sequenceTimer = GlobalTimer.milliseconds();
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                driveBase.droneState(DriveBase.DroneState.RELEASE);
                 climbAdjustIntakeSlides = false;
             }
         }
@@ -543,7 +545,7 @@ public class SimplicityDrive extends LinearOpMode {
         } else if (gamepad2.x){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
         } else if (gamepad2.y){
-            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
         }
     }
 

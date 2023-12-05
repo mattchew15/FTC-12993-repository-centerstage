@@ -35,15 +35,16 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.885,
-            ARM_UPRIGHT_POS = 0.4,
-            ARM_SCORE_HALF_DOWN_POS = 0.1,
-            ARM_SCORE_DOWN_POS = 0.18,
-            ARM_SCORE_UP_POS = 0.05;
+            ARM_READY_POS = 1,
+            ARM_UPRIGHT_POS = 0.51,
+            ARM_SCORE_HALF_DOWN_POS = 0.195,
+            ARM_SCORE_DOWN_POS = 0.275,
+            ARM_SCORE_UP_POS = 0.105,
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.5,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.38,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.62;
+            MINI_TURRET_STRAIGHT_POS = 0.48,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.35,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
             PIVOT_READY_POS = 0.502,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
@@ -97,7 +98,8 @@ public class OuttakeSubsystem {
         UPRIGHT,
         SCORE_HALF_DOWN,
         SCORE_DOWN,
-        SCORE_UP
+        SCORE_UP,
+        SCORE_PURPLE
     }
 
     public enum PivotServoState {
@@ -273,6 +275,10 @@ public class OuttakeSubsystem {
             case SCORE_UP:
                 OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
                 OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
+                break;
+            case SCORE_PURPLE:
+                OuttakeArmServoRight.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
+                OuttakeArmServoLeft.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
                 break;
         }
     }
