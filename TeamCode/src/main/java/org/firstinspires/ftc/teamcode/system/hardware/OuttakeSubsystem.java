@@ -35,18 +35,19 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 1,
+            ARM_READY_POS = 0.99,
             ARM_UPRIGHT_POS = 0.51,
             ARM_SCORE_HALF_DOWN_POS = 0.195,
             ARM_SCORE_DOWN_POS = 0.275,
             ARM_SCORE_UP_POS = 0.105,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.48,
+            MINI_TURRET_STRAIGHT_POS = 0.49,
+            MINI_TURRET_READY_POS = 0.49,
             MINI_TURRET_LEFT_DIAGONAL_POS = 0.35,
             MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            PIVOT_READY_POS = 0.502,
+            PIVOT_READY_POS = 0.507,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
             PIVOT_DIAGONAL_RIGHT_POS = 0.369,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.068,
@@ -113,6 +114,7 @@ public class OuttakeSubsystem {
     }
     public enum MiniTurretState {
         STRAIGHT,
+        READY,
         DIAGONAL_LEFT,
         DIAGONAL_RIGHT,
         POINT_TO_BACKDROP
@@ -322,6 +324,9 @@ public class OuttakeSubsystem {
         switch (state) {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
+                break;
+            case READY:
+                MiniTurretServo.setPosition(MINI_TURRET_READY_POS);
                 break;
             case DIAGONAL_LEFT:
                 MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);

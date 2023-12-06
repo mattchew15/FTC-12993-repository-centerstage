@@ -36,6 +36,7 @@ public class Front_RED_Stage extends LinearOpMode {
     int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
+    boolean goToPark;
 
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
@@ -121,6 +122,9 @@ public class Front_RED_Stage extends LinearOpMode {
         outtakeSubsystem.encodersReset();
         intakeSubsystem.intakeSlideMotorEncodersReset();
 
+
+        goToPark = false;
+
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY); // don't touch this at all in auto
         autoTimer = 0;
@@ -170,6 +174,11 @@ public class Front_RED_Stage extends LinearOpMode {
     }
 
     public void autoSequence(){
+        if ((GlobalTimer.milliseconds() > 28200) && goToPark && currentState != AutoState.IDLE){
+            goToPark = false;
+            currentState = AutoState.PARK;
+            autoTrajectories.park(poseEstimate,2);
+        }
         switch (currentState) {
             case DELAY:
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -377,7 +386,7 @@ public class Front_RED_Stage extends LinearOpMode {
                                     autoTimer = GlobalTimer.milliseconds();
 
                                     if (numCycles == 1){
-                                        autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,8);
+                                        autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,8, 30);
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 2){
                                         autoTrajectories.driveIntoStackStraightAfterAngledOuttakeSTAGE(poseEstimate, 16);
@@ -440,7 +449,7 @@ public class Front_RED_Stage extends LinearOpMode {
 
                             currentState = AutoState.AFTER_GRAB_OFF_STACK;
                             autoTimer = GlobalTimer.milliseconds();
-                            autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,17, 155);
+                            autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155,8);
                         }
                     } else{
                         if (numCycles == 1){

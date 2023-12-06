@@ -224,7 +224,7 @@ public class AutoSequences {
                                 autoTrajectories.driveIntoStackStraight(poseEstimate,18,2); // might cause an issue here
                                 outtakeChangeStates = 1;
                             } else if (numCycles == 3){
-                                autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,20);
+                                autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,20,30);
                                 outtakeChangeStates = 1;
                             } else if (numCycles == 4){
                                 outtakeChangeStates = 2;

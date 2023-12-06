@@ -36,6 +36,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
     int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
+    boolean goToPark;
 
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
@@ -170,6 +171,12 @@ public class Front_RED_CYCLE extends LinearOpMode {
     }
 
     public void autoSequence(){
+        if ((GlobalTimer.milliseconds() > 28500) && goToPark && currentState != AutoState.IDLE){
+            goToPark = false;
+            currentState = AutoState.PARK;
+            autoTrajectories.park(poseEstimate,1);
+        }
+
         switch (currentState) {
             case DELAY:
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -393,7 +400,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                                         autoTrajectories.driveIntoStackStraight(poseEstimate,12,2); // might cause an issue here
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 3){
-                                        autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,8);
+                                        autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,8, 30);
                                         currentState = AutoState.DROP;
                                     } else if (numCycles == 4){
                                         currentState = AutoState.PARK;
@@ -454,9 +461,8 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
                             currentState = AutoState.AFTER_GRAB_OFF_STACK;
                             autoTimer = GlobalTimer.milliseconds();
-                            autoTimer = GlobalTimer.milliseconds();
                             if (numCycles > 2) {
-                               autoTrajectories.outtakeDriveTurnEndPathChangeX(poseEstimate,15,155,31,10.4,3);
+                                autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
                             } else {
                                 autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
                             }
