@@ -365,14 +365,34 @@ public class Front_RED_CYCLE extends LinearOpMode {
                                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                                 if (numCycles == 0){
                                     if (teamPropLocation == 1){
-                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                        if (BLUE_AUTO){
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                        }
+                                        else {
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                        }
                                     } else if (teamPropLocation == 2){
-                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                        if (RED_AUTO){
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                        }
+                                        else {
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                        }
                                     } else if (teamPropLocation == 3){
-                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                        if (RED_AUTO){
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                        }
+                                        else {
+                                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                        }
                                     }
                                 } else {
-                                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                    if (BLUE_AUTO){
+                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                    }
+                                    else {
+                                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                    }
                                 }
                                 if (numCycles < 2){
                                     intakeSubsystem.intakeSlideTo(500, intakeSubsystem.intakeSlidePosition, 0.6); // line above may limit speed of drop

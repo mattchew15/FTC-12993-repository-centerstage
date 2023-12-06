@@ -236,7 +236,12 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (GlobalTimer.milliseconds()- autoTimer > 20){
                         outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
                     }
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                    if (BLUE_AUTO){
+                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                    }
+                    else {
+                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                    }
                     outtakePreload(poseEstimate);
                 }
                 if (intakeSubsystem.intakeSlideTargetReached() && outtakeSubsystem.liftTargetReached()){
@@ -383,7 +388,12 @@ public class Back_RED_Stage extends LinearOpMode {
                         if (GlobalTimer.milliseconds() - autoTimer > 920){ // once chute is down
                             outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
 
-                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                            if (BLUE_AUTO){
+                                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                            }
+                            else {
+                                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                            }
 
                             if (!autoTrajectories.drive.isBusy() || (outtakeSubsystem.outtakeDistanceSensorValue < 6.7 && numCycles != 0)) { // //  || outtakeSubsystem.outtakeDistanceSensorValue < 8.7
                                 // line above determines when we drop the pixels

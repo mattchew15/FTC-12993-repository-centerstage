@@ -229,7 +229,12 @@ public class Back_RED_Cycle extends LinearOpMode {
                     if (GlobalTimer.milliseconds()- autoTimer > 50){
                         outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
                     }
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                    if (BLUE_AUTO){
+                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                    }
+                    else {
+                        outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                    }
                     outtakePreload(poseEstimate);
                 }
                 if (intakeSubsystem.intakeSlideTargetReached() && outtakeSubsystem.liftTargetReached()){
@@ -394,7 +399,12 @@ public class Back_RED_Cycle extends LinearOpMode {
                             if (GlobalTimer.milliseconds() - autoTimer > 920){ // once chute is down
                                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
 
-                                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                if (BLUE_AUTO){
+                                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                                }
+                                else {
+                                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                                }
 
                                 if (numCycles < 1){
                                     intakeSubsystem.intakeSlideTo(500, intakeSubsystem.intakeSlidePosition, 0.6); // line above may limit speed of drop
