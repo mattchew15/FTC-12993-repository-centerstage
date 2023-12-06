@@ -101,14 +101,25 @@ public class Back_RED_Stage extends LinearOpMode {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
-                teamPropLocation = 1;
+                if (BLUE_AUTO){
+                    teamPropLocation = 3;
+                }
+                else {
+                    teamPropLocation = 1;
+                }
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
                 teamPropLocation = 2;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
-                teamPropLocation = 3;
+                if (BLUE_AUTO){
+                    teamPropLocation = 1;
+                }
+                else {
+                    teamPropLocation = 3;
+                }
             }
+            telemetry.addData("S", S);
 
             telemetry.update();
         }
@@ -123,7 +134,7 @@ public class Back_RED_Stage extends LinearOpMode {
         GlobalTimer.reset();
         autoTimer = GlobalTimer.milliseconds();
 
-        goToPark = false;
+        goToPark = true;
 
         intakeSubsystem.intakeHardwareSetup();
         outtakeSubsystem.hardwareSetup();
@@ -302,7 +313,13 @@ public class Back_RED_Stage extends LinearOpMode {
 
                         }
                     }
-                }
+                }if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
+                currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                autoTimer = GlobalTimer.milliseconds();
+
+                autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16,157, 4);
+
+            }
                 break;
 
             // might need to make another state for the colour sensors similar to teleop

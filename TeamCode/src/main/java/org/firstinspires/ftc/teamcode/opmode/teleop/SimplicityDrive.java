@@ -108,8 +108,8 @@ public class SimplicityDrive extends LinearOpMode {
 
             intakeSubsystem.intakeHardwareSetup();
             outtakeSubsystem.hardwareSetup();
-            outtakeSubsystem.encodersReset();
-            intakeSubsystem.intakeSlideMotorEncodersReset();
+            //outtakeSubsystem.encodersReset(); // so that we don't have to do a manual rest if auto messes up1
+            //intakeSubsystem.intakeSlideMotorEncodersReset();
 
             driveBase.drivebaseSetup();
             pitching = true;

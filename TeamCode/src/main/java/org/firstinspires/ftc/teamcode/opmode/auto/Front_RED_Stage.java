@@ -94,13 +94,23 @@ public class Front_RED_Stage extends LinearOpMode {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
-                teamPropLocation = 1;
+                if (BLUE_AUTO){
+                    teamPropLocation = 3;
+                }
+                else {
+                    teamPropLocation = 1;
+                }
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
                 teamPropLocation = 2;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
-                teamPropLocation = 3;
+                if (BLUE_AUTO){
+                    teamPropLocation = 1;
+                }
+                else {
+                    teamPropLocation = 3;
+                }
             }
 
             telemetry.update();
@@ -123,7 +133,7 @@ public class Front_RED_Stage extends LinearOpMode {
         intakeSubsystem.intakeSlideMotorEncodersReset();
 
 
-        goToPark = false;
+        goToPark = true;
 
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY); // don't touch this at all in auto
@@ -202,6 +212,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");
                     }
+                    telemetry.addData("S", S);
                 }
 
                 break;
@@ -214,7 +225,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
                 }
 
-                if (yPosition > -15){
+                if (RED_AUTO? yPosition > -15*S : yPosition < -15*S){
                     if (teamPropLocation == 1){
                         intakeSubsystem.intakeSlideTo(0, intakeSubsystem.intakeSlidePosition,1);
                     } else if (teamPropLocation == 2){
@@ -271,7 +282,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 intakeSubsystem.intakeSpin(-1);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
-                if (yPosition < -26.5){
+                if (RED_AUTO? yPosition < -26.5*S:yPosition > -26.5*S){
                     // autoTrajectories.outtakeDriveMiddlePath(poseEstimate, 20);
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
@@ -475,6 +486,15 @@ public class Front_RED_Stage extends LinearOpMode {
                         if (numCycles == 1){
                             intakeSubsystem.intakeSpin(-1);
                         }
+                    }
+                }
+                if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
+                    currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                    autoTimer = GlobalTimer.milliseconds();
+                    if (numCycles > 2) {
+                        autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
+                    } else {
+                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
                     }
                 }
                 break;

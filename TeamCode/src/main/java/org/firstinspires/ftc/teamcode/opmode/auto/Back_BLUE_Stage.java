@@ -29,8 +29,8 @@ import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetec
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
 
-@Autonomous(name = "Back Red TrussPark Auto", group = "Autonomous")
-public class Back_RED_TrussPark extends LinearOpMode {
+@Autonomous(name = "Back Blue Stage Auto", group = "Autonomous")
+public class Back_BLUE_Stage extends LinearOpMode {
 
     // class members
     ElapsedTime GlobalTimer;
@@ -76,7 +76,7 @@ public class Back_RED_TrussPark extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         autoTrajectories = new AutoTrajectories(); // road drive class
-        SetAuto.setRedAuto();
+        SetAuto.setBlueAuto();
 
 
         // initialize hardware
@@ -112,12 +112,7 @@ public class Back_RED_TrussPark extends LinearOpMode {
                 teamPropLocation = 2;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
-                if (BLUE_AUTO){
-                    teamPropLocation = 1;
-                }
-                else {
-                    teamPropLocation = 3;
-                }
+                teamPropLocation = 3;
             }
             telemetry.addData("S", S);
 
@@ -190,13 +185,11 @@ public class Back_RED_TrussPark extends LinearOpMode {
     }
 
     public void autoSequence(){
-        if ((GlobalTimer.milliseconds() > 27500) && goToPark && currentState != AutoState.IDLE){
+        if ((GlobalTimer.milliseconds() > 28200) && goToPark && currentState != AutoState.IDLE){
             goToPark = false;
             currentState = AutoState.PARK;
-            autoTrajectories.park(poseEstimate,1);
+            autoTrajectories.park(poseEstimate,2);
         }
-
-
         switch (currentState) {
             case DELAY:
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -268,23 +261,23 @@ public class Back_RED_TrussPark extends LinearOpMode {
                 break;
 
             case DROP_AFTER_PRELOAD:
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
-                if (GlobalTimer.milliseconds() - autoTimer > 350){
-                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
+                if (GlobalTimer.milliseconds() - autoTimer > 200){
                     intakeSubsystem.intakeSpin(0);
                     intakeSubsystem.intakeSlideInternalPID(0,1); // retract the slides
-                    if (GlobalTimer.milliseconds() - autoTimer > 850){
+                    if (GlobalTimer.milliseconds() - autoTimer > 500){
                         outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
                         outtakeSubsystem.pitchToInternalPID(0,1);
                         if (intakeSubsystem.intakeSlidePosition < 10 && outtakeSubsystem.liftPosition < 10){
                             autoTimer = GlobalTimer.milliseconds();
-                            autoTrajectories.park(poseEstimate,1);
-                            currentState = AutoState.PARK;
+                            autoTrajectories.driveIntoStackStageFromMiddlePathStraightEnd(poseEstimate,10, 27);
+                            currentState = AutoState.GRAB_OFF_STACK;
                             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                         }
                     }
                 } else {
-                    intakeSubsystem.intakeSpin(-0.24);
+                    intakeSubsystem.intakeSpin(-0.18);
                 }
 
 
@@ -316,14 +309,11 @@ public class Back_RED_TrussPark extends LinearOpMode {
                         }
                     }
                 }if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
-                    currentState = AutoState.AFTER_GRAB_OFF_STACK;
-                    autoTimer = GlobalTimer.milliseconds();
-                    if (numCycles > 2) {
-                        autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
-                    } else {
-                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
-                    }
-                }
+                currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                autoTimer = GlobalTimer.milliseconds();
+                autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16,157, 4);
+
+              }
                 break;
 
             // might need to make another state for the colour sensors similar to teleop

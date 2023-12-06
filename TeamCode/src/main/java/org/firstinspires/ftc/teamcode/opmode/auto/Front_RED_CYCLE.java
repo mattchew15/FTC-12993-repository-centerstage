@@ -94,14 +94,25 @@ public class Front_RED_CYCLE extends LinearOpMode {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
-                teamPropLocation = 1;
+                if (BLUE_AUTO){
+                    teamPropLocation = 3;
+                }
+                else {
+                    teamPropLocation = 1;
+                }
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
                 teamPropLocation = 2;
             } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
-                teamPropLocation = 3;
+                if (BLUE_AUTO){
+                    teamPropLocation = 1;
+                }
+                else {
+                    teamPropLocation = 3;
+                }
             }
+            telemetry.addData("S", S);
 
             telemetry.update();
         }
@@ -116,6 +127,8 @@ public class Front_RED_CYCLE extends LinearOpMode {
         GlobalTimer = new ElapsedTime(System.nanoTime());
         GlobalTimer.reset();
         autoTimer = GlobalTimer.milliseconds();
+
+        goToPark = true;
 
         intakeSubsystem.intakeHardwareSetup();
         outtakeSubsystem.hardwareSetup();
@@ -212,7 +225,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
                 }
 
-                if (yPosition > -15){
+                if (RED_AUTO? yPosition > -15*S : yPosition < -15*S){
                     if (teamPropLocation == 1){
                         intakeSubsystem.intakeSlideTo(0, intakeSubsystem.intakeSlidePosition,1);
                     } else if (teamPropLocation == 2){
@@ -269,7 +282,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 intakeSubsystem.intakeSpin(-1);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
-                if (yPosition < -26.5){
+                if (RED_AUTO? yPosition < -26.5*S:yPosition > -26.5*S){
                    // autoTrajectories.outtakeDriveMiddlePath(poseEstimate, 20);
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
@@ -291,7 +304,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 100){ // time for pixel holder to close
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
 
-                    if ((GlobalTimer.milliseconds() - autoTimer > 600) && timesIntoStack < 3 && numCycles != 0){
+                    if ((GlobalTimer.milliseconds() - autoTimer > 450) && timesIntoStack < 3 && numCycles != 0){
                         if (!intakeSubsystem.pixelsInIntake()){
                             currentState = AutoState.GRAB_OFF_STACK;
                             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
@@ -494,6 +507,15 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     }
                 } else if (numCycles != 3){
                 intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
+                }
+                if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
+                    currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                    autoTimer = GlobalTimer.milliseconds();
+                    if (numCycles > 2) {
+                        autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
+                    } else {
+                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
+                    }
                 }
                 break;
 

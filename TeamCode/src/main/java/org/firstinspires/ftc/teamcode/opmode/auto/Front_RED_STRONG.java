@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetec
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
-
+@Disabled
 @Autonomous(name = "Front Red Strong Auto", group = "Autonomous")
 public class Front_RED_STRONG extends LinearOpMode {
     // class members
