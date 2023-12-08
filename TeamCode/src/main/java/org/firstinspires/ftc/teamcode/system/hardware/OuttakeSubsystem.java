@@ -35,17 +35,19 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.885,
-            ARM_UPRIGHT_POS = 0.4,
-            ARM_SCORE_HALF_DOWN_POS = 0.1,
-            ARM_SCORE_DOWN_POS = 0.18,
-            ARM_SCORE_UP_POS = 0.05;
+            ARM_READY_POS = 0.99,
+            ARM_UPRIGHT_POS = 0.51,
+            ARM_SCORE_HALF_DOWN_POS = 0.195,
+            ARM_SCORE_DOWN_POS = 0.275,
+            ARM_SCORE_UP_POS = 0.105,
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.5,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.38,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.62;
+            MINI_TURRET_STRAIGHT_POS = 0.49,
+            MINI_TURRET_READY_POS = 0.49,
+            MINI_TURRET_LEFT_DIAGONAL_POS = 0.35,
+            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
-            PIVOT_READY_POS = 0.502,
+            PIVOT_READY_POS = 0.507,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
             PIVOT_DIAGONAL_RIGHT_POS = 0.369,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.068,
@@ -54,9 +56,9 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
     public static double
             GRIPPER_TOP_OPEN_POS = 0.88,
-            GRIPPER_TOP_GRIP_POS = 0.73,
+            GRIPPER_TOP_GRIP_POS = 0.725,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
-            GRIPPER_BOTTOM_GRIP_POS = 0.38;
+            GRIPPER_BOTTOM_GRIP_POS = 0.385;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -91,7 +93,7 @@ public class OuttakeSubsystem {
     private ProfileConstraints profileArmConstraints = new ProfileConstraints(armVelConstrain, armAccelConstrain, armDecelConstrain);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
-    public boolean updateTarget = false;
+
 
     public enum ArmServoState {
         READY,
@@ -114,6 +116,7 @@ public class OuttakeSubsystem {
     }
     public enum MiniTurretState {
         STRAIGHT,
+        READY,
         DIAGONAL_LEFT,
         DIAGONAL_RIGHT,
         POINT_TO_BACKDROP
@@ -277,27 +280,30 @@ public class OuttakeSubsystem {
                 OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
                 OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
                 break;
+            case SCORE_PURPLE:
+                OuttakeArmServoRight.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
+                OuttakeArmServoLeft.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
+                break;
         }
     }
     public void armServoProfileState(ArmServoState state) {
         switch (state) {
             case READY:
-                if (updateTarget) setArmTarget(ARM_READY_POS);
+                setArmTarget(ARM_READY_POS);
                 break;
             case UPRIGHT:
-                if (updateTarget) setArmTarget(ARM_UPRIGHT_POS);
+                setArmTarget(ARM_UPRIGHT_POS);
                 break;
             case SCORE_HALF_DOWN:
-                if (updateTarget) setArmTarget(ARM_SCORE_HALF_DOWN_POS);
+                setArmTarget(ARM_SCORE_HALF_DOWN_POS);
                 break;
             case SCORE_DOWN:
-                if (updateTarget) setArmTarget(ARM_SCORE_DOWN_POS);
+                setArmTarget(ARM_SCORE_DOWN_POS);
                 break;
             case SCORE_UP:
-                if (updateTarget) setArmTarget(ARM_SCORE_UP_POS);
+                setArmTarget(ARM_SCORE_UP_POS);
                 break;
             case NULL:
-                updateTarget = false;
                 break;
 
         }
@@ -323,6 +329,9 @@ public class OuttakeSubsystem {
         switch (state) {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
+                break;
+            case READY:
+                MiniTurretServo.setPosition(MINI_TURRET_READY_POS);
                 break;
             case DIAGONAL_LEFT:
                 MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);

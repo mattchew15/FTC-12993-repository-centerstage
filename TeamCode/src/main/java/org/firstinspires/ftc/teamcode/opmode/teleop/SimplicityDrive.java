@@ -228,7 +228,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
                 setIntakeArmHeight();
 
-                if (intakeSubsystem.backColourSensorValue < 0) { // need to tune colour sensor thresholds
+                if (intakeSubsystem.backColourSensorValue > 2500) { // need to tune colour sensor thresholds
                     outtakeState = OuttakeState.AFTER_INTAKE; //reverses intake
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -249,7 +249,7 @@ public class SimplicityDrive extends LinearOpMode {
                         if (false){ // 10 amps is assumed stalling - should tune
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                         }
-                        if (intakeSubsystem.backColourSensorValue < 0) { // or a sensor detects this
+                        if (intakeSubsystem.backColourSensorValue > 2500) { // or a sensor detects this
                             outtakeState = OuttakeState.AFTER_INTAKE;
                             sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                         }
