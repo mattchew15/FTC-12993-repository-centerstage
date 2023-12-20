@@ -221,8 +221,11 @@ public class Front_RED_Stage extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-                if (GlobalTimer.milliseconds() - autoTimer > 600){
+                if (GlobalTimer.milliseconds() - autoTimer > 900){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
+                    if (GlobalTimer.milliseconds() - autoTimer > 1000){
+                        intakeSubsystem.intakeSpin(1);
+                    }
                 }
 
                 if (RED_AUTO? yPosition > -15*S : yPosition < -15*S){
@@ -287,9 +290,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
                     } else if (teamPropLocation == 1){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, -173,32, 2);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnLeftFrontPreload:TurnRightFrontPreload,32, 2);
                     } else if (teamPropLocation == 3){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, 173,32, 2);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnRightFrontPreload:TurnLeftFrontPreload,32, 2);
 
                     }
 
@@ -471,6 +474,11 @@ public class Front_RED_Stage extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
 
+                if (intakeSubsystem.robotVoltage < 6.5){
+                    currentState = AutoState.PARK;
+                    autoTrajectories.park(poseEstimate,2);
+                }
+
                 if (xPosition < 6){ //
                     intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
                     if (xPosition < -12) {
@@ -491,11 +499,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     autoTimer = GlobalTimer.milliseconds();
-                    if (numCycles > 2) {
-                        autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
-                    } else {
-                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
-                    }
+                    autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155,8);
                 }
                 break;
 
@@ -524,8 +528,8 @@ public class Front_RED_Stage extends LinearOpMode {
 
             case IDLE:
                 telemetry.addLine("WWWWWWWWWWW");
-                intakeSubsystem.intakeSlideInternalPID(-6,1);
-                outtakeSubsystem.liftToInternalPID(-8,1);
+                intakeSubsystem.intakeSlideInternalPID(-0,1);
+                outtakeSubsystem.liftToInternalPID(-0,1);
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS, 1);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);

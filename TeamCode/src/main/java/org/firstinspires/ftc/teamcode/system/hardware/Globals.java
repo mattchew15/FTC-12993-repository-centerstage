@@ -48,7 +48,8 @@ public class Globals {
             LIFT_LOW_POSITION_PITCHING_TICKS = 690,
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
 
-            S = 1; // the side multiplier to change sides for autonomous
+            S = 1, // the side multiplier to change sides for autonomous
+            LEFT_OR_RIGHT;
 
     public static double degreestoTicksPitchMotor(double degrees){
         return degrees * PITCH_TICKS_PER_DEGREES;

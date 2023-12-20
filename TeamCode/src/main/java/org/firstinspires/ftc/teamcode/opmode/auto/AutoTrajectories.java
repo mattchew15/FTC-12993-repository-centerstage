@@ -47,11 +47,14 @@ public class AutoTrajectories {
 
     MiddleLaneYDeposit = -32,
     MiddleLaneYIntake = -28.7,
-            LaneOffset = 27.4,
+            LaneOffset = 26.9,
 
     ParkX = 45,
             ParkMiddleY = -14,
-            ParkWallY = -54;
+            ParkWallY = -54,
+
+    TurnLeftFrontPreload = -176,
+    TurnRightFrontPreload = 176;
 
 
     public static Pose2d poseEstimate;
@@ -170,7 +173,7 @@ public class AutoTrajectories {
 
     public void driveIntoStackStraightFromMiddleTurnDrive(Pose2d startTrajectory, double slowerVelocityIntoStack, int trussMiddleStage){ // generates a live trajectory
         Trajectory driveIntoStackStraightLIVE = drive.trajectoryBuilder(startTrajectory)
-                .lineToSplineHeading(new Pose2d(20, MiddleLaneYIntake*S + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)), Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToSplineHeading(new Pose2d(20, MiddleLaneYDeposit*S + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)), Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(-28, MiddleLaneYIntake*S+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S))), Math.toRadians(180)*S) // end tangent affects path alot\
                 .lineToSplineHeading(new Pose2d(-36.7, MiddleLaneYIntake*S + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)), Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

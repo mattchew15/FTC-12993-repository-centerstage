@@ -6,8 +6,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.opmode.teleop.SimplicityDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
@@ -24,6 +27,7 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosit
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import static org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline.BLUE_POSITION;
 import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
@@ -35,6 +39,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
     // class members
     ElapsedTime GlobalTimer;
     double autoTimer;
+    VoltageSensor voltageSensor;
 
     int numCycles;
     int teamPropLocation;
@@ -84,6 +89,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         } //
 
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         cameraHardware.initWebcam(hardwareMap);
@@ -99,7 +105,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+            if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
                 if (BLUE_AUTO){
                     teamPropLocation = 3;
@@ -107,12 +113,17 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 else {
                     teamPropLocation = 1;
                 }
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
                 teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
-                teamPropLocation = 3;
+                if (BLUE_AUTO){
+                    teamPropLocation = 1;
+                }
+                else {
+                    teamPropLocation = 3;
+                }
             }
             telemetry.addData("S", S);
 
@@ -165,6 +176,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
             telemetry.addData("liftPosition", outtakeSubsystem.liftPosition);
             telemetry.addData("pitchPosition", outtakeSubsystem.pitchPosition);
             telemetry.addData("intakeSlidePosition", intakeSubsystem.intakeSlidePosition);
+            //telemetry.addData("RobotVoltage", voltageSensor.getVoltage());
             autoSequence();
 
 
@@ -185,7 +197,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
     }
 
     public void autoSequence(){
-        if ((GlobalTimer.milliseconds() > 28200) && goToPark && currentState != AutoState.IDLE){
+        if (((GlobalTimer.milliseconds() > 28200) && goToPark && currentState != AutoState.IDLE)){ //|| intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS) > 6
             goToPark = false;
             currentState = AutoState.PARK;
             autoTrajectories.park(poseEstimate,2);

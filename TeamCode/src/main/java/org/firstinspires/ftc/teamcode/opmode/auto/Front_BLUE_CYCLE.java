@@ -16,10 +16,12 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
+import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
+import static org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline.BLUE_POSITION;
 import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
@@ -92,7 +94,7 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+            if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
                 telemetry.addLine("left");
                 if (BLUE_AUTO){
                     teamPropLocation = 3;
@@ -100,10 +102,10 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                 else {
                     teamPropLocation = 1;
                 }
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
                 telemetry.addLine("center");
                 teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
                 telemetry.addLine("right");
                 if (BLUE_AUTO){
                     teamPropLocation = 1;
@@ -113,7 +115,8 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                 }
             }
             telemetry.addData("S", S);
-
+            telemetry.addData("BlueAuto", BLUE_AUTO);
+            telemetry.addData("RedAuto", RED_AUTO);
             telemetry.update();
         }
 
@@ -153,6 +156,7 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
 
             // Print pose to telemetry
             loopTime.updateLoopTime(telemetry);
+            telemetry.addData("teamPropLocation", teamPropLocation);
             telemetry.addData("distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
             telemetry.addData ("times into stack", timesIntoStack);
             telemetry.addData("intakeMotorVelocity", intakeSubsystem.intakeVelocity);
@@ -187,7 +191,7 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
         if ((GlobalTimer.milliseconds() > 28500) && goToPark && currentState != AutoState.IDLE){
             goToPark = false;
             currentState = AutoState.PARK;
-            autoTrajectories.park(poseEstimate,1);
+            autoTrajectories.park(poseEstimate,2);
         }
 
         switch (currentState) {
@@ -200,15 +204,15 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 0){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
-                    if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                    if (teamPropLocation == 1){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                    } else if (teamPropLocation == 2){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
                         telemetry.addLine("center");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                    } else if (teamPropLocation == 3){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");
@@ -221,8 +225,11 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-                if (GlobalTimer.milliseconds() - autoTimer > 600){
+                if (GlobalTimer.milliseconds() - autoTimer > 1100){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
+                    if (GlobalTimer.milliseconds() - autoTimer > 1200){
+                        intakeSubsystem.intakeSpin(1);
+                    }
                 }
 
                 if (RED_AUTO? yPosition > -15*S : yPosition < -15*S){
@@ -287,10 +294,9 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
                     } else if (teamPropLocation == 1){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, -173,32, 2);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnLeftFrontPreload:TurnRightFrontPreload,32, 2);
                     } else if (teamPropLocation == 3){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, 173,32, 2);
-
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnRightFrontPreload:TurnLeftFrontPreload,32, 2);
                     }
 
                     autoTimer = GlobalTimer.milliseconds();
@@ -304,7 +310,7 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 100){ // time for pixel holder to close
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
 
-                    if ((GlobalTimer.milliseconds() - autoTimer > 450) && timesIntoStack < 3 && numCycles != 0){
+                    if ((GlobalTimer.milliseconds() - autoTimer > 450) && timesIntoStack < 1 && numCycles != 0){
                         if (!intakeSubsystem.pixelsInIntake()){
                             currentState = AutoState.GRAB_OFF_STACK;
                             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
@@ -505,8 +511,17 @@ public class Front_BLUE_CYCLE extends LinearOpMode {
                             intakeSubsystem.intakeSpin(-1);
                         }
                     }
-                } else if (numCycles != 3){
-                    intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
+                } else if (numCycles != 3 ){
+                    if (numCycles == 1){
+                        if (teamPropLocation == 1 || teamPropLocation == 3){
+                            intakeSubsystem.intakeSlideTo(0, intakeSubsystem.intakeSlidePosition,1);
+                        } else {
+                            intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
+
+                        }
+                    } else {
+                        intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
+                    }
                 }
                 if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
@@ -29,7 +30,9 @@ public class IntakeSubsystem {
 
     public AnalogInput
             IntakeChuteArmEncoder;
+
     public DigitalChannel FrontLimitSwitch;
+    VoltageSensor voltageSensor;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.479,
@@ -97,6 +100,7 @@ public class IntakeSubsystem {
     public double intakeChuteArmPosition;
     public double intakeCurrent;
     public double intakeVelocity;
+    public double robotVoltage;
 
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
@@ -112,6 +116,7 @@ public class IntakeSubsystem {
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
         IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
         FrontLimitSwitch = hwMap.get(DigitalChannel.class, "FrontLimitSwitch");
+        voltageSensor = hwMap.voltageSensor.iterator().next();
     }
 
     public void intakeHardwareSetup(){
@@ -129,6 +134,7 @@ public class IntakeSubsystem {
             backColourSensorValue = IntakeColourSensorBack.alpha();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
             intakeVelocity = IntakeMotor.getVelocity();
+            robotVoltage = voltageSensor.getVoltage();
         }
     }
 
