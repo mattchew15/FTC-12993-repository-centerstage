@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,8 +14,6 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.headingPosition;
@@ -24,9 +21,6 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEs
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline.BLUE_POSITION;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
@@ -39,7 +33,6 @@ public class Back_BLUE_TrussPark extends LinearOpMode {
     double autoTimer;
 
     int numCycles;
-    int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
     int liftTarget;
@@ -99,28 +92,14 @@ public class Back_BLUE_TrussPark extends LinearOpMode {
 
         while (!isStarted()) { // initialization loop
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-            outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                telemetry.addLine("left");
-                if (BLUE_AUTO){
-                    teamPropLocation = 3;
-                }
-                else {
-                    teamPropLocation = 1;
-                }
-            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                telemetry.addLine("center");
-                teamPropLocation = 2;
-            } else if (BLUE_POSITION == YCrCbBlueTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                telemetry.addLine("right");
-                if (BLUE_AUTO){
-                    teamPropLocation = 1;
-                }
-                else {
-                    teamPropLocation = 3;
-                }
+            if (teamPropLocation == 1){
+                telemetry.addLine("Front");
+            } else if (teamPropLocation == 2){
+                telemetry.addLine("Middle");
+            } else if (teamPropLocation == 3){
+                telemetry.addLine("Back");
             }
             telemetry.addData("S", S);
 

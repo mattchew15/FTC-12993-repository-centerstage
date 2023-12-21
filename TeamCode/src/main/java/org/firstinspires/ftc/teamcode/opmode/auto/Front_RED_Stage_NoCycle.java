@@ -16,11 +16,9 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
@@ -33,7 +31,6 @@ public class Front_RED_Stage_NoCycle extends LinearOpMode {
     double autoTimer;
 
     int numCycles;
-    int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
     boolean goToPark;
@@ -92,26 +89,14 @@ public class Front_RED_Stage_NoCycle extends LinearOpMode {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                telemetry.addLine("left");
-                if (BLUE_AUTO){
-                    teamPropLocation = 3;
-                }
-                else {
-                    teamPropLocation = 1;
-                }
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                telemetry.addLine("center");
-                teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                telemetry.addLine("right");
-                if (BLUE_AUTO){
-                    teamPropLocation = 1;
-                }
-                else {
-                    teamPropLocation = 3;
-                }
+            if (teamPropLocation == 1){
+                telemetry.addLine("Front");
+            } else if (teamPropLocation == 2){
+                telemetry.addLine("Middle");
+            } else if (teamPropLocation == 3){
+                telemetry.addLine("Back");
             }
+            telemetry.addData("S", S);
 
             telemetry.update();
         }
@@ -199,15 +184,15 @@ public class Front_RED_Stage_NoCycle extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 0){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
-                    if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                    if (teamPropLocation == 1){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                    } else if (teamPropLocation == 2){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
                         telemetry.addLine("center");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                    } else if (teamPropLocation == 3){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");

@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -136,3 +137,5 @@ public class ContourBlueTeamPropDetectorPipeline extends OpenCvPipeline {
     public double getCx() { return cx;}
     public double getCy() { return cy;}
 }
+
+ */

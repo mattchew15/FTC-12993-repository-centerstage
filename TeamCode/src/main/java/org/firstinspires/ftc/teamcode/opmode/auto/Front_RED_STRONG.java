@@ -17,11 +17,9 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
@@ -86,15 +84,12 @@ public class Front_RED_STRONG extends LinearOpMode {
 
         while (!isStarted()) { // initialization loop
             autoSequences.intializationLoop();
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                telemetry.addLine("left");
-                autoSequences.teamPropLocation = 1;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                telemetry.addLine("center");
-                autoSequences.teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                telemetry.addLine("right");
-                autoSequences.teamPropLocation = 3;
+            if (teamPropLocation == 1){
+                telemetry.addLine("Front");
+            } else if (teamPropLocation == 2){
+                telemetry.addLine("Middle");
+            } else if (teamPropLocation == 3){
+                telemetry.addLine("Back");
             }
             telemetry.update();
         }

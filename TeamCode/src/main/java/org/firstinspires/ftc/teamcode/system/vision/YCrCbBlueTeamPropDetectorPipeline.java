@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.vision;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -9,12 +12,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
-    public enum TeamPropPosition {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
 
+    private Telemetry telemetry;
     // Colors for rectangles drawn
     private final Scalar
             blue = new Scalar(0, 0, 255),
@@ -42,8 +41,6 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
 
     // CB values in 3 rectangles.
     private Mat region1Cb, region2Cb, region3Cb;
-
-    public static volatile TeamPropPosition BLUE_POSITION = TeamPropPosition.RIGHT;
 
     private final Mat
             YCrCb = new Mat(),
@@ -92,13 +89,16 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if (max == avg1) {
-            BLUE_POSITION = TeamPropPosition.LEFT;
+            teamPropLocation = 3;
+            telemetry.addLine("Back");
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
-            BLUE_POSITION = TeamPropPosition.CENTER;
+            teamPropLocation = 2;
+            telemetry.addLine("Middle");
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            BLUE_POSITION = TeamPropPosition.RIGHT;
+            teamPropLocation = 1;
+            telemetry.addLine("Front");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
