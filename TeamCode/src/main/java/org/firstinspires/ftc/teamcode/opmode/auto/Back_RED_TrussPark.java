@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.headingPosition;
@@ -23,8 +21,6 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEs
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
@@ -37,7 +33,6 @@ public class Back_RED_TrussPark extends LinearOpMode {
     double autoTimer;
 
     int numCycles;
-    int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
     int liftTarget;
@@ -99,16 +94,14 @@ public class Back_RED_TrussPark extends LinearOpMode {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                telemetry.addLine("left");
-                teamPropLocation = 1;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                telemetry.addLine("center");
-                teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                telemetry.addLine("right");
-                teamPropLocation = 3;
+            if (teamPropLocation == 1){
+                telemetry.addLine("Front");
+            } else if (teamPropLocation == 2){
+                telemetry.addLine("Middle");
+            } else if (teamPropLocation == 3){
+                telemetry.addLine("Back");
             }
+            telemetry.addData("S", S);
 
             telemetry.update();
         }
@@ -123,7 +116,7 @@ public class Back_RED_TrussPark extends LinearOpMode {
         GlobalTimer.reset();
         autoTimer = GlobalTimer.milliseconds();
 
-        goToPark = false;
+        goToPark = true;
 
         intakeSubsystem.intakeHardwareSetup();
         outtakeSubsystem.hardwareSetup();
@@ -194,7 +187,7 @@ public class Back_RED_TrussPark extends LinearOpMode {
                 outtakeSubsystem.pitchToInternalPID(570,1);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
-                if (GlobalTimer.milliseconds() - autoTimer > 500){
+                if (GlobalTimer.milliseconds() - autoTimer > 22000){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
                     if (teamPropLocation == 1){
@@ -303,6 +296,14 @@ public class Back_RED_TrussPark extends LinearOpMode {
                             autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16,157, 4);
 
                         }
+                    }
+                }if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
+                    currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                    autoTimer = GlobalTimer.milliseconds();
+                    if (numCycles > 2) {
+                        autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155, 8);
+                    } else {
+                        autoTrajectories.outtakeDriveMiddlePath(poseEstimate,13, 29, MiddleLaneYDeposit);
                     }
                 }
                 break;

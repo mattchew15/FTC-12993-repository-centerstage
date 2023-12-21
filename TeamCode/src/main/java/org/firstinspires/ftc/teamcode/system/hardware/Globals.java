@@ -2,11 +2,6 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.system.vision.ContourBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.ContourRedTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
-
 @Config // Allows dashboard tune
 public class Globals {
 
@@ -19,9 +14,10 @@ public class Globals {
     // Auto States
     public static boolean
             BLUE_AUTO = false,
-            RED_AUTO = false,
-            FRONT_AUTO = false,
-            BACK_AUTO = false;
+            RED_AUTO = false;
+
+    // Team Prop Location
+    public static int teamPropLocation = 1;
 
     // Pitch
     public static double
@@ -48,7 +44,8 @@ public class Globals {
             LIFT_LOW_POSITION_PITCHING_TICKS = 690,
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
 
-            S = 1; // the side multiplier to change sides for autonomous
+            S = 1, // the side multiplier to change sides for autonomous
+            LEFT_OR_RIGHT;
 
     public static double degreestoTicksPitchMotor(double degrees){
         return degrees * PITCH_TICKS_PER_DEGREES;

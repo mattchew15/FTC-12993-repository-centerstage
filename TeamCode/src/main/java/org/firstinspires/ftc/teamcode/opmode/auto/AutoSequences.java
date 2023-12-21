@@ -4,8 +4,7 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.Middle
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEstimate;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.SIXTY_DEGREE_TICKS;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,8 +13,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
-
 
 @Config
 public class AutoSequences {
@@ -24,7 +21,6 @@ public class AutoSequences {
     double autoTimer;
 
     int numCycles;
-    int teamPropLocation;
     boolean changeStates;
     int outtakeChangeStates;
 
@@ -42,7 +38,8 @@ public class AutoSequences {
 
     public void intializationLoop (){
         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-        intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
+        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+        intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
     }
 
     public void afterWaitForStart(){

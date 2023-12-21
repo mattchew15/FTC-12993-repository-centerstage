@@ -35,7 +35,7 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.99,
+            ARM_READY_POS = 0.988,
             ARM_UPRIGHT_POS = 0.51,
             ARM_SCORE_HALF_DOWN_POS = 0.195,
             ARM_SCORE_DOWN_POS = 0.275,

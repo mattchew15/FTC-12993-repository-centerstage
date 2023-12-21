@@ -16,11 +16,9 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
-import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
-import static org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline.RED_POSITION;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
@@ -33,7 +31,6 @@ public class Front_RED_Stage extends LinearOpMode {
     double autoTimer;
 
     int numCycles;
-    int teamPropLocation;
     double correctedHeading;
     int timesIntoStack;
     boolean goToPark;
@@ -92,16 +89,14 @@ public class Front_RED_Stage extends LinearOpMode {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-            if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
-                telemetry.addLine("left");
-                teamPropLocation = 1;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
-                telemetry.addLine("center");
-                teamPropLocation = 2;
-            } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
-                telemetry.addLine("right");
-                teamPropLocation = 3;
+            if (teamPropLocation == 1){
+                telemetry.addLine("Front");
+            } else if (teamPropLocation == 2){
+                telemetry.addLine("Middle");
+            } else if (teamPropLocation == 3){
+                telemetry.addLine("Back");
             }
+            telemetry.addData("S", S);
 
             telemetry.update();
         }
@@ -123,7 +118,7 @@ public class Front_RED_Stage extends LinearOpMode {
         intakeSubsystem.intakeSlideMotorEncodersReset();
 
 
-        goToPark = false;
+        goToPark = true;
 
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY); // don't touch this at all in auto
@@ -189,19 +184,20 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (GlobalTimer.milliseconds() - autoTimer > 0){
                     autoTimer = GlobalTimer.milliseconds(); // reset timer not rly needed here
                     currentState = AutoState.PRELOAD_DRIVE;
-                    if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.LEFT){
+                    if (teamPropLocation == 1){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.CENTER){
+                    } else if (teamPropLocation == 2){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
                         telemetry.addLine("center");
-                    } else if (RED_POSITION == YCrCbRedTeamPropDetectorPipeline.TeamPropPosition.RIGHT){
+                    } else if (teamPropLocation == 3){
 
                         autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");
                     }
+                    telemetry.addData("S", S);
                 }
 
                 break;
@@ -210,11 +206,14 @@ public class Front_RED_Stage extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-                if (GlobalTimer.milliseconds() - autoTimer > 600){
+                if (GlobalTimer.milliseconds() - autoTimer > 900){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
+                    if (GlobalTimer.milliseconds() - autoTimer > 1000){
+                        intakeSubsystem.intakeSpin(1);
+                    }
                 }
 
-                if (yPosition > -15){
+                if (RED_AUTO? yPosition > -15*S : yPosition < -15*S){
                     if (teamPropLocation == 1){
                         intakeSubsystem.intakeSlideTo(0, intakeSubsystem.intakeSlidePosition,1);
                     } else if (teamPropLocation == 2){
@@ -271,14 +270,14 @@ public class Front_RED_Stage extends LinearOpMode {
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 intakeSubsystem.intakeSpin(-1);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
-                if (yPosition < -26.5){
+                if (RED_AUTO? yPosition < -26.5*S:yPosition > -26.5*S){
                     // autoTrajectories.outtakeDriveMiddlePath(poseEstimate, 20);
                     if (teamPropLocation == 2){
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,16, 30, -31);
                     } else if (teamPropLocation == 1){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, -173,32, 2);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnLeftFrontPreload:TurnRightFrontPreload,32, 2);
                     } else if (teamPropLocation == 3){
-                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, 173,32, 2);
+                        autoTrajectories.outtakeDriveTurnEndPath(poseEstimate,16, RED_AUTO?TurnRightFrontPreload:TurnLeftFrontPreload,32, 2);
 
                     }
 
@@ -460,6 +459,11 @@ public class Front_RED_Stage extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
 
+                if (intakeSubsystem.robotVoltage < 6.5){
+                    currentState = AutoState.PARK;
+                    autoTrajectories.park(poseEstimate,2);
+                }
+
                 if (xPosition < 6){ //
                     intakeSubsystem.intakeSlideTo(700, intakeSubsystem.intakeSlidePosition,1);
                     if (xPosition < -12) {
@@ -476,6 +480,11 @@ public class Front_RED_Stage extends LinearOpMode {
                             intakeSubsystem.intakeSpin(-1);
                         }
                     }
+                }
+                if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){
+                    currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                    autoTimer = GlobalTimer.milliseconds();
+                    autoTrajectories.outtakeDriveFromStraightTurnEndStageV2(poseEstimate,16, 155,8);
                 }
                 break;
 
@@ -504,8 +513,8 @@ public class Front_RED_Stage extends LinearOpMode {
 
             case IDLE:
                 telemetry.addLine("WWWWWWWWWWW");
-                intakeSubsystem.intakeSlideInternalPID(-6,1);
-                outtakeSubsystem.liftToInternalPID(-8,1);
+                intakeSubsystem.intakeSlideInternalPID(-0,1);
+                outtakeSubsystem.liftToInternalPID(-0,1);
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS, 1);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);

@@ -20,9 +20,12 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(36.7, -24, Math.toRadians(-180)))
 
 
-                                .splineToConstantHeading(new Vector2d(34, -36), Math.toRadians(180)) // end tangent affects path alot
-                                .lineToSplineHeading(new Pose2d(-20, -36, Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-37, -36, Math.toRadians(170)))// slower portion of spline
+
+
+                                .lineToSplineHeading(new Pose2d(20, -32, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(-28, -29), Math.toRadians(180)) // end tangent affects path alot\
+                                .lineToSplineHeading(new Pose2d(-36.7, -29, Math.toRadians(180))) // seperates trajectories
+                                .build()
 /*
                                 .splineToConstantHeading(new Vector2d(15, -36),Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(10, -36, Math.toRadians(180)))
@@ -44,7 +47,7 @@ public class MeepMeepTesting {
                                 .lineToSplineHeading(new Pose2d(24, -36, Math.toRadians(-160)))
                                 .splineToConstantHeading(new Vector2d(36, -32),Math.toRadians(20))
  */
-                                .build()
+
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
                 .setDarkMode(true)

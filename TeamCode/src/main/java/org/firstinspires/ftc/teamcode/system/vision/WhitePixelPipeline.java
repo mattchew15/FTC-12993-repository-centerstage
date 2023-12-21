@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -143,4 +144,6 @@ public class WhitePixelPipeline extends OpenCvPipeline {
     {
         return pos;
     }
+
 }
+ */
