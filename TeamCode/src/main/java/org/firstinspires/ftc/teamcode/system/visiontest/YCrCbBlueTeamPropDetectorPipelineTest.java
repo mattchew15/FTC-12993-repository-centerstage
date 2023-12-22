@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.vision;
-
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+package org.firstinspires.ftc.teamcode.system.visiontest;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -11,9 +9,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
-
-    public Telemetry telemetry;
+public class YCrCbBlueTeamPropDetectorPipelineTest extends OpenCvPipeline {
+    private int teamPropLocation = 1;
+    private Telemetry telemetry;
     // Colors for rectangles drawn
     private final Scalar
             blue = new Scalar(0, 0, 255),
