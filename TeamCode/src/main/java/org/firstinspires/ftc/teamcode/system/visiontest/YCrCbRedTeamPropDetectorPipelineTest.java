@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.vision;
-
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+package org.firstinspires.ftc.teamcode.system.visiontest;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -11,9 +9,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
-
-    public Telemetry telemetry;
+public class YCrCbRedTeamPropDetectorPipelineTest extends OpenCvPipeline {
+    private int teamPropLocation = 1;
+    private Telemetry telemetry;
     // Colors for rectangles drawn
     private final Scalar
             blue = new Scalar(0, 0, 255),
@@ -25,7 +23,7 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
             regionHeight = 100,
             region1A_x = 0,
             region1A_y = 380,
-            region2A_x = 575,
+            region2A_x = 625,
             region2A_y = 380,
             region3A_x = 1180,
             region3A_y = 380;
@@ -40,45 +38,44 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
             region3B = new Point(region3A_x + regionWidth, region3A_y + regionHeight);
 
     // CB values in 3 rectangles.
-    private Mat region1Cb, region2Cb, region3Cb;
+    private Mat region1Cr, region2Cr, region3Cr;
 
     private final Mat
             YCrCb = new Mat(),
-            Cb = new Mat();
+            Cr = new Mat();
 
-    // Average Cb values in each rectangle.
+    // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
 
-    // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
-    private void inputToCb(Mat input) {
+    // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
+    private void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cb, 2);
+        Core.extractChannel(YCrCb, Cr, 1);
     }
 
     @Override
     public void init(Mat firstFrame) {
         /*
-        To make sure the 'Cb' object is initialized, so the submats will still be linked.
-        If the object were to only be initialized in processFrame, then the submats would delink
+        To make sure the 'Cr' object is initialized, so the submats will still be linked
+        if the object were to only be initialized in processFrame, then the submats would delink
         because the back buffer would be re-allocated the first time a real frame was crunched.
          */
 
-        inputToCb(firstFrame);
+        inputToCr(firstFrame);
 
-        region1Cb = Cb.submat(new Rect(region1A, region1B));
-        region2Cb = Cb.submat(new Rect(region2A, region2B));
-        region3Cb = Cb.submat(new Rect(region3A, region3B));
+        region1Cr = Cr.submat(new Rect(region1A, region1B));
+        region2Cr = Cr.submat(new Rect(region2A, region2B));
+        region3Cr = Cr.submat(new Rect(region3A, region3B));
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        inputToCb(input);
-        //Core.flip(input, input, 0);
+        inputToCr(input);
 
-        //Average pixel value of each Cb channel.
-        avg1 = (int) Core.mean(region1Cb).val[0];
-        avg2 = (int) Core.mean(region2Cb).val[0];
-        avg3 = (int) Core.mean(region3Cb).val[0];
+        //Average pixel value of each Cr channel.
+        avg1 = (int) Core.mean(region1Cr).val[0];
+        avg2 = (int) Core.mean(region2Cr).val[0];
+        avg3 = (int) Core.mean(region3Cr).val[0];
 
         //Draw rectangles showing regions. Simply visual aid.
         Imgproc.rectangle(input, region1A, region1B, blue, 2);
@@ -89,16 +86,16 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if (max == avg1) {
-            teamPropLocation = 3;
-            telemetry.addLine("Back");
+            teamPropLocation = 1;
+            telemetry.addLine("Front");
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
             teamPropLocation = 2;
             telemetry.addLine("Middle");
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            teamPropLocation = 1;
-            telemetry.addLine("Front");
+            teamPropLocation = 3;
+            telemetry.addLine("Back");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
