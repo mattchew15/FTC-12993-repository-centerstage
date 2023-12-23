@@ -18,11 +18,12 @@ public class ToggleR
                 toggleMode = !toggleMode;
                 toggled = true;
             }
+            return toggleMode;
         }
         else
         {
             toggled = false;
+            return false;
         }
-        return toggleMode;
     }
 }

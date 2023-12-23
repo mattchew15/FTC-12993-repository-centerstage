@@ -35,7 +35,7 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.988,
+            ARM_READY_POS = 0.99,
             ARM_UPRIGHT_POS = 0.51,
             ARM_SCORE_HALF_DOWN_POS = 0.195,
             ARM_SCORE_DOWN_POS = 0.275,
@@ -101,6 +101,7 @@ public class OuttakeSubsystem {
         SCORE_HALF_DOWN,
         SCORE_DOWN,
         SCORE_UP,
+        CALCULATE,
         NULL,
         SCORE_PURPLE
     }
@@ -303,11 +304,43 @@ public class OuttakeSubsystem {
             case SCORE_UP:
                 setArmTarget(ARM_SCORE_UP_POS);
                 break;
-            case NULL:
+            case CALCULATE:
+                calculateArmProfile();
                 break;
-
+            default:
         }
-        calculateArmProfile();
+        // previous version calculated always
+    }
+
+    public void armServoProfileState2(ArmServoState state, boolean update)
+    {
+        switch (state)
+        {
+            case READY:
+                if (update) setArmTarget(ARM_READY_POS);
+                else calculateArmProfile();
+                break;
+            case UPRIGHT:
+                if (update) setArmTarget(ARM_UPRIGHT_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_HALF_DOWN:
+                if (update) setArmTarget(ARM_SCORE_HALF_DOWN_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_DOWN:
+                if (update) setArmTarget(ARM_SCORE_DOWN_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_UP:
+                if (update) setArmTarget(ARM_SCORE_UP_POS);
+                else calculateArmProfile();
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
+        }
     }
 
     public static double degreesToTicksMiniTurret(double degrees){
@@ -416,7 +449,7 @@ public class OuttakeSubsystem {
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
-        profileSubsystem.initState(); // this might fuck up
+        profileSubsystem.initState(); // this might fuck up; to be complete honest this is unnecessary write that set the variables to zero, why it is here i don't know, like i don't even recall this state being accessed later
         profileSubsystem.setTarget(liftTarget);
         profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID
         double output = profileSubsystem.calculate();

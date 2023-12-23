@@ -169,15 +169,20 @@ public class SimplicityDriveMotion extends LinearOpMode {
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
         outtakeSubsystem.profileLiftSetUp();
+
+        armTarget = OuttakeSubsystem.ARM_READY_POS;
+        outtakeSubsystem.setArmTarget(armTarget);
+        outtakeSubsystem.calculateArmProfile();
         waitForStart();
 
         // Yeah i know it is crappy it is just for testing the profiles
         while (opModeIsActive() && !isStopRequested())
         {
+            outtakeSubsystem.calculateArmProfile();
+            //outtakeSubsystem.armServoProfileState(armState);
             outtakeSubsystem.outtakeReads(false);
             outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
             //outtakeSubsystem.armServoState(armState);
-            outtakeSubsystem.armServoProfileState(armState);
             // Implementation needs a toggle so it doesn't keep resetting the time
 
             if (gamepad1.a)
@@ -200,13 +205,29 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
             }
 
+            /*_
+            if (gamepad1.right_bumper)
+            {
+                outtakeSubsystem.liftTo(600,outtakeSubsystem.liftPosition, 1);
+            }
+            if (gamepad1.right_trigger > 0.1)
+            {
+                outtakeSubsystem.liftTo(600, outtakeSubsystem.liftPosition, 1);
+            }
+            if (gamepad1.left_bumper)
+            {
+                outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 0.75);
+            }
+
+
+             */
+
             if (!gamepad1.dpad_right && !gamepad1.dpad_left)
             {
                 armState = OuttakeSubsystem.ArmServoState.NULL;
             }
             else
             {
-                outtakeSubsystem.updateTarget = true;
                 if (gamepad1.dpad_left)
                 {
                     armState = OuttakeSubsystem.ArmServoState.UPRIGHT;
@@ -217,9 +238,8 @@ public class SimplicityDriveMotion extends LinearOpMode {
                     armState = OuttakeSubsystem.ArmServoState.READY;
                     armTarget = OuttakeSubsystem.ARM_READY_POS;
                 }
+                outtakeSubsystem.setArmTarget(armTarget);
             }
-
-            double output = outtakeSubsystem.profileLiftCalculateFeedForward();
 
             if (gamepad1.left_trigger > 0.1)
             {
@@ -249,7 +269,10 @@ public class SimplicityDriveMotion extends LinearOpMode {
             telemetry.addData("Arm pos", outtakeSubsystem.getArmPos());
             telemetry.addData("Arm target", armTarget);
             telemetry.addData("Arm Error", Math.abs(outtakeSubsystem.getArmPos() - outtakeSubsystem.getArmX()));
-            telemetry.addData("Update target", outtakeSubsystem.updateTarget);
+            telemetry.addData("Arm timer", outtakeSubsystem.armProfileTimer);
+            telemetry.addData("Arm constrains (VEl)", outtakeSubsystem.profileArmConstraints.velo);
+            telemetry.addData("Arm constrains (ACCEL)", outtakeSubsystem.profileArmConstraints.accel);
+            telemetry.addData("Arm constrains (DECEL)", outtakeSubsystem.profileArmConstraints.decel);
             telemetry.update();
         }
     }

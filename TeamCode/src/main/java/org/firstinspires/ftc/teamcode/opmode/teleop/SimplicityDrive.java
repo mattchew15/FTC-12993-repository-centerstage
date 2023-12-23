@@ -70,6 +70,7 @@ public class SimplicityDrive extends LinearOpMode {
         DEPOSIT,
         RETURN,
         MANUAL_ENCODER_RESET,
+
         PITCH_RESET,
         CLIMB_START,
         CLIMB_END,
@@ -188,7 +189,6 @@ public class SimplicityDrive extends LinearOpMode {
                 if (gamepad2.right_bumper){
                   //  lockLowPosition = true;
                 }
-
                 readyOuttake();
                 liftTarget = 0; // this isn't the lift target in this state but rather for when we are fine adjusting lift
                 intakeTarget = 0;
