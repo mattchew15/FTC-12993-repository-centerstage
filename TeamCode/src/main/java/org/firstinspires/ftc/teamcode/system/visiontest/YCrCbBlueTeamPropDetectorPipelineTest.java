@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class YCrCbBlueTeamPropDetectorPipelineTest extends OpenCvPipeline {
-    private int teamPropLocation = 1;
+    private int teamPropLocation;
     private Telemetry telemetry;
     // Colors for rectangles drawn
     private final Scalar
@@ -46,6 +46,10 @@ public class YCrCbBlueTeamPropDetectorPipelineTest extends OpenCvPipeline {
 
     // Average Cb values in each rectangle.
     private int avg1, avg2, avg3;
+
+    public YCrCbBlueTeamPropDetectorPipelineTest(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
 
     // Take the RGB frame and convert to YCrCb, then extract the Cb channel.
     private void inputToCb(Mat input) {
@@ -99,6 +103,7 @@ public class YCrCbBlueTeamPropDetectorPipelineTest extends OpenCvPipeline {
             telemetry.addLine("Front");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
+        telemetry.addData("teamPropLocation", teamPropLocation);
 
         return input;
     }

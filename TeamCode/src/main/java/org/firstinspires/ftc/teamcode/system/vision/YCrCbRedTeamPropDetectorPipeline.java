@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
 
-    public Telemetry telemetry;
+    private Telemetry telemetry;
     // Colors for rectangles drawn
     private final Scalar
             blue = new Scalar(0, 0, 255),
