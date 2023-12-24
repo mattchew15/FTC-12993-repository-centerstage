@@ -18,13 +18,12 @@ P = 3x3
 R = 3x3
 I = 3x3
 */
-    //TODO: Check math and maybe do a new prediction function(DOES NOT USE ODO as update), discuss this with sully tomorrow
     public SimpleMatrix[] pose;
     private SimpleMatrix STARTING_COVARIANCE = new SimpleMatrix(new double[][]
     {
-            {0.1, 0, 0}, // x covariance
+            {0.01, 0, 0}, // x covariance
             {0, 0.01, 0}, // y covariance
-            {0, 0, Math.toRadians(0.1)} // heading covariance
+            {0, 0, Math.toRadians(0.01)} // heading covariance
     });
 
     // A is something, like transitional matrix for prediction, this should always be an identity as the prediction is always current pls update
@@ -40,19 +39,19 @@ I = 3x3
             {0.0}
         });
     // Sensor noise
-    // TODO how to find these values? Michael said he found a sensor noise paper or something like that
     private SimpleMatrix R = new SimpleMatrix(new double[][]
         {
-            {0.20, 0, 0},
+            {0.2, 0, 0},
             {0, 0.2, 0},
             {0, 0, 0.01}
         });
+
     // Covariance gain for the model
     private SimpleMatrix Q = new SimpleMatrix(new double[][]
         {
-            {0.3, 0, 0},
+            {0.2, 0, 0},
             {0, 0.2, 0},
-            {0, 0, 0.9}
+            {0, 0, 0.1}
         });
 
 

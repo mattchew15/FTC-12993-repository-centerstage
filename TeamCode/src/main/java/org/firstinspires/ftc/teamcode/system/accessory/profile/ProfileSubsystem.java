@@ -111,7 +111,7 @@ public class ProfileSubsystem
                     this.pow += currentFeedForward * Math.sin(position);
                     break;
                 case FullState:
-                    this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, state.v) * Math.signum(targetOffSet);
+                    this.pow += fullStateFeedback.updateWithError((target + targetOffSet) - position, position, profile.state.v) * Math.signum(targetOffSet);
                     break;
                 default:
 
@@ -243,6 +243,14 @@ public class ProfileSubsystem
     {
         //The bottom one works without having to call calculate() one more time: return profile.calculate(timer.time()).x;
         return profile.state.x;
+    }
+    public double getV()
+    {
+        return profile.state.v;
+    }
+    public double getA()
+    {
+        return profile.state.a;
     }
     public void initState()
     {

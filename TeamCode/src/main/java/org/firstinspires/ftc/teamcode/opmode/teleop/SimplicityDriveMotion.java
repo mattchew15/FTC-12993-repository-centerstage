@@ -168,17 +168,21 @@ public class SimplicityDriveMotion extends LinearOpMode {
         GlobalTimer.startTime();
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
-        outtakeSubsystem.setLiftFullStateGains(0.00001, 0.00004);
         outtakeSubsystem.profileLiftSetUp();
+
+        armTarget = OuttakeSubsystem.ARM_READY_POS;
+        outtakeSubsystem.setArmTarget(armTarget);
+        outtakeSubsystem.calculateArmProfile();
         waitForStart();
 
         // Yeah i know it is crappy it is just for testing the profiles
         while (opModeIsActive() && !isStopRequested())
         {
+            outtakeSubsystem.calculateArmProfile();
+            //outtakeSubsystem.armServoProfileState(armState);
             outtakeSubsystem.outtakeReads(false);
             outtakeSubsystem.pitchToInternalPID(300, 0.65); // so the sliders don't fall
-            //outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
-            outtakeSubsystem.armServoProfileState(armState);
+            //outtakeSubsystem.armServoState(armState);
             // Implementation needs a toggle so it doesn't keep resetting the time
 
             if (gamepad1.a)
@@ -200,18 +204,42 @@ public class SimplicityDriveMotion extends LinearOpMode {
                 outtakeSubsystem.updateLiftTargetProfile(0);
 
             }
-            if (gamepad1.dpad_left)
+
+            /*_
+            if (gamepad1.right_bumper)
             {
-                armState = OuttakeSubsystem.ArmServoState.UPRIGHT;
-                armTarget = OuttakeSubsystem.ARM_UPRIGHT_POS;
+                outtakeSubsystem.liftTo(600,outtakeSubsystem.liftPosition, 1);
             }
-            if (gamepad1.dpad_right)
+            if (gamepad1.right_trigger > 0.1)
             {
-                armState = OuttakeSubsystem.ArmServoState.READY;
-                armTarget = OuttakeSubsystem.ARM_READY_POS;
+                outtakeSubsystem.liftTo(600, outtakeSubsystem.liftPosition, 1);
+            }
+            if (gamepad1.left_bumper)
+            {
+                outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 0.75);
             }
 
-            double output = outtakeSubsystem.profileLiftCalculateFeedForward();
+
+             */
+
+            if (!gamepad1.dpad_right && !gamepad1.dpad_left)
+            {
+                armState = OuttakeSubsystem.ArmServoState.NULL;
+            }
+            else
+            {
+                if (gamepad1.dpad_left)
+                {
+                    armState = OuttakeSubsystem.ArmServoState.UPRIGHT;
+                    armTarget = OuttakeSubsystem.ARM_UPRIGHT_POS;
+                }
+                if (gamepad1.dpad_right)
+                {
+                    armState = OuttakeSubsystem.ArmServoState.READY;
+                    armTarget = OuttakeSubsystem.ARM_READY_POS;
+                }
+                outtakeSubsystem.setArmTarget(armTarget);
+            }
 
             if (gamepad1.left_trigger > 0.1)
             {
@@ -224,8 +252,11 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
 
             // Debug telemetry,
-            telemetry.addData("X", outtakeSubsystem.profileSubsystem.getX()); // Think as this as a function
-            telemetry.addData("Output Feedforward", output);
+            telemetry.addData("X", outtakeSubsystem.profileSubsystem.getX());// Think as this as a function
+            telemetry.addData("V", outtakeSubsystem.profileSubsystem.getV());
+            telemetry.addData("A", outtakeSubsystem.profileSubsystem.getA());
+
+            telemetry.addData("Output Feedforward", outtakeSubsystem.profileLiftCalculateFeedForward());
             telemetry.addData("Output FullState", outtakeSubsystem.profileLiftCalculate());
             telemetry.addData("Target", outtakeSubsystem.liftTarget);
             telemetry.addData("SliderPos", outtakeSubsystem.liftPosition);
@@ -236,8 +267,12 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
             telemetry.addData("Arm X", outtakeSubsystem.getArmX());
             telemetry.addData("Arm pos", outtakeSubsystem.getArmPos());
-            telemetry.addData("Arm target", armState);
-            telemetry.addData("Error", Math.abs(outtakeSubsystem.getArmPos() - outtakeSubsystem.getArmX()));
+            telemetry.addData("Arm target", armTarget);
+            telemetry.addData("Arm Error", Math.abs(outtakeSubsystem.getArmPos() - outtakeSubsystem.getArmX()));
+            telemetry.addData("Arm timer", outtakeSubsystem.armProfileTimer);
+            telemetry.addData("Arm constrains (VEl)", outtakeSubsystem.profileArmConstraints.velo);
+            telemetry.addData("Arm constrains (ACCEL)", outtakeSubsystem.profileArmConstraints.accel);
+            telemetry.addData("Arm constrains (DECEL)", outtakeSubsystem.profileArmConstraints.decel);
             telemetry.update();
         }
     }

@@ -35,7 +35,7 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            ARM_READY_POS = 0.988,
+            ARM_READY_POS = 0.99,
             ARM_UPRIGHT_POS = 0.51,
             ARM_SCORE_HALF_DOWN_POS = 0.195,
             ARM_SCORE_DOWN_POS = 0.275,
@@ -77,7 +77,7 @@ public class OuttakeSubsystem {
     public double outtakeDistanceSensorValue;
 
     // The profile stuff
-    public double kPos, kVel;
+    public double kPos = 0.0001, kVel = 0.0001;
     public final double LiftPKp = 0.0038, LiftPKi = 0.0001, LiftPKd = 0.00006, LiftPIntegralSumLimit = 10;
     public final PID PLiftPID = new PID(LiftPKp, LiftPKi, LiftPKd, LiftPIntegralSumLimit, 0);
     public static double velConstrain = 5000, accelConstrain = 4900, decelConstrain = 4800;
@@ -89,7 +89,8 @@ public class OuttakeSubsystem {
 
     // servos profile stuff
     private double armTarget, armPos; // armPos is the previous target
-    private ProfileConstraints profileArmConstraints = new ProfileConstraints(500, 500, 500);
+    public static double armVelConstrain = 0.1, armAccelConstrain = 0.1, armDecelConstrain = 0.1;
+    private ProfileConstraints profileArmConstraints = new ProfileConstraints(armVelConstrain, armAccelConstrain, armDecelConstrain);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
 
@@ -100,6 +101,8 @@ public class OuttakeSubsystem {
         SCORE_HALF_DOWN,
         SCORE_DOWN,
         SCORE_UP,
+        CALCULATE,
+        NULL,
         SCORE_PURPLE
     }
 
@@ -301,8 +304,43 @@ public class OuttakeSubsystem {
             case SCORE_UP:
                 setArmTarget(ARM_SCORE_UP_POS);
                 break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
         }
-        calculateArmProfile();
+        // previous version calculated always
+    }
+
+    public void armServoProfileState2(ArmServoState state, boolean update)
+    {
+        switch (state)
+        {
+            case READY:
+                if (update) setArmTarget(ARM_READY_POS);
+                else calculateArmProfile();
+                break;
+            case UPRIGHT:
+                if (update) setArmTarget(ARM_UPRIGHT_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_HALF_DOWN:
+                if (update) setArmTarget(ARM_SCORE_HALF_DOWN_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_DOWN:
+                if (update) setArmTarget(ARM_SCORE_DOWN_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE_UP:
+                if (update) setArmTarget(ARM_SCORE_UP_POS);
+                else calculateArmProfile();
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
+        }
     }
 
     public static double degreesToTicksMiniTurret(double degrees){
@@ -407,15 +445,15 @@ public class OuttakeSubsystem {
     public double profileLiftCalculate()
     {
         liftProfile = new AsymmetricMotionProfile(liftProfileStartingPosition, liftTarget, profileLiftConstraints);
-        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.CONSTANT);
+        profileSubsystem.setMode(ProfileSubsystem.SubsystemMode.FullState);
         profileSubsystem.setTolerance(LIFT_THRESHOLD_DISTANCE);
         profileSubsystem.setMaxOutput(1); // not a necessary write
         profileSubsystem.setFullStateFeedback(kPos, kVel);
-        profileSubsystem.initState(); // this might fuck up
+        profileSubsystem.initState(); // this might fuck up; to be complete honest this is unnecessary write that set the variables to zero, why it is here i don't know, like i don't even recall this state being accessed later
         profileSubsystem.setTarget(liftTarget);
         profileSubsystem.setPos(liftPosition); // this should be the currentPosition, this is for the PID
         double output = profileSubsystem.calculate();
-        rawLift(output);
+        //rawLift(output);
         return output;
     }
     public double profileLiftCalculateFeedForward()

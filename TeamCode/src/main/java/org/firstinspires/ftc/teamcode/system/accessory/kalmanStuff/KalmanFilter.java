@@ -33,8 +33,7 @@ public class KalmanFilter
     {
         synchronized (sync)
         {
-            // Todo: u value is wrong, very very wrong
-            // Get the reading of the first sensor (ex. change of pos in odometry)
+                    // Get the reading of the first sensor (ex. change of pos in odometry)
             u = firstSensor; // This should be the previous output on the system
             x = x_previous + u; // Predicted current state, given by previous state + the previous output
 
