@@ -26,7 +26,8 @@ public class MathFunctions
     /** Generate the waypoints of a given line
      * @param circleCenter Robots position
      * @param radius Look ahead distance
-     * @param linePoint1*/
+     * @param linePoint1 start point of line
+     * @param linePoint2 end point of line*/
     public static ArrayList<Point> lineCircleIntersection(double radius, Point circleCenter,
                                                           Point linePoint1, Point linePoint2)
     {
@@ -51,7 +52,7 @@ public class MathFunctions
         double quadraticC = ((pow(m1, 2) * pow(x1, 2))) - (2.0 * y1 * m1 * x1) + pow(y1, 2) - pow(radius, 2);
 
         ArrayList<Point> allPoints = new ArrayList<>();
-        // If sqrt is negative it will throw a NaN
+        // If sqrt is negative it will throw a NaN?
         try
         {
             double xRoot1 = (-quadraticB + sqrt(pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))) / 2.0 * quadraticA;

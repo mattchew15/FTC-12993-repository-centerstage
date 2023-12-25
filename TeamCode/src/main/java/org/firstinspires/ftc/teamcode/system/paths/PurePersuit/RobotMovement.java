@@ -25,14 +25,33 @@ public class RobotMovement
 {
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle)
     {
+        // this is for the debugging
         for (int i = 0; i < allPoints.size() - 1; i++)
         {
-            // dont know
+            // dont know,
         }
+        /*
+        // I took it out for tests
+        // TODO: put this into a function
+        double followRadius = allPoints.get(0).followDistance + 0.003; // maybe smaller? this addition it is just to be safe
+        CurvePoint startPoint = allPoints.get(-2);
+        CurvePoint endPoint = allPoints.get(-1);
+        Point v = new Point(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+        double z = sqrt(pow(v.x,2) + pow(v.y,2));
+        Point u = new Point(v.x / z, v.y / z);
+        Point e = new Point(u.x * followRadius, u.y * followRadius);
+        CurvePoint newEndPoint = new CurvePoint(endPoint);
+        newEndPoint.setPoint(new Point(e.x + endPoint.x, e.y + endPoint.y));
+        allPoints.add(newEndPoint);
+        //This extends the last line figure how to not follow just look at the new point
+         */
+
+        // this uses the same follow distance for every point,
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition), allPoints.get(0).followDistance);
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
     }
 
+    /** Finds the point in the path to follow*/
     public static CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation, double followRadius)
     {
         CurvePoint followMe = new CurvePoint(pathPoints.get(0));
@@ -58,8 +77,10 @@ public class RobotMovement
                 }
             }
         }
+
         return followMe;
     }
+    // Simply gives how much to turn, and move in x,y
     public static void goToPosition(double x, double y, double movementSpeed, double turnAngle, double preferredAngle)
     {
         double distanceToTarget = hypot(x - worldXPosition, y - worldYPosition);
