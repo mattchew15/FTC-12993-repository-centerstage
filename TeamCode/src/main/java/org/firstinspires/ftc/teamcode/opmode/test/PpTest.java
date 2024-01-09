@@ -35,14 +35,9 @@ public class PpTest extends OpMode
         drive.initDrivebase(hardwareMap);
         localizer.setPoseEstimate(new Pose2d(CmToInches(worldXPosition), CmToInches(worldYPosition), worldAngle_rad));
         allPoints = new ArrayList<>();
-        //allPoints.add(new CurvePoint(0, 0, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
         allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        //allPoints.add(new CurvePoint(0, 0, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(20, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(20, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(320, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(280, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
-        //allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(300, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
 
     }
 
