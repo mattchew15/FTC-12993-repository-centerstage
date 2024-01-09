@@ -119,7 +119,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
     }
 
 }
-*/
+
 
 package org.firstinspires.ftc.teamcode.opmode.test;
 
@@ -220,7 +220,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
             }
 
 
-             */
+
 
             if (!gamepad1.dpad_right && !gamepad1.dpad_left)
             {
@@ -282,4 +282,5 @@ public class SimplicityDriveMotion extends LinearOpMode {
 
 
 
+*/
 

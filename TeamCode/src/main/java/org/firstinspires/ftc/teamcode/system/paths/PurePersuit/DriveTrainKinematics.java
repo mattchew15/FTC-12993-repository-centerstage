@@ -123,10 +123,6 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
-public void test()
-{
-
-}
 }
 
 
