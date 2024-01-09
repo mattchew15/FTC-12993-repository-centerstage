@@ -121,7 +121,7 @@ public class SimplicityDriveMotion extends LinearOpMode {
 }
 */
 
-package org.firstinspires.ftc.teamcode.opmode.teleop;
+package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
