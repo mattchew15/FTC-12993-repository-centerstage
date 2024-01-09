@@ -3,6 +3,7 @@ package Main.src.treamcode;
 import static Main.src.com.company.Robot.*;
 import static Main.src.treamcode.MathFunctions.*;
 import static Main.src.RobotUtilities.MovementVars.*;
+import static Main.src.treamcode.DriveTrainKinematics.*;
 
 import java.util.ArrayList;
 
@@ -11,8 +12,9 @@ import Main.src.com.company.FloatPoint;
 import Main.src.com.company.Range;
 import Main.src.org.opencv.core.Point;
 
-public class RobotMovement {
 
+public class RobotMovement {
+    public static boolean finished = false;
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         for (int i = 0; i < allPoints.size() - 1; i++){
             ComputerDebugging.sendLine(new FloatPoint(allPoints.get(i).x, allPoints.get(i).y),
@@ -25,7 +27,7 @@ public class RobotMovement {
 
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
     }
-
+    // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
     public static CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius){
         CurvePoint followMe = new CurvePoint(pathPoint.get(0));
 
@@ -47,6 +49,7 @@ public class RobotMovement {
                     followMe.setPoint(thisIntersection);
                 }
             }
+
         }
         return followMe;
     }
@@ -63,9 +66,10 @@ public class RobotMovement {
 
         double distanceToTarget = Math.hypot(x-worldXPosition, y-worldYPosition);
 
-        double absoluteAngleToTarget = Math.atan2(y-worldYPosition,x-worldXPosition);
+        double absoluteAngleToTarget = Math.atan2(y-worldYPosition, x-worldXPosition);
 
         double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
+        angleToPoint = relativeAngleToPoint * distanceToTarget;
 
         double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
@@ -83,4 +87,5 @@ public class RobotMovement {
             movement_turn = 0;
         }
     }
+
 }

@@ -1,6 +1,7 @@
 package debugclient.src.com.company;
 
 
+import Main.src.treamcode.MathFunctions;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -90,7 +91,7 @@ public class Main extends Application{
 
 
         ///////////////////////////////////Setup the background image/////////////////////////////////
-        Image image = new Image(Files.newInputStream(Paths.get(System.getProperty("user.dir") + "/Pure_Pursuit/src/main/java/debugclient/field dark.png")));
+        Image image = new Image(Files.newInputStream(Paths.get(System.getProperty("user.dir") + "/Pure_Pursuit/src/main/java/debugclient/field.png")));
         fieldBackgroundImageView = new ImageView();
 
         fieldBackgroundImageView.setImage(image);//set the image
@@ -210,7 +211,7 @@ public class Main extends Application{
 
                     debuggingLabel.setText("Robot Coordinates: \n" +"X: " + MessageProcessing.getRobotX()
                     + " , Y: " + MessageProcessing.getRobotY() + "\nAngle: "
-                            + String.format("%.2f", Math.toDegrees(MessageProcessing.getRobotAngle())) + "°");
+                            + String.format("%.2f", MathFunctions.AngleWrap(Math.toDegrees(MessageProcessing.getRobotAngle()))) + "°");
                     System.out.println(primaryStage.getWidth());
 //                    gc.setLineWidth(10);
                     drawScreen(gc);

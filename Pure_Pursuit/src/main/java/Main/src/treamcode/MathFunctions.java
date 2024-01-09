@@ -49,8 +49,8 @@ public class MathFunctions {
             xRoot1 += circleCenter.x;
             yRoot1 += circleCenter.y;
 
-            double minX = linePoint1.x < linePoint1.x ? linePoint1.x : linePoint2.x;
-            double maxX = linePoint1.x > linePoint1.x ? linePoint1.x : linePoint2.x;
+            double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
+            double maxX = linePoint1.x > linePoint2.x ? linePoint1.x : linePoint2.x;
 
             if (xRoot1 > minX && xRoot1 < maxX){
                 allPoints.add(new Point(xRoot1,yRoot1));
