@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.test;
+package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.CmToInches;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.inchesToCm;
