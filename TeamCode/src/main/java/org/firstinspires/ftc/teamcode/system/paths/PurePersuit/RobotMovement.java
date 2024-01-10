@@ -70,7 +70,7 @@ public class RobotMovement {
         double absoluteAngleToTarget = Math.atan2(y-worldYPosition, x-worldXPosition);
 
         double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
-        angleToPoint = relativeAngleToPoint * distanceToTarget;
+        angleToPoint = relativeAngleToPoint; // there was a * distance which is stupid ?? i am stupid
 
         double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
