@@ -19,8 +19,8 @@ import Main.src.com.company.Range;
 
 public class DriveTrainKinematics
 {
-    private static PID TRANSLATIONAL_PID = new PID(10, 0, 0, 0 , 0);
-    private static PID HEADING_PID = new PID(8, 0, 0, 0 , 0);
+    //private static PID TRANSLATIONAL_PID = new PID(10, 0, 0, 0 , 0);
+    //private static PID HEADING_PID = new PID(8, 0, 0, 0 , 0);
     // Wheels vel
     public static double
     FR_Vel,
@@ -106,6 +106,7 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
+    /*
     public static double[] powerPID()
     {
         double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
@@ -121,6 +122,7 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
+    */
 
 }
 
