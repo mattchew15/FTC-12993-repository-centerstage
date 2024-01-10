@@ -1,6 +1,10 @@
 package Main.src.treamcode;
 
 
+import static java.lang.Math.max;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 import java.util.ArrayList;
 import Main.src.org.opencv.core.Point;
 
@@ -42,7 +46,7 @@ public class MathFunctions {
         ArrayList<Point> allPoints = new ArrayList<>();
 
         try{
-            double xRoot1 = (-quadraticB + Math.sqrt(Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC)))/(2.0 * quadraticA);
+            double xRoot1 = (-quadraticB + sqrt(Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC)))/(2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
             //put back offset
@@ -56,7 +60,7 @@ public class MathFunctions {
                 allPoints.add(new Point(xRoot1,yRoot1));
             }
 
-            double xRoot2 = (-quadraticB - Math.sqrt(Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC)))/(2.0 * quadraticA);
+            double xRoot2 = (-quadraticB - sqrt(Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC)))/(2.0 * quadraticA);
             double yRoot2 = m1 * (xRoot2 - x1) + y1;
 
             xRoot2 += circleCenter.x;
@@ -70,5 +74,17 @@ public class MathFunctions {
 
         }
         return allPoints;
+    }
+    public static CurvePoint extendVector(CurvePoint start, CurvePoint end)
+    {
+        Point d = new Point(end.x - start.x, end.y - start.y);
+        double u = sqrt(pow(d.x, 2) + pow(d.y, 2));
+        Point n = new Point(d.x / u, d.y / u);
+        double scalar = end.followDistance;
+        n = new Point(n.x * scalar, n.y * scalar);
+        n = new Point(end.x + n.x, end.y + n.y);
+        CurvePoint f = new CurvePoint(end);
+        f.setPoint(n);
+        return f;
     }
 }

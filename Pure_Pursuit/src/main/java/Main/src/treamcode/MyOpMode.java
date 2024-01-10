@@ -18,6 +18,7 @@ public class MyOpMode extends OpMode{
         allPoints.add(new CurvePoint(20, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         allPoints.add(new CurvePoint(320, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         allPoints.add(new CurvePoint(280, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
+        finished = false;
         //allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0));
 
 
@@ -34,7 +35,7 @@ public class MyOpMode extends OpMode{
        // System.out.println("LeftB" + DriveTrainKinematics.powerFromVector()[2]);
        // System.out.println("RightF" + DriveTrainKinematics.powerFromVector()[3]);
         //System.out.println("PowerPID:LeftF" + powerPID[0] + "PowerPID: RightPID" + powerPID[1] +"PowerPID: LeftB" + powerPID[2] + "PowerPID: RightF" + powerPID[3]);
-        finished = true;
+
 
     }
 }
