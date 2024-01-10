@@ -15,6 +15,7 @@ import Main.src.org.opencv.core.Point;
 
 public class RobotMovement {
     public static boolean finished = false;
+    public static CurvePoint endPoint;
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         for (int i = 0; i < allPoints.size() - 1; i++){
             ComputerDebugging.sendLine(new FloatPoint(allPoints.get(i).x, allPoints.get(i).y),
@@ -34,6 +35,7 @@ public class RobotMovement {
 
             goToHeading(finalPoint.x, finalPoint.y, finalPoint.moveSpeed, followAngle, finalPoint.turnSpeed);
         }
+
     }
 
     // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
@@ -61,8 +63,8 @@ public class RobotMovement {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
 
-                    // maybe i can check if the intersection is at the last line, maybe end - follow distance
-                    if (thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
+                    // TODO: maybe i can check if the intersection is at the last line, maybe end - follow distance
+                    if ( thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
                     {
 
                         finished = true;
