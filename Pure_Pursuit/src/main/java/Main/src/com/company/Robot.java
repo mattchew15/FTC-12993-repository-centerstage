@@ -11,8 +11,8 @@ public class Robot {
      */
     public Robot(){
         worldXPosition = 150;
-        worldYPosition = 150;
-        worldAngle_rad = Math.toRadians(180);
+        worldYPosition = 0;
+        worldAngle_rad = Math.toRadians(90);
     }
 
     //the actual speed the robot is moving

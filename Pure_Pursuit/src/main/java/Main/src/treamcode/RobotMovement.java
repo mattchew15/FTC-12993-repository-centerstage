@@ -63,6 +63,10 @@ public class RobotMovement {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
 
+                    CurvePoint finalStartLine = pathPoint.get(i);
+                    CurvePoint finalEndLine = pathPoint.get(i + 1);
+
+                   // ArrayList<Point> intersectionsLastLine = lineCircleIntersection(robotLocation, followRadius, )
                     // TODO: maybe i can check if the intersection is at the last line, maybe end - follow distance
                     if ( thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
                     {
