@@ -113,8 +113,8 @@ public class DriveTrainKinematics
         // the world is not necessary but makes it more readable for now
         double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
         double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2);
-        t = AngleWrap(t);
+        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
+        t = AngleWrap(t); // TODO evalute the removal of this...
         double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
         double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
 

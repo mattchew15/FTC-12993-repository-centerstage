@@ -63,8 +63,9 @@ public class PpTest extends OpMode
         double[] powerNormal = DriveTrainKinematics.normalPID();
         telemetry.addData("PowerPID: ", " LeftF " + powerPID[0] + " RightF " + powerPID[1] +" LeftB " + powerPID[2] + " Rightb " + powerPID[3]);
         telemetry.addData("PowerNormal: ", " LeftF " + powerNormal[0] + " RightF " + powerNormal[1] +" LeftB " + powerNormal[2] + " Rightb " + powerNormal[3]);
-        drive.FL.setPower(-powerPID[0]);
-        drive.FR.setPower(-powerPID[1]);
+        // maybe this needs to be negative
+        drive.FL.setPower(powerPID[0]);
+        drive.FR.setPower(powerPID[1]);
         drive.BL.setPower(-powerPID[2]);
         drive.BR.setPower(-powerPID[3]);
         telemetry.addData("X", inchesToCm(pose.getX()));

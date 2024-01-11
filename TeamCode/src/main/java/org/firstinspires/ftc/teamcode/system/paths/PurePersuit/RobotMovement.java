@@ -68,6 +68,7 @@ public class RobotMovement {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
 
+
                     // maybe i can check if the intersection is at the last line, maybe end - follow distance
                     if (thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
                     {
