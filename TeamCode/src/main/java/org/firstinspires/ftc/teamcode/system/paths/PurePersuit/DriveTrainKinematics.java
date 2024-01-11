@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 public class DriveTrainKinematics
 {
-    private static PID TRANSLATIONAL_PID = new PID(10, 0, 0, 0 , 0);
-    private static PID HEADING_PID = new PID(8, 0, 0, 0 , 0);
+    private static PID TRANSLATIONAL_PID = new PID(1.0, 0, 0, 0 , 0);
+    private static PID HEADING_PID = new PID(0.5, 0, 0, 0 , 0);
     // Wheels vel
     public static double
     FR_Vel,
@@ -130,9 +130,9 @@ public class DriveTrainKinematics
         double maxPower = 1;
 
         // the world is not necessary but makes it more readable for now
-        double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
-        double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2*PI);
+        double x = TRANSLATIONAL_PID.update(movement_x , 0, 99999);
+        double y = TRANSLATIONAL_PID.update(movement_y , 0, 99999);
+        double t = HEADING_PID.update(AngleWrap(movement_turn), 0, 2 * PI);
         t = AngleWrap(t);
         double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
         double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);

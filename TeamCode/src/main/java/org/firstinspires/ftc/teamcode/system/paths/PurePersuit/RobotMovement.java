@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.AngleWrap;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.extendVector;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.lineCircleIntersection;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldXPosition;
@@ -22,34 +23,64 @@ import java.util.ArrayList;
 
 public class RobotMovement {
     //public static boolean finished = false;
+    public static Point currentPoint;
+    public static boolean finished = false;
+
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
                 allPoints.get(0).followDistance);
 
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
+
+        if (finished)
+        {
+            CurvePoint startPoint = allPoints.get(allPoints.size() -2);
+            CurvePoint endPoint = allPoints.get(allPoints.size() - 1);
+            CurvePoint finalPoint = extendVector(startPoint, endPoint);
+
+            goToHeading(finalPoint.x, finalPoint.y, finalPoint.moveSpeed, followAngle, finalPoint.turnSpeed);
+        }
+        currentPoint = new Point(followMe.x, followMe.y);
+
     }
     // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
     public static CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius){
         CurvePoint followMe = new CurvePoint(pathPoint.get(0));
 
-        for (int i = 0; i < pathPoint.size() - 1; i ++){
+        for (int i = 0; i < pathPoint.size() - 1; i ++)
+        {
             CurvePoint startLine = pathPoint.get(i);
             CurvePoint endLine = pathPoint.get(i + 1);
 
             ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius, startLine.toPoint(),
                     endLine.toPoint());
 
+
             double closestAngle = 1000000000;
 
-            for (Point thisIntersection : intersections){
+            for (Point thisIntersection : intersections)
+            {
                 double angle = Math.atan2(thisIntersection.y - worldYPosition, thisIntersection.x - worldXPosition);
-                double deltaAngle = Math.abs(AngleWrap(angle - worldAngle_rad));
+                double deltaAngle = Math.abs(MathFunctions.AngleWrap(angle - worldAngle_rad));
 
-                if (deltaAngle < closestAngle){
+                if (deltaAngle < closestAngle)
+                {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
+
+                    // maybe i can check if the intersection is at the last line, maybe end - follow distance
+                    if (thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
+                    {
+
+                        finished = true;
+                    }
                 }
             }
+
+        }
+        if (finished)
+        {
+            followMe = new CurvePoint(pathPoint.get(pathPoint.size()-1));
 
         }
         return followMe;
@@ -87,6 +118,20 @@ public class RobotMovement {
         if (distanceToTarget < 10){
             movement_turn = 0;
         }
+    }
+    // Maybe this was not necessary but i like this implementation
+    public static void goToHeading(double x, double y, double movementSpeed, double preferredAngle, double turnSpeed) {
+
+
+        double absoluteAngleToTarget = Math.atan2(y-worldYPosition, x-worldXPosition);
+
+        double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
+        angleToPoint = relativeAngleToPoint;
+
+
+        double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
+        movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
+
     }
 
 }
