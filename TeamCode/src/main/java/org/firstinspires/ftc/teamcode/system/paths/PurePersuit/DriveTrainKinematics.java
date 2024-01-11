@@ -113,7 +113,8 @@ public class DriveTrainKinematics
         // the world is not necessary but makes it more readable for now
         double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
         double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 99999);
+        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2);
+        t = AngleWrap(t);
         double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
         double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
 
@@ -123,6 +124,35 @@ public class DriveTrainKinematics
         double rightB = MathUtils.clamp(xRotated + yRotated - t, -1, 1);
 
         return new double[]{leftF,rightF,leftB,rightB};
+    }
+    public static double[] normalPID()
+    {
+        double maxPower = 1;
+
+        // the world is not necessary but makes it more readable for now
+        double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
+        double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
+        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2*PI);
+        t = AngleWrap(t);
+        double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
+        double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
+
+        double[] aws = new double[]{xRotated + yRotated + t, xRotated - yRotated - t, xRotated - yRotated + t, xRotated + yRotated - t};
+
+        for (double power: aws)
+        {
+            if (abs(power) > maxPower)
+            {
+                maxPower = abs(power);
+            }
+        }
+        for (int i = 0; i < aws.length; i++)
+        {
+            aws[i] /= maxPower;
+        }
+        return aws;
+
+
     }
 }
 
