@@ -75,6 +75,7 @@ public class MathFunctions {
         }
         return allPoints;
     }
+    // this works fine? but could be better with a scale being the follow radius + a small value
     public static CurvePoint extendVector(CurvePoint start, CurvePoint end)
     {
         Point d = new Point(end.x - start.x, end.y - start.y);
@@ -84,6 +85,18 @@ public class MathFunctions {
         n = new Point(n.x * scalar, n.y * scalar);
         n = new Point(end.x + n.x, end.y + n.y);
         CurvePoint f = new CurvePoint(end);
+        f.setPoint(n);
+        return f;
+    }
+    public static CurvePoint retractVector(CurvePoint start, CurvePoint end)
+    {
+        Point d = new Point(end.x - start.x, end.y - start.y);
+        double u = sqrt(pow(d.x, 2) + pow(d.y, 2));
+        Point n = new Point(d.x / u, d.y / u);
+        double scalar = start.followDistance / 5;
+        n = new Point(n.x * scalar, n.y * scalar);
+        n = new Point(start.x + n.x, start.y + n.y);
+        CurvePoint f = new CurvePoint(start);
         f.setPoint(n);
         return f;
     }
