@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.AngleWrap;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.extendVector;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.lineCircleIntersection;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.retractVector;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldXPosition;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldYPosition;
@@ -30,7 +31,7 @@ public class RobotMovement {
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
                 allPoints.get(0).followDistance);
 
-        //followMe = new CurvePoint(59, 39, 1.0, 0.8, 27, Math.toRadians(50), 1.0);
+
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
 
         if (finished)
@@ -68,6 +69,16 @@ public class RobotMovement {
                 {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
+
+                    CurvePoint finalStartLine = pathPoint.get(pathPoint.size() - 2);
+                    CurvePoint finalEndLine = pathPoint.get(pathPoint.size() - 1);
+                    finalStartLine = retractVector(finalStartLine, finalEndLine);
+
+                    ArrayList<Point> interFinal = lineCircleIntersection(thisIntersection,0.2, finalStartLine.toPoint(), finalEndLine.toPoint());
+                    if (interFinal.size() > 0)
+                    {
+                        finished = true;
+                    }
                 }
             }
 

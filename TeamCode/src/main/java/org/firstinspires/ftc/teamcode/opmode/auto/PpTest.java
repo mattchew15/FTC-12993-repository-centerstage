@@ -4,8 +4,8 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrain
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrainKinematics.PID_Y;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrainKinematics.unwrappedPID_H;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrainKinematics.wrappedPID_H;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.CmToInches;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.inchesToCm;
+
+
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_turn;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_x;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_y;
@@ -51,9 +51,9 @@ public class PpTest extends OpMode
         finished = false;
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 1.0, 0.8, 15, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(59, 39, 1.0, 0.8, 15, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(94, 39, 1.0, 0.8, 27, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 0, 1.0, 1, 23, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 39, 1.0, 1, 23, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(94, 94, 1.0, 1, 27, Math.toRadians(50), 1.0));
 
     }
 

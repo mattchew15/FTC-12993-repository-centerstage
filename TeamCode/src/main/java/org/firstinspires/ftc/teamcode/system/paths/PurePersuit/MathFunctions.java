@@ -85,6 +85,23 @@ public class MathFunctions {
         f.setPoint(n);
         return f;
     }
+    public static CurvePoint retractVector(CurvePoint start, CurvePoint end)
+    {
+        Point d = new Point(end.x - start.x, end.y - start.y);
+        double u = Math.sqrt(Math.pow(d.x, 2) + Math.pow(d.y, 2));
+        if (u < end.followDistance)
+        {
+            u = end.followDistance;
+        }
+        Point n = new Point(d.x / u, d.y / u);
+        double scalar = end.followDistance;
+        n = new Point(n.x * scalar, n.y * scalar);
+        n = new Point(end.x - n.x, end.y - n.y);
+        CurvePoint f = new CurvePoint(end);
+        f.setPoint(n);
+        return f;
+    }
+
 
     public static double inchesToCm(double in)
     {
