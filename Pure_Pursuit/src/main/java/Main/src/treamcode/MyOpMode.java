@@ -11,8 +11,8 @@ public class MyOpMode extends OpMode{
     @Override
     public void init() {
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
-        allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 60, Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 40, Math.toRadians(50), 1.0, false));
         allPoints.add(new CurvePoint(300, 300, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(20, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(20, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));

@@ -63,12 +63,14 @@ public class RobotMovement {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
 
-                    CurvePoint finalStartLine = pathPoint.get(pathPoint.size() - 1);
-                    CurvePoint finalEndLine = pathPoint.get(pathPoint.size() - 2);
-                    finalStartLine = retractVector(finalStartLine, finalEndLine);
+                    CurvePoint finalStartLine = pathPoint.get(pathPoint.size() - 2);
+                    CurvePoint finalEndLine = pathPoint.get(pathPoint.size() - 1);
+                    finalStartLine = VectorVectorVector(finalStartLine, finalEndLine);
+                    ComputerDebugging.sendKeyPoint(new FloatPoint(finalStartLine.x, finalStartLine.y));
+                    ComputerDebugging.sendLine(new FloatPoint(finalStartLine.x, finalStartLine.y), new FloatPoint(finalEndLine.x, finalEndLine.y));
 
-                    //Lazy stuff...
-                    ArrayList<Point> interFinal = lineCircleIntersection(thisIntersection,0.1, finalStartLine.toPoint(), finalEndLine.toPoint());
+                            //Lazy stuff...
+                    ArrayList<Point> interFinal = lineCircleIntersection(thisIntersection,0.2, finalStartLine.toPoint(), finalEndLine.toPoint());
                     if (interFinal.size() > 0)
                     {
                         finished = true;
