@@ -11,9 +11,12 @@ public class MyOpMode extends OpMode{
     @Override
     public void init() {
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 60, Math.toRadians(50), 1.0, false));
-        allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 40, Math.toRadians(50), 1.0, false));
-        allPoints.add(new CurvePoint(300, 300, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(toCM(59), 0, 1.0, 1, toCM(23), Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(toCM(59), toCM(39), 1.0, 1, toCM(23), Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(toCM(94), toCM(94), 1.0, 1, toCM(27), Math.toRadians(50), 1.0, false));
+       // allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 60, Math.toRadians(50), 1.0, false));
+        //allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 40, Math.toRadians(50), 1.0, false));
+       // allPoints.add(new CurvePoint(300, 300, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(20, 150, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(20, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(320, 70, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
@@ -38,5 +41,9 @@ public class MyOpMode extends OpMode{
         //System.out.println("PowerPID:LeftF" + powerPID[0] + "PowerPID: RightPID" + powerPID[1] +"PowerPID: LeftB" + powerPID[2] + "PowerPID: RightF" + powerPID[3]);
 
 
+    }
+    private double toCM(double in)
+    {
+        return in * 2.55;
     }
 }

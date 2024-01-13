@@ -10,7 +10,7 @@ public class Robot {
      * Creates a robot simulation
      */
     public Robot(){
-        worldXPosition = 150;
+        worldXPosition = 59 * 2.55;
         worldYPosition = 0;
         worldAngle_rad = Math.toRadians(90);
     }
