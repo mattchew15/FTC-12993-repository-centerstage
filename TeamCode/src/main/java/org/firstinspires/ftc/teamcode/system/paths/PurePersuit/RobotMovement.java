@@ -23,13 +23,14 @@ import java.util.ArrayList;
 
 public class RobotMovement {
     //public static boolean finished = false;
-    public static Point currentPoint;
+    public static Point currentPoint; //todo
     public static boolean finished = false;
 
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
                 allPoints.get(0).followDistance);
 
+        //followMe = new CurvePoint(59, 39, 1.0, 0.8, 27, Math.toRadians(50), 1.0);
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
 
         if (finished)
@@ -67,14 +68,6 @@ public class RobotMovement {
                 {
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
-
-
-                    // maybe i can check if the intersection is at the last line, maybe end - follow distance
-                    //if (thisIntersection.x == pathPoint.get(pathPoint.size()-1).x && thisIntersection.y == pathPoint.get(pathPoint.size()-1).y)
-                    //{
-
-                      //  finished = true;
-                    //}
                 }
             }
 
@@ -116,7 +109,7 @@ public class RobotMovement {
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
         movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
 
-        if (distanceToTarget < 10){
+        if (distanceToTarget < 3.93){
             movement_turn = 0;
         }
     }

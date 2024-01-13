@@ -22,8 +22,17 @@ import java.util.Arrays;
 
 public class DriveTrainKinematics
 {
-    private static PID TRANSLATIONAL_PID = new PID(1.0, 0, 0, 0 , 0);
+    private static PID TRANSLATIONAL_PID = new PID(1, 0, 0, 0 , 0);
     private static PID HEADING_PID = new PID(0.5, 0, 0, 0 , 0);
+
+
+    public static double PID_X;
+    public static double PID_Y;
+    public static double unwrappedPID_H;
+    public static double wrappedPID_H;
+
+    public static double x_Rotated;
+    public static double y_Rotated;
     // Wheels vel
     public static double
     FR_Vel,
@@ -112,16 +121,45 @@ public class DriveTrainKinematics
     {
         // the world is not necessary but makes it more readable for now
         double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
-        double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
+        double y = - TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
         double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
-        t = AngleWrap(t); // TODO evalute the removal of this...
+
+        PID_X = x;
+        PID_Y = y;
+        unwrappedPID_H = t;
+        t = AngleWrap(t); // TODO evalute the removal of this... it can be...
+        wrappedPID_H = t;
         double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
         double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
+        x_Rotated = xRotated;
+        y_Rotated = yRotated;
 
         double leftF = MathUtils.clamp(xRotated + yRotated + t, -1, 1);
         double rightF = MathUtils.clamp(xRotated - yRotated - t, -1, 1);
         double leftB = MathUtils.clamp(xRotated - yRotated + t, -1, 1);
         double rightB = MathUtils.clamp(xRotated + yRotated - t, -1, 1);
+
+        return new double[]{leftF,rightF,leftB,rightB};
+    }
+    public static double[] UNCLAMPED_PowerPID()
+    {
+        // the world is not necessary but makes it more readable for now
+        double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
+        double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
+        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
+
+        PID_X = x;
+        PID_Y = y;
+        unwrappedPID_H = t;
+        t = AngleWrap(t); // TODO evalute the removal of this... it can be...
+        wrappedPID_H = t;
+        double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
+        double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
+
+        double leftF = xRotated + yRotated + t;
+        double rightF = xRotated - yRotated - t;
+        double leftB = xRotated - yRotated + t;
+        double rightB = xRotated + yRotated - t;
 
         return new double[]{leftF,rightF,leftB,rightB};
     }

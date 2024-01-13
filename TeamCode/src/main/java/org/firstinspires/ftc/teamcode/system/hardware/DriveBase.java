@@ -82,7 +82,13 @@ public class DriveBase {  // no constructor for this class
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         //BR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-
+    public void setUpFloat()
+    {
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
     public void Drive(double LY, double LX, double RX) {
         double denominator = Math.max(Math.abs(LY) + Math.abs(LX) + Math.abs(RX), 1);
         double frontLeftPower = (-LY*PowerBase + LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
