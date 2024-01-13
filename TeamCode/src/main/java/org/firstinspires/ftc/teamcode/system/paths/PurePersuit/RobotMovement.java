@@ -120,7 +120,8 @@ public class RobotMovement {
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
         movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
 
-        if (distanceToTarget < 3.93){
+
+        if (distanceToTarget < 3.93 && !finished){
             movement_turn = 0;
         }
     }

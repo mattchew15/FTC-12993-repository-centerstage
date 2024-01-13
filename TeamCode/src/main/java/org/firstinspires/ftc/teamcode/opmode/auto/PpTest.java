@@ -19,11 +19,15 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worl
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToPosition;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CurvePoint;
 import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrainKinematics;
@@ -31,13 +35,17 @@ import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Config
 @Autonomous(name = "PP test", group = "TestR")
 public class PpTest extends OpMode
 {
     List<Integer> lastTrackingEncPositions = new ArrayList<>(); //
     List<Integer> lastTrackingEncVels = new ArrayList<>();
     StandardTrackingWheelLocalizer localizer;
+    TelemetryPacket packet;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    LoopTime loopTime = new LoopTime();
+
 
     ArrayList<CurvePoint> allPoints;
     DriveBase drive = new DriveBase();
@@ -45,28 +53,49 @@ public class PpTest extends OpMode
     public void init() {
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
 
+        packet = new TelemetryPacket();
         drive.initDrivebase(hardwareMap);
         drive.drivebaseSetup();
         Robot robot = new Robot(); // init the pose
         finished = false;
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 1.0, 1, 23, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(59, 39, 1.0, 1, 23, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(94, 94, 1.0, 1, 27, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 0, 1.0, 1, 25, Math.toRadians(50), 1.0));
+        //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
+       allPoints.add(new CurvePoint(59, 39, 1.0, 1, 25, Math.toRadians(50), 1.0));
+       allPoints.add(new CurvePoint(64, 44, 1.0, 1, 25, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(90, 44, 1.0, 1, 25, Math.toRadians(50), 1.0));
+        for (int i = 0; i < allPoints.size() - 1; i++)
+        {
+            packet.fieldOverlay().setFill("red").strokeLine(allPoints.get(i).x - 50, allPoints.get(i).y - 25, allPoints.get(i+1).x - 50, allPoints.get(i+1).y - 25);
+
+        }
+    dashboard.sendTelemetryPacket(packet);
 
     }
 
     @Override
     public void loop() {
+        packet = new TelemetryPacket();
         localizer.update();
+
         Pose2d pose = localizer.getPoseEstimate();
+
         worldXPosition = pose.getX();
         worldYPosition = pose.getY();
         worldAngle_rad = pose.getHeading();
 
-
         followCurve(allPoints, Math.toRadians(90));
+
+        for (int i = 0; i < allPoints.size() - 1; i++)
+        {
+            packet.fieldOverlay().setFill("red").strokeLine(allPoints.get(i).x - 50, allPoints.get(i).y - 25, allPoints.get(i+1).x - 50, allPoints.get(i+1).y - 25);
+
+        }
+        packet.fieldOverlay().setFill("red").fillRect((worldXPosition - 50) - 5,(worldYPosition - 25) - 5,10, 10);
+        packet.fieldOverlay().setStroke("blue").strokeCircle(currentPoint.x - 50,currentPoint.y - 25, 2);
+        //packet.fieldOverlay().setFill("green").fillRect((worldXPosition - 50) - 5, worldYPosition - 7, 2, 3);
+
         double[] powerPID = DriveTrainKinematics.powerPID();
 
         double[] powerNormal = DriveTrainKinematics.normalPID();
@@ -75,14 +104,15 @@ public class PpTest extends OpMode
         //telemetry.addData("powerUNCLAM: ", " LeftF " + powerUNCLAM[0] + " RightF " + powerUNCLAM[1] +" LeftB " + powerUNCLAM[2] + " Rightb " + powerUNCLAM[3]);
         // maybe this needs to be negative
 
-        drive.FL.setPower(powerPID[0]);
-        drive.FR.setPower(powerPID[1]);
-        drive.BL.setPower(powerPID[2]);
-        drive.BR.setPower(powerPID[3]);
+       drive.FL.setPower(powerPID[0]);
+       drive.FR.setPower(powerPID[1]);
+       drive.BL.setPower(powerPID[2]);
+       drive.BR.setPower(powerPID[3]);
 
 
 
 
+        loopTime.updateLoopTime(telemetry);
         telemetry.addData("X", pose.getX());
         telemetry.addData("Y", pose.getY());
         telemetry.addData("Theta", pose.getHeading());
@@ -99,6 +129,7 @@ public class PpTest extends OpMode
         telemetry.addData("PID unwrapped", unwrappedPID_H);
 
         telemetry.update();
+        dashboard.sendTelemetryPacket(packet);
 
     }
 
