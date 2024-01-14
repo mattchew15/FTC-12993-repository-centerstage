@@ -114,7 +114,7 @@ public class RobotMovement {
         movement_y = movementYPower * movementSpeed;
 
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
-        movement_turn = Range.clip(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
+        movement_turn = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
         if (distanceToTarget < 10 ){
             movement_turn = 0;

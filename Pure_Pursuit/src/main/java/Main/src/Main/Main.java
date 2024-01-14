@@ -29,6 +29,7 @@ public class Main {
         Robot robot = new Robot();
         OpMode opMode = new MyOpMode();
         opMode.init();
+        int i = 0;
 
         ComputerDebugging.clearLogPoints();
 
@@ -40,7 +41,11 @@ public class Main {
             e.printStackTrace();
         }
         while (true) {
-
+            if (i > 700)
+            {
+                ComputerDebugging.clearLogPoints();
+                i = 0;
+            }
             opMode.loop();
 
             try {
@@ -52,6 +57,7 @@ public class Main {
             ComputerDebugging.sendRobotLocation(robot);
             ComputerDebugging.sendLogPoint(new FloatPoint(Robot.worldXPosition, Robot.worldYPosition));
             ComputerDebugging.markEndOfUpdate();
+            i++;
         }
     }
 
