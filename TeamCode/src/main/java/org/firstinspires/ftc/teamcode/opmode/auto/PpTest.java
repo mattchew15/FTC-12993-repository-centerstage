@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot;
 import java.util.ArrayList;
 import java.util.List;
 @Config
-@Autonomous(name = "PP test", group = "TestR")
+@Autonomous(name = "PP test", group = "aTestR")
 public class PpTest extends OpMode
 {
     List<Integer> lastTrackingEncPositions = new ArrayList<>(); //

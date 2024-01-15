@@ -8,7 +8,7 @@ public class MovementVars {
     public static double movement_x = 0;
     public static double movement_y = 0;
     public static double movement_turn = 0;
-    /*
+
     public static void updateVars(double targetX, double targetY, double targetH)
     {
         movement_x = targetX - worldXPosition;
@@ -16,5 +16,5 @@ public class MovementVars {
         movement_turn = targetH - worldAngle_rad;
     }
 
-     */
+
 }
