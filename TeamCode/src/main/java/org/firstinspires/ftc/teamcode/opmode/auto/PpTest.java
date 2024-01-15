@@ -60,11 +60,11 @@ public class PpTest extends OpMode
         finished = false;
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 1.0, 1, 25, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 0, 0.5, 1, 25, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
-       allPoints.add(new CurvePoint(59, 39, 1.0, 1, 25, Math.toRadians(50), 1.0));
-       allPoints.add(new CurvePoint(64, 44, 1.0, 1, 25, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(90, 44, 1.0, 1, 25, Math.toRadians(50), 1.0));
+       allPoints.add(new CurvePoint(59, 39, 0.5, 1, 25, Math.toRadians(50), 1.0));
+       allPoints.add(new CurvePoint(64, 44, 0.5, 1, 25, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(90, 44, 0.5, 1, 25, Math.toRadians(50), 1.0));
         for (int i = 0; i < allPoints.size() - 1; i++)
         {
             packet.fieldOverlay().setFill("red").strokeLine(allPoints.get(i).x - 50, allPoints.get(i).y - 25, allPoints.get(i+1).x - 50, allPoints.get(i+1).y - 25);

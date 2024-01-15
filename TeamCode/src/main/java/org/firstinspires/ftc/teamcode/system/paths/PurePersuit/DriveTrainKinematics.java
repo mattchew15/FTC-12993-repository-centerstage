@@ -125,7 +125,7 @@ public class DriveTrainKinematics
         // the world is not necessary but makes it more readable for now
         double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
         double y = - TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
+        double t = - HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
 
         PID_X = x;
         PID_Y = y;
