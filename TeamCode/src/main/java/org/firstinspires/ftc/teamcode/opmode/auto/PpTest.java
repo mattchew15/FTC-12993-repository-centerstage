@@ -12,10 +12,12 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVa
 
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldXPosition;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.FINAL_HEADING;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.currentPoint;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.finished;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.followCurve;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldYPosition;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToHeading;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToPosition;
 
 
@@ -58,19 +60,22 @@ public class PpTest extends OpMode
         drive.drivebaseSetup();
         Robot robot = new Robot(); // init the pose
         finished = false;
+
+
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 0.5, 1, 25, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 0, 0.5, 1, 15, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
-       allPoints.add(new CurvePoint(59, 39, 0.5, 1, 25, Math.toRadians(50), 1.0));
-       allPoints.add(new CurvePoint(64, 44, 0.5, 1, 25, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(90, 44, 0.5, 1, 25, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(85, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
+        //allPoints.add(new CurvePoint(80, 37, 0.5, 1, 10, Math.toRadians(50), 1.0));
         for (int i = 0; i < allPoints.size() - 1; i++)
         {
             packet.fieldOverlay().setFill("red").strokeLine(allPoints.get(i).x - 50, allPoints.get(i).y - 25, allPoints.get(i+1).x - 50, allPoints.get(i+1).y - 25);
 
         }
-    dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet);
+        FINAL_HEADING = Math.toRadians(0);
 
     }
 
@@ -95,19 +100,26 @@ public class PpTest extends OpMode
         packet.fieldOverlay().setFill("red").fillRect((worldXPosition - 50) - 5,(worldYPosition - 25) - 5,10, 10);
         packet.fieldOverlay().setStroke("blue").strokeCircle(currentPoint.x - 50,currentPoint.y - 25, 2);
         //packet.fieldOverlay().setFill("green").fillRect((worldXPosition - 50) - 5, worldYPosition - 7, 2, 3);
+        double[] power;
 
-        double[] powerPID = DriveTrainKinematics.powerPID();
+        if (!finished)
+        {
+            // This should drive with gluten free vector util it gets to the last point
+             power = DriveTrainKinematics.power();
+        }
+        else
+        {
+            power = DriveTrainKinematics.driveToPosition(currentPoint.x, currentPoint.y, FINAL_HEADING,
+                    pose.getX(), pose.getY(), pose.getHeading(),
+                    telemetry);
+        }
+        telemetry.addData("PowerPID: ", " LeftF " + power[0] + " RightF " + power[1] +" LeftB " + power[2] + " Rightb " + power[3]);
 
-        double[] powerNormal = DriveTrainKinematics.normalPID();
-        double[] powerUNCLAM = DriveTrainKinematics.UNCLAMPED_PowerPID();
-        telemetry.addData("PowerPID: ", " LeftF " + powerPID[0] + " RightF " + powerPID[1] +" LeftB " + powerPID[2] + " Rightb " + powerPID[3]);
-        //telemetry.addData("powerUNCLAM: ", " LeftF " + powerUNCLAM[0] + " RightF " + powerUNCLAM[1] +" LeftB " + powerUNCLAM[2] + " Rightb " + powerUNCLAM[3]);
-        // maybe this needs to be negative
 
-       drive.FL.setPower(powerPID[0]);
-       drive.FR.setPower(powerPID[1]);
-       drive.BL.setPower(powerPID[2]);
-       drive.BR.setPower(powerPID[3]);
+        drive.FL.setPower(power[0]);
+        drive.FR.setPower(power[1]);
+        drive.BL.setPower(power[2]);
+        drive.BR.setPower(power[3]);
 
 
 
@@ -118,6 +130,7 @@ public class PpTest extends OpMode
         telemetry.addData("Theta", pose.getHeading());
 
         telemetry.addData("Point following", currentPoint);
+        telemetry.addData("Final theta", FINAL_HEADING);
 
         telemetry.addData("Movement X", movement_x);
         telemetry.addData("Movement Y", movement_y);
