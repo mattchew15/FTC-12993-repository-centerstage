@@ -26,14 +26,16 @@ public class RobotMovement {
     //public static boolean finished = false;
     public static Point currentPoint; //todo
     public static boolean finished = false;
+    public static double FINAL_HEADING;
 
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
                 allPoints.get(0).followDistance);
 
 
-        goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
 
+        goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
+/*
         if (finished)
         {
             CurvePoint startPoint = allPoints.get(allPoints.size() -2);
@@ -42,6 +44,8 @@ public class RobotMovement {
 
             goToHeading(finalPoint.x, finalPoint.y, finalPoint.moveSpeed, followAngle, finalPoint.turnSpeed);
         }
+
+         */
         currentPoint = new Point(followMe.x, followMe.y);
 
     }
@@ -121,14 +125,15 @@ public class RobotMovement {
         movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
 
 
-        if (distanceToTarget < 3.93 && !finished){
+        if (distanceToTarget < 3.93 ){
             movement_turn = 0;
         }
     }
     // Maybe this was not necessary but i like this implementation
-    public static void goToHeading(double x, double y, double movementSpeed, double preferredAngle, double turnSpeed) {
+    public static double goToHeading(double x, double y)
+    {
 
-
+/*
         double absoluteAngleToTarget = Math.atan2(y-worldYPosition, x-worldXPosition);
 
         double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
@@ -137,6 +142,23 @@ public class RobotMovement {
 
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
         movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
+
+    }
+
+
+
+ */
+        if (finished)
+        {
+            return FINAL_HEADING;
+        }
+        else
+        {
+             return Math.atan2(y-worldYPosition, x-worldXPosition);
+
+           // return AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
+
+        }
 
     }
 

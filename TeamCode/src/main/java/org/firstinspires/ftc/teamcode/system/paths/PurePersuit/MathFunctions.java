@@ -94,7 +94,7 @@ public class MathFunctions {
             u = end.followDistance;
         }
         Point n = new Point(d.x / u, d.y / u);
-        double scalar = end.followDistance;
+        double scalar = 10;
         n = new Point(n.x * scalar, n.y * scalar);
         n = new Point(end.x - n.x, end.y - n.y);
         CurvePoint f = new CurvePoint(end);

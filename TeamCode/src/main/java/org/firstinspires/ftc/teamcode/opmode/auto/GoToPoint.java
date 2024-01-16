@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worl
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldXPosition;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldYPosition;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.currentPoint;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToHeading;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -64,13 +65,14 @@ public class GoToPoint extends OpMode
         START_H = pose.getHeading();
 
 
+        TARGET_H = goToHeading(TARGET_X, TARGET_Y);
 
         double[] powers = DriveTrainKinematics.driveToPosition(TARGET_X, TARGET_Y, TARGET_H, START_X, START_Y , START_H, telemetry);
 
-       drive.FL.setPower(powers[0]);
-       drive.FR.setPower(powers[1]);
-       drive.BL.setPower(powers[2]);
-       drive.BR.setPower(powers[3]);
+        drive.FL.setPower(powers[0]);
+        drive.FR.setPower(powers[1]);
+        drive.BL.setPower(powers[2]);
+        drive.BR.setPower(powers[3]);
 
         telemetry.addData("X", pose.getX());
         telemetry.addData("Y", pose.getY());

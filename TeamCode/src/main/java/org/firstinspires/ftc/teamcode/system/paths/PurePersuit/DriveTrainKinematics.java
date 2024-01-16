@@ -25,8 +25,8 @@ import java.util.Arrays;
 
 public class DriveTrainKinematics
 {
-    private static PID TRANSLATIONAL_PID = new PID(0.22, 0, 0, 0 , 0);
-    private static PID HEADING_PID = new PID(2, 0.0008, 0.024, 0 , 0);
+    private static PID TRANSLATIONAL_PID = new PID(0.07, 0, 0, 0 , 0);
+    private static PID HEADING_PID = new PID(0.6, 0.0008, 0.024, 312 , 0);
 
 
     public static double PID_X;
@@ -120,20 +120,13 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
-    public static double[] powerPID()
+    public static double[] power()
     {
-        // the world is not necessary but makes it more readable for now
-        double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
-        double y = - TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = - HEADING_PID.update(AngleWrap(movement_turn + worldAngle_rad), worldAngle_rad, 2 * PI);
+        double y = - movement_y;
+        double t = - movement_turn;
 
-        PID_X = x;
-        PID_Y = y;
-        unwrappedPID_H = t;
-        t = AngleWrap(t); // TODO evalute the removal of this... it can be...
-        wrappedPID_H = t;
-        double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
-        double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
+        double xRotated = movement_x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
+        double yRotated = movement_x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
         x_Rotated = xRotated;
         y_Rotated = yRotated;
 
@@ -172,7 +165,7 @@ public class DriveTrainKinematics
     {
         double x = TRANSLATIONAL_PID.update(targetX, robotX, 1);
         double y = -TRANSLATIONAL_PID.update(targetY, robotY, 1);
-        double theta = -HEADING_PID.update(targetHeading, robotTheta, 1);
+        double theta = -HEADING_PID.updateWithError(AngleWrap(targetHeading -robotTheta) , 1);
         telemetry.addData("Pid theta: ", theta);
         telemetry.addData("Pid X: ", x);
         telemetry.addData("Pid Y: ", y);
@@ -182,10 +175,11 @@ public class DriveTrainKinematics
         telemetry.addData("Y rotated: ", y_rotated);
         telemetry.addData("X rotated: ", x_rotated);
 
-       double FL = MathUtils.clamp(x_rotated + y_rotated + theta, -1, 1);
-       double BL = MathUtils.clamp(x_rotated - y_rotated + theta, -1, 1);
-       double FR = MathUtils.clamp(x_rotated - y_rotated - theta, -1, 1);
-       double BR = MathUtils.clamp(x_rotated + y_rotated - theta, -1, 1);
+        double FL = MathUtils.clamp(x_rotated + y_rotated + theta, -1, 1);
+        double BL = MathUtils.clamp(x_rotated - y_rotated + theta, -1, 1);
+        double FR = MathUtils.clamp(x_rotated - y_rotated - theta, -1, 1);
+        double BR = MathUtils.clamp(x_rotated + y_rotated - theta, -1, 1);
+
         telemetry.addData("FL ", FL);
         telemetry.addData("BL ", BL);
         telemetry.addData("FR ", FR);
