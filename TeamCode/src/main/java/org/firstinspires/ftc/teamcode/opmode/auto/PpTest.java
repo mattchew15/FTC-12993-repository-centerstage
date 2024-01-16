@@ -68,6 +68,7 @@ public class PpTest extends OpMode
         //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
         allPoints.add(new CurvePoint(59, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
         allPoints.add(new CurvePoint(85, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
+        //allPoints.add(new CurvePoint(85, 60, 0.5, 1, 15, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(80, 37, 0.5, 1, 10, Math.toRadians(50), 1.0));
         for (int i = 0; i < allPoints.size() - 1; i++)
         {

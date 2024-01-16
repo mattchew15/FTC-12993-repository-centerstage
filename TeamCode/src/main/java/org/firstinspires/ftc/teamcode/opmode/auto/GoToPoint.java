@@ -33,11 +33,11 @@ import java.util.List;
 public class GoToPoint extends OpMode
 {
     DriveBase drive = new DriveBase();
-    List<Integer> lastTrackingEncPositions = new ArrayList<>(); //
+    List<Integer> lastTrackingEncPositions = new ArrayList<>();
     List<Integer> lastTrackingEncVels = new ArrayList<>();
     StandardTrackingWheelLocalizer localizer;
-    public static double TARGET_X = 0, TARGET_Y = 0, TARGET_H = 0;
-    public static double START_X = 0, START_Y = 0, START_H = 0;
+    public static double TARGET_X = 0, TARGET_Y = 40, TARGET_H = 90;
+    public static double START_X = 0, START_Y = 0, START_H = 90;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
@@ -65,7 +65,7 @@ public class GoToPoint extends OpMode
         START_H = pose.getHeading();
 
 
-        TARGET_H = goToHeading(TARGET_X, TARGET_Y);
+        //TARGET_H = goToHeading(TARGET_X, TARGET_Y);
 
         double[] powers = DriveTrainKinematics.driveToPosition(TARGET_X, TARGET_Y, TARGET_H, START_X, START_Y , START_H, telemetry);
 

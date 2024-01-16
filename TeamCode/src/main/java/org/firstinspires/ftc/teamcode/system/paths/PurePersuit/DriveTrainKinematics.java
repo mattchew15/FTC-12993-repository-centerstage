@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 public class DriveTrainKinematics
 {
-    private static PID TRANSLATIONAL_PID = new PID(0.07, 0, 0, 0 , 0);
+    private static PID TRANSLATIONAL_PID = new PID(0.016, 0, 0.00000, 0 , 0);
     private static PID HEADING_PID = new PID(0.6, 0.0008, 0.024, 312 , 0);
 
 
