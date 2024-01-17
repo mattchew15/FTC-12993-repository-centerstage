@@ -101,6 +101,7 @@ public class RobotMovement {
 
         double absoluteAngleToTarget = Math.atan2(y-worldYPosition, x-worldXPosition);
 
+        // (90 degrees is forwards and the preferred angle
         double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (worldAngle_rad - Math.toRadians(90)));
         angleToPoint = relativeAngleToPoint; // removed distance in here
 

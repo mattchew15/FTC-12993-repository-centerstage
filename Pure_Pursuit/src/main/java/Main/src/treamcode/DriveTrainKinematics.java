@@ -38,6 +38,7 @@ public class DriveTrainKinematics
     public static double TRACK_LENGTH = 10 / 2.0;
     public static double power = 0;
     public static double angleToPoint = 0;
+    public static boolean reversing = false;
 /*
     public static SimpleMatrix wheelsVelocity = new SimpleMatrix(new double[][]{
             {0},
@@ -106,12 +107,22 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
-    /*
-    public static double[] powerPID()
+
+    public static double[] power()
     {
-        double x = TRANSLATIONAL_PID.update(movement_x + worldXPosition, worldXPosition, 99999);
-        double y = TRANSLATIONAL_PID.update(movement_y + worldYPosition, worldYPosition, 99999);
-        double t = HEADING_PID.update(movement_turn + worldAngle_rad, worldAngle_rad, 99999);
+        double x = movement_x;
+        double y = -movement_y;
+
+        double t;
+        if (reversing)
+        {
+            t = - movement_turn + PI;
+        }
+        else
+        {
+            t = - movement_turn;
+        }
+
         double xRotated = x * cos(worldAngle_rad) - y * sin(worldAngle_rad);
         double yRotated = x * sin(worldAngle_rad) + y * cos(worldAngle_rad);
 
@@ -122,7 +133,7 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
-    */
+
 
 }
 

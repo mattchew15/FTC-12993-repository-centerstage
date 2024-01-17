@@ -31,7 +31,7 @@ public class MyOpMode extends OpMode{
 
     @Override
     public void loop() {
-        followCurve(allPoints, Math.toRadians(90));
+        followCurve(allPoints, Math.toRadians(270));
         //double[] powerPID = DriveTrainKinematics.powerPID();
         double[] powerVec = DriveTrainKinematics.powerFromVector();
         System.out.println("PowerVec: LeftF " + powerVec[0] + " RightF " + powerVec[1] +" LeftB " + powerVec[2] + " RightF " + powerVec[3]);
