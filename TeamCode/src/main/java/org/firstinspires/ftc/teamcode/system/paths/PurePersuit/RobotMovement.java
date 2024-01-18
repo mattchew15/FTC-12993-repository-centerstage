@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 public class RobotMovement {
     //public static boolean finished = false;
-    public static Point currentPoint; //todo
+    public static CurvePoint currentPoint;
+    public static CurvePoint lastPoint;
     public static boolean finished = false;
     public static double FINAL_HEADING;
 
@@ -46,12 +47,25 @@ public class RobotMovement {
         }
 
          */
-        currentPoint = new Point(followMe.x, followMe.y);
+        if (lastPoint != null)
+        {
+            lastPoint = currentPoint;
+        }
+        currentPoint = followMe;
 
     }
     // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
     public static CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius){
-        CurvePoint followMe = new CurvePoint(pathPoint.get(0));
+        CurvePoint followMe;
+        //
+        if (lastPoint != null)
+        {
+            followMe = lastPoint;
+        }
+        else
+        {
+            followMe = new CurvePoint(pathPoint.get(0));
+        }
 
         for (int i = 0; i < pathPoint.size() - 1; i ++)
         {
@@ -62,7 +76,7 @@ public class RobotMovement {
                     endLine.toPoint());
 
 
-            double closestAngle = 1000000000;
+            double closestAngle = 100000000;
 
             for (Point thisIntersection : intersections)
             {

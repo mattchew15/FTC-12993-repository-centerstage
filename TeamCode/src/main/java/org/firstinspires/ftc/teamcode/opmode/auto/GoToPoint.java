@@ -36,8 +36,8 @@ public class GoToPoint extends OpMode
     List<Integer> lastTrackingEncPositions = new ArrayList<>();
     List<Integer> lastTrackingEncVels = new ArrayList<>();
     StandardTrackingWheelLocalizer localizer;
-    public static double TARGET_X = 0, TARGET_Y = 40, TARGET_H = 90;
-    public static double START_X = 0, START_Y = 0, START_H = 90;
+    public static double TARGET_X = 0, TARGET_Y = 40, TARGET_H = 270;
+    public static double START_X = 0, START_Y = 0, START_H = 270;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
 

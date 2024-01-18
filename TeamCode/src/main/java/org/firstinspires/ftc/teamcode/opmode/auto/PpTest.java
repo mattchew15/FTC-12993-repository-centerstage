@@ -59,16 +59,16 @@ public class PpTest extends OpMode
         drive.initDrivebase(hardwareMap);
         drive.drivebaseSetup();
         Robot robot = new Robot(); // init the pose
-        finished = false;
+        finished = false; // should change to endpoint so i can call it afterwards
 
 
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 0.5, 1, 15, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 0, 0.3, 0.5, 15, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(59, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(85, 40, 0.5, 1, 15, Math.toRadians(50), 1.0));
-        //allPoints.add(new CurvePoint(85, 60, 0.5, 1, 15, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 90, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(30, 90, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(30, 20, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(80, 37, 0.5, 1, 10, Math.toRadians(50), 1.0));
         for (int i = 0; i < allPoints.size() - 1; i++)
         {
@@ -76,7 +76,7 @@ public class PpTest extends OpMode
 
         }
         dashboard.sendTelemetryPacket(packet);
-        FINAL_HEADING = Math.toRadians(0);
+        FINAL_HEADING = Math.toRadians(90);
 
     }
 
@@ -130,7 +130,7 @@ public class PpTest extends OpMode
         telemetry.addData("Y", pose.getY());
         telemetry.addData("Theta", pose.getHeading());
 
-        telemetry.addData("Point following", currentPoint);
+        telemetry.addData("Point following", currentPoint.toPoint());
         telemetry.addData("Final theta", FINAL_HEADING);
 
         telemetry.addData("Movement X", movement_x);
