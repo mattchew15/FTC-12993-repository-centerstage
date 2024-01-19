@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 
 
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CrossTrackError.calculateCTE;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CrossTrackError.calculateLookahead;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.AngleWrap;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.extendVector;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.lineCircleIntersection;
@@ -28,15 +30,22 @@ public class RobotMovement {
     public static CurvePoint lastPoint;
     public static boolean finished = false;
     public static double FINAL_HEADING;
+    public static double lookAheadDis;
 
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
+        if (lookAheadDis == 0) // the initial one should always be the first
+        {
+            lookAheadDis = allPoints.get(0).followDistance;
+        }
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
-                allPoints.get(0).followDistance);
+                lookAheadDis);
 
+
+        //lookAheadDis = calculateLookahead(calculateCTE(new Point(worldXPosition, worldYPosition), followMe.toPoint(), lookAheadDis), 10, 25, 5);
 
 
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
-/*
+   /*
         if (finished)
         {
             CurvePoint startPoint = allPoints.get(allPoints.size() -2);
@@ -47,25 +56,28 @@ public class RobotMovement {
         }
 
          */
-        if (lastPoint != null)
-        {
-            lastPoint = currentPoint;
-        }
+
+        lastPoint = currentPoint;
+
         currentPoint = followMe;
 
     }
     // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
     public static CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius){
         CurvePoint followMe;
-        //
+        //this makes the robot follow the previous point followed
+
         if (lastPoint != null)
         {
             followMe = lastPoint;
         }
-        else
+        else // if at the intersect
         {
             followMe = new CurvePoint(pathPoint.get(0));
         }
+
+
+
 
         for (int i = 0; i < pathPoint.size() - 1; i ++)
         {
@@ -104,7 +116,6 @@ public class RobotMovement {
         if (finished)
         {
             followMe = new CurvePoint(pathPoint.get(pathPoint.size()-1));
-
         }
         return followMe;
     }
@@ -139,7 +150,7 @@ public class RobotMovement {
         movement_turn = MathUtils.clamp(relativeTurnAngle/Math.toRadians(30), -1, 1) * turnSpeed;
 
 
-        if (distanceToTarget < 3.93 ){
+        if (distanceToTarget < 2 ){
             movement_turn = 0;
         }
     }
