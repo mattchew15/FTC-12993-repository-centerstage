@@ -11,9 +11,9 @@ public class MyOpMode extends OpMode{
     @Override
     public void init() {
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(toCM(59), 0, 1.0, 1, toCM(23), Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(toCM(59), 0, 1.0, 1, toCM(15), Math.toRadians(50), 1.0, false));
         allPoints.add(new CurvePoint(toCM(59), toCM(39), 1.0, 1, toCM(23), Math.toRadians(50), 1.0, false));
-        allPoints.add(new CurvePoint(toCM(94), toCM(94), 1.0, 1, toCM(27), Math.toRadians(50), 1.0, false));
+        allPoints.add(new CurvePoint(toCM(94), toCM(94), 1.0, 1, toCM(23), Math.toRadians(50), 1.0, false));
        // allPoints.add(new CurvePoint(150, 0, 1.0, 1.0, 60, Math.toRadians(50), 1.0, false));
         //allPoints.add(new CurvePoint(150, 150, 1.0, 1.0, 40, Math.toRadians(50), 1.0, false));
        // allPoints.add(new CurvePoint(300, 300, 1.0, 1.0, 50, Math.toRadians(50), 1.0, false));
@@ -31,9 +31,10 @@ public class MyOpMode extends OpMode{
 
     @Override
     public void loop() {
-        followCurve(allPoints, Math.toRadians(270));
+        followCurve(allPoints, Math.toRadians(90));
         //double[] powerPID = DriveTrainKinematics.powerPID();
         double[] powerVec = DriveTrainKinematics.powerFromVector();
+
         System.out.println("PowerVec: LeftF " + powerVec[0] + " RightF " + powerVec[1] +" LeftB " + powerVec[2] + " RightF " + powerVec[3]);
         //System.out.println("RightF" + DriveTrainKinematics.powerFromVector()[1]);
        // System.out.println("LeftB" + DriveTrainKinematics.powerFromVector()[2]);

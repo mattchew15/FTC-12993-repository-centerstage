@@ -1,6 +1,8 @@
 package Main.src.treamcode;
 
 import static Main.src.com.company.Robot.*;
+import static Main.src.treamcode.CrossTrackError.calculateCTE;
+import static Main.src.treamcode.CrossTrackError.calculateLookahead;
 import static Main.src.treamcode.MathFunctions.*;
 import static Main.src.RobotUtilities.MovementVars.*;
 import static Main.src.treamcode.DriveTrainKinematics.*;
@@ -16,13 +18,21 @@ import Main.src.org.opencv.core.Point;
 public class RobotMovement {
     public static boolean finished = false;
     public static CurvePoint endPoint;
+    public static double lookAheadDis;
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
+        if (lookAheadDis == 0) // the initial one should always be the first
+        {
+            lookAheadDis = allPoints.get(0).followDistance;
+        }
         for (int i = 0; i < allPoints.size() - 1; i++){
             ComputerDebugging.sendLine(new FloatPoint(allPoints.get(i).x, allPoints.get(i).y),
                     new FloatPoint(allPoints.get(i+1).x, allPoints.get(i+1).y));
         }
+
         CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldXPosition, worldYPosition),
-                allPoints.get(0).followDistance);
+                lookAheadDis);
+
+        lookAheadDis = calculateLookahead(calculateCTE(new Point(worldXPosition, worldYPosition), followMe.toPoint(), lookAheadDis), 10, 25, 5);
 
         ComputerDebugging.sendKeyPoint(new FloatPoint(followMe.x, followMe.y));
 
@@ -117,7 +127,7 @@ public class RobotMovement {
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
         movement_turn = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
-        if (distanceToTarget < 10 ){
+        if (distanceToTarget < 10){
             movement_turn = 0;
         }
     }
