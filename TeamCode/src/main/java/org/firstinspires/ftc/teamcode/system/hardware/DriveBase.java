@@ -125,13 +125,11 @@ public class DriveBase {  // no constructor for this class
         if (toggle) {
             if (!PowerToggled) {
                 if (PowerBase == 1) {
-                    PowerBase = 0.33;
-                    PowerBaseTurn = 0.3;
-                    PowerStrafe = 0.36;
+
+                    PowerStrafe = 0;
                 } else {
                     //edit these values to change drivecode
-                    PowerBase = 1;
-                    PowerBaseTurn = 0.8;
+
                     PowerStrafe = 1.05;
                 }
                 PowerToggled = true;

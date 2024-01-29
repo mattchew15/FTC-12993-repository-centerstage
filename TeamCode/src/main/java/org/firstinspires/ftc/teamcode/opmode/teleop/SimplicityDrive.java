@@ -128,6 +128,7 @@ public class SimplicityDrive extends LinearOpMode {
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                driveBase.PowerToggle(gamepad1.left_stick_button);
                 pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
 
                 outtakeSequence();
