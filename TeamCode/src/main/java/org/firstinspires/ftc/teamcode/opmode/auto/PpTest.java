@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovem
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.finished;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.followCurve;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldYPosition;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToHeading;
+
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.RobotMovement.goToPosition;
 
 
@@ -64,11 +64,11 @@ public class PpTest extends OpMode
 
         localizer.setPoseEstimate(new Pose2d(worldXPosition, worldYPosition, worldAngle_rad));
         allPoints = new ArrayList<>();
-        allPoints.add(new CurvePoint(59, 0, 0.3, 0.5, 15, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(59, 80, 0.3, 0.5, 15, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(90, 0, 1.0, 1, 3, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(59, 60, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(40, 60, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
-        allPoints.add(new CurvePoint(40, 20, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
+        allPoints.add(new CurvePoint(100, 80, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
+        //allPoints.add(new CurvePoint(40, 60, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
+        //allPoints.add(new CurvePoint(40, 20, 0.3, 0.5, 10, Math.toRadians(50), 1.0));
         //allPoints.add(new CurvePoint(80, 37, 0.5, 1, 10, Math.toRadians(50), 1.0));
         for (int i = 0; i < allPoints.size() - 1; i++)
         {
@@ -76,7 +76,7 @@ public class PpTest extends OpMode
 
         }
         dashboard.sendTelemetryPacket(packet);
-        FINAL_HEADING = Math.toRadians(180);
+        FINAL_HEADING = Math.toRadians(90);
 
     }
 

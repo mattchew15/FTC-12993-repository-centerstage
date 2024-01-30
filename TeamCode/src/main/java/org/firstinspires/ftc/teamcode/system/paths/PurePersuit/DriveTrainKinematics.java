@@ -137,6 +137,25 @@ public class DriveTrainKinematics
 
         return new double[]{leftF,rightF,leftB,rightB};
     }
+    public static double[] powerDebug(double movement_x, double movement_y, double movement_turn)
+    {
+        double x = movement_x;
+        double y = - movement_y;
+        double t = - movement_turn;
+
+        // TODO: fix the coordinateS AAAAAAAAA
+        //double xRotated = movement_x * cos(angle) - y * sin(angle);
+        //double yRotated = movement_x * sin(angle) + y * cos(angle);
+       // x_Rotated = xRotated;
+        //y_Rotated = yRotated;
+
+        double leftF = MathUtils.clamp(x + y + t, -1, 1);
+        double rightF = MathUtils.clamp(x - y - t, -1, 1);
+        double leftB = MathUtils.clamp(x - y + t, -1, 1);
+        double rightB = MathUtils.clamp(x + y - t, -1, 1);
+
+        return new double[]{leftF,rightF,leftB,rightB};
+    }
     public static double[] powerPID(double targetX, double targetY, double targetH)
     {
         // the world is not necessary but makes it more readable for now

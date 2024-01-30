@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.system.vision;
+package org.firstinspires.ftc.teamcode.system.visiontest;
+
+import android.annotation.SuppressLint;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -30,7 +32,7 @@ public class AprilTagPipeline extends OpenCvPipeline
     public static Scalar green = new Scalar(0,255,0,255);
     public static Scalar white = new Scalar(255,255,255,255);
 
-    static final double FEET_PER_METER = 3.28084;
+    protected static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -46,23 +48,24 @@ public class AprilTagPipeline extends OpenCvPipeline
 
     // instance variables
 
-    private long nativeApriltagPtr;
-    private Mat grey = new Mat();
-    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+    protected long nativeApriltagPtr;
+    protected Mat grey = new Mat();
+    protected ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
-    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
-    private final Object detectionsUpdateSync = new Object();
+    protected ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+    protected short detectionsCounter;
+    protected final Object detectionsUpdateSync = new Object();
 
-    Mat cameraMatrix;
+    protected Mat cameraMatrix;
 
-    double tagsizeX = TAG_SIZE;
-    double tagsizeY = TAG_SIZE;
+    protected double tagsizeX = TAG_SIZE;
+    protected double tagsizeY = TAG_SIZE;
 
-    private float decimation;
-    private boolean needToSetDecimation;
-    private final Object decimationSync = new Object();
+    protected float decimation;
+    protected boolean needToSetDecimation;
+    protected final Object decimationSync = new Object();
 
-    Telemetry telemetry;
+    protected Telemetry telemetry;
 
     public AprilTagPipeline(Telemetry telemetry)
     {
@@ -84,6 +87,7 @@ public class AprilTagPipeline extends OpenCvPipeline
         AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public Mat processFrame(Mat input)
     {
@@ -106,12 +110,14 @@ public class AprilTagPipeline extends OpenCvPipeline
         synchronized (detectionsUpdateSync)
         {
             detectionsUpdate = detections;
+
         }
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
         for(AprilTagDetection detection : detections)
         {
+            detectionsCounter++;
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
@@ -128,7 +134,7 @@ public class AprilTagPipeline extends OpenCvPipeline
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
         }
 
-        telemetry.update();
+        //telemetry.update();
 
         return input;
     }
@@ -156,8 +162,37 @@ public class AprilTagPipeline extends OpenCvPipeline
             return ret;
         }
     }
+    public ArrayList<ArrayList<?>> processDetections()
+    {
+        ArrayList<ArrayList<?>> objects = new ArrayList<>();
+        ArrayList<Tag> tags = new ArrayList<>();
+        ArrayList<AprilTagDetection> detectionsList = new ArrayList<>();
+        synchronized (detectionsUpdateSync)
+        {
+            for (AprilTagDetection detection : detections)
+            {
 
-    void constructMatrix()
+                Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+                Tag tag = new Tag(detection.id, detection.pose.x, detection.pose.y, detection.pose.z, rot.firstAngle, rot.secondAngle, rot.thirdAngle);
+                tags.add(tag);
+                detectionsList.add(detection);
+            }
+        }
+        objects.add(tags);
+        objects.add(detectionsList);
+        return objects;
+    }
+    public short getDetectionsCounter()
+    {
+        synchronized (detectionsUpdateSync)
+        {
+            short c = detectionsCounter;
+            detectionsCounter = 0;
+            return c;
+        }
+    }
+
+    public void constructMatrix()
     {
         //     Construct the camera matrix.
         //
@@ -192,7 +227,7 @@ public class AprilTagPipeline extends OpenCvPipeline
      * @param tvec the translation vector of the detection
      * @param cameraMatrix the camera matrix used when finding the detection
      */
-    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
+     public void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
@@ -215,8 +250,25 @@ public class AprilTagPipeline extends OpenCvPipeline
 
         Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
     }
+    public Point getMiddlePoint(double length, Mat rvec, Mat tvec, Mat cameraMatrix)
+    {
+        // The points in 3D space we wish to project onto the 2D image plane.
+        // The origin of the coordinate space is assumed to be in the center of the detection.
+        MatOfPoint3f axis = new MatOfPoint3f(
+                new Point3(0,0,0),
+                new Point3(length,0,0),
+                new Point3(0,length,0),
+                new Point3(0,0,-length)
+        );
 
-    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
+        // Project those points
+        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
+        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
+        Point[] projectedPoints = matProjectedPoints.toArray();
+        return projectedPoints[0];
+    }
+
+    public void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
         //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
@@ -267,7 +319,7 @@ public class AprilTagPipeline extends OpenCvPipeline
      * @param tagsizeY the original height of the tag
      * @return the 6DOF pose of the camera relative to the tag
      */
-    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
+    public Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
     {
         // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
@@ -291,10 +343,10 @@ public class AprilTagPipeline extends OpenCvPipeline
      * A simple container to hold both rotation and translation
      * vectors, which together form a 6DOF pose.
      */
-    class Pose
+    protected class Pose
     {
-        Mat rvec;
-        Mat tvec;
+        public Mat rvec;
+        public Mat tvec;
 
         public Pose()
         {
@@ -307,5 +359,20 @@ public class AprilTagPipeline extends OpenCvPipeline
             this.rvec = rvec;
             this.tvec = tvec;
         }
+    }
+    protected class Tag
+    {
+        public double id, x, y, z, yaw, pitch, roll;
+        public Tag(double id, double x, double y, double z, double yaw, double pitch, double roll)
+        {
+            this.id = id;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yaw = yaw;
+            this.pitch = pitch;
+            this.roll = roll;
+        }
+
     }
 }
