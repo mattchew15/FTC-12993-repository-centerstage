@@ -106,7 +106,6 @@ public class AutoSequences {
             intakeSubsystem.intakeSlideTo(295, intakeSubsystem.intakeSlidePosition,1);
         } else if (teamPropLocation == 3){
             intakeSubsystem.intakeSlideTo(480, intakeSubsystem.intakeSlidePosition,1);
-
         }
         if (intakeSubsystem.intakeSlideTargetReached()){
             if (GlobalTimer.milliseconds() - autoTimer > 700){ // ensure pixels are in robot
