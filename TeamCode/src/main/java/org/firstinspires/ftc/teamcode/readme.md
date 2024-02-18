@@ -1,5 +1,5 @@
 ## TeamCode Module
-
+ADB command: adb connect 192.168.43.1:5555
 Welcome!
 
 This module, TeamCode, is the place where you will write/paste the code for your team's

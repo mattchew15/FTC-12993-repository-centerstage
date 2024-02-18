@@ -1,29 +1,28 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.Angle;
+import com.outoftheboxrobotics.photoncore.Photon;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.CoordinatesLogic;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
+@Photon
 @Config // Allows dashboard to tune
-public class DriveBase {  // no constructor for this class
+public class DriveBasePhoton
+{  // no constructor for this class
 
-    public DcMotorEx
+    public PhotonDcMotor
             FL,
             FR,
             BL,
             BR;
 
-    public ServoImplEx
+    public PhotonServo
             ClimbHolderServo,
             DroneServo;
 
@@ -47,7 +46,12 @@ public class DriveBase {  // no constructor for this class
     PID drivebaseThetaPID = new PID(DrivebaseThetaKp,DrivebaseThetaKi,DrivebaseThetaKd,DrivebaseThetaIntegralSumLimit,DrivebaseThetaKf);
 
     CoordinatesLogic coordinatesLogic = new CoordinatesLogic();
-    private double powerCoefficient = 2;
+
+    private final double cachingTolerance = 0.005;
+    private double previousFrontLeft;
+    private double previousBackLeft;
+    private double previousFrontRight;
+    private double previousBackRight;
 
     public enum DroneState {
         HOLD,
@@ -60,13 +64,13 @@ public class DriveBase {  // no constructor for this class
     }
 
     public void initDrivebase(HardwareMap hwMap){
-        FL = hwMap.get(DcMotorEx.class, "FL");
-        FR = hwMap.get(DcMotorEx.class, "FR");
-        BL = hwMap.get(DcMotorEx.class, "BL");
-        BR = hwMap.get(DcMotorEx.class, "BR");
+        FL = hwMap.get(PhotonDcMotor.class, "FL");
+        FR = hwMap.get(PhotonDcMotor.class, "FR");
+        BL = hwMap.get(PhotonDcMotor.class, "BL");
+        BR = hwMap.get(PhotonDcMotor.class, "BR");
 
-        ClimbHolderServo = hwMap.get(ServoImplEx.class, "ClimbHolderS");
-        DroneServo = hwMap.get(ServoImplEx.class, "DroneS");
+        ClimbHolderServo = hwMap.get(PhotonServo.class, "ClimbHolderS");
+        DroneServo = hwMap.get(PhotonServo.class, "DroneS");
     }
 
     // this could be run in robothardware
@@ -97,16 +101,14 @@ public class DriveBase {  // no constructor for this class
         double frontRightPower = (-LY*PowerBase - LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
         double backRightPower = (-LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
 
-        // just comment this out if you don't like the drive...
-        frontLeftPower = Math.pow(frontLeftPower, powerCoefficient);
-        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
-        frontRightPower = Math.pow(frontRightPower, powerCoefficient);
-        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
+        // Motor caching runs the motors...
+        previousFrontLeft = motorCaching(frontLeftPower, previousFrontLeft, cachingTolerance, FL);
 
-        FL.setPower(frontLeftPower);
-        BL.setPower(backLeftPower);
-        FR.setPower(frontRightPower);
-        BR.setPower(backRightPower);
+        previousBackLeft = motorCaching(backLeftPower, previousBackLeft, cachingTolerance, BL);
+
+        previousFrontRight = motorCaching(frontRightPower, previousFrontRight, cachingTolerance, FR);
+
+        previousBackRight = motorCaching(backRightPower, previousBackRight, cachingTolerance, BR);
     }
 
 
@@ -125,6 +127,7 @@ public class DriveBase {  // no constructor for this class
     public void runtoPositionTest(int Position){
         FL.setTargetPosition(Position);
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         FL.setPower(1);
     }
 
@@ -166,6 +169,22 @@ public class DriveBase {  // no constructor for this class
                 ClimbHolderServo.setPosition(ClimbServoReleasePos);
                 break;
         }
+    }
+
+    public double motorCaching(double pow, double prev, double cachingTolerance, DcMotor motor)
+    {
+        if (
+                //Should it be >= or > ??
+                Math.abs(pow - prev) > cachingTolerance ||
+                (pow == 0.0 && prev != 0.0 ) ||
+                (pow >= 1.0 && !(prev >= 1.0)) ||
+                (pow <= -1.0 && !(prev <= -1.0))
+        )
+        {
+            prev = pow;
+            motor.setPower(pow);
+        }
+        return prev;
     }
 
 }

@@ -67,6 +67,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+    private double previousV, previousV1, previousV2, previousV3;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -279,10 +280,26 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        if (Math.abs(v - previousV) > 0.005)
+        {
+            leftFront.setPower(v);
+            previousV = v;
+        }
+        if (Math.abs(v1 - previousV1) > 0.005)
+        {
+            leftRear.setPower(v1);
+            previousV1 = v1;
+        }
+        if (Math.abs(v2 - previousV2) > 0.005)
+        {
+            rightRear.setPower(v2);
+            previousV2 = v2;
+        }
+        if (Math.abs(v3 - previousV3) > 0.005)
+        {
+            rightFront.setPower(v3);
+            previousV3 = v3;
+        }
     }
 
     @Override
