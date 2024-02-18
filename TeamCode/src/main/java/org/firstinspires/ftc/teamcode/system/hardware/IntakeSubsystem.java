@@ -31,7 +31,10 @@ public class IntakeSubsystem {
     public AnalogInput
             IntakeChuteArmEncoder;
 
-    public DigitalChannel FrontLimitSwitch;
+    public DigitalChannel RightArmLimitSwitch;
+    public DigitalChannel LeftArmLimitSwitch;
+    public DigitalChannel ChuteUpDetectorLimitSwitch;
+
     VoltageSensor voltageSensor;
 
     public static double
@@ -96,7 +99,9 @@ public class IntakeSubsystem {
     public int intakeSlideTarget;
     public double frontColourSensorValue;
     public double backColourSensorValue;
-    public boolean frontLimitSwitchValue;
+    public boolean rightArmLimitSwitchValue;
+    public boolean leftArmLimitSwitchValue;
+    public boolean chuteDetectorLimitSwitchValue;
     public double intakeChuteArmPosition;
     public double intakeCurrent;
     public double intakeVelocity;
@@ -115,7 +120,9 @@ public class IntakeSubsystem {
         IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
         IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
-        FrontLimitSwitch = hwMap.get(DigitalChannel.class, "FrontLimitSwitch");
+        RightArmLimitSwitch = hwMap.get(DigitalChannel.class, "RightArmLimit");
+        LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
+        ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteDetector");
         voltageSensor = hwMap.voltageSensor.iterator().next();
     }
 
@@ -128,7 +135,10 @@ public class IntakeSubsystem {
     public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         intakeChuteArmPosition = getIntakeChuteArmPos();
-        frontLimitSwitchValue = !FrontLimitSwitch.getState();
+        rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
+        leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
+        chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
+
         if (intakingState){ // pass in state
             frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.alpha();

@@ -36,6 +36,9 @@ public class Globals {
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
 
+            LIFT_TICKS_FOR_MAX_EXTENSION = 620,
+
+            // Nats shit bro kinda L
             LIFT_HIGH_POSITION_TICKS = 600,
             LIFT_MEDIUM_POSITION_TICKS = 400,
             LIFT_LOW_POSITION_TICKS = 70,

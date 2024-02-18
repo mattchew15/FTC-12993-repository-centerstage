@@ -117,8 +117,6 @@ public class PixelDetectAprilTag extends AprilTagPipeline
                         Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
                         Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
 
-
-                        // i didnt find necessary to exclude any zone just parse the whole rect
                         Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
                         Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
 
@@ -145,7 +143,7 @@ public class PixelDetectAprilTag extends AprilTagPipeline
 
                         if (place == Place.LEFT)
                         {
-                            Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -2);
+                            Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -1);
                         } else
                         {
                             Imgproc.rectangle(input, regionRightA, regionRightB, new Scalar(255, 0, 0), -1);

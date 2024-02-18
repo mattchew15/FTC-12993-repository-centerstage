@@ -30,7 +30,8 @@ public class OuttakeSubsystem {
             MiniTurretServo,
             PivotServo,
             GripperTopServo,
-            GripperBottomServo;
+            GripperBottomServo,
+            OuttakeRailServo;
 
     public DistanceSensor OuttakeDistanceSensor;
 
@@ -59,6 +60,10 @@ public class OuttakeSubsystem {
             GRIPPER_TOP_GRIP_POS = 0.725,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
             GRIPPER_BOTTOM_GRIP_POS = 0.385;
+    public static double
+            RAIL_CENTER_POS = 0.5,
+            RAIL_RIGHT_POS = 0.95,
+            RAIL_LEFT_POS = 0.05;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -75,6 +80,7 @@ public class OuttakeSubsystem {
     public double pitchPosition;
     public double liftPosition;
     public double outtakeDistanceSensorValue;
+    public double outtakeRailAdjustTimer;
 
     // The profile stuff
     public double kPos = 0.0001, kVel = 0.0001;
@@ -123,6 +129,13 @@ public class OuttakeSubsystem {
         POINT_TO_BACKDROP
     }
 
+    public enum OuttakeRailState {
+        CENTER,
+        RIGHT,
+        LEFT,
+        FINE_ADJUST
+    }
+
     public enum GripperServoState { // might add more states here
         GRIP,
         OPEN,
@@ -167,6 +180,9 @@ public class OuttakeSubsystem {
 
     public void encodersReset(){
         PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    public void liftEncoderReset(){
         LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -343,6 +359,28 @@ public class OuttakeSubsystem {
         }
     }
 
+    public void outtakeRailState(OuttakeRailState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
+        switch (state) {
+            case CENTER:
+                OuttakeRailServo.setPosition(RAIL_CENTER_POS);
+                break;
+            case RIGHT:
+                OuttakeRailServo.setPosition(RAIL_RIGHT_POS);
+                break;
+            case LEFT:
+                OuttakeRailServo.setPosition(RAIL_LEFT_POS);
+                break;
+        }
+    }
+
+    public void fineAdjustRail(double fineAdjust, double timer){
+        if (timer - outtakeRailAdjustTimer > 15){ // only set the position every 15 ms, once achieved cache the timer value
+            OuttakeRailServo.setPosition(OuttakeRailServo.getPosition() + fineAdjust * 0.05); // increase amount per iteration
+            outtakeRailAdjustTimer = timer; // cache the value of the outtakerailadjust
+        }
+        // this should make the fine adjust not looptime dependent. can tune by adjusting iteration & move amount
+    }
+
     public static double degreesToTicksMiniTurret(double degrees){
         return MINI_TURRET_STRAIGHT_POS - degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
@@ -373,13 +411,13 @@ public class OuttakeSubsystem {
                 MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
                 break;
             case POINT_TO_BACKDROP:
-                //removed this stupid shit
+                //removed this stupid shit tehe
                 break;
         }
     }
 
     public void miniTurretPointToBackdrop(double robotDegrees){
-        if (Math.abs(robotDegrees) < 63){
+        if (Math.abs(robotDegrees) < 63){ // this is the max range of the miniturret as defined by the physical hardstops
             MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
         }
     }
