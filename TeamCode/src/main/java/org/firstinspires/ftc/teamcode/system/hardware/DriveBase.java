@@ -23,9 +23,7 @@ public class DriveBase {  // no constructor for this class
             BL,
             BR;
 
-    public ServoImplEx
-            ClimbHolderServo,
-            DroneServo;
+    public ServoImplEx DroneServo;
 
     //variable for the drivebase speed toggle;
     boolean PowerToggled;
@@ -54,18 +52,12 @@ public class DriveBase {  // no constructor for this class
         RELEASE
     }
 
-    public enum ClimbState {
-        HOLD,
-        RELEASE
-    }
-
     public void initDrivebase(HardwareMap hwMap){
         FL = hwMap.get(DcMotorEx.class, "FL");
         FR = hwMap.get(DcMotorEx.class, "FR");
         BL = hwMap.get(DcMotorEx.class, "BL");
         BR = hwMap.get(DcMotorEx.class, "BR");
 
-        ClimbHolderServo = hwMap.get(ServoImplEx.class, "ClimbHolderS");
         DroneServo = hwMap.get(ServoImplEx.class, "DroneS");
     }
 
@@ -157,15 +149,4 @@ public class DriveBase {  // no constructor for this class
                 break;
         }
     }
-    public void climbState(ClimbState state) {
-        switch (state) {
-            case HOLD:
-                ClimbHolderServo.setPosition(ClimbServoHoldPos);
-                break;
-            case RELEASE:
-                ClimbHolderServo.setPosition(ClimbServoReleasePos);
-                break;
-        }
-    }
-
 }

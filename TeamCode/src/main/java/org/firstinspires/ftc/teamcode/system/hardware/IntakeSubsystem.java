@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -86,7 +85,7 @@ public class IntakeSubsystem {
         OPEN
     }
 
-    public enum IntakePixelHolderState {
+    public enum IntakePixelHolderServoState {
         HOLDING,
         OPEN
     }
@@ -262,7 +261,7 @@ public class IntakeSubsystem {
         }
     }
 
-    public void intakePixelHolderServoState(IntakePixelHolderState state) {
+    public void intakePixelHolderServoState(IntakePixelHolderServoState state) {
         switch (state) {
             case HOLDING:
                 IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_HOLDING_POS);

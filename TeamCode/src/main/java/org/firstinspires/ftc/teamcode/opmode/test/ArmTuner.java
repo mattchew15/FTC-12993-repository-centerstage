@@ -19,7 +19,7 @@ public class ArmTuner extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            outtakeSubsystem.OuttakeArmServoLeft.setPosition(OUTTAKE_ARM_POS);
+            outtakeSubsystem.OuttakeArmServo.setPosition(OUTTAKE_ARM_POS);
             outtakeSubsystem.OuttakeArmServoRight.setPosition(OUTTAKE_ARM_POS);
         }
     }
