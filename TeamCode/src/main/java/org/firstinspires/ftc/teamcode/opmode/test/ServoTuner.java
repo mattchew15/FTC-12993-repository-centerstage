@@ -22,20 +22,20 @@ public class ServoTuner extends LinearOpMode {
             IntakeChuteArmServo,
             IntakeClipServo,
             IntakePixelHolderServo,
-            OuttakeArmServoLeft,
-            OuttakeArmServoRight,
+            OuttakePitchServo,
             MiniTurretServo,
+            OuttakeRailServo,
+            OuttakeArmServo,
             PivotServo,
             GripperTopServo,
-            GripperBottomServo,
-            OuttakeRailServo;
+            GripperBottomServo;
 
     @Override
     public void runOpMode() {
 
+        driveBase.initDrivebase(hardwareMap);
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
-        driveBase.initDrivebase(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {

@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.CoordinatesLogic;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
@@ -47,7 +43,7 @@ public class DriveBase {  // no constructor for this class
     CoordinatesLogic coordinatesLogic = new CoordinatesLogic();
     private double powerCoefficient = 2;
 
-    public enum DroneState {
+    public enum DroneServoState {
         HOLD,
         RELEASE
     }
@@ -139,7 +135,7 @@ public class DriveBase {  // no constructor for this class
         }
     }
 
-    public void droneState(DroneState state) {
+    public void droneState(DroneServoState state) {
         switch (state) {
             case HOLD:
                 DroneServo.setPosition(DroneServoHoldPos);

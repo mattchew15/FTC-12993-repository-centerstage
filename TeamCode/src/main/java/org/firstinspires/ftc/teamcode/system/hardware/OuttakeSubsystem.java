@@ -281,9 +281,6 @@ public class OuttakeSubsystem {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
-            case POINT_TO_BACKDROP:
-                //removed this stupid shit tehe
-                break;
         }
     }
 
@@ -465,7 +462,6 @@ public class OuttakeSubsystem {
         armProfile = new AsymmetricMotionProfile(armTarget ,armPos , profileArmConstraints);
         armProfile.calculate(armProfileTimer.time());
         double pos = armProfile.state.x;
-        OuttakeArmServoRight.setPosition(pos);
         OuttakeArmServo.setPosition(pos);
     }
     public void setArmTarget(double armTarget)
