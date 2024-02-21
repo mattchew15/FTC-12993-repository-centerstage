@@ -1,16 +1,29 @@
 package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class OuttakeInverseKinematics {
-    public double getSlideEnd(double pitchStart, double pitchEnd, double slideStart, double robotAngle) {
-        double bdAngle = Math.atan2(Math.sqrt(3) * Math.cos(robotAngle), 1);
+    public double distance = 0;
 
-        return slideStart * (Math.sin(180 + pitchStart - bdAngle) / Math.sin(bdAngle - pitchEnd));
+    public double bdAngle(double robotAngle) {
+        return Math.atan2(Math.sqrt(3) * Math.cos(robotAngle), 1);
     }
 
-    public double getRailChange(double pitchStart, double pitchEnd, double slideStart, double robotAngle) {
-        double slideEnd = getSlideEnd(pitchStart, pitchEnd, slideStart, robotAngle);
+    public double h(double heightEnd, double robotAngle) {
+        return heightEnd * Math.sin(bdAngle(robotAngle));
+    }
 
-        return robotAngle * Math.sqrt(Math.pow(slideStart, 2) + Math.pow(slideEnd, 2) -
-                2 * slideStart * slideEnd * Math.cos(pitchEnd - pitchStart));
+    public double t(double heightEnd, double robotAngle) {
+        return heightEnd * Math.cos(bdAngle(robotAngle));
+    }
+
+    public double slideEnd(double heightEnd, double robotAngle) {
+        return Math.atan2(h(heightEnd, robotAngle), distance + t(heightEnd, robotAngle));
+    }
+
+    public double pitchEnd(double heightEnd, double robotAngle) {
+        return Math.sqrt(Math.pow(h(heightEnd, robotAngle),2) + Math.pow(distance + t(heightEnd, robotAngle), 2));
+    }
+
+    public double railEnd(double railStart, double heightEnd, double heightStart) {
+        return (railStart * heightEnd)/heightStart;
     }
 }

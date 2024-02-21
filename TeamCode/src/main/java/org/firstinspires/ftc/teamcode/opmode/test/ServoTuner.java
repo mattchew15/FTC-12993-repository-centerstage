@@ -17,24 +17,25 @@ public class ServoTuner extends LinearOpMode {
     DriveBase driveBase = new DriveBase();
 
     public static double
-            INTAKE_ARM_POS = 0.48,
-            INTAKE_CHUTE_ARM_POS = 0.57,
-            INTAKE_CLIP_POS = 0.75,
-            INTAKE_PIXEL_HOLDER_POS = 0.5,
-            OUTTAKE_ARM_POS = 0.92,
-            MINI_TURRET_POS = 0.489,
-            PIVOT_POS = 0.53,
-            GRIPPER_TOP_POS = 0.26,
-            GRIPPER_BOTTOM_POS = 0.6,
-            CLIMB_HOLDER_POS = 0.5,
-            DRONE_POS = 0.5;
+            DroneServo,
+            IntakeArmServo,
+            IntakeChuteArmServo,
+            IntakeClipServo,
+            IntakePixelHolderServo,
+            OuttakePitchServo,
+            MiniTurretServo,
+            OuttakeRailServo,
+            OuttakeArmServo,
+            PivotServo,
+            GripperTopServo,
+            GripperBottomServo;
 
     @Override
     public void runOpMode() {
 
+        driveBase.initDrivebase(hardwareMap);
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
-        driveBase.initDrivebase(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {

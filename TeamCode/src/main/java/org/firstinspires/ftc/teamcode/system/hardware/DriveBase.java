@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.CoordinatesLogic;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
@@ -23,9 +19,7 @@ public class DriveBase {  // no constructor for this class
             BL,
             BR;
 
-    public ServoImplEx
-            ClimbHolderServo,
-            DroneServo;
+    public ServoImplEx DroneServo;
 
     //variable for the drivebase speed toggle;
     boolean PowerToggled;
@@ -49,12 +43,7 @@ public class DriveBase {  // no constructor for this class
     CoordinatesLogic coordinatesLogic = new CoordinatesLogic();
     private double powerCoefficient = 2;
 
-    public enum DroneState {
-        HOLD,
-        RELEASE
-    }
-
-    public enum ClimbState {
+    public enum DroneServoState {
         HOLD,
         RELEASE
     }
@@ -65,7 +54,6 @@ public class DriveBase {  // no constructor for this class
         BL = hwMap.get(DcMotorEx.class, "BL");
         BR = hwMap.get(DcMotorEx.class, "BR");
 
-        ClimbHolderServo = hwMap.get(ServoImplEx.class, "ClimbHolderS");
         DroneServo = hwMap.get(ServoImplEx.class, "DroneS");
     }
 
@@ -147,7 +135,7 @@ public class DriveBase {  // no constructor for this class
         }
     }
 
-    public void droneState(DroneState state) {
+    public void droneState(DroneServoState state) {
         switch (state) {
             case HOLD:
                 DroneServo.setPosition(DroneServoHoldPos);
@@ -157,15 +145,4 @@ public class DriveBase {  // no constructor for this class
                 break;
         }
     }
-    public void climbState(ClimbState state) {
-        switch (state) {
-            case HOLD:
-                ClimbHolderServo.setPosition(ClimbServoHoldPos);
-                break;
-            case RELEASE:
-                ClimbHolderServo.setPosition(ClimbServoReleasePos);
-                break;
-        }
-    }
-
 }

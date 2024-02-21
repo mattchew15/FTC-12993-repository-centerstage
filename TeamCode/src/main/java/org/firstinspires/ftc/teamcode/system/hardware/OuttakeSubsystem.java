@@ -25,28 +25,25 @@ public class OuttakeSubsystem {
             PitchMotor;
 
     public ServoImplEx
-            OuttakeArmServoLeft,
-            OuttakeArmServoRight,
+            OuttakePitchServo,
             MiniTurretServo,
+            OuttakeRailServo,
+            OuttakeArmServo,
             PivotServo,
             GripperTopServo,
-            GripperBottomServo,
-            OuttakeRailServo;
+            GripperBottomServo;
 
     public DistanceSensor OuttakeDistanceSensor;
 
+    public static double MINI_TURRET_STRAIGHT_POS = 0.49;
+    public static double
+            RAIL_CENTER_POS = 0.5,
+            RAIL_RIGHT_POS = 0.95,
+            RAIL_LEFT_POS = 0.05;
     public static double
             ARM_READY_POS = 0.99,
-            ARM_UPRIGHT_POS = 0.51,
-            ARM_SCORE_HALF_DOWN_POS = 0.195,
-            ARM_SCORE_DOWN_POS = 0.275,
-            ARM_SCORE_UP_POS = 0.105,
+            ARM_SCORE_POS = 0.51,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
-    public static double
-            MINI_TURRET_STRAIGHT_POS = 0.49,
-            MINI_TURRET_READY_POS = 0.49,
-            MINI_TURRET_LEFT_DIAGONAL_POS = 0.35,
-            MINI_TURRET_RIGHT_DIAGONAL_POS = 0.6;
     public static double
             PIVOT_READY_POS = 0.507,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
@@ -60,10 +57,6 @@ public class OuttakeSubsystem {
             GRIPPER_TOP_GRIP_POS = 0.725,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
             GRIPPER_BOTTOM_GRIP_POS = 0.385;
-    public static double
-            RAIL_CENTER_POS = 0.5,
-            RAIL_RIGHT_POS = 0.95,
-            RAIL_LEFT_POS = 0.05;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -101,12 +94,19 @@ public class OuttakeSubsystem {
     private ElapsedTime armProfileTimer = new ElapsedTime();
 
 
+    public enum MiniTurretState {
+        STRAIGHT,
+        POINT_TO_BACKDROP
+    }
+    public enum OuttakeRailState {
+        CENTER,
+        RIGHT,
+        LEFT,
+        FINE_ADJUST
+    }
     public enum ArmServoState {
         READY,
-        UPRIGHT,
-        SCORE_HALF_DOWN,
-        SCORE_DOWN,
-        SCORE_UP,
+        SCORE,
         CALCULATE,
         NULL,
         SCORE_PURPLE
@@ -121,21 +121,6 @@ public class OuttakeSubsystem {
         SIDEWAYS_LEFT,
         SIDEWAYS_RIGHT
     }
-    public enum MiniTurretState {
-        STRAIGHT,
-        READY,
-        DIAGONAL_LEFT,
-        DIAGONAL_RIGHT,
-        POINT_TO_BACKDROP
-    }
-
-    public enum OuttakeRailState {
-        CENTER,
-        RIGHT,
-        LEFT,
-        FINE_ADJUST
-    }
-
     public enum GripperServoState { // might add more states here
         GRIP,
         OPEN,
@@ -154,9 +139,10 @@ public class OuttakeSubsystem {
         LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
         PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
 
-        OuttakeArmServoLeft = hwMap.get(ServoImplEx.class, "ArmSLeft");
-        OuttakeArmServoRight = hwMap.get(ServoImplEx.class, "ArmSRight");
+        OuttakePitchServo = hwMap.get(ServoImplEx.class,"OuttakePitchS");
         MiniTurretServo = hwMap.get(ServoImplEx.class,"MiniTurretS");
+        OuttakeRailServo = hwMap.get(ServoImplEx.class,"OuttakeRailS");
+        OuttakeArmServo = hwMap.get(ServoImplEx.class, "OuttakeArmS");
         PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
         GripperTopServo = hwMap.get(ServoImplEx.class, "GripperTopS");
         GripperBottomServo = hwMap.get(ServoImplEx.class, "GripperBottomS");
@@ -275,87 +261,32 @@ public class OuttakeSubsystem {
         return (Math.abs(pitchTarget - pitchPosition) < PITCH_THRESHOLD_DISTANCE);
     }
 
-    public void armServoState(ArmServoState state) {
-        switch (state) {
-            case READY:
-                OuttakeArmServoRight.setPosition(ARM_READY_POS);
-                OuttakeArmServoLeft.setPosition(ARM_READY_POS);
-                break;
-            case UPRIGHT:
-                OuttakeArmServoRight.setPosition(ARM_UPRIGHT_POS);
-                OuttakeArmServoLeft.setPosition(ARM_UPRIGHT_POS);
-                break;
-            case SCORE_HALF_DOWN:
-                OuttakeArmServoRight.setPosition(ARM_SCORE_HALF_DOWN_POS);
-                OuttakeArmServoLeft.setPosition(ARM_SCORE_HALF_DOWN_POS);
-                break;
-            case SCORE_DOWN:
-                OuttakeArmServoRight.setPosition(ARM_SCORE_DOWN_POS);
-                OuttakeArmServoLeft.setPosition(ARM_SCORE_DOWN_POS);
-                break;
-            case SCORE_UP:
-                OuttakeArmServoRight.setPosition(ARM_SCORE_UP_POS);
-                OuttakeArmServoLeft.setPosition(ARM_SCORE_UP_POS);
-                break;
-            case SCORE_PURPLE:
-                OuttakeArmServoRight.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
-                OuttakeArmServoLeft.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
-                break;
-        }
+    public static double degreesToTicksMiniTurret(double degrees){
+        return MINI_TURRET_STRAIGHT_POS - degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
-    public void armServoProfileState(ArmServoState state) {
-        switch (state) {
-            case READY:
-                setArmTarget(ARM_READY_POS);
-                break;
-            case UPRIGHT:
-                setArmTarget(ARM_UPRIGHT_POS);
-                break;
-            case SCORE_HALF_DOWN:
-                setArmTarget(ARM_SCORE_HALF_DOWN_POS);
-                break;
-            case SCORE_DOWN:
-                setArmTarget(ARM_SCORE_DOWN_POS);
-                break;
-            case SCORE_UP:
-                setArmTarget(ARM_SCORE_UP_POS);
-                break;
-            case CALCULATE:
-                calculateArmProfile();
-                break;
-            default:
+    public double angleWrap(double radians) {
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
         }
-        // previous version calculated always
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+
+        // keep in mind that the result is in radians
+        return radians;
     }
 
-    public void armServoProfileState2(ArmServoState state, boolean update)
-    {
-        switch (state)
-        {
-            case READY:
-                if (update) setArmTarget(ARM_READY_POS);
-                else calculateArmProfile();
+    public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
+        switch (state) {
+            case STRAIGHT:
+                MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
-            case UPRIGHT:
-                if (update) setArmTarget(ARM_UPRIGHT_POS);
-                else calculateArmProfile();
-                break;
-            case SCORE_HALF_DOWN:
-                if (update) setArmTarget(ARM_SCORE_HALF_DOWN_POS);
-                else calculateArmProfile();
-                break;
-            case SCORE_DOWN:
-                if (update) setArmTarget(ARM_SCORE_DOWN_POS);
-                else calculateArmProfile();
-                break;
-            case SCORE_UP:
-                if (update) setArmTarget(ARM_SCORE_UP_POS);
-                else calculateArmProfile();
-                break;
-            case CALCULATE:
-                calculateArmProfile();
-                break;
-            default:
+        }
+    }
+
+    public void miniTurretPointToBackdrop(double robotDegrees){
+        if (Math.abs(robotDegrees) < 63){ // this is the max range of the miniturret as defined by the physical hardstops
+            MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
         }
     }
 
@@ -381,44 +312,49 @@ public class OuttakeSubsystem {
         // this should make the fine adjust not looptime dependent. can tune by adjusting iteration & move amount
     }
 
-    public static double degreesToTicksMiniTurret(double degrees){
-        return MINI_TURRET_STRAIGHT_POS - degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
-    }
-    public double angleWrap(double radians) {
-        while (radians > Math.PI) {
-            radians -= 2 * Math.PI;
-        }
-        while (radians < -Math.PI) {
-            radians += 2 * Math.PI;
-        }
-
-        // keep in mind that the result is in radians
-        return radians;
-    }
-
-    public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
+    public void armServoState(ArmServoState state) {
         switch (state) {
-            case STRAIGHT:
-                MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
-                break;
             case READY:
-                MiniTurretServo.setPosition(MINI_TURRET_READY_POS);
+                OuttakeArmServo.setPosition(ARM_READY_POS);
                 break;
-            case DIAGONAL_LEFT:
-                MiniTurretServo.setPosition(MINI_TURRET_LEFT_DIAGONAL_POS);
+            case SCORE:
+                OuttakeArmServo.setPosition(ARM_SCORE_POS);
                 break;
-            case DIAGONAL_RIGHT:
-                MiniTurretServo.setPosition(MINI_TURRET_RIGHT_DIAGONAL_POS);
-                break;
-            case POINT_TO_BACKDROP:
-                //removed this stupid shit tehe
+            case SCORE_PURPLE:
+                OuttakeArmServo.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
                 break;
         }
     }
+    public void armServoProfileState(ArmServoState state) {
+        switch (state) {
+            case READY:
+                setArmTarget(ARM_READY_POS);
+                break;
+            case SCORE:
+                setArmTarget(ARM_SCORE_POS);
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
+        }
+        // previous version calculated always
+    }
 
-    public void miniTurretPointToBackdrop(double robotDegrees){
-        if (Math.abs(robotDegrees) < 63){ // this is the max range of the miniturret as defined by the physical hardstops
-            MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
+    public void armServoProfileState2(ArmServoState state, boolean update) {
+        switch (state) {
+            case READY:
+                if (update) setArmTarget(ARM_READY_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE:
+                if (update) setArmTarget(ARM_SCORE_POS);
+                else calculateArmProfile();
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
         }
     }
 
@@ -526,8 +462,7 @@ public class OuttakeSubsystem {
         armProfile = new AsymmetricMotionProfile(armTarget ,armPos , profileArmConstraints);
         armProfile.calculate(armProfileTimer.time());
         double pos = armProfile.state.x;
-        OuttakeArmServoRight.setPosition(pos);
-        OuttakeArmServoLeft.setPosition(pos);
+        OuttakeArmServo.setPosition(pos);
     }
     public void setArmTarget(double armTarget)
     {

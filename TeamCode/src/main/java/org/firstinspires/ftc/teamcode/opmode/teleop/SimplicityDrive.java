@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.analysis.function.Max;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
@@ -19,9 +17,6 @@ import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-
-import android.graphics.Path;
-import android.provider.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -518,13 +513,13 @@ public class SimplicityDrive extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.2){ // && outtakeState == OuttakeState.READY
             if (gamepad1.dpad_up){
-                driveBase.droneState(DriveBase.DroneState.RELEASE);
+                driveBase.droneState(DriveBase.DroneServoState.RELEASE);
             }
             if (gamepad1.dpad_down && outtakeState == OuttakeState.READY){
                 outtakeState = OuttakeState.CLIMB_START;
                 sequenceTimer = GlobalTimer.milliseconds();
                 //intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
-                driveBase.droneState(DriveBase.DroneState.RELEASE);
+                driveBase.droneState(DriveBase.DroneServoState.RELEASE);
                 climbAdjustIntakeSlides = false;
             }
         }
