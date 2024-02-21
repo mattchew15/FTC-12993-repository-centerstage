@@ -35,6 +35,19 @@ public class Log
             e.printStackTrace();
         }
     }
+    public Log(String filename, boolean logTime) {
+        if (logTime) startTime = System.nanoTime();
+        this.logTime = logTime;
+        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME;
+        File directory = new File(directoryPath);
+        //noinspection ResultOfMethodCallIgnored
+        directory.mkdir();
+        try {
+            fileWriter = new FileWriter(directoryPath+"/"+filename+".csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public boolean isDisabled() {
         return disabled;
@@ -74,11 +87,11 @@ public class Log
             if (disabled) return;
             if (!line.equals("")) line += ",";
             line += data;
-            telemetry.addData("Data state: ", "Added");
+            if (telemetry != null) telemetry.addData("Data state: ", "Added");
         }
         catch (NullPointerException e)
         {
-            telemetry.addData("Data state: ","Not added");
+            if (telemetry != null) telemetry.addData("Data state: ","Not added");
         }
     }
     public void addData(Object data) {
@@ -98,11 +111,11 @@ public class Log
                 {
                     line += ",";
                 }
-                telemetry.addData("Data state: ", "Added");
+                if (telemetry != null) telemetry.addData("Data state: ", "Added");
             }
             catch (NullPointerException e)
             {
-                telemetry.addData("Data state: ","Not added");
+                if (telemetry != null) telemetry.addData("Data state: ","Not added");
             }
         }
     }
