@@ -15,11 +15,11 @@ public class OuttakeInverseKinematics {
         return heightEnd * Math.cos(bdAngle(robotAngle));
     }
 
-    public double slideEnd(double heightEnd, double robotAngle) {
+    public double pitchEnd(double heightEnd, double robotAngle) {
         return Math.atan2(h(heightEnd, robotAngle), distance + t(heightEnd, robotAngle));
     }
 
-    public double pitchEnd(double heightEnd, double robotAngle) {
+    public double slideEnd(double heightEnd, double robotAngle) {
         return Math.sqrt(Math.pow(h(heightEnd, robotAngle),2) + Math.pow(distance + t(heightEnd, robotAngle), 2));
     }
 
