@@ -28,7 +28,6 @@ public class DriveBase {  // no constructor for this class
     double PowerStrafe = 1.05;
 
     public static double DroneServoReleasePos = 0.43, DroneServoHoldPos = 0.212;
-    public static double ClimbServoReleasePos = 0.4, ClimbServoHoldPos = 0.7;
 
 
     public static double DrivebaseXKp = 0.22, DrivebaseXKi = 0.00, DrivebaseXKd = 0.018, DrivebaseXIntegralSumLimit = 10, DrivebaseXKf = 0;

@@ -186,7 +186,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
                 if (GlobalTimer.milliseconds() - sequenceTimer > 100){
-                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                     if (gamepad1.right_bumper) {
                         outtakeState = OuttakeState.INTAKE;
                     } else if (gamepad1.left_trigger > 0.2){
@@ -219,7 +219,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (false){ // 10 amps is assumed stalling - should tune
                     intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
                 }
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 setIntakeArmHeight();
 
                 if (intakeSubsystem.backColourSensorValue > 2500) { // need to tune colour sensor thresholds
@@ -234,7 +234,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE_EXTENDO:
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 setIntakeArmHeight();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 90) { // power draw reasons
                     intakeSubsystem.intakeSlideTo(intakeTarget, intakeSubsystem.intakeSlidePosition, 1);
@@ -274,7 +274,7 @@ public class SimplicityDrive extends LinearOpMode {
             case INTAKE_TO_TRANSFER:
                 liftPositionChange();
                 if (GlobalTimer.milliseconds() - sequenceTimer > 20){ // gives time for pixels to orientate
-                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 180) { // time for intake holder to close
                         if (GlobalTimer.milliseconds() - sequenceTimer > 350){
                             intakeSubsystem.intakeSpin(0.35); // helps chute arm go up
@@ -298,7 +298,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                 if ((GlobalTimer.milliseconds() - sequenceTimer > 600) || intakeSubsystem.intakeSlidePosition < 2 && intakeSubsystem.chuteDetectorLimitSwitchValue) { //((GlobalTimer.milliseconds() - sequenceTimer > 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || GlobalTimer.milliseconds() > 2000
-                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.OPEN);
+                    intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                     outtakeState = OuttakeState.TRANSFER_END;
                     sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                 }
@@ -337,8 +337,7 @@ public class SimplicityDrive extends LinearOpMode {
                 // if adjusting to low have the pitching preset go further in
 
                 if (GlobalTimer.milliseconds() - sequenceTimer > 20){ // makes transfer better?
-                    armAdjust(); // depends on the pitch the arm will go to position
-                }
+                    outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);              }
 
                outtakeSubsystem.liftTo(fineAdjustSlides.OffsetTargetPosition, outtakeSubsystem.liftPosition,1);
 
@@ -410,7 +409,7 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1);
                 intakeSubsystem.intakeSlideInternalPID(-10,1);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                 intakeSubsystem.intakeSpin(-0.3);
@@ -453,7 +452,7 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
 
                 if (gamepad1.left_bumper || gamepad2.left_bumper){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
@@ -469,10 +468,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
 
-            case CLIMB_START:  // idk what this case does
-                if (GlobalTimer.milliseconds() - sequenceTimer > 50){
-                    driveBase.climbState(DriveBase.ClimbState.RELEASE);
-                }
+            case CLIMB_START:
                 if (GlobalTimer.milliseconds() - sequenceTimer > 800){
                     outtakeSubsystem.pitchToInternalPID(UPRIGHT_PITCH_TICKS, 1);
                     intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
@@ -522,9 +518,6 @@ public class SimplicityDrive extends LinearOpMode {
                 driveBase.droneState(DriveBase.DroneServoState.RELEASE);
                 climbAdjustIntakeSlides = false;
             }
-        }
-        if (gamepad1.dpad_down){
-            outtakeSubsystem.pitchToInternalPID(SIXTY_DEGREE_TICKS,1);
         }
     }
 
@@ -601,16 +594,6 @@ public class SimplicityDrive extends LinearOpMode {
         }
     }
 
-    public void armAdjust(){
-        if (armTarget == 1){
-            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_DOWN);
-        } else if (armTarget == 2){
-            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_HALF_DOWN);
-        } else if (armTarget == 3){
-            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_UP);
-        }
-    }
-
     public void pivotAdjust(){
         if (gamepad2.left_trigger > 0.2) {
             if (pivotFlipToggle.ToggleMode){
@@ -643,16 +626,6 @@ public class SimplicityDrive extends LinearOpMode {
         }
     }
 
-    void miniTurretAdjust(){ // have a button on dpad to straighten turret at any time
-        if (miniTurretPositionToggle.CycleState == 1){
-            outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.DIAGONAL_LEFT);
-        } else if (miniTurretPositionToggle.CycleState == 2) {
-            outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
-        } else if (miniTurretPositionToggle.CycleState == 3) {
-            outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.DIAGONAL_RIGHT);
-        }
-    }
-
     public void extendOuttake(boolean MaxExtension){
         if (MaxExtension){
 
@@ -673,27 +646,9 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     boolean gamepad1RightTrigger(){
-
-        /*
-        if (gamepad1.right_trigger > GAMEPAD_TRIGGER_THRESHOLD){
-            return true;
-        } else {
-            return false;
-        }
-        */
-        // old version above if any problems happen, if works delete it
         return (gamepad1.right_trigger > GAMEPAD_TRIGGER_THRESHOLD);
     }
     boolean gamepad1LeftTrigger() {
-        /*
-        if (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD) {
-            return true;
-        } else {
-            return false;
-        }
-        */
-        // old version above if any problems happen, if works delete it
-
         return (gamepad1.left_trigger > GAMEPAD_TRIGGER_THRESHOLD);
     }
     boolean gamepad2RightTrigger(){
