@@ -57,6 +57,8 @@ public class OuttakeSubsystem {
             GRIPPER_TOP_GRIP_POS = 0.725,
             GRIPPER_BOTTOM_OPEN_POS = 0.25,
             GRIPPER_BOTTOM_GRIP_POS = 0.385;
+    public static double
+            PITCH_OVERCENTERED_POSITION;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
@@ -152,7 +154,6 @@ public class OuttakeSubsystem {
     public void hardwareSetup(){
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
-
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -274,6 +275,16 @@ public class OuttakeSubsystem {
 
         // keep in mind that the result is in radians
         return radians;
+    }
+
+    public static double degreesToTicksPitchServo(double degrees){
+        return degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+    }
+
+    public void outtakePitchServoKeepToPitch (double pitchAngle){
+        double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
+        // we dont have to worry about boundaries because the pitch has limits
+        OuttakePitchServo.setPosition(PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees));
     }
 
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE

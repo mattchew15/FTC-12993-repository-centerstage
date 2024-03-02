@@ -188,6 +188,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (gamepad2.dpad_down){
                     gamepad1.rumbleBlips(1);
                 }
+                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchPosition); //TODO do an angle conversion between these 2 things
             }
         }
     }
