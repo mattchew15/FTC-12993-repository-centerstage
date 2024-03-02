@@ -6,10 +6,10 @@ public class ToggleUpOrDown { // TODO: Optimize the shit out of this please
     public boolean ToggleDown;
 
     public int OffsetTargetPosition;
-    public int UpIncrement;
-    public int DownIncrement;
+    public double UpIncrement;
+    public double DownIncrement;
 
-    public ToggleUpOrDown(int upIncrement, int downIncrement, int targetPosition){
+    public ToggleUpOrDown(double upIncrement, double downIncrement, int targetPosition){
         this.UpIncrement = upIncrement;
         this.DownIncrement = downIncrement;
         this.OffsetTargetPosition = targetPosition;

@@ -159,5 +159,4 @@ public class Log
     {
         addData(new String[]{Arrays.toString(data)});
     }
-
 }

@@ -139,6 +139,7 @@ public class IntakeSubsystem {
         chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
 
         if (intakingState){ // pass in state
+
             frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.alpha();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);

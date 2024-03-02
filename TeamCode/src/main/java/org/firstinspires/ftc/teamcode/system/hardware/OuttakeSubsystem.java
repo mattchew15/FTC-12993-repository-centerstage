@@ -159,7 +159,7 @@ public class OuttakeSubsystem {
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
         pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
         liftPosition = LiftMotor.getCurrentPosition();
-        if (dropReadyState){
+        if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
     }
@@ -293,20 +293,24 @@ public class OuttakeSubsystem {
     public void outtakeRailState(OuttakeRailState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
             case CENTER:
-                OuttakeRailServo.setPosition(RAIL_CENTER_POS);
+                RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 break;
             case RIGHT:
-                OuttakeRailServo.setPosition(RAIL_RIGHT_POS);
+                RAIL_SERVO_POSITION = RAIL_RIGHT_POS;
                 break;
             case LEFT:
-                OuttakeRailServo.setPosition(RAIL_LEFT_POS);
+                RAIL_SERVO_POSITION = RAIL_LEFT_POS;
                 break;
         }
     }
 
-    public void fineAdjustRail(double fineAdjust, double timer){
+    public void setOuttakeRailServo(double position){
+        OuttakeRailServo.setPosition(position);
+    }
+
+    public void fineAdjustRail(double fineAdjust, double timer){ // this is for tinkos controls only
         if (timer - outtakeRailAdjustTimer > 15){ // only set the position every 15 ms, once achieved cache the timer value
-            OuttakeRailServo.setPosition(OuttakeRailServo.getPosition() + fineAdjust * 0.05); // increase amount per iteration
+            RAIL_SERVO_POSITION += fineAdjust * 0.05; // changes global variale at .05 per 15ms
             outtakeRailAdjustTimer = timer; // cache the value of the outtakerailadjust
         }
         // this should make the fine adjust not looptime dependent. can tune by adjusting iteration & move amount

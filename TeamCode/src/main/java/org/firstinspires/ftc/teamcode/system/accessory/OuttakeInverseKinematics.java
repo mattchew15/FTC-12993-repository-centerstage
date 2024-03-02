@@ -2,28 +2,32 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class OuttakeInverseKinematics {
     public double distance = 0;
+    public double robotAngle;
+    // heightStart/End = height on bd
 
-    public double bdAngle(double robotAngle) {
+    // these functions are all intermediate steps
+    public double bdAngle() {
         return Math.atan2(Math.sqrt(3) * Math.cos(robotAngle), 1);
     }
 
-    public double h(double heightEnd, double robotAngle) {
-        return heightEnd * Math.sin(bdAngle(robotAngle));
+    public double h(double heightEnd) {
+        return heightEnd * Math.sin(bdAngle());
     }
 
-    public double t(double heightEnd, double robotAngle) {
-        return heightEnd * Math.cos(bdAngle(robotAngle));
+    public double t(double heightEnd) {
+        return heightEnd * Math.cos(bdAngle());
+    }
+    // these functions are all intermediate steps
+
+    public double pitchEnd(double heightEnd) { // this should be in degrees
+        return Math.atan2(h(heightEnd), distance + t(heightEnd));
     }
 
-    public double pitchEnd(double heightEnd, double robotAngle) {
-        return Math.atan2(h(heightEnd, robotAngle), distance + t(heightEnd, robotAngle));
+    public double slideEnd(double heightEnd) {
+        return Math.sqrt(Math.pow(h(heightEnd),2) + Math.pow(distance + t(heightEnd), 2));
     }
 
-    public double slideEnd(double heightEnd, double robotAngle) {
-        return Math.sqrt(Math.pow(h(heightEnd, robotAngle),2) + Math.pow(distance + t(heightEnd, robotAngle), 2));
-    }
-
-    public double railEnd(double railStart, double heightEnd, double heightStart) {
-        return (railStart * heightEnd)/heightStart;
+    public double railEnd(double heightStart, double heightEnd, double railStart) { // rail start needs to be cached. Alternatively use servo.getposition into the parameter
+        return (heightEnd - heightStart) * Math.cos(bdAngle()) * Math.sin(robotAngle) + railStart;
     }
 }

@@ -25,10 +25,15 @@ public class Globals {
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
+
+            RAIL_SERVO_POSITION,
+            FINE_ADJUST_HEIGHT_INTERVAL = 5,
             A; // angle offset for autonmous
 
     public static int
             SIXTY_DEGREE_TICKS = 0,
+            PITCH_DEGREE_TICKS = 0,
+            PITCH_CLIMB_TICKS = -600,
             UPRIGHT_PITCH_TICKS = -300,
             PITCH_LOW_DEGREE_TICKS = 1000,
             PITCH_MID_DEGREE_TICKS = 400,
@@ -36,7 +41,7 @@ public class Globals {
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
 
-            LIFT_TICKS_FOR_MAX_EXTENSION = 620,
+            LIFT_TICKS_FOR_MAX_EXTENSION = 800,
 
             // Nats shit bro kinda L
             LIFT_HIGH_POSITION_TICKS = 600,
@@ -46,6 +51,11 @@ public class Globals {
             LIFT_MEDIUM_POSITION_PITCHING_TICKS = 580,
             LIFT_LOW_POSITION_PITCHING_TICKS = 690,
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
+
+            // Worlds constants
+            HIGH_BACKDROP_PRESET_INCHES = 34,
+            MID_BACKDROP_PRESET_INCHES = 16,
+            LOW_BACKDROP_PRESET_INCHES = 5,
 
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
