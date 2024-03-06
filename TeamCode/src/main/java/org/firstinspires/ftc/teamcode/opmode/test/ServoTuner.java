@@ -17,18 +17,18 @@ public class ServoTuner extends LinearOpMode {
     DriveBase driveBase = new DriveBase();
 
     public static double
-            DRONE_POS = 0,
-            INTAKE_ARM_POS = 0,
-            INTAKE_CHUTE_ARM_POS = 0,
-            INTAKE_CLIP_POS = 0,
-            INTAKE_PIXEL_HOLDER_POS = 0,
-            OUTTAKE_PITCH_POS = 0,
-            MINI_TURRET_POS = 0,
-            OUTTAKE_RAIL_POS = 0,
-            OUTTAKE_ARM_POS = 0,
-            PIVOT_POS = 0,
-            GRIPPER_TOP_POS = 0,
-            GRIPPER_BOTTOM_POS = 0;
+            DRONE_POS = 0.5,
+            INTAKE_ARM_POS = 0.5,
+            INTAKE_CHUTE_ARM_POS = 0.5,
+            INTAKE_CLIP_POS = 0.5,
+            INTAKE_PIXEL_HOLDER_POS = 0.5,
+            OUTTAKE_PITCH_POS = 0.5,
+            MINI_TURRET_POS = 0.5,
+            OUTTAKE_RAIL_POS = 0.5,
+            OUTTAKE_ARM_POS = 0.5,
+            PIVOT_POS = 0.5,
+            GRIPPER_TOP_POS = 0.5,
+            GRIPPER_BOTTOM_POS = 0.5;
 
     @Override
     public void runOpMode() {

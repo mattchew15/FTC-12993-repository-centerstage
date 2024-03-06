@@ -71,15 +71,15 @@ public class PIDMotorTest extends LinearOpMode {
                     outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(LIFT_HIGH_POSITION_TICKS, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftTo(20, outtakeSubsystem.liftPosition, 1);
                 } else if (gamepad1.y) {
-                    outtakeSubsystem.pitchToInternalPID(0,0.6);
+                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,0.6);
                 } else if (gamepad1.x){
                     outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,0.6);
                 }
 
                 else if (gamepad1.dpad_down){
-                    outtakeSubsystem.liftToInternalPID(-100,1);
+                    outtakeSubsystem.liftToInternalPID(-10,1);
                 }else if (gamepad1.dpad_up){
                     outtakeSubsystem.liftToInternalPID(0,1);
                 }
@@ -101,6 +101,14 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
                 telemetry.addData("IntakeMotor Current", intakeSubsystem.intakeCurrent);
                 telemetry.addData("IntakeChuteArmPosition", intakeSubsystem.intakeChuteArmPosition);
+                telemetry.addLine("");
+                telemetry.addData("LeftLimitSwitch", intakeSubsystem.leftArmLimitSwitchValue);
+                telemetry.addData("RightLimitSwitch", intakeSubsystem.rightArmLimitSwitchValue);
+                telemetry.addData("Chute Limit Switch", intakeSubsystem.chuteDetectorLimitSwitchValue);
+
+
+                // this is the pitch position servo kinda difficult
+                outtakeSubsystem.outtakePitchServoKeepToPitch(ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
 
                 //location.update();
                 telemetry.update();

@@ -67,7 +67,7 @@ public class OuttakeSubsystem {
     PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,PitchFeedforward);
 
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
-    final double LIFT_THRESHOLD_DISTANCE = 22;
+    final double LIFT_THRESHOLD_DISTANCE = 1;
 
     public int pitchTarget;
     public int liftTarget;
@@ -183,8 +183,8 @@ public class OuttakeSubsystem {
         PitchMotor.setPower(manualControlTurret * -0.4);
     }
 
-    public double liftTo(int rotations, double motorPosition, double maxSpeed){
-        liftTarget = rotations;
+    public double liftTo(int inches, double motorPosition, double maxSpeed){
+        liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         LiftMotor.setPower(output);
@@ -213,8 +213,8 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void liftToInternalPID(int rotations, double maxSpeed){
-        liftTarget = rotations;
+    public void liftToInternalPID(int inches, double maxSpeed){
+        liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setTargetPosition(liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotor.setPower(maxSpeed);
@@ -228,8 +228,8 @@ public class OuttakeSubsystem {
     }
 
      */
-    public void pitchToInternalPID(int rotations, double maxSpeed){
-        pitchTarget = rotations;
+    public void pitchToInternalPID(int degrees, double maxSpeed){
+        pitchTarget = (int)degreestoTicksPitchMotor(degrees);
         //telemetry.addData("lifttarget", liftTarget);
         PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -281,8 +281,9 @@ public class OuttakeSubsystem {
         return degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
-    public void outtakePitchServoKeepToPitch (double pitchAngle){
+    public void outtakePitchServoKeepToPitch (double pitchAngle){ // this assumes 0 is lowest pitch and 1 is higher pitch
         double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
+
         // we dont have to worry about boundaries because the pitch has limits
         OuttakePitchServo.setPosition(PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees));
     }

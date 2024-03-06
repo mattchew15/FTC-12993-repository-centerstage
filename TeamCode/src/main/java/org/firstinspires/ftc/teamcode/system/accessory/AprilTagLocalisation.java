@@ -2,22 +2,15 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class AprilTagLocalisation {
     public double cameraOffset = 0;
+    public double aprilTagX, aprilTagY, robotAngle;
 
-    public double distance(double x, double y) {
-        return Math.sqrt(Math.pow(x + cameraOffset, 2) + Math.pow(y, 2));
-    }
+    // these functions are all intermediate steps
+    public double distance() {return Math.sqrt(Math.pow(aprilTagX + cameraOffset, 2) + Math.pow(aprilTagY, 2));}
 
-    public double beta(double x, double y, double robotAngle) {
-        double alpha = Math.atan2(y, x + cameraOffset);
+    public double angle() {return robotAngle + Math.atan2(aprilTagY, aprilTagX + cameraOffset); }
+    // these functions are all intermediate steps
 
-        return robotAngle + alpha;
-    }
+    public double xPos() {return distance() * Math.cos(angle()); }
 
-    public double xPos(double x, double y, double robotAngle) {
-        return distance(x, y) * Math.cos(beta(x, y, robotAngle));
-    }
-
-    public double yPos(double x, double y, double robotAngle) {
-        return distance(x, y) * Math.sin(beta(x, y, robotAngle));
-    }
+    public double yPos() {return distance() * Math.sin(angle()); }
 }

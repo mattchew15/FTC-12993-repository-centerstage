@@ -21,8 +21,14 @@ public class Globals {
 
     // Pitch
     public static double
-            PITCH_TICKS_PER_REVOLUTION = 3895.9,
+            //PITCH_TICKS_PER_REVOLUTION = 3895.9,
+            //PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
+
+            TICKS_PER_BAREMOTOR = 7,
+
+            PITCH_TICKS_PER_REVOLUTION = 4096,
             PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
+
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
 
@@ -31,26 +37,25 @@ public class Globals {
             A; // angle offset for autonmous
 
     public static int
-            SIXTY_DEGREE_TICKS = 0,
-            PITCH_DEGREE_TICKS = 0,
-            PITCH_CLIMB_TICKS = -600,
-            UPRIGHT_PITCH_TICKS = -300,
-            PITCH_LOW_DEGREE_TICKS = 1000,
-            PITCH_MID_DEGREE_TICKS = 400,
+            PITCH_DEFAULT_DEGREE_TICKS = 36,
+            PITCH_CLIMB_TICKS = 65,
+            UPRIGHT_PITCH_TICKS = 56,
+            PITCH_LOW_DEGREE_TICKS = 22,
+            PITCH_MID_DEGREE_TICKS = 45,
 
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
 
-            LIFT_TICKS_FOR_MAX_EXTENSION = 800,
+            LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
 
             // Nats shit bro kinda L
-            LIFT_HIGH_POSITION_TICKS = 600,
-            LIFT_MEDIUM_POSITION_TICKS = 400,
-            LIFT_LOW_POSITION_TICKS = 70,
+            //LIFT_HIGH_POSITION_TICKS = 600,
+            //LIFT_MEDIUM_POSITION_TICKS = 400,
+            //LIFT_LOW_POSITION_TICKS = 70,
 
-            LIFT_MEDIUM_POSITION_PITCHING_TICKS = 580,
-            LIFT_LOW_POSITION_PITCHING_TICKS = 690,
-            LIFT_HITS_WHILE_PITCHING_THRESHOLD = 110,
+            //LIFT_MEDIUM_POSITION_PITCHING_TICKS = 580,
+            //LIFT_LOW_POSITION_PITCHING_TICKS = 690,
+            LIFT_HITS_WHILE_PITCHING_THRESHOLD = 3,
 
             // Worlds constants
             HIGH_BACKDROP_PRESET_INCHES = 34,
@@ -66,6 +71,15 @@ public class Globals {
 
     public static double ticksToDegreePitchMotor (double ticks){
         return ticks/PITCH_TICKS_PER_DEGREES;
+    }
+
+    public static double ticksToInchesSlidesMotor(double ticks){
+        return (1.33858*Math.PI/(TICKS_PER_BAREMOTOR*5)) * ticks; //34mm is the diameter of the reel
+    }
+
+    public static double inchesToTicksSlidesMotor (double inches){
+        return ((TICKS_PER_BAREMOTOR*5)/1.33858*Math.PI) * inches; //ticks per inches
+        // ratio is 60/12 = 5
     }
 
     // Inverse Kinematic Constants
