@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -358,7 +359,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     if(numCycles == 0 && GlobalTimer.milliseconds() - autoTimer > 530){
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                     }
-                     */
+
                     if (GlobalTimer.milliseconds() - autoTimer > 630){ // time for grippers to close
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
@@ -471,6 +472,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
 
 
 
+ */
 
 
 
