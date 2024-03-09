@@ -1,3 +1,5 @@
+/*
+
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
@@ -292,7 +294,8 @@ public class AutoSequences {
                 if (intakeSubsystem.pixelsInIntake()){
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderState.HOLDING);
                 }
-                 */
+
+
         if (GlobalTimer.milliseconds() - autoTimer > 100){
             if (numCycles == 1 || numCycles == 3) {
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
@@ -323,3 +326,6 @@ public class AutoSequences {
     }
 
 }
+
+
+ */

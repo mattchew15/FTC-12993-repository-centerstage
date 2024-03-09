@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.system.accessory.Log;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.accessory.TimedSupplier2;
-import org.firstinspires.ftc.teamcode.system.accessory.TimedSupplier3;
+//import org.firstinspires.ftc.teamcode.system.accessory.TimedSupplier3;
 
 @Autonomous(name="Bulking")
 public class BulkingTest extends LinearOpMode

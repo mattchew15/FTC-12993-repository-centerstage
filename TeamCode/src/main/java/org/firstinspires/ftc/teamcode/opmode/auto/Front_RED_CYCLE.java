@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -337,7 +338,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     if(numCycles == 0 && GlobalTimer.milliseconds() - autoTimer > 530){
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                     }
-                     */
+
                     if (GlobalTimer.milliseconds() - autoTimer > 630){ // time for grippers to close
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
@@ -554,5 +555,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
 
 
+
+ */
 
 
