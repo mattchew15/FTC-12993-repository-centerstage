@@ -4,17 +4,20 @@ import com.acmerobotics.dashboard.config.Config;
 import com.outoftheboxrobotics.photoncore.Photon;
 import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
+import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
+
+import java.util.List;
 
 @Photon
 @Config
@@ -62,6 +65,8 @@ public class IntakeSubsystemPhoton
     final double intakeSlidethresholdDistanceNewThreshold = 4;
     private double previousIntakeSlidePower;
     private double previousIntakeSpin;
+    private List<LynxModule> hubs;
+    private LynxModule expHub, chub;
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeSpinState {
@@ -126,25 +131,54 @@ public class IntakeSubsystemPhoton
         IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
         FrontLimitSwitch = hwMap.get(DigitalChannel.class, "FrontLimitSwitch");
         voltageSensor = hwMap.voltageSensor.iterator().next();
+
+        hubs = hwMap.getAll(LynxModule.class);
     }
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         intakeSpinState = IntakeSpinState.INTAKE;
+        setHubs();
+        chub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+
     }
 
     // handles all of the reads in this class
-    public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
+    public void intakeReads(boolean intakingState, boolean outtakeState){ // pass in the state that the colour sensors need to be read in to optimize loop times
+        // easier to clear both at the start ig
+        for (LynxModule hub: hubs)
+        {
+            hub.clearBulkCache();
+        }
+        // this reads are from the chub and should be done every loop
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         intakeChuteArmPosition = getIntakeChuteArmPos();
         frontLimitSwitchValue = !FrontLimitSwitch.getState();
+
         if (intakingState){ // pass in state
+            TimedSupplier<Integer> front = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
+            TimedSupplier<Double>  current = new TimedSupplier<>(()-> IntakeMotor.getCurrent(CurrentUnit.AMPS), 100);
+            intakeCurrent = current.get();
+
+
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.alpha();
             intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
             intakeVelocity = IntakeMotor.getVelocity();
             robotVoltage = voltageSensor.getVoltage();
         }
+        else
+        {
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+        }
+
+        if (outtakeState) // this should guarantee that if the outtake is trying to bulk read the expHub intake class won't set to off
+        {
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
     }
 
     public void intakeSlideMotorEncodersReset(){
@@ -282,6 +316,17 @@ public class IntakeSubsystemPhoton
             case OPEN:
                 IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_OPEN_POS);
                 break;
+        }
+    }
+
+    public void setHubs()
+    {
+        if(hubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(hubs.get(0).getSerialNumber())){
+             chub = hubs.get(0);
+             expHub = hubs.get(1);
+        }else{
+            chub = hubs.get(1);
+            expHub = hubs.get(0);
         }
     }
 }
