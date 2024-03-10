@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
-import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
+//import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
 
 import java.util.List;
 
@@ -157,9 +157,9 @@ public class IntakeSubsystemPhoton
         frontLimitSwitchValue = !FrontLimitSwitch.getState();
 
         if (intakingState){ // pass in state
-            TimedSupplier<Integer> front = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
-            TimedSupplier<Double>  current = new TimedSupplier<>(()-> IntakeMotor.getCurrent(CurrentUnit.AMPS), 100);
-            intakeCurrent = current.get();
+            //TimedSupplier<Integer> front = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
+            //TimedSupplier<Double>  current = new TimedSupplier<>(()-> IntakeMotor.getCurrent(CurrentUnit.AMPS), 100);
+            //intakeCurrent = current.get();
 
 
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 // Old imports, some not needed
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
@@ -13,6 +15,8 @@ import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+
+import java.util.List;
 
 
 @TeleOp(name = "PIDmotortest")
@@ -31,6 +35,7 @@ public class PIDMotorTest extends LinearOpMode {
     // random setup function that runs once start is pressed but before main loop
     // this setup should be put somewhere else
 
+    private List<LynxModule> hubs;
 
     @Override
     public void runOpMode() {
@@ -43,9 +48,16 @@ public class PIDMotorTest extends LinearOpMode {
          */
 
        // StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap); // idk what other parameters are needed here
+        hubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub: hubs)
+        {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            hub.clearBulkCache();
+        }
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
+
        // IntakeSlideMotor = hardwareMap.get(DcMotorEx.class, "IntakeSlideMotor");
         waitForStart();
         if (opModeIsActive()) {
@@ -61,8 +73,8 @@ public class PIDMotorTest extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                outtakeSubsystem.outtakeReads(true); // read at the start of the loop
-                intakeSubsystem.intakeReads(true);
+                outtakeSubsystem.outtakeReads(false); // read at the start of the loop
+                intakeSubsystem.intakeReads(false);
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
@@ -71,31 +83,52 @@ public class PIDMotorTest extends LinearOpMode {
                     outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(20, outtakeSubsystem.liftPosition, 1);
-                } else if (gamepad1.y) {
-                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,0.6);
+                    outtakeSubsystem.liftTo(6, outtakeSubsystem.liftPosition, 1);
+                }
+
+
+                //driveBase.motorDirectionTest(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_y,gamepad1.right_stick_x);
+
+                else if (gamepad1.y) {
+                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 } else if (gamepad1.x){
-                    outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,0.6);
+                    outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
                 }
 
                 else if (gamepad1.dpad_down){
-                    outtakeSubsystem.liftToInternalPID(-10,1);
+                    //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.pitchTo(30, outtakeSubsystem.pitchEncoderPosition, 1);
                 }else if (gamepad1.dpad_up){
-                    outtakeSubsystem.liftToInternalPID(0,1);
+                    //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
+                    outtakeSubsystem.pitchTo(36, outtakeSubsystem.pitchEncoderPosition, 1);
                 }
 
+                //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
+                /*
                 else if (gamepad1.dpad_left){
-                   intakeSubsystem.intakeSlideInternalPID(0,0.7);
+                   intakeSubsystem.intakeSlideInternalPID(0,1);
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(100,0.7);
+                    intakeSubsystem.intakeSlideInternalPID(100,1);
                 }
+
+                else if (gamepad1.dpad_up){
+                    intakeSubsystem.intakeSlideTo(0,intakeSubsystem.intakeSlidePosition,1);
+                }else if (gamepad1.dpad_down){
+                    intakeSubsystem.intakeSlideTo(900,intakeSubsystem.intakeSlidePosition,1);
+                }
+
+                 */
+
+
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
-                telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
-                telemetry.addData("PitchPosition", outtakeSubsystem.pitchPosition);
+                telemetry.addData("LiftPosition", ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
+                telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
+                telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
+                telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);
                 telemetry.addLine("");
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
@@ -108,13 +141,21 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 // this is the pitch position servo kinda difficult
-             //   outtakeSubsystem.outtakePitchServoKeepToPitch(ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
-
+                //outtakeSubsystem.outtakePitchServoKeepToPitch(ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
                 //location.update();
                 telemetry.update();
                 //clears the cache at the end of the loop
-                // PhotonCore.CONTROL_HUB.clearBulkCache();
+                // PhotonCore.CONTROL_HUB.clearBulkCache()
+                clearCache();
             }
+        }
+    }
+
+    public void clearCache()
+    {
+        for (LynxModule hub: hubs)
+        {
+            hub.clearBulkCache();
         }
     }
 

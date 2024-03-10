@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -21,6 +23,7 @@ public class DriveBase {  // no constructor for this class
 
     public ServoImplEx DroneServo;
 
+    private double previousFrontLeftPower, previousFrontRightPower, previousBackLeftPower, previousBackRightPower;
     //variable for the drivebase speed toggle;
     boolean PowerToggled;
     double PowerBase = 1;
@@ -86,24 +89,35 @@ public class DriveBase {  // no constructor for this class
         double backRightPower = (-LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
 
         // just comment this out if you don't like the drive...
+        /*
         frontLeftPower = Math.pow(frontLeftPower, powerCoefficient);
         backLeftPower = Math.pow(backLeftPower, powerCoefficient);
         frontRightPower = Math.pow(frontRightPower, powerCoefficient);
         backLeftPower = Math.pow(backLeftPower, powerCoefficient);
 
+         */
+
+
+        previousFrontLeftPower = motorCaching(frontLeftPower, previousFrontLeftPower, 0.005, FL);
+        previousFrontRightPower = motorCaching(frontRightPower, previousFrontRightPower, 0.005, FR);
+        previousBackLeftPower = motorCaching(backLeftPower, previousBackLeftPower, 0.005, BL);
+        previousBackRightPower = motorCaching(backRightPower, previousBackRightPower, 0.005, BR);
+
+        /*
         FL.setPower(frontLeftPower);
         BL.setPower(backLeftPower);
         FR.setPower(frontRightPower);
         BR.setPower(backRightPower);
+         */
     }
 
 
 
-    public void motorDirectionTest(double a, double b, double c, double d){
+    public void motorDirectionTest(double a, double b, double x, double y){
         FL.setPower(a);
         BL.setPower(b);
-        FR.setPower(c);
-        BR.setPower(d);
+        FR.setPower(x);
+        BR.setPower(y);
     }
     /*
     public int getMotorPosition(){

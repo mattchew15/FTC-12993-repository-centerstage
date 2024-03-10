@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -33,6 +34,9 @@ public class OuttakeSubsystem {
             GripperTopServo,
             GripperBottomServo;
 
+    public AnalogInput
+            PitchEncoder;
+
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double MINI_TURRET_STRAIGHT_POS = 0.49;
@@ -41,9 +45,9 @@ public class OuttakeSubsystem {
             RAIL_RIGHT_POS = 0.95,
             RAIL_LEFT_POS = 0.05;
     public static double
-            ARM_READY_POS = 0.99,
-            ARM_SCORE_POS = 0.51,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.05;
+            ARM_READY_POS = 0.23,
+            ARM_SCORE_POS = 0.85,
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.86;
     public static double
             PIVOT_READY_POS = 0.507,
             PIVOT_DIAGONAL_LEFT_POS = 0.627,
@@ -60,11 +64,13 @@ public class OuttakeSubsystem {
     public static double
             PITCH_OVERCENTERED_POSITION;
 
-    public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00006, LiftIntegralSumLimit = 10, LiftKf = 0;
-    public static double PitchKp = 0.007, PitchKi = 0.000, PitchKd = 0.0002, PitchIntegralSumLimit = 1, PitchFeedforward = 0.3;
+    public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
+    public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
+  //public static double PitchKpExternal = 0.007, PitchKiExternal = 0.000, PitchKdExternal = 0.0002, PitchIntegralSumLimitExternal = 1, PitchFeedforwardExternal = 0.3;
+
 
     PID liftPID = new PID(LiftKp,LiftKi,LiftKd,LiftIntegralSumLimit,LiftKf);
-    PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,PitchFeedforward);
+    PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
 
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
     final double LIFT_THRESHOLD_DISTANCE = 1;
@@ -76,6 +82,8 @@ public class OuttakeSubsystem {
     public double liftPosition;
     public double outtakeDistanceSensorValue;
     public double outtakeRailAdjustTimer;
+    public double pitchEncoderPosition;
+    public double pitchTicksInitialOffset;
 
     // The profile stuff
     public double kPos = 0.0001, kVel = 0.0001;
@@ -94,6 +102,7 @@ public class OuttakeSubsystem {
     private ProfileConstraints profileArmConstraints = new ProfileConstraints(armVelConstrain, armAccelConstrain, armDecelConstrain);
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
+    private double prevLiftOutput;
 
 
     public enum MiniTurretState {
@@ -149,6 +158,7 @@ public class OuttakeSubsystem {
         GripperTopServo = hwMap.get(ServoImplEx.class, "GripperTopS");
         GripperBottomServo = hwMap.get(ServoImplEx.class, "GripperBottomS");
         OuttakeDistanceSensor = hwMap.get(DistanceSensor.class, "OuttakeDistanceSensor");
+        PitchEncoder = hwMap.get(AnalogInput.class, "PitchEncoder");
     }
 
     public void hardwareSetup(){
@@ -157,12 +167,26 @@ public class OuttakeSubsystem {
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void cacheInitialPitchValue(){
+        pitchEncoderPosition = (angleWrapDegrees(getPitchEncoderPos()) *0.389921)+54.4; // offset and stuff covered here
+        pitchTicksInitialOffset = pitchEncoderPosition - PitchMotor.getCurrentPosition();
+    }
+
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
-        pitchPosition = PitchMotor.getCurrentPosition(); // only reads in the whole class
-        liftPosition = LiftMotor.getCurrentPosition();
+        double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
+        liftPosition = -LiftMotor.getCurrentPosition();
+        pitchEncoderPosition = (angleWrapDegrees(rawPitchEncoderPosition) *0.389921)+54.4; // offset and stuff covered here
+
+        pitchPosition = pitchTicksInitialOffset + PitchMotor.getCurrentPosition();
+
+
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
+    }
+
+    public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
+        return PitchEncoder.getVoltage() / 3.3 * 360;
     }
 
     public void encodersReset(){
@@ -187,7 +211,8 @@ public class OuttakeSubsystem {
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        LiftMotor.setPower(output);
+        //LiftMotor.setPower(output);
+        prevLiftOutput = motorCaching(output, prevLiftOutput, 0.005, LiftMotor);
         return output;
     }
 
@@ -219,15 +244,15 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotor.setPower(maxSpeed);
     }
-    /*
+
     public void pitchTo(int targetRotations, double motorPosition, double maxSpeed){
         pitchTarget = targetRotations;
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        PitchMotor.setPower(output);
+        PitchMotor.setPower(-output);
     }
 
-     */
+
     public void pitchToInternalPID(int degrees, double maxSpeed){
         pitchTarget = (int)degreestoTicksPitchMotor(degrees);
         //telemetry.addData("lifttarget", liftTarget);
@@ -236,27 +261,13 @@ public class OuttakeSubsystem {
         PitchMotor.setPower(maxSpeed);
     }
 
-    //public boolean liftTargetReachedOld(){
-    //    if (liftPosition > (liftTarget - LIFT_THRESHOLD_DISTANCE) && liftPosition < (liftTarget+ LIFT_THRESHOLD_DISTANCE)){ //LIFT_THRESHOLD_DISTANCE, simplify with Math.abs
-    //        return true;
-    //    }
-    //    else{
-    //        return false;
-    //    }
-    //}
+
     public boolean liftTargetReached() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(liftTarget - liftPosition) < LIFT_THRESHOLD_DISTANCE);
     }
 
-    //public boolean pitchTargetReachedOld(){
-    //    if (pitchPosition < (pitchTarget + PITCH_THRESHOLD_DISTANCE) && pitchPosition > (pitchTarget- PITCH_THRESHOLD_DISTANCE)){
-    //        return true;
-    //    }
-    //    else{
-    //        return false;
-    //    }
-    //}
+
     public boolean pitchTargetReached() // Simple version than the above one, should improve loop times
     {
         return (Math.abs(pitchTarget - pitchPosition) < PITCH_THRESHOLD_DISTANCE);
@@ -283,7 +294,6 @@ public class OuttakeSubsystem {
 
     public void outtakePitchServoKeepToPitch (double pitchAngle){ // this assumes 0 is lowest pitch and 1 is higher pitch
         double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
-
         // we dont have to worry about boundaries because the pitch has limits
         OuttakePitchServo.setPosition(PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees));
     }
@@ -341,38 +351,7 @@ public class OuttakeSubsystem {
                 break;
         }
     }
-    public void armServoProfileState(ArmServoState state) {
-        switch (state) {
-            case READY:
-                setArmTarget(ARM_READY_POS);
-                break;
-            case SCORE:
-                setArmTarget(ARM_SCORE_POS);
-                break;
-            case CALCULATE:
-                calculateArmProfile();
-                break;
-            default:
-        }
-        // previous version calculated always
-    }
 
-    public void armServoProfileState2(ArmServoState state, boolean update) {
-        switch (state) {
-            case READY:
-                if (update) setArmTarget(ARM_READY_POS);
-                else calculateArmProfile();
-                break;
-            case SCORE:
-                if (update) setArmTarget(ARM_SCORE_POS);
-                else calculateArmProfile();
-                break;
-            case CALCULATE:
-                calculateArmProfile();
-                break;
-            default:
-        }
-    }
 
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out
         switch (state) {
@@ -418,6 +397,24 @@ public class OuttakeSubsystem {
                 break;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // below is profile stuff
     public void rawLift(double pow)
     {
         // The manual control lift is weighted this is different.
@@ -495,6 +492,41 @@ public class OuttakeSubsystem {
     {
         return armPos;
     }
+
+
+    public void armServoProfileState(ArmServoState state) {
+        switch (state) {
+            case READY:
+                setArmTarget(ARM_READY_POS);
+                break;
+            case SCORE:
+                setArmTarget(ARM_SCORE_POS);
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
+        }
+        // previous version calculated always
+    }
+
+    public void armServoProfileState2(ArmServoState state, boolean update) {
+        switch (state) {
+            case READY:
+                if (update) setArmTarget(ARM_READY_POS);
+                else calculateArmProfile();
+                break;
+            case SCORE:
+                if (update) setArmTarget(ARM_SCORE_POS);
+                else calculateArmProfile();
+                break;
+            case CALCULATE:
+                calculateArmProfile();
+                break;
+            default:
+        }
+    }
+
 
 
 }

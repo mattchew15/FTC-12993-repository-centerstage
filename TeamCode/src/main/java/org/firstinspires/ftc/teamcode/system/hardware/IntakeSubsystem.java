@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -55,6 +58,7 @@ public class IntakeSubsystem {
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
+    private double previousSpeedDirection, previousSlideMotor;
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeSpinState {
@@ -182,21 +186,24 @@ public class IntakeSubsystem {
 
 
     public void intakeSpin(double speedDirection){
-        IntakeMotor.setPower(speedDirection);
+        //IntakeMotor.setPower(speedDirection);
+        previousSpeedDirection = motorCaching(speedDirection, previousSpeedDirection, EPSILON_DELTA, IntakeMotor);
     }
 
     public void intakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
         intakeSlideTarget = targetRotations;
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        IntakeSlideMotor.setPower(-output);
+        previousSpeedDirection = motorCaching(-output, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        //IntakeSlideMotor.setPower(-output);
     }
 
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        IntakeSlideMotor.setPower(maxSpeed);
+        previousSpeedDirection = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        //IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
         //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
@@ -210,7 +217,8 @@ public class IntakeSubsystem {
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
+        previousSpeedDirection = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
     public double intakeSlideError(){
