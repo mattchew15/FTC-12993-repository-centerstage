@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 // Old imports, some not needed
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,6 +23,7 @@ import java.util.List;
 
 
 @TeleOp(name = "PIDmotortest")
+@Config
 public class PIDMotorTest extends LinearOpMode {
 
 
