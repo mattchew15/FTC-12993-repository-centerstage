@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 // Old imports, some not needed
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,11 +59,12 @@ public class PIDMotorTest extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
+        FtcDashboard dashboard = FtcDashboard.getInstance();
 
        // IntakeSlideMotor = hardwareMap.get(DcMotorEx.class, "IntakeSlideMotor");
         waitForStart();
         if (opModeIsActive()) {
-
+                telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
                 GlobalTimer = new ElapsedTime(System.nanoTime());
                 GlobalTimer.reset();
                // intakeSubsystem.intakeHardwareSetup();
@@ -138,6 +141,10 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addData("LeftLimitSwitch", intakeSubsystem.leftArmLimitSwitchValue);
                 telemetry.addData("RightLimitSwitch", intakeSubsystem.rightArmLimitSwitchValue);
                 telemetry.addData("Chute Limit Switch", intakeSubsystem.chuteDetectorLimitSwitchValue);
+
+                telemetry.addData("PID error", outtakeSubsystem.pitchPID.returnError());
+                telemetry.addData("PID current pos", outtakeSubsystem.pitchPID.getState());
+                telemetry.addData("PID target", outtakeSubsystem.pitchPID.getTarget());
 
 
                 // this is the pitch position servo kinda difficult
