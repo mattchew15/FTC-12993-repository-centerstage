@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
@@ -70,7 +71,7 @@ public class OuttakeSubsystem {
 
 
     PID liftPID = new PID(LiftKp,LiftKi,LiftKd,LiftIntegralSumLimit,LiftKf);
-    PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
+    public PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
 
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
     final double LIFT_THRESHOLD_DISTANCE = 1;
@@ -82,8 +83,11 @@ public class OuttakeSubsystem {
     public double liftPosition;
     public double outtakeDistanceSensorValue;
     public double outtakeRailAdjustTimer;
+    public double outtakeLiftAdjustTimer;
     public double pitchEncoderPosition;
     public double pitchTicksInitialOffset;
+
+    private OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     // The profile stuff
     public double kPos = 0.0001, kVel = 0.0001;
@@ -215,6 +219,18 @@ public class OuttakeSubsystem {
         prevLiftOutput = motorCaching(output, prevLiftOutput, 0.005, LiftMotor);
         return output;
     }
+    public void fineAdjustLift(double inches, double timer)
+    {
+        if (timer - outtakeLiftAdjustTimer > 20)
+        {
+            double newValue = ticksToInchesSlidesMotor(liftTarget) + inches;
+            liftTarget = (int) ticksToInchesSlidesMotor(outtakeInverseKinematics.slideEnd(newValue));
+            //liftTarget = Math.min(liftTarget, LIFT_INCHES_FOR_MAX_EXTENSION);
+            liftToInternalPIDTicks(liftTarget, 1);
+            pitchToInternalPID((int) outtakeInverseKinematics.pitchEnd(newValue), 1);
+        }
+
+    }
 
 
     public void resetOuttake() {
@@ -240,6 +256,13 @@ public class OuttakeSubsystem {
 
     public void liftToInternalPID(int inches, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
+        LiftMotor.setTargetPosition(liftTarget);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LiftMotor.setPower(maxSpeed);
+    }
+    public void liftToInternalPIDTicks(int target, double maxSpeed)
+    {
+        liftTarget = target;
         LiftMotor.setTargetPosition(liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotor.setPower(maxSpeed);
