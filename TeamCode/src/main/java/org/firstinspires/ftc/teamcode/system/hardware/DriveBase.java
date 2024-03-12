@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -70,7 +71,7 @@ public class DriveBase {  // no constructor for this class
 
         //reverse correct motors
         //FR.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.REVERSE); //DcMotorSimple class?
+        //FL.setDirection(DcMotorSimple.Direction.REVERSE); //DcMotorSimple class?
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         //BR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -98,10 +99,10 @@ public class DriveBase {  // no constructor for this class
          */
 
 
-        previousFrontLeftPower = motorCaching(frontLeftPower, previousFrontLeftPower, 0.005, FL);
-        previousFrontRightPower = motorCaching(frontRightPower, previousFrontRightPower, 0.005, FR);
-        previousBackLeftPower = motorCaching(backLeftPower, previousBackLeftPower, 0.005, BL);
-        previousBackRightPower = motorCaching(backRightPower, previousBackRightPower, 0.005, BR);
+        previousFrontLeftPower = motorCaching(frontLeftPower, previousFrontLeftPower, EPSILON_DELTA, FL);
+        previousFrontRightPower = motorCaching(frontRightPower, previousFrontRightPower, EPSILON_DELTA, FR);
+        previousBackLeftPower = motorCaching(backLeftPower, previousBackLeftPower, EPSILON_DELTA, BL);
+        previousBackRightPower = motorCaching(backRightPower, previousBackRightPower, EPSILON_DELTA, BR);
 
         /*
         FL.setPower(frontLeftPower);
