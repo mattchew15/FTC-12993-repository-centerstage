@@ -6,7 +6,9 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCachin
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -40,15 +42,15 @@ public class IntakeSubsystem {
     VoltageSensor voltageSensor;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.479,
-            INTAKE_ARM_VERY_TOP_POS = 0.481,
-            INTAKE_ARM_FOUR_POS = 0.477,
-            INTAKE_ARM_MIDDLE_POS = 0.425,
-            INTAKE_ARM_BASE_POS = 0.37;
+            INTAKE_ARM_TOP_POS = 0.37,
+            INTAKE_ARM_VERY_TOP_POS = 0.35,
+            INTAKE_ARM_FOUR_POS = 0.4,
+            INTAKE_ARM_MIDDLE_POS = 0.5,
+            INTAKE_ARM_BASE_POS = 0.65;
     public static double
-            INTAKE_CHUTE_ARM_READY_POS = 0.15,
-            INTAKE_CHUTE_ARM_HALFUP_POS = 0.33,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.22;
+            INTAKE_CHUTE_ARM_READY_POS = 0.72,
+            INTAKE_CHUTE_ARM_HALFUP_POS = 0.3,
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.231;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.66,
             INTAKE_CLIP_OPEN_POS = 0.45;
@@ -131,6 +133,7 @@ public class IntakeSubsystem {
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSpinState = IntakeSpinState.INTAKE;
     }
 
@@ -157,7 +160,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 350) && (backColourSensorValue > 2500); // should work
+        return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
     }
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
@@ -187,6 +190,7 @@ public class IntakeSubsystem {
 
     public void intakeSpin(double speedDirection){
         //IntakeMotor.setPower(speedDirection);
+        //IntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         previousSpeedDirection = motorCaching(speedDirection, previousSpeedDirection, EPSILON_DELTA, IntakeMotor);
     }
 
@@ -194,7 +198,7 @@ public class IntakeSubsystem {
         intakeSlideTarget = targetRotations;
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        previousSpeedDirection = motorCaching(-output, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        previousSlideMotor = motorCaching(-output, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(-output);
     }
 
@@ -202,7 +206,7 @@ public class IntakeSubsystem {
         intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        previousSpeedDirection = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
@@ -217,7 +221,7 @@ public class IntakeSubsystem {
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        previousSpeedDirection = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 

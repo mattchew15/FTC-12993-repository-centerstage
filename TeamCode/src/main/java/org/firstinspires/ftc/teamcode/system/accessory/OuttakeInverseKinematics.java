@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 public class OuttakeInverseKinematics {
     public double distance = 25;
     public final double offset = 3;
+    public final double slideLength = 12;
     public double robotAngle;
     // heightStart/End is vertical height of outtake
 
@@ -25,12 +26,7 @@ public class OuttakeInverseKinematics {
     // this needs to be in angles
     public double pitchEnd(double heightEnd) { return Math.atan2(heightEnd, L(heightEnd)); }
 
-    public double slideEnd(double heightEnd) {
-        //return Math.sqrt(Math.pow(heightEnd,2) + Math.pow(L(heightEnd), 2));
-        //TODO: account for the starter
-
-        return Math.hypot(heightEnd, L(heightEnd));
-    }
+    public double slideEnd(double heightEnd) {return Math.hypot(heightEnd, L(heightEnd)) - slideLength;}
 
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
     public double railEnd(double heightStart, double heightEnd, double railStart) {return c(heightStart, heightEnd) * Math.sin(robotAngle) + railStart; }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.ticksToInchesSlidesMotor;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
@@ -40,30 +42,30 @@ public class OuttakeSubsystem {
 
     public DistanceSensor OuttakeDistanceSensor;
 
-    public static double MINI_TURRET_STRAIGHT_POS = 0.49;
+    public static double MINI_TURRET_STRAIGHT_POS = 0.5;
     public static double
-            RAIL_CENTER_POS = 0.5,
-            RAIL_RIGHT_POS = 0.95,
-            RAIL_LEFT_POS = 0.05;
+            RAIL_CENTER_POS = 0.49,
+            RAIL_RIGHT_POS = 0,
+            RAIL_LEFT_POS = 1;
     public static double
-            ARM_READY_POS = 0.23,
+            ARM_READY_POS = 0.235,
             ARM_SCORE_POS = 0.85,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.86;
     public static double
-            PIVOT_READY_POS = 0.507,
-            PIVOT_DIAGONAL_LEFT_POS = 0.627,
-            PIVOT_DIAGONAL_RIGHT_POS = 0.369,
-            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.068,
-            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.928,
-            PIVOT_SIDEWAYS_LEFT_POS = 0.778,
-            PIVOT_SIDEWAYS_RIGHT_POS = 0.22;
+            PIVOT_READY_POS = 0.489,
+            PIVOT_DIAGONAL_LEFT_POS = 0.334,
+            PIVOT_DIAGONAL_RIGHT_POS = 0.634,
+            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.87,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.06,
+            PIVOT_SIDEWAYS_LEFT_POS = 0.205,
+            PIVOT_SIDEWAYS_RIGHT_POS = 0.759;
     public static double
-            GRIPPER_TOP_OPEN_POS = 0.88,
-            GRIPPER_TOP_GRIP_POS = 0.725,
-            GRIPPER_BOTTOM_OPEN_POS = 0.25,
-            GRIPPER_BOTTOM_GRIP_POS = 0.385;
+            GRIPPER_TOP_OPEN_POS = 0.24,
+            GRIPPER_TOP_GRIP_POS = 0.5,
+            GRIPPER_BOTTOM_OPEN_POS = 0.73,
+            GRIPPER_BOTTOM_GRIP_POS = 0.5;
     public static double
-            PITCH_OVERCENTERED_POSITION;
+            PITCH_OVERCENTERED_POSITION = 0.12;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
@@ -86,6 +88,8 @@ public class OuttakeSubsystem {
     public double outtakeLiftAdjustTimer;
     public double pitchEncoderPosition;
     public double pitchTicksInitialOffset;
+    public double initialPitchDegrees;
+    public double servoPositionForOverCentered;
 
     private OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
@@ -107,6 +111,7 @@ public class OuttakeSubsystem {
     private AsymmetricMotionProfile armProfile;
     private ElapsedTime armProfileTimer = new ElapsedTime();
     private double prevLiftOutput;
+    private double prevPitchOutput;
 
 
     public enum MiniTurretState {
@@ -169,19 +174,19 @@ public class OuttakeSubsystem {
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+       // LiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void cacheInitialPitchValue(){
-        pitchEncoderPosition = (angleWrapDegrees(getPitchEncoderPos()) *0.389921)+54.4; // offset and stuff covered here
-        pitchTicksInitialOffset = pitchEncoderPosition - PitchMotor.getCurrentPosition();
+        initialPitchDegrees = (angleWrapDegrees(getPitchEncoderPos()) *0.389921)+54.4; // offset and stuff covered here
+        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
         double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
-        liftPosition = -LiftMotor.getCurrentPosition();
-        pitchEncoderPosition = (angleWrapDegrees(rawPitchEncoderPosition) *0.389921)+54.4; // offset and stuff covered here
-
-        pitchPosition = pitchTicksInitialOffset + PitchMotor.getCurrentPosition();
+        liftPosition =  ticksToInchesSlidesMotor(-LiftMotor.getCurrentPosition());
+        pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+1; // offset and stuff covered here
+        //pitchPosition = pitchTicksInitialOffset + -PitchMotor.getCurrentPosition();
 
 
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
@@ -190,7 +195,7 @@ public class OuttakeSubsystem {
     }
 
     public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
-        return PitchEncoder.getVoltage() / 3.3 * 360;
+        return PitchEncoder.getVoltage() / 3.15 * 360;
     }
 
     public void encodersReset(){
@@ -203,21 +208,24 @@ public class OuttakeSubsystem {
 
     public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        LiftMotor.setPower(manualControlLift * -1);
+        prevLiftOutput = motorCaching(-manualControlLift, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+        // LiftMotor.setPower(manualControlLift * -1);
+
     }
 
     public void pitchMotorRawControl(double manualControlTurret){
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        PitchMotor.setPower(manualControlTurret * -0.4);
+        prevPitchOutput = motorCaching(manualControlTurret * -0.4, prevPitchOutput, EPSILON_DELTA, PitchMotor);
+        //PitchMotor.setPower(manualControlTurret * -0.4);
     }
 
-    public double liftTo(int inches, double motorPosition, double maxSpeed){
+    public void liftTo(int inches, double motorPosition, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        //LiftMotor.setPower(output);
-        prevLiftOutput = motorCaching(output, prevLiftOutput, 0.005, LiftMotor);
-        return output;
+        LiftMotor.setPower(-output);
+        //prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+
     }
     public void fineAdjustLift(double inches, double timer)
     {
@@ -257,7 +265,7 @@ public class OuttakeSubsystem {
 
     public void liftToInternalPID(int inches, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
-        LiftMotor.setTargetPosition(liftTarget);
+        LiftMotor.setTargetPosition(-liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotor.setPower(maxSpeed);
     }
@@ -266,23 +274,26 @@ public class OuttakeSubsystem {
         liftTarget = target;
         LiftMotor.setTargetPosition(liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
         LiftMotor.setPower(maxSpeed);
     }
 
-    public void pitchTo(int targetRotations, double motorPosition, double maxSpeed){
-        pitchTarget = targetRotations;
+    public void pitchTo(int targetDegrees, double motorPosition, double maxSpeed){
+        pitchTarget = targetDegrees;
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double output = pitchPID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
-        PitchMotor.setPower(-output);
+        double output = pitchPID.update(targetDegrees,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
+        prevPitchOutput = motorCaching(-output, prevPitchOutput, EPSILON_DELTA, PitchMotor);
+        //PitchMotor.setPower(-output)
     }
 
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
-        pitchTarget = (int)degreestoTicksPitchMotor(degrees);
-        //telemetry.addData("lifttarget", liftTarget);
+
+        pitchTarget = (int)degreestoTicksPitchMotor(initialPitchDegrees-degrees);
         PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        PitchMotor.setPower(maxSpeed);
+        prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
+        //PitchMotor.setPower(maxSpeed);
     }
 
 
@@ -316,10 +327,18 @@ public class OuttakeSubsystem {
         return degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
-    public void outtakePitchServoKeepToPitch (double pitchAngle){ // this assumes 0 is lowest pitch and 1 is higher pitch
+    public void outtakePitchServoKeepToPitch (double pitchAngle, Telemetry telemtry){ // this assumes 0 is lowest pitch and 1 is higher pitch
         double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
         // we dont have to worry about boundaries because the pitch has limits
-        OuttakePitchServo.setPosition(PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees));
+        double servoPosition = PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees);
+
+        if (servoPosition > 0.15){
+            servoPositionForOverCentered = servoPosition;
+        } else {
+            servoPositionForOverCentered = 0.15;
+        }
+        OuttakePitchServo.setPosition(servoPositionForOverCentered);
+        telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
     }
 
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
@@ -356,7 +375,7 @@ public class OuttakeSubsystem {
 
     public void fineAdjustRail(double fineAdjust, double timer){ // this is for tinkos controls only
         if (timer - outtakeRailAdjustTimer > 15){ // only set the position every 15 ms, once achieved cache the timer value
-            RAIL_SERVO_POSITION += fineAdjust * 0.05; // changes global variale at .05 per 15ms
+            RAIL_SERVO_POSITION += fineAdjust * 0.03; // changes global variale at .05 per 15ms
             outtakeRailAdjustTimer = timer; // cache the value of the outtakerailadjust
         }
         // this should make the fine adjust not looptime dependent. can tune by adjusting iteration & move amount
@@ -443,7 +462,8 @@ public class OuttakeSubsystem {
     {
         // The manual control lift is weighted this is different.
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // not a necessary write
-        LiftMotor.setPower(pow);
+        prevLiftOutput = motorCaching(pow, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+        //LiftMotor.setPower(pow);
     }
     public void profileLiftSetUp()
     {

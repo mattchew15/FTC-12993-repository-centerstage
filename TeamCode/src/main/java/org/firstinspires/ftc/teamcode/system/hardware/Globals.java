@@ -35,7 +35,7 @@ public class Globals {
             TICKS_PER_BAREMOTOR = 28,
 
             PITCH_TICKS_PER_REVOLUTION = 4096,
-            PITCH_TICKS_PER_DEGREES = PITCH_TICKS_PER_REVOLUTION / 360,
+            PITCH_TICKS_PER_DEGREES = (PITCH_TICKS_PER_REVOLUTION / 0.8) / 360,
 
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
@@ -67,9 +67,9 @@ public class Globals {
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 3,
 
             // Worlds constants
-            HIGH_BACKDROP_PRESET_INCHES = 34,
+            HIGH_BACKDROP_PRESET_INCHES = 26,
             MID_BACKDROP_PRESET_INCHES = 16,
-            LOW_BACKDROP_PRESET_INCHES = 5,
+            LOW_BACKDROP_PRESET_INCHES = 9,
 
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;

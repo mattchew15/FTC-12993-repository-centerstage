@@ -21,9 +21,8 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import java.util.List;
 
-
-@TeleOp(name = "PIDmotortest")
 @Config
+@TeleOp(name = "PIDmotortest")
 public class PIDMotorTest extends LinearOpMode {
 
 
@@ -35,6 +34,7 @@ public class PIDMotorTest extends LinearOpMode {
 
     // uses the ElapsedTime class from the SDK to create variable GlobalTimer
     ElapsedTime GlobalTimer;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     // random setup function that runs once start is pressed but before main loop
     // this setup should be put somewhere else
@@ -44,6 +44,7 @@ public class PIDMotorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         // this is basically init, all setup, hardware classes etc get initialized here
         /*
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -61,12 +62,11 @@ public class PIDMotorTest extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
-        FtcDashboard dashboard = FtcDashboard.getInstance();
 
        // IntakeSlideMotor = hardwareMap.get(DcMotorEx.class, "IntakeSlideMotor");
         waitForStart();
         if (opModeIsActive()) {
-                telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
                 GlobalTimer = new ElapsedTime(System.nanoTime());
                 GlobalTimer.reset();
                // intakeSubsystem.intakeHardwareSetup();
@@ -74,7 +74,7 @@ public class PIDMotorTest extends LinearOpMode {
                 driveBase.drivebaseSetup();
                 outtakeSubsystem.encodersReset();
                 intakeSubsystem.intakeSlideMotorEncodersReset();
-
+                outtakeSubsystem.cacheInitialPitchValue();
 
             while (opModeIsActive()) {
 
@@ -93,28 +93,32 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 //driveBase.motorDirectionTest(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_y,gamepad1.right_stick_x);
-
+/*
                 else if (gamepad1.y) {
                     outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 } else if (gamepad1.x){
                     outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
                 }
+ */
 
                 else if (gamepad1.dpad_down){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
-                    outtakeSubsystem.pitchTo(30, outtakeSubsystem.pitchEncoderPosition, 1);
+                    outtakeSubsystem.liftToInternalPID(-5,1);
                 }else if (gamepad1.dpad_up){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
-                    outtakeSubsystem.pitchTo(36, outtakeSubsystem.pitchEncoderPosition, 1);
+                    outtakeSubsystem.liftToInternalPID(0,1);
                 }
 
+
+
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
-                /*
+
                 else if (gamepad1.dpad_left){
-                   intakeSubsystem.intakeSlideInternalPID(0,1);
+                   intakeSubsystem.intakeSlideInternalPID(-10,1);
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(100,1);
+                    intakeSubsystem.intakeSlideInternalPID(200,1);
                 }
+
 
                 else if (gamepad1.dpad_up){
                     intakeSubsystem.intakeSlideTo(0,intakeSubsystem.intakeSlidePosition,1);
@@ -122,17 +126,16 @@ public class PIDMotorTest extends LinearOpMode {
                     intakeSubsystem.intakeSlideTo(900,intakeSubsystem.intakeSlidePosition,1);
                 }
 
-                 */
+
 
 
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
-                driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
+                driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
-                telemetry.addData("LiftPosition", ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
+                telemetry.addData("LiftPosition",outtakeSubsystem.liftPosition);
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
-                telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
                 telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);
                 telemetry.addLine("");
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
@@ -143,14 +146,19 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addData("LeftLimitSwitch", intakeSubsystem.leftArmLimitSwitchValue);
                 telemetry.addData("RightLimitSwitch", intakeSubsystem.rightArmLimitSwitchValue);
                 telemetry.addData("Chute Limit Switch", intakeSubsystem.chuteDetectorLimitSwitchValue);
+                telemetry.addLine("");
+                telemetry.addLine("");
+                telemetry.addLine("");
 
-                telemetry.addData("PID error", outtakeSubsystem.pitchPID.returnError());
-                telemetry.addData("PID current pos", outtakeSubsystem.pitchPID.getState());
-                telemetry.addData("PID target", outtakeSubsystem.pitchPID.getTarget());
+                telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
+               // telemetry.addData("Raw Axon Encoder Reading", outtakeSubsystem.getPitchEncoderPos());
+
 
 
                 // this is the pitch position servo kinda difficult
-                //outtakeSubsystem.outtakePitchServoKeepToPitch(ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
+
+                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition, telemetry);
+
                 //location.update();
                 telemetry.update();
                 //clears the cache at the end of the loop
