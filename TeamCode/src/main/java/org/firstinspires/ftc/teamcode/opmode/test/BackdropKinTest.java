@@ -1,31 +1,43 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
-import com.acmerobotics.roadrunner.drive.Drive;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.LIFT_HITS_WHILE_PITCHING_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.PITCH_DEFAULT_DEGREE_TICKS;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @TeleOp(name="Backdrop Kinematics")
 public class BackdropKinTest extends LinearOpMode
 {
+    double outtakeLiftAdjustTimer,
+            verticalHeight,
+            pitchTarget,
+            liftTarget;
+    ElapsedTime GlobalTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException
     {
-        ElapsedTime timer = new ElapsedTime();
+
         OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
         DriveBase driveBase = new DriveBase();
+        OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
+
         outtakeSubsystem.initOuttake(hardwareMap);
         outtakeSubsystem.hardwareSetup();
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
 
-        timer.reset();
-        timer.startTime();
+        GlobalTimer.reset();
+        GlobalTimer.startTime();
+
         waitForStart();
+
         while (!isStopRequested() && opModeIsActive())
         {
             if (gamepad1.left_trigger > 0.2)
@@ -34,8 +46,45 @@ public class BackdropKinTest extends LinearOpMode
             }
             else
             {
-                outtakeSubsystem.fineAdjustLift(gamepad1.left_stick_y, timer.milliseconds());
+                //in
+                verticalHeight += gamepad1.left_stick_y * 0.8;
+                pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight);
+                liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight);
+
+                //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
+                // idk if we need specific rail adjustment here
+                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+
+                if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
+                    outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
+                } else{
+                    outtakeSubsystem.pitchTo(PITCH_DEFAULT_DEGREE_TICKS,outtakeSubsystem.pitchEncoderPosition,1);
+                }
             }
         }
     }
 }
+
+        /*
+        public void fineAdjust(double fineAdjust, double timer) {
+            if (timer - outtakeLiftAdjustTimer > 100) {
+                double newValue = ticksToInchesSlidesMotor(liftTarget) + fineAdjust;
+                liftTarget = (int) ticksToInchesSlidesMotor(outtakeInverseKinematics.slideEnd(newValue));
+                //liftTarget = Math.min(liftTarget, LIFT_INCHES_FOR_MAX_EXTENSION);
+                liftToInternalPIDTicks(liftTarget, 1);
+                pitchToInternalPID((int) outtakeInverseKinematics.pitchEnd(newValue), 1);
+                outtakeLiftAdjustTimer = timer;
+            }
+        }
+        */
+
+        /*
+        public void fineAdjustLift(double fineAdjust, double timer) {
+            if (timer - outtakeLiftAdjustTimer > 100){ // only set the position every 15 ms, once achieved cache the timer value
+                backdropRelativeHeight += fineAdjust * 0.8;
+                outtakeLiftAdjustTimer = GlobalTimer.milliseconds(); // cache the value of the outtakeLiftAdjustTimer
+            }
+        }
+
+
+         */

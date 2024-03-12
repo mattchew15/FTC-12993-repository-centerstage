@@ -391,7 +391,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                // fineAdjustHeight.upToggle(gamepad2.right_bumper);
                // fineAdjustHeight.downToggle(gamepad2.left_bumper);
-                //fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
+                fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
 
                 // if adjusting to low have the pitching preset go further in
 
