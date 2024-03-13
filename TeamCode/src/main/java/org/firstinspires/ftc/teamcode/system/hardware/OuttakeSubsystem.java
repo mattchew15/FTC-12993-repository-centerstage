@@ -43,10 +43,7 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double MINI_TURRET_STRAIGHT_POS = 0.5;
-    public static double
-            RAIL_CENTER_POS = 0.49,
-            RAIL_RIGHT_POS = 0,
-            RAIL_LEFT_POS = 1;
+
     public static double
             ARM_READY_POS = 0.235,
             ARM_SCORE_POS = 0.85,

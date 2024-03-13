@@ -16,6 +16,11 @@ public class Globals {
             stateTimer,
             numCycles = 0;
 
+    public static double
+            RAIL_CENTER_POS = 0.49,
+            RAIL_RIGHT_POS = 0,
+            RAIL_LEFT_POS = 1;
+
     // Auto States
     public static boolean
             BLUE_AUTO = false,

@@ -397,6 +397,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if (GlobalTimer.milliseconds() - sequenceTimer > 20){ // makes transfer better?
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
+                    outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
                 }
 
                // pitchTarget = (int)outtakeInverseKinematics.pitchEnd(backdropRelativeHeight);
@@ -476,11 +477,13 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                 intakeSubsystem.intakeSpin(-0.3);
-
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+
                 outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
-                if (GlobalTimer.milliseconds() - sequenceTimer > 130){
+                if (GlobalTimer.milliseconds() - sequenceTimer > (Math.abs(RAIL_SERVO_POSITION-RAIL_CENTER_POS)*700) + 130){
+                    // the line above will retract the arm based on how far off the rail servo is at difference timing -> y = mx + c basically
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     if (outtakeSubsystem.liftPosition < 3){ // lets slides ramming trick take over in ready state
                         outtakeState = OuttakeState.READY; //:)
@@ -563,9 +566,6 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                 break;
         }
-
-        // this happens constantly throughout the loop
-        outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // there should only be one write for this servo
 
         if ((gamepad2.b || gamepad1.b) && (outtakeState != OuttakeState.READY) && (outtakeState != OuttakeState.MANUAL_ENCODER_RESET)){
             // can't reset if in manual reset lmao
@@ -759,7 +759,7 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void fineAdjustHeight(double fineAdjust){
         if (GlobalTimer.milliseconds() - heightAdjustTimer > 100){ // only set the position every 15 ms, once achieved cache the timer value
-            RAIL_SERVO_POSITION += fineAdjust * 0.8;
+            backdropRelativeHeight += fineAdjust * 0.8;
             heightAdjustTimer = GlobalTimer.milliseconds(); // cache the value of the outtakerailadjust
         }
     }
