@@ -236,6 +236,7 @@ public class OuttakeSubsystem {
             //liftTarget = Math.min(liftTarget, LIFT_INCHES_FOR_MAX_EXTENSION);
             liftToInternalPIDTicks(liftTarget, 1);
             pitchToInternalPID((int) outtakeInverseKinematics.pitchEnd(newValue), 1);
+            outtakeLiftAdjustTimer = timer;
         }
 
     }
