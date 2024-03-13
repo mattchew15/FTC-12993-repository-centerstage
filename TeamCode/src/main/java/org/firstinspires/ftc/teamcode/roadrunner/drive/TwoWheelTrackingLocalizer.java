@@ -41,14 +41,23 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.944882; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = -1.4; // X is the up and down direction
-    public static double PARALLEL_Y =  5.571875; // Y is the strafe direction
+    public static double PARALLEL_X = -0.2; // X is the up and down direction
+    public static double PARALLEL_Y =  -6.25; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = -5.6;
-    public static double PERPENDICULAR_Y = -3;
+    public static double PERPENDICULAR_X = 5.5;
+    public static double PERPENDICULAR_Y = -6.25;
 
-    public static double X_MULTIPLIER = 0.988169451332796; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 0.996701488508694; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 1.007462686567; // Multiplier in the X direction
+    // 0.9919177076, 0.9920999449, 0.9917355372, 1.0005558643691, 0.9992598075
+    // 72 - 18 = 54
+    // 72 - 15 = 57
+    public static double Y_MULTIPLIER = 0.974495158; // Multiplier in the Y direction
+    // 1.000702247191, 0.9933774834, 0.974025974, 0.9734991888, 0.975433526, 0.974025974
+
+    //16.5 x 14.5
+
+    //Per: 13x 10.5 = x = 5.5 y = -3
+    //Par: x = -0.2 y = -6.25
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -65,8 +74,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         this.drive = drive;
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BL"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FL"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BR"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FR"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         parallelEncoder.setDirection(Encoder.Direction.REVERSE);

@@ -43,8 +43,8 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.5, 1.8);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(12, 0, .5);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(17, 0.5, 1.8);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11, 0, 0.5);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -62,7 +62,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
+    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     private List<Integer> lastEncPositions = new ArrayList<>();
@@ -91,7 +91,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.mode = BNO055IMU.SensorMode.NDOF;
         imu.initialize(parameters);
+
  */
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+
+
+
+
 
 
         leftFront = hardwareMap.get(DcMotorEx.class, "FL");
@@ -118,14 +128,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE); // add if needed
+        //leftFront.setDirection(DcMotorEx.Direction.REVERSE); // add if needed
         leftRear.setDirection(DcMotorEx.Direction.REVERSE); // add if needed
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
         //setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
@@ -304,12 +314,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0.0; //imu.getAngularOrientation().firstAngle;
+         //return imu.getAngularOrientation().firstAngle;
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return 0.0; //(double) imu.getAngularVelocity().zRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+        //return (double) imu.getAngularVelocity().zRotationRate;
     }
 
 
