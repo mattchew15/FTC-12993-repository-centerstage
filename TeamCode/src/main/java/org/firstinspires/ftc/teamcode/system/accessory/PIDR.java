@@ -12,6 +12,7 @@ public class PIDR
     double lastError;
     double integralSum;
     double error;
+    double errorDerivative;
     double derivative;
     double output;
     double Kf;
@@ -77,16 +78,16 @@ public class PIDR
     public double betterUpdate(double target, double state, double maxOutput) { // parameter of the method is the target,
         // PID logic and then return the output with low pass filter + integral wind up
         error = target-state;
-        error = error-lastError;
+        errorDerivative = error-lastError;
 
         reference = Math.signum(error);
 
         // Low pass filter logic
-        currentEstimate = (a * previousEstimate) + (1 - a) * error;
+        currentEstimate = (a * previousEstimate) + (1 - a) * errorDerivative;
         derivative = currentEstimate / timer.seconds();
         previousEstimate = currentEstimate;
 
-        integralSum = integralSum + (error * timer.seconds());
+        integralSum += error * timer.seconds();
         // set a limit on our integral sum
         if (integralSum > integralSumLimit) {
             integralSum = integralSumLimit;
