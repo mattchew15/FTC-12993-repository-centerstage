@@ -26,7 +26,7 @@ public class OuttakeInverseKinematics {
     // this needs to be in angles
     public double pitchEnd(double heightEnd) { return Math.atan2(heightEnd, L(heightEnd)); }
 
-    public double slideEnd(double heightEnd) {return Math.hypot(heightEnd, L(heightEnd)) - slideLength;}
+    public double slideEnd(double heightEnd) {return Math.hypot(heightEnd, L(heightEnd));}
 
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
     public double railEnd(double heightStart, double heightEnd, double railStart) {return c(heightStart, heightEnd) * Math.sin(robotAngle) + railStart; }

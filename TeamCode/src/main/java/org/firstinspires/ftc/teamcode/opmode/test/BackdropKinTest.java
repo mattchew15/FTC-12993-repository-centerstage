@@ -29,37 +29,36 @@ public class BackdropKinTest extends LinearOpMode
         OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
         outtakeSubsystem.initOuttake(hardwareMap);
-        outtakeSubsystem.hardwareSetup();
         driveBase.initDrivebase(hardwareMap);
-        driveBase.drivebaseSetup();
 
-        GlobalTimer.reset();
-        GlobalTimer.startTime();
+        pitchTarget = 36;
 
         waitForStart();
+        if (opModeIsActive()) {
+            outtakeSubsystem.hardwareSetup();
+            driveBase.drivebaseSetup();
 
-        while (!isStopRequested() && opModeIsActive())
-        {
-            if (gamepad1.left_trigger > 0.2)
+            GlobalTimer.reset();
+            while (!isStopRequested() && opModeIsActive())
             {
-                driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            }
-            else
-            {
-                //in
-                verticalHeight += gamepad1.left_stick_y * 0.8;
-                pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight);
-                liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight);
 
-                //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
-                // idk if we need specific rail adjustment here
-                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
-
-                if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
-                    outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
-                } else{
-                    outtakeSubsystem.pitchTo(PITCH_DEFAULT_DEGREE_TICKS,outtakeSubsystem.pitchEncoderPosition,1);
+                if (gamepad1.left_trigger > 0.2)
+                {
+                    driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 }
+                else
+                {
+                    //in
+                    verticalHeight += gamepad1.left_stick_y * 0.8;
+                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight);
+                    liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight);
+
+                    //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
+                    // idk if we need specific rail adjustment here
+
+                }
+                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+                outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
             }
         }
     }
