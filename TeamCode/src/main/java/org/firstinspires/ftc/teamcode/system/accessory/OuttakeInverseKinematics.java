@@ -6,7 +6,7 @@ public class OuttakeInverseKinematics {
     public final double
             distance = 25,
             offset = 3,
-            slideLength = 12;
+            slideLength = 11.8;
     public double
             newDistance,
             varT,
@@ -14,12 +14,13 @@ public class OuttakeInverseKinematics {
     // heightStart/End is vertical height of outtake
 
     // these functions are all intermediate steps
-    public double var_l(double new_height, double robotAngle) {
+    public double varL(double new_height, double robotAngle) {
         newDistance = distance / Math.cos(robotAngle);
-        varT = Math.sqrt(3) * new_height;
+        varT = 1 / Math.sqrt(3) * new_height;
         newT = (varT + distance) / Math.cos(robotAngle) - newDistance;
-        return offset +newDistance +newT;
+        return offset + newDistance + newT;
     }
+
 /*
     public double bdAngle() {
         return Math.atan2(Math.sqrt(3) * Math.cos(robotAngle), 1);
@@ -32,11 +33,11 @@ public class OuttakeInverseKinematics {
  */
     // this needs to be in angles
     public double pitchEnd(double new_height, double robotAngle){
-        return Math.atan2(new_height, var_l(new_height, robotAngle));
+        return Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngle)));
     }
 
     public double slideEnd(double new_height, double robotAngle) {
-        return Math.hypot(new_height, var_l(new_height, robotAngle));
+        return Math.hypot(new_height, varL(new_height, robotAngle)); // might have to subtract slideLength
     }
 
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
