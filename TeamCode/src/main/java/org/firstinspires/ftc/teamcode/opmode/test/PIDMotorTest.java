@@ -114,16 +114,16 @@ public class PIDMotorTest extends LinearOpMode {
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
 
                 else if (gamepad1.dpad_left){
-                   intakeSubsystem.intakeSlideInternalPID(-10,1);
+                    outtakeSubsystem.pitchToInternalPID(36,1);
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(200,1);
+                    intakeSubsystem.intakeSlideInternalPID(30,1);
                 }
 
 
                 else if (gamepad1.dpad_up){
-                    intakeSubsystem.intakeSlideTo(0,intakeSubsystem.intakeSlidePosition,1);
+                    outtakeSubsystem.pitchTo(36,outtakeSubsystem.pitchEncoderPosition,1);
                 }else if (gamepad1.dpad_down){
-                    intakeSubsystem.intakeSlideTo(900,intakeSubsystem.intakeSlidePosition,1);
+                    outtakeSubsystem.pitchTo(30,outtakeSubsystem.pitchEncoderPosition,1);
                 }
 
 
@@ -149,8 +149,8 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addLine("");
                 telemetry.addLine("");
                 telemetry.addLine("");
-
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
+                telemetry.addData("Initial Cached Position Pitch", outtakeSubsystem.initialPitchDegrees);
                // telemetry.addData("Raw Axon Encoder Reading", outtakeSubsystem.getPitchEncoderPos());
 
 
