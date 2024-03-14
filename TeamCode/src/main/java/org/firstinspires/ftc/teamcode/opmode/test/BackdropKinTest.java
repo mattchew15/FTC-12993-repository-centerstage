@@ -34,7 +34,7 @@ public class BackdropKinTest extends LinearOpMode
         driveBase.initDrivebase(hardwareMap);
 
         robotAngle = 0;
-        verticalHeight = 10;
+        verticalHeight = 36;
 
         waitForStart();
         if (opModeIsActive()) {
@@ -53,15 +53,15 @@ public class BackdropKinTest extends LinearOpMode
                 {
                     //in
                     verticalHeight += gamepad1.left_stick_y * 0.001;
-                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
-                    liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
+                    pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
+                    liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
 
                     //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
                     // idk if we need specific rail adjustment here
 
                 }
-                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
-                outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
+                //outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+                //outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
                 telemetry.addData("Vertical Height", verticalHeight);
                 telemetry.addData("Pitch Target", pitchTarget);
                 telemetry.addData("Lift Target", liftTarget);

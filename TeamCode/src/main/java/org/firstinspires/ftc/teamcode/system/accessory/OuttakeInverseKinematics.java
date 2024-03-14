@@ -6,7 +6,7 @@ public class OuttakeInverseKinematics {
     public final double
             distance = 25,
             offset = 3,
-            slideLength = 11.8;
+            slideLength = 11.811;
     public double
             newDistance,
             varT,
@@ -37,7 +37,7 @@ public class OuttakeInverseKinematics {
     }
 
     public double slideEnd(double new_height, double robotAngle) {
-        return Math.hypot(new_height, varL(new_height, robotAngle)); // might have to subtract slideLength
+        return Math.hypot(new_height, varL(new_height, robotAngle)) - slideLength;
     }
 
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
