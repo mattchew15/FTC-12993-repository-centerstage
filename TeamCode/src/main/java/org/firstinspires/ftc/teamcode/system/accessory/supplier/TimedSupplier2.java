@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.system.accessory;
+package org.firstinspires.ftc.teamcode.system.accessory.supplier;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public class TimedSupplier<T>
+@Deprecated
+public class TimedSupplier2<T>
 {
 
     private double period;
@@ -11,7 +13,7 @@ public class TimedSupplier<T>
     private Supplier<T> supplier;
     private T value;
 
-    public TimedSupplier(Supplier<T> supplier, double period)
+    public TimedSupplier2(Supplier<T> supplier, double period)
     {
         this.period = period;
         this.timer = (long) (System.currentTimeMillis() + period);
