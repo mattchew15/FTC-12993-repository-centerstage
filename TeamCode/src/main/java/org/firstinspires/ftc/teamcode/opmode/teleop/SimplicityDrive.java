@@ -185,7 +185,7 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("backdropRelativeHeight", backdropRelativeHeight);
                 telemetry.addData("pureHeight",pureHeight);
                 telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
-                outtakeInverseKinematics.distance = outtakeExtensionInches;
+                //outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 /*
                 if (majorAdjustType == 1){
@@ -199,7 +199,7 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("majorAdjustType", majorAdjustType);
                 telemetry.addLine("");
                 //TODO change the heading to the heading of the bot
-                outtakeInverseKinematics.robotAngle = headingPosition;
+                //outtakeInverseKinematics.robotAngle = headingPosition;
                 headingPosition = 0;//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
                 //telemetry.addData("heading", headingPosition); // we use this for the miniturret
                 telemetry.update();

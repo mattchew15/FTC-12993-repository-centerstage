@@ -17,7 +17,9 @@ public class BackdropKinTest extends LinearOpMode
     double outtakeLiftAdjustTimer,
             verticalHeight,
             pitchTarget,
-            liftTarget;
+            liftTarget,
+            robotAngle;
+
     ElapsedTime GlobalTimer = new ElapsedTime();
 
     @Override
@@ -31,7 +33,8 @@ public class BackdropKinTest extends LinearOpMode
         outtakeSubsystem.initOuttake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
 
-        pitchTarget = 36;
+        robotAngle = 0;
+        verticalHeight = 10;
 
         waitForStart();
         if (opModeIsActive()) {
@@ -50,15 +53,20 @@ public class BackdropKinTest extends LinearOpMode
                 {
                     //in
                     verticalHeight += gamepad1.left_stick_y * 0.8;
-                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight);
-                    liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight);
+                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
+                    liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
 
                     //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
                     // idk if we need specific rail adjustment here
 
                 }
-                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
-                outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
+                //outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+                //outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
+                telemetry.addData("Vertical Height", verticalHeight);
+                telemetry.addData("Pitch Target", pitchTarget);
+                telemetry.addData("Lift Target", liftTarget);
+                telemetry.update();
+
             }
         }
     }

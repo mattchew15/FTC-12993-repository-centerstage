@@ -224,6 +224,8 @@ public class OuttakeSubsystem {
         //prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
 
     }
+
+    /*
     public void fineAdjustLift(double inches, double timer)
     {
         if (timer - outtakeLiftAdjustTimer > 20)
@@ -237,6 +239,8 @@ public class OuttakeSubsystem {
         }
 
     }
+
+     */
 
 
     public void resetOuttake() {
