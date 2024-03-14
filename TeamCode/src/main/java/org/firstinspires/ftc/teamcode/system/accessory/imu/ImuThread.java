@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.accessory;
+package org.firstinspires.ftc.teamcode.system.accessory.imu;
 
 import androidx.annotation.GuardedBy;
 
