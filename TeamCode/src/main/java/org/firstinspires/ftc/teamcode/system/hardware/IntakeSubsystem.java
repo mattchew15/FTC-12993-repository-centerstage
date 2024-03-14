@@ -221,8 +221,8 @@ public class IntakeSubsystem {
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
+        //previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
     public double intakeSlideError(){

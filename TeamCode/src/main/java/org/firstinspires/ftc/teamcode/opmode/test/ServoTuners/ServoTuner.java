@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @Config
-@TeleOp(group = "Tune")
+@TeleOp(name= "ServoTuner", group = "Tune")
 public class ServoTuner extends LinearOpMode {
 
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
@@ -39,11 +39,11 @@ public class ServoTuner extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            driveBase.DroneServo.setPosition(DRONE_POS);
-            intakeSubsystem.IntakeArmServo.setPosition(INTAKE_ARM_POS);
-            intakeSubsystem.IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_POS);
-            intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
-            intakeSubsystem.IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_POS);
+            //driveBase.DroneServo.setPosition(DRONE_POS);
+            //intakeSubsystem.IntakeArmServo.setPosition(INTAKE_ARM_POS);
+            //intakeSubsystem.IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_POS);
+            //intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
+            //intakeSubsystem.IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_POS);
             outtakeSubsystem.OuttakePitchServo.setPosition(OUTTAKE_PITCH_POS);
             outtakeSubsystem.MiniTurretServo.setPosition(MINI_TURRET_POS);
             outtakeSubsystem.OuttakeRailServo.setPosition(OUTTAKE_RAIL_POS);

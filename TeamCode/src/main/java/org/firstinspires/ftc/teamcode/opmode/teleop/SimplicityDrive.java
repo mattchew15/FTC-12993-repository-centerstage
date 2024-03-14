@@ -360,7 +360,6 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_END:
                 liftPositionChange(false, false);
-
                 if (GlobalTimer.milliseconds() - sequenceTimer > 60){ // delay for the transfer to push in
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 160){ // enough time for grippers to close
@@ -604,8 +603,8 @@ public class SimplicityDrive extends LinearOpMode {
     public void intakeClipHoldorNotHold(int slideToPosition){
         if (intakeSubsystem.intakeSlidePosition < 2) {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
-            //intakeSubsystem.intakeSlideMotorRawControl(0);
-            intakeSubsystem.intakeSlideInternalPID(0,1);
+            intakeSubsystem.intakeSlideMotorRawControl(0);
+            //intakeSubsystem.intakeSlideInternalPID(0,1);
         } else {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
             intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);

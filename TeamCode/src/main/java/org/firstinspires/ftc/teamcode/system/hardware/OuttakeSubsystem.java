@@ -62,7 +62,7 @@ public class OuttakeSubsystem {
             GRIPPER_BOTTOM_OPEN_POS = 0.73,
             GRIPPER_BOTTOM_GRIP_POS = 0.5;
     public static double
-            PITCH_OVERCENTERED_POSITION = 0.12;
+            PITCH_OVERCENTERED_POSITION = 0.17;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
@@ -174,9 +174,14 @@ public class OuttakeSubsystem {
        // LiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void cacheInitialPitchValue(){
-        initialPitchDegrees = (angleWrapDegrees(getPitchEncoderPos()) *0.389921)+54.4; // offset and stuff covered here
-        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void cacheInitialPitchValue(){ // this should store the ticks required for motor to run to 0 degrees
+        PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // resets pitch motor once
+        double rawPitchEncoderPosition = getPitchEncoderPos();
+        pitchTicksInitialOffset = -degreestoTicksPitchMotor((rawPitchEncoderPosition *0.389921)-21.4+1);
+        // should store the ticks required for the pitch motor to run to zero
+
+
+
     }
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
@@ -290,7 +295,7 @@ public class OuttakeSubsystem {
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
 
-        pitchTarget = (int)degreestoTicksPitchMotor(initialPitchDegrees-degrees);
+        pitchTarget = (int)degreestoTicksPitchMotor(degrees + initialPitchDegrees);
         PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
