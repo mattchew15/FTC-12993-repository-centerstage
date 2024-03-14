@@ -2,10 +2,20 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.Supplier;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
+import org.firstinspires.ftc.teamcode.system.accessory.math.MathResult;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 
 @Config // Allows dashboard tune
 public class Globals {
@@ -133,7 +143,7 @@ public class Globals {
             degrees += 360;
         }
 
-        // keep in mind that the result is in radians
+        // keep in mind that the result is in degrees
         return degrees;
     }
 
@@ -148,15 +158,31 @@ public class Globals {
     public static double motorCaching(double current, double prev, double cachingTolerance, DcMotor motor) {
         if (
             //Should it be >= or >
-            Math.abs(current - prev) > cachingTolerance ||
+            (Math.abs(current - prev) > cachingTolerance) ||
                     (current == 0.0 && prev != 0.0) ||
                     (current >= 1.0 && !(prev >= 1.0)) ||
                     (current <= -1.0 && !(prev <= -1.0))
         ) {
+
             prev = current;
             motor.setPower(current);
         }
+        // Returning the variable is probably the best way, using and object could work as the pointer would be the same
         return prev;
+    }
+    public static MathResult mathCaching(DoubleUnaryOperator math, double currentInput, double prevInput, double prevResult)
+    {
+        if (Math.abs(currentInput - prevInput) > EPSILON_DELTA)
+        {
+            prevInput = currentInput;
+            prevResult = applyOperation(currentInput, math);
+
+        }
+        return new MathResult(prevInput, prevResult);
+    }
+    public static double applyOperation(double x, DoubleUnaryOperator operator)
+    {
+        return operator.applyAsDouble(x);
     }
 
     /**
@@ -164,7 +190,7 @@ public class Globals {
      * @param hubs the list of all hubs
      * @return returns a new list where chub is always at index 0
      */
-    public List<LynxModule> setHubs(List<LynxModule> hubs)
+    public static List<LynxModule> setHubs(List<LynxModule> hubs)
     {
         if(hubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(hubs.get(0).getSerialNumber())){
             chub = hubs.get(0);
@@ -179,3 +205,5 @@ public class Globals {
         return hubs;
     }
 }
+
+
