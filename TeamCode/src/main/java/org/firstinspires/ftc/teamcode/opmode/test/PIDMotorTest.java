@@ -85,10 +85,10 @@ public class PIDMotorTest extends LinearOpMode {
                 loopTime.updateLoopTime(telemetry); // this may or may not work
 
                 if(gamepad1.a){
-                    outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftToTest(0, outtakeSubsystem.liftPosition, 1, telemetry);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(6, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftToTest(6, outtakeSubsystem.liftPosition, 1, telemetry);
                 }
 
 
@@ -101,10 +101,10 @@ public class PIDMotorTest extends LinearOpMode {
                 }
  */
 
-                else if (gamepad1.dpad_down){
+                else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
                     outtakeSubsystem.liftToInternalPID(-5,1);
-                }else if (gamepad1.dpad_up){
+                }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
                     outtakeSubsystem.liftToInternalPID(0,1);
                 }
@@ -116,15 +116,10 @@ public class PIDMotorTest extends LinearOpMode {
                 else if (gamepad1.dpad_left){
                     outtakeSubsystem.pitchToInternalPID(36,1);
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(30,1);
+                    outtakeSubsystem.pitchToInternalPID(30,1);
                 }
 
 
-                else if (gamepad1.dpad_up){
-                    outtakeSubsystem.pitchTo(36,outtakeSubsystem.pitchEncoderPosition,1);
-                }else if (gamepad1.dpad_down){
-                    outtakeSubsystem.pitchTo(30,outtakeSubsystem.pitchEncoderPosition,1);
-                }
 
 
 
@@ -134,7 +129,7 @@ public class PIDMotorTest extends LinearOpMode {
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
-                telemetry.addData("LiftPosition",outtakeSubsystem.liftPosition);
+                telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
                 telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);
                 telemetry.addLine("");
@@ -150,8 +145,12 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addLine("");
                 telemetry.addLine("");
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
-                telemetry.addData("Initial Cached Position Pitch", outtakeSubsystem.initialPitchDegrees);
+          //      telemetry.addData("Pitch interal encoder position", outtakeSubsystem.pitchPosition);
+                telemetry.addData("internal pitch target", outtakeSubsystem.pitchTarget);
+                telemetry.addData("Initial Cached Position Pitch", outtakeSubsystem.pitchTicksInitialOffset);
                // telemetry.addData("Raw Axon Encoder Reading", outtakeSubsystem.getPitchEncoderPos());
+               // telemetry.addData("Degrees internal encoder", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
+               // telemetry.addData("Degrees Axon encoder", outtakeSubsystem.getPitchEncoderPos());
 
 
 
