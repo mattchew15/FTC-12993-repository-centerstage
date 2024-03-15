@@ -49,8 +49,8 @@ public class Globals {
 
             TICKS_PER_BAREMOTOR = 28,
 
-            PITCH_TICKS_PER_REVOLUTION = 4096,
-            PITCH_TICKS_PER_DEGREES = (PITCH_TICKS_PER_REVOLUTION / 0.8) / 360,
+            PITCH_TICKS_PER_REVOLUTION = 3892,
+            PITCH_TICKS_PER_DEGREES = ((PITCH_TICKS_PER_REVOLUTION / 0.8) / 360),
 
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
@@ -90,11 +90,11 @@ public class Globals {
             LEFT_OR_RIGHT;
 
     public static double degreestoTicksPitchMotor(double degrees){
-        return degrees * PITCH_TICKS_PER_DEGREES;
+        return (degrees * PITCH_TICKS_PER_DEGREES)/0.389921;
     }
 
     public static double ticksToDegreePitchMotor (double ticks){
-        return ticks/PITCH_TICKS_PER_DEGREES;
+        return (ticks/PITCH_TICKS_PER_DEGREES)*0.389921;
     }
 
     public static double ticksToInchesSlidesMotor(double ticks){

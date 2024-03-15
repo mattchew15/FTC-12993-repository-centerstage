@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopTank_Iterative;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
@@ -62,7 +63,7 @@ public class OuttakeSubsystem {
             GRIPPER_BOTTOM_OPEN_POS = 0.73,
             GRIPPER_BOTTOM_GRIP_POS = 0.5;
     public static double
-            PITCH_OVERCENTERED_POSITION = 0.17;
+            PITCH_OVERCENTERED_POSITION = 0.18;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
@@ -176,20 +177,15 @@ public class OuttakeSubsystem {
 
     public void cacheInitialPitchValue(){ // this should store the ticks required for motor to run to 0 degrees
         PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // resets pitch motor once
-        double rawPitchEncoderPosition = getPitchEncoderPos();
-        pitchTicksInitialOffset = -degreestoTicksPitchMotor((rawPitchEncoderPosition *0.389921)-21.4+1);
+        pitchTicksInitialOffset = degreestoTicksPitchMotor((getPitchEncoderPos() *0.389921)-21.4+1);
         // should store the ticks required for the pitch motor to run to zero
-
-
-
     }
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
         double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
-        liftPosition =  ticksToInchesSlidesMotor(-LiftMotor.getCurrentPosition());
-        pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+1; // offset and stuff covered here
-        //pitchPosition = pitchTicksInitialOffset + -PitchMotor.getCurrentPosition();
-
+        liftPosition =  -LiftMotor.getCurrentPosition();
+        pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+2.8; // offset and stuff covered here
+        pitchPosition = PitchMotor.getCurrentPosition();
 
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
@@ -197,7 +193,7 @@ public class OuttakeSubsystem {
     }
 
     public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
-        return PitchEncoder.getVoltage() / 3.15 * 360;
+        return PitchEncoder.getVoltage() / 3.3 * 360;
     }
 
     public void encodersReset(){
@@ -226,6 +222,18 @@ public class OuttakeSubsystem {
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         LiftMotor.setPower(-output);
+        //prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+
+    }
+    public void liftToTest(int inches, double motorPosition, double maxSpeed, Telemetry dakodaisviolent){
+        liftTarget = (int)inchesToTicksSlidesMotor(inches);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
+        double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
+        LiftMotor.setPower(-output);
+        dakodaisviolent.addData("motor output", output);
+        dakodaisviolent.addData("error", liftPID.returnError());
+        dakodaisviolent.addData("target",liftPID.getTarget());
+        dakodaisviolent.addData("state", liftPID.getState());
         //prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
 
     }
@@ -294,8 +302,7 @@ public class OuttakeSubsystem {
 
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
-
-        pitchTarget = (int)degreestoTicksPitchMotor(degrees + initialPitchDegrees);
+        pitchTarget = (int)(-degreestoTicksPitchMotor(degrees + 1) + pitchTicksInitialOffset);
         PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
