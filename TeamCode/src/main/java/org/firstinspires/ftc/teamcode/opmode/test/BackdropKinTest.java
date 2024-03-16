@@ -72,27 +72,3 @@ public class BackdropKinTest extends LinearOpMode
         }
     }
 }
-
-        /*
-        public void fineAdjust(double fineAdjust, double timer) {
-            if (timer - outtakeLiftAdjustTimer > 100) {
-                double newValue = ticksToInchesSlidesMotor(liftTarget) + fineAdjust;
-                liftTarget = (int) ticksToInchesSlidesMotor(outtakeInverseKinematics.slideEnd(newValue));
-                //liftTarget = Math.min(liftTarget, LIFT_INCHES_FOR_MAX_EXTENSION);
-                liftToInternalPIDTicks(liftTarget, 1);
-                pitchToInternalPID((int) outtakeInverseKinematics.pitchEnd(newValue), 1);
-                outtakeLiftAdjustTimer = timer;
-            }
-        }
-        */
-
-        /*
-        public void fineAdjustLift(double fineAdjust, double timer) {
-            if (timer - outtakeLiftAdjustTimer > 100){ // only set the position every 15 ms, once achieved cache the timer value
-                backdropRelativeHeight += fineAdjust * 0.8;
-                outtakeLiftAdjustTimer = GlobalTimer.milliseconds(); // cache the value of the outtakeLiftAdjustTimer
-            }
-        }
-
-
-         */

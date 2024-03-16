@@ -29,8 +29,6 @@ public class OuttakeInverseKinematics {
 
     public double c(double heightStart, double heightEnd) { return (heightEnd - heightStart) / (Math.sqrt(3) * Math.cos(robotAngle)); }
     // these functions are all intermediate steps
-
-
  */
     // this needs to be in angles
     public double pitchEnd(double new_height, double robotAngle){
