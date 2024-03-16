@@ -57,6 +57,7 @@ public class Globals {
 
             RAIL_SERVO_POSITION,
             FINE_ADJUST_HEIGHT_INTERVAL = 5,
+            MIN_OUTTAKE_EXTENSION_INCHES = 15,
             A; // angle offset for autonmous
 
     public static int

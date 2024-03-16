@@ -21,14 +21,15 @@ public class BackdropKinTest extends LinearOpMode
             robotAngle;
 
     ElapsedTime GlobalTimer = new ElapsedTime();
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
+    DriveBase driveBase = new DriveBase();
+    OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     @Override
     public void runOpMode() throws InterruptedException
     {
 
-        OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
-        DriveBase driveBase = new DriveBase();
-        OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
+
 
         outtakeSubsystem.initOuttake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
@@ -52,7 +53,7 @@ public class BackdropKinTest extends LinearOpMode
                 else
                 {
                     //in
-                    verticalHeight += gamepad1.left_stick_y * 0.001;
+                    verticalHeight += gamepad1.left_stick_y * 0.0005;
                     pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
                     liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
 
@@ -60,8 +61,8 @@ public class BackdropKinTest extends LinearOpMode
                     // idk if we need specific rail adjustment here
 
                 }
-                //outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
-                //outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
+                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+                outtakeSubsystem.pitchToInternalPID((int) pitchTarget,1);
                 telemetry.addData("Vertical Height", verticalHeight);
                 telemetry.addData("Pitch Target", pitchTarget);
                 telemetry.addData("Lift Target", liftTarget);

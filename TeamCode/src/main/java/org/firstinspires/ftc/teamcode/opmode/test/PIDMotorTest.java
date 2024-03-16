@@ -40,6 +40,7 @@ public class PIDMotorTest extends LinearOpMode {
     // this setup should be put somewhere else
 
     private List<LynxModule> hubs;
+    double intakeClipTimer;
 
     @Override
     public void runOpMode() {
@@ -83,7 +84,7 @@ public class PIDMotorTest extends LinearOpMode {
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
-
+                outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
                 if(gamepad1.a){
                     outtakeSubsystem.liftToTest(0, outtakeSubsystem.liftPosition, 1, telemetry);
                 }
@@ -112,16 +113,22 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
-
+/*
                 else if (gamepad1.dpad_left){
-                    outtakeSubsystem.pitchToInternalPID(36,1);
+                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 }else if (gamepad1.dpad_right){
                     outtakeSubsystem.pitchToInternalPID(30,1);
                 }
 
+ */
 
 
 
+                else if (gamepad1.dpad_left){
+                    intakeClipHoldorNotHold(-3);
+                }else if (gamepad1.dpad_right){
+                    intakeSubsystem.intakeSlideInternalPID(200,1);
+                }
 
 
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
@@ -172,6 +179,21 @@ public class PIDMotorTest extends LinearOpMode {
         for (LynxModule hub: hubs)
         {
             hub.clearBulkCache();
+        }
+    }
+    public void intakeClipHoldorNotHold(int slideToPosition){
+        if (intakeSubsystem.intakeSlidePosition < 3) {
+            if (GlobalTimer.milliseconds() - intakeClipTimer > 70){
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
+            }
+            intakeSubsystem.intakeSlideMotorRawControl(0);
+            telemetry.addLine("We are HOLDING STUFF IN");
+        } else {
+            intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
+            intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+            intakeClipTimer = GlobalTimer.milliseconds();
+            telemetry.addLine("We are trying to slide our slides in");
+
         }
     }
 

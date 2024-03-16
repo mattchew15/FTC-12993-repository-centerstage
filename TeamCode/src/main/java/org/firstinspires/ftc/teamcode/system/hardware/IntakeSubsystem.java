@@ -50,7 +50,7 @@ public class IntakeSubsystem {
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.72,
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.3,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.231;
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.215;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.66,
             INTAKE_CLIP_OPEN_POS = 0.45;
@@ -206,8 +206,8 @@ public class IntakeSubsystem {
         intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        //IntakeSlideMotor.setPower(maxSpeed);
+        //previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
         //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){

@@ -4,9 +4,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class OuttakeInverseKinematics {
     public final double
-            distance = 25,
+
             offset = 3,
-            slideLength = 11.8;
+            slideLength = 11.811;
+    public double distance = 15;
     public double
             newDistance,
             varT,
@@ -33,11 +34,25 @@ public class OuttakeInverseKinematics {
  */
     // this needs to be in angles
     public double pitchEnd(double new_height, double robotAngle){
-        return Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngle)));
+        double pitchEnd = Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngle)));
+        if (pitchEnd > 60){
+            return 60;
+        } else if (pitchEnd < 20){
+            return 20;
+        } else {
+            return pitchEnd;
+        }
     }
 
     public double slideEnd(double new_height, double robotAngle) {
-        return Math.hypot(new_height, varL(new_height, robotAngle)); // might have to subtract slideLength
+        double slideEnd = Math.hypot(new_height, varL(new_height, robotAngle) - slideLength); // might have to subtract slideLength
+        if (slideEnd > 28){
+            return 28;
+        } else if (slideEnd < 0){
+            return 0;
+        } else {
+            return slideEnd;
+        }
     }
 
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter

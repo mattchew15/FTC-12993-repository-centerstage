@@ -46,7 +46,7 @@ public class OuttakeSubsystem {
     public static double MINI_TURRET_STRAIGHT_POS = 0.5;
 
     public static double
-            ARM_READY_POS = 0.235,
+            ARM_READY_POS = 0.23,
             ARM_SCORE_POS = 0.85,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.86;
     public static double
@@ -58,10 +58,10 @@ public class OuttakeSubsystem {
             PIVOT_SIDEWAYS_LEFT_POS = 0.205,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.759;
     public static double
-            GRIPPER_TOP_OPEN_POS = 0.24,
-            GRIPPER_TOP_GRIP_POS = 0.5,
-            GRIPPER_BOTTOM_OPEN_POS = 0.73,
-            GRIPPER_BOTTOM_GRIP_POS = 0.5;
+            GRIPPER_TOP_GRIP_POS = 0.24,
+            GRIPPER_TOP_OPEN_POS = 0.455,
+            GRIPPER_BOTTOM_GRIP_POS = 0.73,
+            GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18;
 
@@ -302,7 +302,7 @@ public class OuttakeSubsystem {
 
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
-        pitchTarget = (int)(-degreestoTicksPitchMotor(degrees + 1) + pitchTicksInitialOffset);
+        pitchTarget = (int)(-degreestoTicksPitchMotor(degrees) + pitchTicksInitialOffset);
         PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
@@ -371,13 +371,13 @@ public class OuttakeSubsystem {
     public void outtakeRailState(OuttakeRailState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
             case CENTER:
-                RAIL_SERVO_POSITION = RAIL_CENTER_POS;
+                setOuttakeRailServo(RAIL_CENTER_POS);
                 break;
             case RIGHT:
-                RAIL_SERVO_POSITION = RAIL_RIGHT_POS;
+                setOuttakeRailServo(RAIL_RIGHT_POS);
                 break;
             case LEFT:
-                RAIL_SERVO_POSITION = RAIL_LEFT_POS;
+                setOuttakeRailServo(RAIL_LEFT_POS);
                 break;
         }
     }
