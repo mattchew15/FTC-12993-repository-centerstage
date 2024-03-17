@@ -52,7 +52,7 @@ public class IntakeSubsystem {
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.3,
             INTAKE_CHUTE_ARM_TRANSFER_POS = 0.215;
     public static double
-            INTAKE_CLIP_HOLDING_POS = 0.66,
+            INTAKE_CLIP_HOLDING_POS = 0.76,
             INTAKE_CLIP_OPEN_POS = 0.45;
     public static double
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.58,
@@ -160,7 +160,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
+        return (frontColourSensorValue > 500) && (backColourSensorValue > 500); // should work
     }
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;

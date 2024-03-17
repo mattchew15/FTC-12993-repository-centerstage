@@ -18,6 +18,7 @@ public class ImuThread
     HardwareMap hardwareMap;
     @GuardedBy("lock")
     Thread thread;
+
     IMU imu;
     volatile double imuAngle = 0;
     public ImuThread(HardwareMap hardwareMap)
@@ -44,7 +45,7 @@ public class ImuThread
             {
                 synchronized (lock)
                 {
-                    imuAngle = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+                    imuAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                 }
             }
         });
@@ -52,7 +53,8 @@ public class ImuThread
     }
     public double getImuAngle()
     {
-            // is this necessary?
-            return imuAngle;
+        // THis need to be like this as if the thread is in the middle of a request it returns the cached value
+        // instead of waiting for the NACK
+        return imuAngle;
     }
 }

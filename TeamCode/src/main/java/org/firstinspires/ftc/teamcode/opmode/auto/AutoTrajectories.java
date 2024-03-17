@@ -117,15 +117,15 @@ public class AutoTrajectories {
                 .build();
 
         PreloadDrive1Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-62, -19*S, Math.toRadians(179)*S)) // hardest one closest to stack
+                .lineToLinearHeading(new Pose2d(-58, -32*S, Math.toRadians(180)*S)) // hardest one closest to stack
                 .build();
 
         PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-50, -19*S, Math.toRadians(178)*S))
+                .lineToLinearHeading(new Pose2d(-50, -32*S, Math.toRadians(180)*S))
                 .build();
 
         PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-40, -19*S, Math.toRadians(178)*S))
+                .lineToLinearHeading(new Pose2d(-55, -32*S, Math.toRadians(180)*S))
                 .build();
 
 

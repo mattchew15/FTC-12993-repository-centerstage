@@ -43,11 +43,15 @@ public class OuttakeSubsystem {
 
     public DistanceSensor OuttakeDistanceSensor;
 
-    public static double MINI_TURRET_STRAIGHT_POS = 0.5;
+    public static double
+            MINI_TURRET_STRAIGHT_POS = 0.489,
+            MINI_TURRET_FRONTPURPLE_POS = 0.66,
+            MINI_TURRET_BACKPURPLE_POS = 0.38;
 
     public static double
-            ARM_READY_POS = 0.23,
-            ARM_SCORE_POS = 0.85,
+            ARM_READY_POS = 0.15,
+            ARM_UPRIGHT_POS = 0.42,
+            ARM_SCORE_POS = 0.794,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.86;
     public static double
             PIVOT_READY_POS = 0.489,
@@ -114,7 +118,9 @@ public class OuttakeSubsystem {
 
     public enum MiniTurretState {
         STRAIGHT,
-        POINT_TO_BACKDROP
+        POINT_TO_BACKDROP,
+        BACK_PURPLE,
+        FRONT_PURPLE
     }
     public enum OuttakeRailState {
         CENTER,
@@ -127,7 +133,8 @@ public class OuttakeSubsystem {
         SCORE,
         CALCULATE,
         NULL,
-        SCORE_PURPLE
+        SCORE_PURPLE,
+        UPRIGHT
     }
 
     public enum PivotServoState {
@@ -277,7 +284,7 @@ public class OuttakeSubsystem {
         }
     }
 
-    public void liftToInternalPID(int inches, double maxSpeed){
+    public void liftToInternalPID(double inches, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setTargetPosition(-liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -359,6 +366,12 @@ public class OuttakeSubsystem {
             case STRAIGHT:
                 MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
+            case FRONT_PURPLE:
+                MiniTurretServo.setPosition(MINI_TURRET_FRONTPURPLE_POS);
+                break;
+            case BACK_PURPLE:
+                MiniTurretServo.setPosition(MINI_TURRET_BACKPURPLE_POS);
+                break;
         }
     }
 
@@ -389,6 +402,11 @@ public class OuttakeSubsystem {
     public void fineAdjustRail(double fineAdjust, double timer){ // this is for tinkos controls only
         if (timer - outtakeRailAdjustTimer > 15){ // only set the position every 15 ms, once achieved cache the timer value
             RAIL_SERVO_POSITION += fineAdjust * 0.03; // changes global variale at .05 per 15ms
+            if (RAIL_SERVO_POSITION > 1){
+                RAIL_SERVO_POSITION = 1;
+            } else if (RAIL_SERVO_POSITION < 0){
+                RAIL_SERVO_POSITION = 0;
+            }
             outtakeRailAdjustTimer = timer; // cache the value of the outtakerailadjust
         }
         // this should make the fine adjust not looptime dependent. can tune by adjusting iteration & move amount
@@ -404,6 +422,9 @@ public class OuttakeSubsystem {
                 break;
             case SCORE_PURPLE:
                 OuttakeArmServo.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
+                break;
+            case UPRIGHT:
+                OuttakeArmServo.setPosition(ARM_UPRIGHT_POS);
                 break;
         }
     }
