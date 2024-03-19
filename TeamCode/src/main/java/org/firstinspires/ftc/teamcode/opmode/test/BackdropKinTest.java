@@ -17,74 +17,58 @@ public class BackdropKinTest extends LinearOpMode
     double outtakeLiftAdjustTimer,
             verticalHeight,
             pitchTarget,
-            liftTarget;
+            liftTarget,
+            robotAngle;
+
     ElapsedTime GlobalTimer = new ElapsedTime();
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
+    DriveBase driveBase = new DriveBase();
+    OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     @Override
     public void runOpMode() throws InterruptedException
     {
 
-        OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
-        DriveBase driveBase = new DriveBase();
-        OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
+
 
         outtakeSubsystem.initOuttake(hardwareMap);
-        outtakeSubsystem.hardwareSetup();
         driveBase.initDrivebase(hardwareMap);
-        driveBase.drivebaseSetup();
 
-        GlobalTimer.reset();
-        GlobalTimer.startTime();
+        robotAngle = 0;
+        verticalHeight = 36;
 
         waitForStart();
+        if (opModeIsActive()) {
+            outtakeSubsystem.hardwareSetup();
+            driveBase.drivebaseSetup();
 
-        while (!isStopRequested() && opModeIsActive())
-        {
-            if (gamepad1.left_trigger > 0.2)
+            GlobalTimer.reset();
+            while (!isStopRequested() && opModeIsActive())
             {
-                driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            }
-            else
-            {
-                //in
-                verticalHeight += gamepad1.left_stick_y * 0.8;
-                pitchTarget = (int)outtakeInverseKinematics.pitchEnd(verticalHeight);
-                liftTarget = (int)outtakeInverseKinematics.slideEnd(verticalHeight);
 
-                //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
-                // idk if we need specific rail adjustment here
-                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
-
-                if (outtakeSubsystem.liftPosition > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
-                    outtakeSubsystem.pitchTo((int) pitchTarget, outtakeSubsystem.pitchEncoderPosition,1);
-                } else{
-                    outtakeSubsystem.pitchTo(PITCH_DEFAULT_DEGREE_TICKS,outtakeSubsystem.pitchEncoderPosition,1);
+                if (gamepad1.left_trigger > 0.2)
+                {
+                    driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 }
+                else
+                {
+                    //in
+                    verticalHeight += gamepad1.left_stick_y * 0.0005;
+                    pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
+                    liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
+
+                    //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
+                    // idk if we need specific rail adjustment here
+
+                }
+                outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
+                outtakeSubsystem.pitchToInternalPID((int) pitchTarget,1);
+                telemetry.addData("Vertical Height", verticalHeight);
+                telemetry.addData("Pitch Target", pitchTarget);
+                telemetry.addData("Lift Target", liftTarget);
+                telemetry.update();
+
             }
         }
     }
 }
-
-        /*
-        public void fineAdjust(double fineAdjust, double timer) {
-            if (timer - outtakeLiftAdjustTimer > 100) {
-                double newValue = ticksToInchesSlidesMotor(liftTarget) + fineAdjust;
-                liftTarget = (int) ticksToInchesSlidesMotor(outtakeInverseKinematics.slideEnd(newValue));
-                //liftTarget = Math.min(liftTarget, LIFT_INCHES_FOR_MAX_EXTENSION);
-                liftToInternalPIDTicks(liftTarget, 1);
-                pitchToInternalPID((int) outtakeInverseKinematics.pitchEnd(newValue), 1);
-                outtakeLiftAdjustTimer = timer;
-            }
-        }
-        */
-
-        /*
-        public void fineAdjustLift(double fineAdjust, double timer) {
-            if (timer - outtakeLiftAdjustTimer > 100){ // only set the position every 15 ms, once achieved cache the timer value
-                backdropRelativeHeight += fineAdjust * 0.8;
-                outtakeLiftAdjustTimer = GlobalTimer.milliseconds(); // cache the value of the outtakeLiftAdjustTimer
-            }
-        }
-
-
-         */

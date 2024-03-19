@@ -40,6 +40,7 @@ public class PIDMotorTest extends LinearOpMode {
     // this setup should be put somewhere else
 
     private List<LynxModule> hubs;
+    double intakeClipTimer;
 
     @Override
     public void runOpMode() {
@@ -83,12 +84,12 @@ public class PIDMotorTest extends LinearOpMode {
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
-
+                outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
                 if(gamepad1.a){
-                    outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftToTest(0, outtakeSubsystem.liftPosition, 1, telemetry);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftTo(6, outtakeSubsystem.liftPosition, 1);
+                    outtakeSubsystem.liftToTest(6, outtakeSubsystem.liftPosition, 1, telemetry);
                 }
 
 
@@ -101,10 +102,10 @@ public class PIDMotorTest extends LinearOpMode {
                 }
  */
 
-                else if (gamepad1.dpad_down){
+                else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
                     outtakeSubsystem.liftToInternalPID(-5,1);
-                }else if (gamepad1.dpad_up){
+                }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
                     outtakeSubsystem.liftToInternalPID(0,1);
                 }
@@ -112,19 +113,23 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
-
+/*
                 else if (gamepad1.dpad_left){
-                   intakeSubsystem.intakeSlideInternalPID(-10,1);
+                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+                }else if (gamepad1.dpad_right){
+                    outtakeSubsystem.pitchToInternalPID(30,1);
+                }
+
+ */
+
+
+/*
+                else if (gamepad1.dpad_left){
+                    intakeClipHoldorNotHold(-3);
                 }else if (gamepad1.dpad_right){
                     intakeSubsystem.intakeSlideInternalPID(200,1);
                 }
-
-
-                else if (gamepad1.dpad_up){
-                    intakeSubsystem.intakeSlideTo(0,intakeSubsystem.intakeSlidePosition,1);
-                }else if (gamepad1.dpad_down){
-                    intakeSubsystem.intakeSlideTo(900,intakeSubsystem.intakeSlidePosition,1);
-                }
+ */
 
 
 
@@ -132,9 +137,11 @@ public class PIDMotorTest extends LinearOpMode {
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                telemetry.addData("lift Target Reached", outtakeSubsystem.liftTargetReached());
+                telemetry.addData("Pitch target reached", outtakeSubsystem.liftTargetReached());
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
-                telemetry.addData("LiftPosition",outtakeSubsystem.liftPosition);
+                telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
                 telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);
                 telemetry.addLine("");
@@ -149,9 +156,13 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addLine("");
                 telemetry.addLine("");
                 telemetry.addLine("");
-
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
+          //      telemetry.addData("Pitch interal encoder position", outtakeSubsystem.pitchPosition);
+                telemetry.addData("internal pitch target", outtakeSubsystem.pitchTarget);
+                telemetry.addData("Initial Cached Position Pitch", outtakeSubsystem.pitchTicksInitialOffset);
                // telemetry.addData("Raw Axon Encoder Reading", outtakeSubsystem.getPitchEncoderPos());
+               // telemetry.addData("Degrees internal encoder", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
+               // telemetry.addData("Degrees Axon encoder", outtakeSubsystem.getPitchEncoderPos());
 
 
 
@@ -173,6 +184,21 @@ public class PIDMotorTest extends LinearOpMode {
         for (LynxModule hub: hubs)
         {
             hub.clearBulkCache();
+        }
+    }
+    public void intakeClipHoldorNotHold(int slideToPosition){
+        if (intakeSubsystem.intakeSlidePosition < 3) {
+            if (GlobalTimer.milliseconds() - intakeClipTimer > 70){
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
+            }
+            intakeSubsystem.intakeSlideMotorRawControl(0);
+            telemetry.addLine("We are HOLDING STUFF IN");
+        } else {
+            intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
+            intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+            intakeClipTimer = GlobalTimer.milliseconds();
+            telemetry.addLine("We are trying to slide our slides in");
+
         }
     }
 

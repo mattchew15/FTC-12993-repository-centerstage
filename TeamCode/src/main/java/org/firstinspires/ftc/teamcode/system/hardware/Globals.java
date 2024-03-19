@@ -42,7 +42,7 @@ public class Globals {
             RED_AUTO = false;
 
     // Team Prop Location
-    public static int teamPropLocation = 1;
+    public static int teamPropLocation = 2;
     public static LynxModule chub, expHub;
     public static double EPSILON_DELTA = 0.005;
 
@@ -53,14 +53,15 @@ public class Globals {
 
             TICKS_PER_BAREMOTOR = 28,
 
-            PITCH_TICKS_PER_REVOLUTION = 4096,
-            PITCH_TICKS_PER_DEGREES = (PITCH_TICKS_PER_REVOLUTION / 0.8) / 360,
+            PITCH_TICKS_PER_REVOLUTION = 3892,
+            PITCH_TICKS_PER_DEGREES = ((PITCH_TICKS_PER_REVOLUTION / 0.8) / 360),
 
 
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
 
             RAIL_SERVO_POSITION,
-            FINE_ADJUST_HEIGHT_INTERVAL = 5,
+            FINE_ADJUST_HEIGHT_INTERVAL = 3.5,
+            MIN_OUTTAKE_EXTENSION_INCHES = 15,
             A; // angle offset for autonmous
 
     public static int
@@ -69,9 +70,10 @@ public class Globals {
             PITCH_CLIMB_TICKS = 65,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
+            PITCH_PURPLE_PIXEL_POSITION = 27,
             PITCH_MID_DEGREE_TICKS = 45,
 
-            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 690,
+            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 950,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
 
             LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
@@ -86,8 +88,8 @@ public class Globals {
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 3,
 
             // Worlds constants
-            HIGH_BACKDROP_PRESET_INCHES = 26,
-            MID_BACKDROP_PRESET_INCHES = 16,
+            HIGH_BACKDROP_PRESET_INCHES = 30,
+            MID_BACKDROP_PRESET_INCHES = 18,
             LOW_BACKDROP_PRESET_INCHES = 9,
 
             S = 1, // the side multiplier to change sides for autonomous
@@ -132,11 +134,11 @@ public class Globals {
     }
 
     public static double degreestoTicksPitchMotor(double degrees){
-        return degrees * PITCH_TICKS_PER_DEGREES;
+        return (degrees * PITCH_TICKS_PER_DEGREES)/0.389921;
     }
 
     public static double ticksToDegreePitchMotor (double ticks){
-        return ticks/PITCH_TICKS_PER_DEGREES;
+        return (ticks/PITCH_TICKS_PER_DEGREES)*0.389921;
     }
 
     public static double ticksToInchesSlidesMotor(double ticks){

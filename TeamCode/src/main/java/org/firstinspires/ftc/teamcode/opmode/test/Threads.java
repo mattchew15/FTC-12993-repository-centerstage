@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.test;
+/*package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -35,7 +35,7 @@ public class Threads extends LinearOpMode
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP)));
 
-         */
+
         waitForStart();
 
         while (!isStopRequested() && opModeIsActive())
@@ -50,3 +50,7 @@ public class Threads extends LinearOpMode
 
     }
 }
+
+
+
+ */

@@ -50,9 +50,9 @@ public class IntakeSubsystem {
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.72,
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.3,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.231;
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.215;
     public static double
-            INTAKE_CLIP_HOLDING_POS = 0.66,
+            INTAKE_CLIP_HOLDING_POS = 0.76,
             INTAKE_CLIP_OPEN_POS = 0.45;
     public static double
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.58,
@@ -160,7 +160,7 @@ public class IntakeSubsystem {
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
+        return (frontColourSensorValue > 500) && (backColourSensorValue > 500); // should work
     }
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
@@ -206,8 +206,8 @@ public class IntakeSubsystem {
         intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        //IntakeSlideMotor.setPower(maxSpeed);
+        //previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
         //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
@@ -221,8 +221,8 @@ public class IntakeSubsystem {
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
+        //previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
     public double intakeSlideError(){
