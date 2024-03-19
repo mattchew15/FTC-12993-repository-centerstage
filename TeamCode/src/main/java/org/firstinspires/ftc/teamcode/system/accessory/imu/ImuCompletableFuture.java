@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Deprecated
 public class ImuCompletableFuture
 {
     HardwareMap hardwareMap;
@@ -27,7 +28,7 @@ public class ImuCompletableFuture
         this.hardwareMap = hardwareMap;
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP)));
 
 
@@ -39,7 +40,8 @@ public class ImuCompletableFuture
        return CompletableFuture.supplyAsync(() -> AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
     }
 
-    public double get(LinearOpMode opMode) throws ExecutionException, InterruptedException
+
+    public double get() throws ExecutionException, InterruptedException
     {
         CompletableFuture<Double> future;
         if (imuAngle == null)

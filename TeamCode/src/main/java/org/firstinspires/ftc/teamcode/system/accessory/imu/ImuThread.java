@@ -20,6 +20,8 @@ public class ImuThread
     Thread thread;
     IMU imu;
     volatile double imuAngle = 0;
+    private double imuVel;
+
     public ImuThread(HardwareMap hardwareMap)
     {
         this.hardwareMap = hardwareMap;
@@ -30,7 +32,7 @@ public class ImuThread
         {
             imu = hardwareMap.get(BHI260IMU.class, "imu");
             imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
-                    RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                     RevHubOrientationOnRobot.UsbFacingDirection.UP)));
 
         }
@@ -45,6 +47,8 @@ public class ImuThread
                 synchronized (lock)
                 {
                     imuAngle = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+                    imuVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+
                 }
             }
         });
@@ -54,5 +58,9 @@ public class ImuThread
     {
             // is this necessary?
             return imuAngle;
+    }
+    public Double getImuExternalVel()
+    {
+        return imuVel;
     }
 }

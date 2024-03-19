@@ -7,6 +7,9 @@ import org.opencv.core.Mat;
 
 public class robotDetection extends AprilTagPipeline
 {
+    /*
+        Lotus idea from the BBQ, could work if we run in some cases, but it seems not reliable, a bad camera angle, some light, or shit like that
+     */
     public static boolean ClearPath;
     public robotDetection(Telemetry telemetry)
     {
@@ -35,6 +38,7 @@ public class robotDetection extends AprilTagPipeline
         ClearPath = count >= 2;
         telemetry.addData("Count", count);
         telemetry.addData("ClearPath", ClearPath);
+        telemetry.update();
         return input;
     }
 }

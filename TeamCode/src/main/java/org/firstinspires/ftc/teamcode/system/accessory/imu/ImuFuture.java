@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Deprecated
 public class ImuFuture
 {
     HardwareMap hardwareMap;
@@ -45,7 +46,7 @@ public class ImuFuture
         future.get();
     }
 
-    public double get(LinearOpMode opMode) throws ExecutionException, InterruptedException
+    public double get() throws ExecutionException, InterruptedException
     {
         // this might generate an infinite loop
             if (future.isDone())

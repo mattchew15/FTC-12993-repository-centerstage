@@ -72,6 +72,10 @@ public class AprilTagPipeline extends OpenCvPipeline
         this.telemetry = telemetry;
         constructMatrix();
     }
+    public AprilTagPipeline()
+    {
+        constructMatrix();
+    }
 
     @Override
     public void init(Mat frame)
@@ -123,7 +127,7 @@ public class AprilTagPipeline extends OpenCvPipeline
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
 
             Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-
+            /*
             telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
             telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
             telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -132,6 +136,8 @@ public class AprilTagPipeline extends OpenCvPipeline
             telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
             telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
+
+             */
         }
 
         //telemetry.update();

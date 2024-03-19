@@ -8,7 +8,11 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.system.accessory.math.MathResult;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -88,6 +92,44 @@ public class Globals {
 
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
+
+
+    // this custom position library credit Michael from team 14343 (@overkil on Discord)
+    public static AprilTagLibrary getCenterStageTagLibrary()
+    {
+        return new AprilTagLibrary.Builder()
+                .addTag(1, "BlueAllianceLeft",
+                        2, new VectorF(61.75f, 41.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(2, "BlueAllianceCenter",
+                        2, new VectorF(61.75f, 35.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(3, "BlueAllianceRight",
+                        2, new VectorF(61.75f, 29.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(4, "RedAllianceLeft",
+                        2, new VectorF(61.75f, -29.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(5, "RedAllianceCenter",
+                        2, new VectorF(61.75f, -35.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(6, "RedAllianceRight",
+                        2, new VectorF(61.75f, -41.41f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
+                .addTag(7, "RedAudienceWallLarge",
+                        5, new VectorF(-70.25f, -40.625f, 5.5f), DistanceUnit.INCH,
+                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
+                .addTag(8, "RedAudienceWallSmall",
+                        2, new VectorF(-70.25f, -35.125f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
+                .addTag(9, "BlueAudienceWallSmall",
+                        2, new VectorF(-70.25f, 35.125f, 4f), DistanceUnit.INCH,
+                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
+                .addTag(10, "BlueAudienceWallLarge",
+                        5, new VectorF(-70.25f, 40.625f, 5.5f), DistanceUnit.INCH,
+                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
+                .build();
+    }
 
     public static double degreestoTicksPitchMotor(double degrees){
         return degrees * PITCH_TICKS_PER_DEGREES;
@@ -178,6 +220,7 @@ public class Globals {
             prevResult = applyOperation(currentInput, math);
 
         }
+        // i have no idea why this work, to many lambdas for my brain
         return new MathResult(prevInput, prevResult);
     }
     public static double applyOperation(double x, DoubleUnaryOperator operator)
@@ -203,6 +246,13 @@ public class Globals {
         hubs.add(chub);
         hubs.add(expHub);
         return hubs;
+    }
+
+    // This is here because multiple pipelines access it
+    public static Tags getSeenAprilTags(double tagsNum, double[] tags)
+    {
+        return new Tags(tagsNum, tags);
+
     }
 }
 
