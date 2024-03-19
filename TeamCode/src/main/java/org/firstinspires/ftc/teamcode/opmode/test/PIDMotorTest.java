@@ -123,17 +123,22 @@ public class PIDMotorTest extends LinearOpMode {
  */
 
 
-
+/*
                 else if (gamepad1.dpad_left){
                     intakeClipHoldorNotHold(-3);
                 }else if (gamepad1.dpad_right){
                     intakeSubsystem.intakeSlideInternalPID(200,1);
                 }
+ */
+
+
 
 
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                telemetry.addData("lift Target Reached", outtakeSubsystem.liftTargetReached());
+                telemetry.addData("Pitch target reached", outtakeSubsystem.liftTargetReached());
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
                 telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));

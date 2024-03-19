@@ -245,6 +245,7 @@ public class SimplicityDrive extends LinearOpMode {
                     } else if (gamepad1.left_bumper){
                        outtakeState = OuttakeState.INTAKE_EXTENDO;
                        intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE;
+                       intakeOutBtnLogic.upToggle(gamepad1.left_bumper);
                        sequenceTimer = GlobalTimer.milliseconds(); // resets timer
                     }
 
@@ -281,7 +282,6 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE_EXTENDO:
                 intakeOutBtnLogic.upToggle(gamepad1.left_bumper);
-
                 if (intakeOutBtnLogic.OffsetTargetPosition == 1){
                     intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE;
                 } else if (intakeOutBtnLogic.OffsetTargetPosition == 2){
@@ -328,6 +328,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE_TO_TRANSFER:
                 liftPositionChange(false,false);
+
                 if (GlobalTimer.milliseconds() - sequenceTimer > 20){ // gives time for pixels to orientate
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 180) { // time for intake holder to close
@@ -350,7 +351,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 liftPositionChange(false, false); // we dont want d1 control in this state
-
+                outtakeSubsystem.liftToInternalPID(0,1);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                 if ((GlobalTimer.milliseconds() - sequenceTimer > 700) || intakeSubsystem.intakeSlidePosition < 2 && intakeSubsystem.chuteDetectorLimitSwitchValue) { //((GlobalTimer.milliseconds() - sequenceTimer > 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || GlobalTimer.milliseconds() > 2000
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
@@ -368,6 +369,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_END:
                 liftPositionChange(false, false);
+                outtakeSubsystem.liftToInternalPID(0,1);
                 if (GlobalTimer.milliseconds() - sequenceTimer > 60){ // delay for the transfer to push in
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     if (GlobalTimer.milliseconds() - sequenceTimer > 160){ // enough time for grippers to close
@@ -470,10 +472,9 @@ public class SimplicityDrive extends LinearOpMode {
                     if (!straightenTurret){
                         telemetry.addLine("pointing to backdrop");
                         outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
-                        if(GlobalTimer.milliseconds() -sequenceTimer > 360){
-                            pivotAdjust();
-                        } else {
-                            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                        pivotAdjust();
+                        if(GlobalTimer.milliseconds() -sequenceTimer > 400){
+                            gamepad2.dpad_left = true; // may or may not work for the pivot to default to left??
                         }
                     } else {
                         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
@@ -484,9 +485,12 @@ public class SimplicityDrive extends LinearOpMode {
 
             case DEPOSIT:  // idk what this case does
                 // if dropping with the slides further pitched than wait for longer lmao
-                if (outtakeSubsystem.pitchEncoderPosition > 48? GlobalTimer.milliseconds() - sequenceTimer > 400:GlobalTimer.milliseconds() - sequenceTimer > 200){ // test if manual reset is ok
-                    outtakeState = OuttakeState.RETURN;
-                    sequenceTimer = GlobalTimer.milliseconds(); // resets time
+                // or if we have dropped each pixel individually
+                if (outtakeSubsystem.pitchEncoderPosition > 48 || (droppedRight && droppedLeft)? GlobalTimer.milliseconds() - sequenceTimer > 500:GlobalTimer.milliseconds() - sequenceTimer > 150){ // test if manual reset is ok
+                    if (!gamepad1.right_bumper){
+                        outtakeState = OuttakeState.RETURN;
+                        sequenceTimer = GlobalTimer.milliseconds();
+                    }
                 }
                 break;
 
@@ -527,7 +531,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
 
 
-                if (GlobalTimer.milliseconds() - sequenceTimer > 100){
+                if (outtakeSubsystem.pitchTargetReached()){
                     outtakeSubsystem.liftToInternalPID(0,1);
                 } else {
                     outtakeSubsystem.liftToInternalPID(LIFT_HITS_WHILE_PITCHING_THRESHOLD, 1);
@@ -733,6 +737,9 @@ public class SimplicityDrive extends LinearOpMode {
             if (backdropRelativeHeight - adjustHeightCache > 0){ // this means that we are adjusting down
                 MaxExtension = false; // best way to explain this is that as soon as the height is selected the outtake extension limit will also be calculated
                 outtakeExtensionInches = outtakeExtensionInches - ((backdropRelativeHeight - adjustHeightCache)/Math.tan(Math.toRadians(60)));
+                if (outtakeExtensionInches < MIN_OUTTAKE_EXTENSION_INCHES){ // clip outtake extension range :)
+                    outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES;
+                }
                 // line above ensures that endefector stays in line with backdrop when adjusting
                 backdropRelativeHeight = adjustHeightCache;
                 extendOuttake(); // only need to run this once to set new targets

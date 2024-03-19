@@ -38,7 +38,7 @@ public class Globals {
             RED_AUTO = false;
 
     // Team Prop Location
-    public static int teamPropLocation = 1;
+    public static int teamPropLocation = 2;
     public static LynxModule chub, expHub;
     public static double EPSILON_DELTA = 0.005;
 
@@ -57,7 +57,7 @@ public class Globals {
 
             RAIL_SERVO_POSITION,
             FINE_ADJUST_HEIGHT_INTERVAL = 3.5,
-            MIN_OUTTAKE_EXTENSION_INCHES = 16,
+            MIN_OUTTAKE_EXTENSION_INCHES = 15,
             A; // angle offset for autonmous
 
     public static int

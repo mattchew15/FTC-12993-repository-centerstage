@@ -44,7 +44,7 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.489,
+            MINI_TURRET_STRAIGHT_POS = 0.505,
             MINI_TURRET_FRONTPURPLE_POS = 0.66,
             MINI_TURRET_BACKPURPLE_POS = 0.38;
 
@@ -52,9 +52,9 @@ public class OuttakeSubsystem {
             ARM_READY_POS = 0.15,
             ARM_UPRIGHT_POS = 0.42,
             ARM_SCORE_POS = 0.794,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.86;
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.8;
     public static double
-            PIVOT_READY_POS = 0.489,
+            PIVOT_READY_POS = 0.479,
             PIVOT_DIAGONAL_LEFT_POS = 0.334,
             PIVOT_DIAGONAL_RIGHT_POS = 0.634,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.87,
@@ -67,7 +67,8 @@ public class OuttakeSubsystem {
             GRIPPER_BOTTOM_GRIP_POS = 0.73,
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
-            PITCH_OVERCENTERED_POSITION = 0.18;
+            PITCH_OVERCENTERED_POSITION = 0.18,
+            PITCH_PURPLEPIXEL_POSITION = 0.55;
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
@@ -78,7 +79,7 @@ public class OuttakeSubsystem {
     public PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
 
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
-    final double LIFT_THRESHOLD_DISTANCE = 1;
+    final double LIFT_THRESHOLD_DISTANCE = inchesToTicksSlidesMotor(0.4);
 
     public int pitchTarget;
     public int liftTarget;
@@ -224,7 +225,7 @@ public class OuttakeSubsystem {
         //PitchMotor.setPower(manualControlTurret * -0.4);
     }
 
-    public void liftTo(int inches, double motorPosition, double maxSpeed){
+    public void liftTo(double inches, double motorPosition, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         double output = liftPID.update(liftTarget,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
@@ -319,7 +320,7 @@ public class OuttakeSubsystem {
 
     public boolean liftTargetReached() // Simple version than the above one, should improve loop times
     {
-        return (Math.abs(liftTarget - liftPosition) < LIFT_THRESHOLD_DISTANCE);
+        return (Math.abs(inchesToTicksSlidesMotor(liftTarget) - liftPosition) < LIFT_THRESHOLD_DISTANCE);
     }
 
 
@@ -361,6 +362,9 @@ public class OuttakeSubsystem {
         telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
     }
 
+    public void setOuttakePitchPurplePixelPosition(){
+        OuttakePitchServo.setPosition(PITCH_PURPLE_PIXEL_POSITION);
+    }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
             case STRAIGHT:
