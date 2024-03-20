@@ -62,6 +62,7 @@ public class SimplicityDrive extends LinearOpMode {
     boolean straightenTurret;
     boolean MaxExtension;
     boolean initialHeightStored;
+    boolean initialPivot;
 
     double headingPosition;
     boolean topIsRight;
@@ -254,7 +255,7 @@ public class SimplicityDrive extends LinearOpMode {
                 setIntakeArmHeight();
 
                 if (gamepad1.b||gamepad2.b){
-                    intakeSubsystem.intakeSpin(-0.5);
+                    intakeSubsystem.intakeSpin(-0.52);
                 } else {
                     intakeSubsystem.intakeSpin(0);
                 }
@@ -473,9 +474,6 @@ public class SimplicityDrive extends LinearOpMode {
                         telemetry.addLine("pointing to backdrop");
                         outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
                         pivotAdjust();
-                        if(GlobalTimer.milliseconds() -sequenceTimer > 400){
-                            gamepad2.dpad_left = true; // may or may not work for the pivot to default to left??
-                        }
                     } else {
                         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                     }
@@ -522,6 +520,7 @@ public class SimplicityDrive extends LinearOpMode {
                             droppedLeft = false;
                             straightenTurret = false;
                             initialHeightStored = false; // resets this each cycle
+                            initialPivot = true; // so that it pivots out left as default
                             outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES; // change if we want to extend more when not at max
                             backdropRelativeHeight += FINE_ADJUST_HEIGHT_INTERVAL;
                             intakeOutBtnLogic.OffsetTargetPosition = 0;
@@ -787,10 +786,11 @@ public class SimplicityDrive extends LinearOpMode {
                 topIsRight = true;
                 topIsLeft = false;
             }
-        } else if (gamepad2.dpad_left){
+        } else if (gamepad2.dpad_left || initialPivot){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
             topIsLeft = true;
             topIsRight = false;
+            initialPivot = false;
         } else if (gamepad2.dpad_right){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
             topIsRight = true;
