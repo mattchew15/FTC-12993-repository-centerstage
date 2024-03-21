@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.ticksToInchesSlidesMotor;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,7 +15,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopTank_Iterative;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
@@ -77,6 +78,7 @@ public class OuttakeSubsystem {
 
     PID liftPID = new PID(LiftKp,LiftKi,LiftKd,LiftIntegralSumLimit,LiftKf);
     public PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
+    public PIDController pitchFTCLibPID = new PIDController(PitchKp,PitchKi,PitchKd);
 
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
     final double LIFT_THRESHOLD_DISTANCE = inchesToTicksSlidesMotor(0.4);
@@ -200,6 +202,28 @@ public class OuttakeSubsystem {
         }
     }
 
+    public void outtakeReads(boolean dropReadyState, boolean bulkEXP){ // pass in the drop ready state so its not reading the whole time
+        double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
+        liftPosition =  ticksToInchesSlidesMotor(-LiftMotor.getCurrentPosition());
+        pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+1; // offset and stuff covered here
+        //pitchPosition = pitchTicksInitialOffset + -PitchMotor.getCurrentPosition();
+
+
+        if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
+            outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
+        }
+
+        if (bulkEXP)
+        {
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+        else
+        {
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+        }
+
+    }
+
     public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
         return PitchEncoder.getVoltage() / 3.3 * 360;
     }
@@ -315,6 +339,13 @@ public class OuttakeSubsystem {
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
         //PitchMotor.setPower(maxSpeed);
+    }
+    public void pitchToFTCLib(int degrees)
+    {
+        pitchTarget = degrees;
+        PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double output = pitchFTCLibPID.calculate(pitchEncoderPosition, degrees); //does a lift to with external PID instead of just regular encoders
+        prevPitchOutput = motorCaching(-output, prevPitchOutput, EPSILON_DELTA, PitchMotor);
     }
 
 

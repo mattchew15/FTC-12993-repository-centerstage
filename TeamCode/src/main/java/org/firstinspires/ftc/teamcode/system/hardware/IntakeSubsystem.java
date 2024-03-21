@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.expHub;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -154,13 +156,39 @@ public class IntakeSubsystem {
             robotVoltage = voltageSensor.getVoltage();
         }
     }
+    public void intakeReads(boolean intakingState, boolean bulkReadEXP){ // pass in the state that the colour sensors need to be read in to optimize loop times
+        intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
+        intakeChuteArmPosition = getIntakeChuteArmPos();
+        rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
+        leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
+        chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
+
+        if (intakingState){ // pass in state
+
+            frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
+            backColourSensorValue = IntakeColourSensorBack.alpha();
+            intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
+            intakeVelocity = IntakeMotor.getVelocity();
+            robotVoltage = voltageSensor.getVoltage();
+        }
+
+        if (bulkReadEXP)
+        {
+            //any read especific for the exp hub
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+        else
+        {
+            expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+        }
+    }
 
     public void intakeSlideMotorEncodersReset(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 500) && (backColourSensorValue > 500); // should work
+        return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
     }
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
@@ -206,8 +234,8 @@ public class IntakeSubsystem {
         intakeSlideTarget = -rotations; // variable is public to this class?
         IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        //previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        IntakeSlideMotor.setPower(maxSpeed);
+        previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        //IntakeSlideMotor.setPower(maxSpeed);
     }
     public boolean intakeSlideTargetReached(){
         //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
@@ -221,8 +249,8 @@ public class IntakeSubsystem {
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        //previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
-        IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
+        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
     public double intakeSlideError(){

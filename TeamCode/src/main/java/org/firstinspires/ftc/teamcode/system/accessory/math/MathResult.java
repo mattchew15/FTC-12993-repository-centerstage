@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.accessory.math;
 
 public class MathResult {
+    // This is used to make caching the math operations easier
     double prevInput;
     double result;
 

@@ -11,4 +11,8 @@ public class LoopTime { // Do you need to cache 2 variables instead of just time
         telemetry.addData("Loop Time", dt);
         prev_time = System.currentTimeMillis(); // this should possibly be run at the end of the loop to reset the time, might not work all packaged together
     }
+    public double getDt()
+    {
+        return dt;
+    }
 }

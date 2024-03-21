@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.system.visiontest;
 
 
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -25,8 +27,7 @@ import java.util.Arrays;
 public class RelocalizationAprilTag extends AprilTagPipeline
 {
 
-    private static final boolean BLUE_SIDE = true;
-
+    private final Object object = new Object();
     ArrayList<Integer> tagList = new ArrayList<>();
 
     // for now it feeds from the database there is a copy at globals if needed
@@ -35,6 +36,8 @@ public class RelocalizationAprilTag extends AprilTagPipeline
 
     //Pose2d pos = new Pose2d(0, 0, 0);
     double[] pos = new double[]{0,0,0};
+
+    public static double CAMERA_OFFSET = 4;
 
     public RelocalizationAprilTag(Telemetry telemetry)
     {
@@ -46,7 +49,7 @@ public class RelocalizationAprilTag extends AprilTagPipeline
     public void init(Mat frame)
     {
         super.init(frame);
-        if (BLUE_SIDE)
+        if (BLUE_AUTO)
         {
             tagList.add(1);
             tagList.add(2);
@@ -93,9 +96,32 @@ public class RelocalizationAprilTag extends AprilTagPipeline
         return input;
     }
 
-    public double[] getPos()
+    /**
+     *
+     * @param angle DEGREES IG THEN
+     * @return
+     */
+    public double[] getPos(double angle)
     {
-        return pos;
+        /*
+        -----_-----
+
+               Y offset, sin robot angle
+                        ^
+                        |
+                    _____________
+                    |  ___      |
+                    |     |     |  -> X offset, cos robot angle
+                   ||     *     |
+                    |           |
+                    |           |
+                    -------------
+
+         */
+        angle = Math.toRadians(angle);
+        double realX = Math.cos(angle) * CAMERA_OFFSET;
+        double realY = Math.sin(angle) * CAMERA_OFFSET;
+        return new double[]{pos[0] + realX, pos[1] + realY};
     }
     public static AprilTagLibrary getCenterStageTagLibrary()
     {
@@ -135,7 +161,7 @@ public class RelocalizationAprilTag extends AprilTagPipeline
 }
 
 /*
-     public VectorF(float x, float y, float z, float w)
+     public VectorF(float x, float y, float z, float w
         {
         this.data = new float[4];
         this.data[0] = x;
@@ -144,3 +170,4 @@ public class RelocalizationAprilTag extends AprilTagPipeline
         this.data[3] = w;
         }
  */
+

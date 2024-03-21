@@ -250,12 +250,15 @@ public class Globals {
         return hubs;
     }
 
+    /*
     // This is here because multiple pipelines access it
     public static Tags getSeenAprilTags(double tagsNum, double[] tags)
     {
         return new Tags(tagsNum, tags);
 
     }
+
+     */
 }
 
 
