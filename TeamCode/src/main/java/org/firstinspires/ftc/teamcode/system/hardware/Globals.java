@@ -90,7 +90,7 @@ public class Globals {
             // Worlds constants
             HIGH_BACKDROP_PRESET_INCHES = 30,
             MID_BACKDROP_PRESET_INCHES = 18,
-            LOW_BACKDROP_PRESET_INCHES = 9,
+            LOW_BACKDROP_PRESET_INCHES = 10,
 
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;

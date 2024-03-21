@@ -54,8 +54,8 @@ public class BackdropKinTest extends LinearOpMode
                 {
                     //in
                     verticalHeight += gamepad1.left_stick_y * 0.0005;
-                    pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
-                    liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
+                    //pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
+                    //liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
 
                     //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
                     // idk if we need specific rail adjustment here
