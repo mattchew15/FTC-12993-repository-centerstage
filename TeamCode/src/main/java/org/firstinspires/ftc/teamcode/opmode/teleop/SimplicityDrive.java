@@ -196,7 +196,7 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("backdropRelativeHeight", backdropRelativeHeight);
                 telemetry.addData("pureHeight",pureHeight);
                 telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
-                outtakeInverseKinematics.distance = outtakeExtensionInches;
+                //outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 /*
                 if (majorAdjustType == 1){
@@ -412,8 +412,8 @@ public class SimplicityDrive extends LinearOpMode {
                 }
 
                 if (GlobalTimer.milliseconds() - sequenceTimer > 250){ // run after we enter the new state
-                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
-                    liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
+                    //pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
+                    //liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
                     if (Math.abs(gamepad2.right_stick_y)<0.2){
                         fineAdjustHeight.upToggle(gamepad2.right_bumper);
                         fineAdjustHeight.downToggle(gamepad2.left_bumper);
