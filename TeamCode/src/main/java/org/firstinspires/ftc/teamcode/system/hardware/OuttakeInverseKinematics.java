@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.accessory;
+package org.firstinspires.ftc.teamcode.system.hardware;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -7,6 +7,7 @@ public class OuttakeInverseKinematics {
             offset = 3,
             slideLength = 11.811;
     public double
+            distance,
             newDistance,
             varT,
             newT,
@@ -16,7 +17,7 @@ public class OuttakeInverseKinematics {
     // heightStart/End is vertical height of outtake
 
     // these functions are all intermediate steps
-    public double varL(double new_height, double robotAngle, double distance) {
+    public double varL(double new_height, double robotAngle) {
         newDistance = distance / Math.cos(robotAngle);
         varT = new_height / Math.sqrt(3);
         newT = (varT + distance) / Math.cos(robotAngle) - newDistance;
@@ -32,9 +33,9 @@ public class OuttakeInverseKinematics {
     // these functions are all intermediate steps
  */
     // this needs to be in angles
-    public double pitchEnd(double new_height, double robotAngle, double distance){
+    public double pitchEnd(double new_height, double robotAngle){
         robotAngleRad = Math.toRadians(robotAngle);
-        pitchEnd = Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngleRad, distance)));
+        pitchEnd = Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngleRad)));
         if (pitchEnd > 60){
             return 60;
         } else if (pitchEnd < 20){
@@ -44,9 +45,9 @@ public class OuttakeInverseKinematics {
         }
     }
 
-    public double slideEnd(double new_height, double robotAngle, double distance) {
+    public double slideEnd(double new_height, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
-        slideEnd = Math.hypot(new_height, varL(new_height, robotAngleRad, distance) - slideLength); // might have to subtract slideLength
+        slideEnd = Math.hypot(new_height, varL(new_height, robotAngleRad) - slideLength); // might have to subtract slideLength
         if (slideEnd > 28){
             return 28;
         } else if (slideEnd < 0){
@@ -55,7 +56,6 @@ public class OuttakeInverseKinematics {
             return slideEnd;
         }
     }
-
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
     // public double railEnd(double heightStart, double heightEnd, double railStart) {return c(heightStart, heightEnd) * Math.sin(robotAngle) + railStart; }
 }

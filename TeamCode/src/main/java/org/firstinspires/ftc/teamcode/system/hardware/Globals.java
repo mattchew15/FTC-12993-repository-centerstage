@@ -31,7 +31,7 @@ public class Globals {
             numCycles = 0;
 
     public static double
-            RAIL_CENTER_POS = 0.49,
+            RAIL_CENTER_POS = 0.485,
             RAIL_RIGHT_POS = 0,
             RAIL_LEFT_POS = 1;
 
