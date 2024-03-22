@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.Supplier;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import org.firstinspires.ftc.teamcode.system.accessory.Tags;
 import org.firstinspires.ftc.teamcode.system.accessory.math.MathResult;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
@@ -40,6 +42,16 @@ public class Globals {
             BLUE_AUTO = false,
 
             RED_AUTO = false;
+
+    public enum Place
+    {
+        LEFT,
+        RIGHT,
+        MIDDLE,
+        NONE
+    }
+
+    public static Place place;
 
     // Team Prop Location
     public static int teamPropLocation = 2;
@@ -250,15 +262,15 @@ public class Globals {
         return hubs;
     }
 
-    /*
+
     // This is here because multiple pipelines access it
-    public static Tags getSeenAprilTags(double tagsNum, double[] tags)
+    public static Tags setSeenAprilTags(double tagsNum, double[] tags)
     {
         return new Tags(tagsNum, tags);
 
     }
 
-     */
+
 }
 
 

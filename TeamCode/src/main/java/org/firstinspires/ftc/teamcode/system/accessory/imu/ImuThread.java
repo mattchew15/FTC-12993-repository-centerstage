@@ -56,7 +56,6 @@ public class ImuThread
     }
     public double getImuAngle()
     {
-            // is this necessary?
             return imuAngle;
     }
     public Double getImuExternalVel()

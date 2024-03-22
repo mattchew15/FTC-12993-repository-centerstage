@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.system.vision;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.visiontest.AprilTagPipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,15 +24,6 @@ public class PreloadDetection extends AprilTagPipeline
             regionRightB;
 
     private Mat regionLeftLight, regionRightLight;
-
-    protected enum Place
-    {
-        LEFT,
-        RIGHT,
-        MIDDLE,
-        NONE
-    }
-    Place place;
 
     public PreloadDetection(Telemetry telemetry)
     {

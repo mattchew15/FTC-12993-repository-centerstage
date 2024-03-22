@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
+import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.visiontest.RelocalizationAprilTag;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -15,9 +19,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CameraHardware {
 
-    private OpenCvWebcam blueWebcam, redWebcam;
+    private OpenCvWebcam blueWebcam, redWebcam, backWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
+    private PreloadDetection preloadPipeline;
+    private RelocalizationAprilTagPipeline relocalizationPipeline;
     private AprilTagProcessor aprilTag;
 
     public void initWebcam(HardwareMap hwMap) {
@@ -53,13 +59,47 @@ public class CameraHardware {
         }
     }
 
+    public void initBackWebcam(HardwareMap hardwareMap, int purplePlacement)
+    {
+        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamBack"));
+        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                preloadPipeline = new PreloadDetection(purplePlacement);
+                backWebcam.setPipeline(preloadPipeline);
+                backWebcam.startStreaming(1280, 960, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+    }
+
     public void closeWebcam() {
         if (BLUE_AUTO) {
             blueWebcam.closeCameraDevice();
         } else if (RED_AUTO) {
             redWebcam.closeCameraDevice();
         }
+        backWebcam.closeCameraDevice();
     }
+    public Pose2d update(double angle)
+    {
+        return relocalizationPipeline.getPos(angle);
+    }
+    public void setPreloadPipeline()
+    {
+        backWebcam.setPipeline(preloadPipeline);
+    }
+
+    public void setRelocalizationPipeline()
+    {
+        backWebcam.setPipeline(relocalizationPipeline);
+    }
+
 
     /*
     public void initAprilTag(HardwareMap hwMap) {
