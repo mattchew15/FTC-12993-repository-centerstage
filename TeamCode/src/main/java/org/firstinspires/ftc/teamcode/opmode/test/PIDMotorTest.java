@@ -86,10 +86,10 @@ public class PIDMotorTest extends LinearOpMode {
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
                 if(gamepad1.a){
-                    outtakeSubsystem.liftToTest(0, outtakeSubsystem.liftPosition, 1, telemetry);
+                    outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
                 }
                 else if (gamepad1.b){
-                    outtakeSubsystem.liftToTest(6, outtakeSubsystem.liftPosition, 1, telemetry);
+                    outtakeSubsystem.liftTo(6, outtakeSubsystem.liftPosition, 1);
                 }
 
 
@@ -104,24 +104,27 @@ public class PIDMotorTest extends LinearOpMode {
 
                 else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
-                    outtakeSubsystem.liftToInternalPID(-5,1);
+                    outtakeSubsystem.liftToFTCLib(0);
                 }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
-                    outtakeSubsystem.liftToInternalPID(0,1);
+                    outtakeSubsystem.liftToFTCLib(6);
                 }
 
 
 
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
-/*
+
                 else if (gamepad1.dpad_left){
-                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+                    outtakeSubsystem.pitchToFTCLib(36);
                 }else if (gamepad1.dpad_right){
-                    outtakeSubsystem.pitchToInternalPID(30,1);
+                    outtakeSubsystem.pitchToFTCLib(30);
                 }
 
- */
-
+                else if (gamepad1.dpad_down){
+                    outtakeSubsystem.pitchToInternalPID(36,1);
+                }else if (gamepad1.dpad_up){
+                    outtakeSubsystem.pitchToInternalPID(30,1);
+                }
 
 /*
                 else if (gamepad1.dpad_left){

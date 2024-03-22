@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.LIFT_HITS_WHILE_PITCHING_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.PITCH_DEFAULT_DEGREE_TICKS;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 

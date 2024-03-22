@@ -7,24 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.stat.descriptive.rank.Max;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
-import org.firstinspires.ftc.teamcode.system.accessory.OuttakeInverseKinematics;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
 import org.firstinspires.ftc.teamcode.system.accessory.ToggleRisingEdge;
-import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpDown;
 import org.firstinspires.ftc.teamcode.system.accessory.ToggleUpOrDown;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
-
-import android.provider.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +189,7 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("backdropRelativeHeight", backdropRelativeHeight);
                 telemetry.addData("pureHeight",pureHeight);
                 telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
-                //outtakeInverseKinematics.distance = outtakeExtensionInches;
+                outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 /*
                 if (majorAdjustType == 1){
@@ -210,7 +203,6 @@ public class SimplicityDrive extends LinearOpMode {
                 //telemetry.addData("majorAdjustType", majorAdjustType);
                 telemetry.addLine("");
                 //TODO change the heading to the heading of the bot
-                //outtakeInverseKinematics.robotAngle = headingPosition;
                 headingPosition = Math.toDegrees(outtakeSubsystem.angleWrap(sampleMecanumDrive.getPoseEstimate().getHeading()));//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
                 telemetry.addData("heading", headingPosition); // we use this for the miniturret
                 telemetry.update();
@@ -412,8 +404,8 @@ public class SimplicityDrive extends LinearOpMode {
                 }
 
                 if (GlobalTimer.milliseconds() - sequenceTimer > 250){ // run after we enter the new state
-                    //pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
-                    //liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
+                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,headingPosition);
+                    liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,headingPosition);
                     if (Math.abs(gamepad2.right_stick_y)<0.2){
                         fineAdjustHeight.upToggle(gamepad2.right_bumper);
                         fineAdjustHeight.downToggle(gamepad2.left_bumper);
