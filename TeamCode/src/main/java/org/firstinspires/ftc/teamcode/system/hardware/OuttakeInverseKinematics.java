@@ -13,7 +13,8 @@ public class OuttakeInverseKinematics {
             newT,
             robotAngleRad,
             pitchEnd,
-            slideEnd;
+            slideEnd,
+            varC;
     // heightStart/End is vertical height of outtake
 
     // these functions are all intermediate steps
@@ -24,21 +25,13 @@ public class OuttakeInverseKinematics {
         return offset + newDistance + newT;
     }
 
-/*
-    public double bdAngle() {
-        return Math.atan2(Math.sqrt(3) * Math.cos(robotAngle), 1);
-    }
-
-    public double c(double heightStart, double heightEnd) { return (heightEnd - heightStart) / (Math.sqrt(3) * Math.cos(robotAngle)); }
-    // these functions are all intermediate steps
- */
     // this needs to be in angles
-    public double pitchEnd(double new_height, double robotAngle){
+    public double pitchEnd(double new_height, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
         pitchEnd = Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngleRad)));
-        if (pitchEnd > 60){
+        if (pitchEnd > 60) {
             return 60;
-        } else if (pitchEnd < 20){
+        } else if (pitchEnd < 20) {
             return 20;
         } else {
             return pitchEnd;
@@ -48,14 +41,19 @@ public class OuttakeInverseKinematics {
     public double slideEnd(double new_height, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
         slideEnd = Math.hypot(new_height, varL(new_height, robotAngleRad) - slideLength); // might have to subtract slideLength
-        if (slideEnd > 28){
+        if (slideEnd > 28) {
             return 28;
-        } else if (slideEnd < 0){
+        } else if (slideEnd < 0) {
             return 0;
         } else {
             return slideEnd;
         }
     }
+
     // rail start needs to be cached. Alternatively use servo.getposition into the parameter
-    // public double railEnd(double heightStart, double heightEnd, double railStart) {return c(heightStart, heightEnd) * Math.sin(robotAngle) + railStart; }
+    public double railEnd(double heightStart, double heightEnd, double railStart, double robotAngle) {
+        robotAngleRad = Math.toRadians(robotAngle);
+        varC = (heightEnd - heightStart) / (Math.sqrt(3) * Math.cos(robotAngleRad));
+        return varC * Math.sin(robotAngleRad) + railStart;
+    }
 }
