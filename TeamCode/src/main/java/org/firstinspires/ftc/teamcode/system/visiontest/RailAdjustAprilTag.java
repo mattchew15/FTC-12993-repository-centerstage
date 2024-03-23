@@ -108,10 +108,10 @@ public class RailAdjustAprilTag extends AprilTagPipeline
                     switch (place)
                     {
                         case LEFT:
-                            error += -tagWidth * .28 / 2;
+                            error += -tagWidth * .75;
                             break;
                         case RIGHT:
-                            error += tagWidth * .28 / 2;
+                            error += tagWidth * .75;
                             break;
                         case MIDDLE:
                             error += 0;
@@ -119,7 +119,7 @@ public class RailAdjustAprilTag extends AprilTagPipeline
                     }
                     Imgproc.circle(input, new Point(error + middleScreen, tagCenterY - 100), 4, new Scalar(0, 0, 255));
 
-                    // 0.01 ticks = 0.2805 in trust me lol
+                    // 0.01 ticks = 0.2805 in  trust me lol
 
                     error = error / 0.2805 * 0.01;
 
