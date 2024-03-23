@@ -80,7 +80,7 @@ public class PIDMotorTest extends LinearOpMode {
             while (opModeIsActive()) {
 
                 outtakeSubsystem.outtakeReads(false); // read at the start of the loop
-                intakeSubsystem.intakeReads(false);
+                intakeSubsystem.intakeReads(true);
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work

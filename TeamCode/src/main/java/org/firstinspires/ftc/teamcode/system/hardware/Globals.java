@@ -33,7 +33,7 @@ public class Globals {
             numCycles = 0;
 
     public static double
-            RAIL_CENTER_POS = 0.485,
+            RAIL_CENTER_POS = 0.49,
             RAIL_RIGHT_POS = 0,
             RAIL_LEFT_POS = 1;
 
@@ -72,7 +72,7 @@ public class Globals {
             GAMEPAD_TRIGGER_THRESHOLD = 0.2,
 
             RAIL_SERVO_POSITION,
-            FINE_ADJUST_HEIGHT_INTERVAL = 3.5,
+            FINE_ADJUST_HEIGHT_INTERVAL = 3,
             MIN_OUTTAKE_EXTENSION_INCHES = 15,
             A; // angle offset for autonmous
 

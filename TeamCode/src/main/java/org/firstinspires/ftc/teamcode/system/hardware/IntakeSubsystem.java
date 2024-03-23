@@ -50,15 +50,15 @@ public class IntakeSubsystem {
             INTAKE_ARM_MIDDLE_POS = 0.5,
             INTAKE_ARM_BASE_POS = 0.65;
     public static double
-            INTAKE_CHUTE_ARM_READY_POS = 0.72,
-            INTAKE_CHUTE_ARM_HALFUP_POS = 0.3,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.215;
+            INTAKE_CHUTE_ARM_READY_POS = 0.93,
+            INTAKE_CHUTE_ARM_HALFUP_POS = 0.93,
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.43;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.76,
             INTAKE_CLIP_OPEN_POS = 0.45;
     public static double
-            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.58,
-            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.3;
+            INTAKE_PIXEL_HOLDER_OPEN_POS = 0.255,
+            INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.58;
 
     final double intakeSlidethresholdDistance = 20;
     final double intakeSlidethresholdDistanceNewThreshold = 4;
@@ -135,7 +135,7 @@ public class IntakeSubsystem {
 
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+       // IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSpinState = IntakeSpinState.INTAKE;
     }
 
