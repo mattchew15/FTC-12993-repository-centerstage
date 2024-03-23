@@ -5,7 +5,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class OuttakeInverseKinematics {
     public final double
             offset = 3,
-            slideLength = 11.811;
+            slideLength = 11.811,
+            railRange = 14.027;
     public double
             distance,
             newDistance,
@@ -50,10 +51,14 @@ public class OuttakeInverseKinematics {
         }
     }
 
-    // rail start needs to be cached. Alternatively use servo.getposition into the parameter
-    public double railEnd(double heightStart, double heightEnd, double railStart, double robotAngle) {
+    // heightStart and railStart needs to be cached. Alternatively use servo.getposition into the parameter
+    public double railEndInch(double heightStart, double heightEnd, double railStart, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
         varC = (heightEnd - heightStart) / (Math.sqrt(3) * Math.cos(robotAngleRad));
         return varC * Math.sin(robotAngleRad) + railStart;
+    }
+
+    public double railEndTicks(double heightStart, double heightEnd, double railStart, double robotAngle) {
+        return railEndInch(heightStart, heightEnd, railStart, robotAngle) / railRange;
     }
 }
