@@ -121,7 +121,7 @@ public class OuttakeSubsystem {
     private ElapsedTime armProfileTimer = new ElapsedTime();
     private double prevLiftOutput;
     private double prevPitchOutput;
-
+    private static final double RAIL_RANGE = 14.027;
 
     public enum MiniTurretState {
         STRAIGHT,
@@ -640,6 +640,11 @@ public class OuttakeSubsystem {
         }
     }
 
+    public static double railInchesToTicks(double inches) {
+        return inches / RAIL_RANGE;
+    }
 
-
+    public static double railTicksToInches(double ticks) {
+        return ticks * RAIL_RANGE;
+    }
 }
