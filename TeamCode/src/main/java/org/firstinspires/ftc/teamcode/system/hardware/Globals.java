@@ -33,7 +33,7 @@ public class Globals {
             numCycles = 0;
 
     public static double
-            RAIL_CENTER_POS = 0.49,
+            RAIL_CENTER_POS = 0.487,
             RAIL_RIGHT_POS = 0,
             RAIL_LEFT_POS = 1;
 
@@ -82,11 +82,11 @@ public class Globals {
             PITCH_CLIMB_TICKS = 65,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
-            PITCH_PURPLE_PIXEL_POSITION = 27,
+            PITCH_PURPLE_PIXEL_POSITION = 20,
             PITCH_MID_DEGREE_TICKS = 45,
 
-            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 950,
-            INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 410,
+            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 1000,
+            INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 500,
 
             LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
 
@@ -100,10 +100,9 @@ public class Globals {
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 3,
 
             // Worlds constants
-            HIGH_BACKDROP_PRESET_INCHES = 30,
+            HIGH_BACKDROP_PRESET_INCHES = 34,
             MID_BACKDROP_PRESET_INCHES = 18,
             LOW_BACKDROP_PRESET_INCHES = 10,
-
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
 

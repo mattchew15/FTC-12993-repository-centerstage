@@ -55,20 +55,21 @@ public class OuttakeSubsystem {
             ARM_SCORE_PURPLE_PIXEL_POS = 0.8;
     public static double
             PIVOT_READY_POS = 0.486,
-            PIVOT_DIAGONAL_LEFT_POS = 0.334,
-            PIVOT_DIAGONAL_RIGHT_POS = 0.634,
-            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = 0.87,
-            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0.06,
+            PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
+            PIVOT_DIAGONAL_RIGHT_POS = PIVOT_READY_POS + 0.096,
+            PIVOT_DIAGONAL_LEFT_FLIPPED_POS = PIVOT_READY_POS + 0.486,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = PIVOT_READY_POS - 0.486,
             PIVOT_SIDEWAYS_LEFT_POS = 0.205,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.759;
     public static double
-            GRIPPER_TOP_GRIP_POS = 0.24,
+            GRIPPER_TOP_GRIP_POS = 0.25,
             GRIPPER_TOP_OPEN_POS = 0.455,
-            GRIPPER_BOTTOM_GRIP_POS = 0.73,
+            GRIPPER_BOTTOM_GRIP_POS = 0.74,
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
-            PITCH_PURPLEPIXEL_POSITION = 0.55;
+            PITCH_PURPLEPIXEL_POSITION = 0.65;
+
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double LiftFTCLIBKp = 0.015, LiftFTCLIBKi = 0.0001, LiftFTCLIBKd = 0.05;
@@ -242,14 +243,13 @@ public class OuttakeSubsystem {
 
     public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
-        prevLiftOutput = motorCaching(-manualControlLift, prevLiftOutput, EPSILON_DELTA, LiftMotor);
-        // LiftMotor.setPower(manualControlLift * -1);
-
+        //prevLiftOutput = motorCaching(-manualControlLift, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+        LiftMotor.setPower(manualControlLift * 0.8);
     }
 
     public void pitchMotorRawControl(double manualControlTurret){
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        prevPitchOutput = motorCaching(manualControlTurret * -0.4, prevPitchOutput, EPSILON_DELTA, PitchMotor);
+        prevPitchOutput = motorCaching(manualControlTurret * 0.4, prevPitchOutput, EPSILON_DELTA, PitchMotor);
         //PitchMotor.setPower(manualControlTurret * -0.4);
     }
 
@@ -394,7 +394,7 @@ public class OuttakeSubsystem {
     }
 
     public void setOuttakePitchPurplePixelPosition(){
-        OuttakePitchServo.setPosition(PITCH_PURPLE_PIXEL_POSITION);
+        OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION);
     }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
