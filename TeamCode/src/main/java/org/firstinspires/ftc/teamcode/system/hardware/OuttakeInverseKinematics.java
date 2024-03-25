@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import static org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem.RAIL_RANGE;
 
 public class OuttakeInverseKinematics {
+    OuttakeSubsystem outtakeSubsystem;
     public final double
             offset = 3,
-            slideLength = 11.811,
-            railRange = 14.027;
+            slideLength = 11.811;
     public double
             distance,
             newDistance,
@@ -58,7 +59,9 @@ public class OuttakeInverseKinematics {
         return varC * Math.sin(robotAngleRad) + railStart;
     }
 
+    /*
     public double railEndTicks(double heightStart, double heightEnd, double railStart, double robotAngle) {
-        return railEndInch(heightStart, heightEnd, railStart, robotAngle) / railRange;
+        return outtakeSubsystem.railInchesToTicks(railEndInch(heightStart, heightEnd, railStart, robotAngle));
     }
+     */
 }

@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.system.visiontest;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.place;
+//import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
+//import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
+//import static org.firstinspires.ftc.teamcode.system.hardware.Globals.place;
+
+//import androidx.core.math.MathUtils;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.system.hardware.Globals;
-import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -20,14 +18,20 @@ import java.util.ArrayList;
 public class RailAdjustAprilTag extends AprilTagPipeline
 {
 
-    Globals.Place depositPlace = Globals.Place.MIDDLE;
+    public enum Place
+    {
+        LEFT,
+        RIGHT,
+        MIDDLE,
+        NONE
+    }
+    public static Place depositPlace = Place.LEFT;
 
     private final Object object = new Object();
     ArrayList<Integer> tagList = new ArrayList<>();
 
-    AprilTagLibrary library = getCenterStageTagLibrary(); // apparently the official one is wrong
+    //AprilTagLibrary library = getCenterStageTagLibrary(); // apparently the official one is wrong
 
-    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
 
     //Pose2d pos = new Pose2d(0, 0, 0);
 
@@ -46,7 +50,7 @@ public class RailAdjustAprilTag extends AprilTagPipeline
     public void init(Mat frame)
     {
         super.init(frame);
-        if (BLUE_AUTO)
+        if (true)
         {
             tagList.add(1);
             tagList.add(2);
@@ -77,7 +81,7 @@ public class RailAdjustAprilTag extends AprilTagPipeline
         {
             for (AprilTagDetection detection : detections)
             {
-                if (tagList.contains(detection.id))
+                if (detection.id == 1)
                 {
                     int leftX = Integer.MAX_VALUE;
                     int rightX = Integer.MIN_VALUE;
@@ -98,14 +102,17 @@ public class RailAdjustAprilTag extends AprilTagPipeline
                     int tagWidth = rightX - leftX;
                     //int tagHeight = topY - bottomY;
 
-                    double IN_PER_PIXEL = (TAG_SIZE / tagWidth) * 39.3701; // tag size is in meters so...
+                    double IN_PER_PIXEL = 2.0 / tagWidth; // tag size is in meters so...
 
                     double middleScreen = 640; //1280 / 2.0;
 
-                    double error = (tagCenterX - middleScreen) * IN_PER_PIXEL;
                     // this assumes that x axis approaches ∞+ from the left, or left is negative lol
+                    // just keep in mind that the servo position far right is 0
 
-                    switch (place)
+                    telemetry.addData("Tag x", tagCenterX);
+                    double error = (middleScreen - tagCenterX);
+
+                    switch (depositPlace)
                     {
                         case LEFT:
                             error += -tagWidth * .75;
@@ -117,13 +124,23 @@ public class RailAdjustAprilTag extends AprilTagPipeline
                             error += 0;
                             break;
                     }
-                    Imgproc.circle(input, new Point(error + middleScreen, tagCenterY - 100), 4, new Scalar(0, 0, 255));
+                    Imgproc.circle(input, new Point(error + tagCenterX, tagCenterY - 100), 4, new Scalar(0, 0, 255), 4);
+                    Imgproc.drawMarker(input, new Point(middleScreen, 360), new Scalar(255, 0, 0), 2, 15);
+                    // until this point everything was in pixels
 
+
+                    error = error * IN_PER_PIXEL;
+                    // here we have the error in inches
+                    telemetry.addData("X inches", error);
                     // 0.01 ticks = 0.2805 in  trust me lol
 
-                    error = error / 0.2805 * 0.01;
+                    error = -error / 14.027 * 0.01;
+                    // here we have the error in servo ticks
 
-                    target = error + RAIL_CENTER_POS;
+                    target = error + 0.49;
+                    //target = MathUtils.clamp(error + 0.49, 0, 1);
+
+                    // istead of doing a piece wise for the conversion i just add the error to the center position
 
 
 

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.system.accessory.Log;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
@@ -81,6 +82,8 @@ public class SimplicityDrive extends LinearOpMode {
     ToggleRisingEdge highPreset = new ToggleRisingEdge();
     ToggleRisingEdge midPreset = new ToggleRisingEdge();
     ToggleRisingEdge lowPreset = new ToggleRisingEdge();
+
+    Log log = new Log("SimplicityDrive PowerDraw", true);
 
     enum OuttakeState { // FSM
         READY,
@@ -198,6 +201,18 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
+                log.addData(
+                        outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS),
+                        outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS),
+                        intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS),
+                        intakeSubsystem.IntakeMotor.getCurrent(CurrentUnit.AMPS),
+                        driveBase.FL.getCurrent(CurrentUnit.AMPS),
+                        driveBase.FR.getCurrent(CurrentUnit.AMPS),
+                        driveBase.BL.getCurrent(CurrentUnit.AMPS),
+                        driveBase.BR.getCurrent(CurrentUnit.AMPS));
+
+                log.addData(outtakeState);
+
                 /*
                 if (majorAdjustType == 1){
                     telemetry.addLine("We are adjusting down");
@@ -209,10 +224,11 @@ public class SimplicityDrive extends LinearOpMode {
                  */
                 //telemetry.addData("majorAdjustType", majorAdjustType);
                 telemetry.addLine("");
-                //TODO change the heading to the heading of the bot
+                //TODO change the heading to the heading of the bot, cache this don't call it again
                 headingPosition = Math.toDegrees(outtakeSubsystem.angleWrap(sampleMecanumDrive.getPoseEstimate().getHeading()));//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
                 telemetry.addData("heading", headingPosition); // we use this for the miniturret
                 telemetry.update();
+                log.update();
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();
                 if (gamepad1.dpad_left){
@@ -227,6 +243,7 @@ public class SimplicityDrive extends LinearOpMode {
                 pureHeight = prevPureHeight;
             }
         }
+        log.close();
     }
 
     public void outtakeSequence(){

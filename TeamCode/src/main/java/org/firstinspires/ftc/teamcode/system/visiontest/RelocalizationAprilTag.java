@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.system.visiontest;
 
 
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
+//import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -47,7 +47,7 @@ public class RelocalizationAprilTag extends AprilTagPipeline
     public void init(Mat frame)
     {
         super.init(frame);
-        if (BLUE_AUTO)
+        if (true)
         {
             tagList.add(1);
             tagList.add(2);
