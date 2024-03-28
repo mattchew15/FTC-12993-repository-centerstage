@@ -31,7 +31,7 @@ public class PreloadDetection extends AprilTagPipeline
 
     }
 
-    public PreloadDetection(int purple)
+    public PreloadDetection()
     {
         super();
     }
@@ -136,10 +136,10 @@ public class PreloadDetection extends AprilTagPipeline
                         double leftAvg = Core.mean(regionLeftLight).val[0];
                         double rightAvg = Core.mean(regionRightLight).val[0];
 
-                        if (Math.abs(leftAvg - rightAvg) < 20 && leftAvg < 70)
+                        if (Math.abs(leftAvg - rightAvg) < 35 && leftAvg < 100)
                         {
                             place = Place.NONE;
-                        } else if (Math.abs(leftAvg - rightAvg) < 35 && leftAvg > 100 || Math.abs(leftAvg - rightAvg) < 35 && leftAvg < 100)
+                        } else if (Math.abs(leftAvg - rightAvg) < 35 && leftAvg > 100)
                         {
                             place = Place.MIDDLE;
                         } else
@@ -153,14 +153,14 @@ public class PreloadDetection extends AprilTagPipeline
                         switch (place)
                         {
                             case RIGHT:
-                                Imgproc.rectangle(input, regionRightA, regionRightB, new Scalar(255, 0, 0), -2);
+                                Imgproc.rectangle(input, regionRightA, regionRightB, new Scalar(255, 0, 0), -4);
                                 break;
                             case LEFT:
-                                Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -2);
+                                Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -4);
                                 break;
                             case MIDDLE:
-                                Imgproc.rectangle(input, regionRightA, regionRightB, new Scalar(255, 0, 0), -2);
-                                Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -2);
+                                Imgproc.rectangle(input, regionRightA, regionRightB, new Scalar(255, 0, 0), -4);
+                                Imgproc.rectangle(input, regionLeftA, regionLeftB, new Scalar(255, 0, 0), -4);
                                 break;
                             case NONE:
                                 break;
@@ -173,6 +173,7 @@ public class PreloadDetection extends AprilTagPipeline
                             telemetry.addData("Difference", Math.abs(leftAvg - rightAvg));
 
                             telemetry.addData("Place", place);
+                            telemetry.update();
                         }
                         break;
                         // no need to iterate if you found it

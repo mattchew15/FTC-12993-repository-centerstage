@@ -6,17 +6,26 @@ package org.firstinspires.ftc.teamcode.system.visiontest;
 
 //import androidx.core.math.MathUtils;
 
+import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
 
+
+
 import java.util.ArrayList;
 
 public class RailAdjustAprilTag extends AprilTagPipeline
 {
+    //AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder().setLensIntrinsics().build();
 
     public enum Place
     {
@@ -26,6 +35,7 @@ public class RailAdjustAprilTag extends AprilTagPipeline
         NONE
     }
     public static Place depositPlace = Place.LEFT;
+    public static double tag = 5;
 
     private final Object object = new Object();
     ArrayList<Integer> tagList = new ArrayList<>();
@@ -62,6 +72,7 @@ public class RailAdjustAprilTag extends AprilTagPipeline
             tagList.add(5);
             tagList.add(6);
         }
+        //TODO: acount for purple idk
     }
 
     @Override
@@ -81,86 +92,53 @@ public class RailAdjustAprilTag extends AprilTagPipeline
         {
             for (AprilTagDetection detection : detections)
             {
-                if (detection.id == 1)
+                if (detection.id == tag)
                 {
-                    int leftX = Integer.MAX_VALUE;
-                    int rightX = Integer.MIN_VALUE;
-                    int topY = Integer.MIN_VALUE;
-                    int bottomY = Integer.MAX_VALUE;
-
-                    for (Point point : detection.corners)
-                    {
-                        if (point.x < leftX) leftX = (int) point.x;
-                        if (point.x > rightX) rightX = (int) point.x;
-                        if (point.y > topY) topY = (int) point.y;
-                        if (point.y < bottomY) bottomY = (int) point.y;
-                    }
-
-                    int tagCenterX = (int) detection.center.x;
-                    int tagCenterY = (int) detection.center.y;
-
-                    int tagWidth = rightX - leftX;
-                    //int tagHeight = topY - bottomY;
-
-                    double IN_PER_PIXEL = 2.0 / tagWidth; // tag size is in meters so...
-
-                    double middleScreen = 640; //1280 / 2.0;
-
-                    // this assumes that x axis approaches ∞+ from the left, or left is negative lol
-                    // just keep in mind that the servo position far right is 0
-
-                    telemetry.addData("Tag x", tagCenterX);
-                    double error = (middleScreen - tagCenterX);
-
+                    double error = detection.pose.x;
                     switch (depositPlace)
                     {
+                        // case off set inches
                         case LEFT:
-                            error += -tagWidth * .75;
+                            error += 1.5;
                             break;
                         case RIGHT:
-                            error += tagWidth * .75;
+                            error -= 1.5;
                             break;
                         case MIDDLE:
                             error += 0;
                             break;
                     }
-                    Imgproc.circle(input, new Point(error + tagCenterX, tagCenterY - 100), 4, new Scalar(0, 0, 255), 4);
-                    Imgproc.drawMarker(input, new Point(middleScreen, 360), new Scalar(255, 0, 0), 2, 15);
-                    // until this point everything was in pixels
-
-
-                    error = error * IN_PER_PIXEL;
+                    // Imgproc.circle(input, new Point(error + tagCenterX, tagCenterY - 100), 4, new Scalar(0, 0, 255), 4);
+                    Imgproc.drawMarker(input, new Point(640, 360), new Scalar(255, 0, 0), 2, 15);
                     // here we have the error in inches
                     telemetry.addData("X inches", error);
                     // 0.01 ticks = 0.2805 in  trust me lol
+                    target = error;
 
-                    error = -error / 14.027 * 0.01;
-                    // here we have the error in servo ticks
-
-                    target = error + 0.49;
-                    //target = MathUtils.clamp(error + 0.49, 0, 1);
-
-                    // istead of doing a piece wise for the conversion i just add the error to the center position
+                    Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
 
 
-
-
-                    //TODO: conversion rate between servo pos and inches
-
-
-
+                    telemetry.addData("FINAL", getTarget(rot.firstAngle, 2.5));
                     break;
                 }
             }
         }
         telemetry.addData("Target", target);
-        //telemetry.addData("New position y", );
         telemetry.update();
         return input;
     }
-
-    public double getTarget()
+    public double InchesToTicksInches(double inches)
     {
-        return target;
+       return inches / 14.027 * 0.01;
+    }
+
+    public double getTarget(double angle, double liftDis)
+    {
+        double offset = 2;
+        return InchesToTicksInches(target + (liftDis - offset) * Math.sin(angle)) + 0.49;
     }
 }
+
+
+
+

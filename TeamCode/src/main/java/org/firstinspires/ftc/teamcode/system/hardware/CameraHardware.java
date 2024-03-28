@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
 import org.firstinspires.ftc.teamcode.system.visiontest.RelocalizationAprilTag;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -20,17 +21,18 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CameraHardware {
 
     private OpenCvWebcam blueWebcam, redWebcam, backWebcam;
-    private final YCrCbBlueTeamPropDetectorPipeline bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
+    private final YCrCbBlueTeamPropDetectorPipeline  bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
     private PreloadDetection preloadPipeline;
     private RelocalizationAprilTagPipeline relocalizationPipeline;
+    private RailAdjustAprilTag railAdjustPipeline;
     private AprilTagProcessor aprilTag;
 
     public void initWebcam(HardwareMap hwMap) {
         int cameraMonitorViewId;
         if (BLUE_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamLeft"), cameraMonitorViewId);
+            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
             blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -44,7 +46,7 @@ public class CameraHardware {
             });
         } else if (RED_AUTO) {
             cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "WebcamRight"), cameraMonitorViewId);
+            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
             redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
@@ -61,15 +63,17 @@ public class CameraHardware {
 
     public void initBackWebcam(HardwareMap hardwareMap, int purplePlacement)
     {
-        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamBack"));
+        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"));
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                preloadPipeline = new PreloadDetection(purplePlacement);
+                preloadPipeline = new PreloadDetection();
+                relocalizationPipeline = new RelocalizationAprilTagPipeline();
+                railAdjustPipeline = new RailAdjustAprilTag();
                 backWebcam.setPipeline(preloadPipeline);
-                backWebcam.startStreaming(1280, 960, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                backWebcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -93,6 +97,15 @@ public class CameraHardware {
     public void setPreloadPipeline()
     {
         backWebcam.setPipeline(preloadPipeline);
+    }
+    public Place getYellowPixelState()
+    {
+        return preloadPipeline.getYellowPixelState();
+    }
+
+    public void setRailAdjustPipeline()
+    {
+        backWebcam.setPipeline(railAdjustPipeline);
     }
 
     public void setRelocalizationPipeline()

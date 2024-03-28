@@ -1,6 +1,4 @@
-/*
-package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
-
+package org.firstinspires.ftc.teamcode.roadrunner.drive;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -44,7 +42,7 @@ import java.util.List;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
-
+*/
 @Config
 public class SampleMecanumDriveThread extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(17, 0.5, 1.5);
@@ -98,12 +96,16 @@ public class SampleMecanumDriveThread extends MecanumDrive {
         imu.initialize(parameters);
 
 
+ */
+
 /*
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP)));
 
+
+ */
 
         imu = new ImuThread(hardwareMap);
         imu.initImuThread();
@@ -140,7 +142,7 @@ public class SampleMecanumDriveThread extends MecanumDrive {
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+        setLocalizer(new TwoWheelTrackingLocalizerThread(hardwareMap, this));
         //setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
@@ -350,4 +352,4 @@ public class SampleMecanumDriveThread extends MecanumDrive {
 }
 
 
- */
+

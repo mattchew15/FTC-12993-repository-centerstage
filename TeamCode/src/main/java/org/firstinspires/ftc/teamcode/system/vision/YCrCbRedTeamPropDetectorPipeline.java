@@ -89,18 +89,22 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
 
         if (max == avg1) {
             teamPropLocation = 1;
-            telemetry.addLine("Front");
+            //telemetry.addLine("Front");
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
             teamPropLocation = 2;
-            telemetry.addLine("Middle");
+            //telemetry.addLine("Middle");
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
             teamPropLocation = 3;
-            telemetry.addLine("Back");
+            //telemetry.addLine("Back");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
 
         return input;
+    }
+    public void setTelemetry(Telemetry telemetry)
+    {
+        this.telemetry = telemetry;
     }
 }

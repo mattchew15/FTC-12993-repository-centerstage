@@ -42,10 +42,19 @@ public class AprilTagPipeline extends OpenCvPipeline
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
+    /*
     public static double fx = 822.317;
     public static double fy = 822.317;
     public static double cx = 319.495;
     public static double cy = 242.502;
+     */
+
+    // fx = 549.651, fy = 549.651, cx = 317.108, cy = 236.644, mason like saving the macOs users
+
+    public static double fx = 549.651;
+    public static double fy = 549.651;
+    public static double cx = 317.108;
+    public static double cy = 236.644;
 
     // UNITS ARE METERS
     public static double TAG_SIZE = 0.0508;
@@ -131,20 +140,23 @@ public class AprilTagPipeline extends OpenCvPipeline
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
 
             Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-            /*
+
+
             telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x));
+            telemetry.addLine(String.format("Translation X: %.2f in", detection.pose.x * 12));
+            telemetry.addLine(String.format("Translation Y: %.2f in", detection.pose.y * 12));
+            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y));
+            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z));
 
             telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
             telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
 
-             */
+
         }
 
-        //telemetry.update();
+        telemetry.update();
 
         return input;
     }
@@ -171,26 +183,6 @@ public class AprilTagPipeline extends OpenCvPipeline
             detectionsUpdate = null;
             return ret;
         }
-    }
-    public ArrayList<ArrayList<?>> processDetections()
-    {
-        ArrayList<ArrayList<?>> objects = new ArrayList<>();
-        ArrayList<Tag> tags = new ArrayList<>();
-        ArrayList<AprilTagDetection> detectionsList = new ArrayList<>();
-        synchronized (detectionsUpdateSync)
-        {
-            for (AprilTagDetection detection : detections)
-            {
-
-                Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-                Tag tag = new Tag(detection.id, detection.pose.x, detection.pose.y, detection.pose.z, rot.firstAngle, rot.secondAngle, rot.thirdAngle);
-                tags.add(tag);
-                detectionsList.add(detection);
-            }
-        }
-        objects.add(tags);
-        objects.add(detectionsList);
-        return objects;
     }
     public short getDetectionsCounter()
     {
@@ -260,24 +252,6 @@ public class AprilTagPipeline extends OpenCvPipeline
 
         Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
     }
-    public Point getMiddlePoint(double length, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
-        MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(0,0,0),
-                new Point3(length,0,0),
-                new Point3(0,length,0),
-                new Point3(0,0,-length)
-        );
-
-        // Project those points
-        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
-        Point[] projectedPoints = matProjectedPoints.toArray();
-        return projectedPoints[0];
-    }
-
     public void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],

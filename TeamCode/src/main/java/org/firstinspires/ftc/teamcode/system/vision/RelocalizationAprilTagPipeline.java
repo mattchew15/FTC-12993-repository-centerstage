@@ -28,7 +28,7 @@ public class RelocalizationAprilTagPipeline extends AprilTagPipeline
     AprilTagLibrary library = getCenterStageTagLibrary(); // apparently the official one is wrong
 
     //Pose2d pos = new Pose2d(0, 0, 0);
-    double[] pos;
+    double[] pos = new double[]{0,0,0};
     // = new double[]{ROBOT_POSE.getX(),ROBOT_POSE.getY(),ROBOT_POSE.getHeading()};
 
     public static double CAMERA_OFFSET = 4;
@@ -38,12 +38,17 @@ public class RelocalizationAprilTagPipeline extends AprilTagPipeline
         super(telemetry);
 
     }
+    public RelocalizationAprilTagPipeline()
+    {
+        super();
+
+    }
 
     @Override
     public void init(Mat frame)
     {
         super.init(frame);
-        if (BLUE_AUTO)
+        if (false)
         {
             tagList.add(1);
             tagList.add(2);
@@ -66,29 +71,43 @@ public class RelocalizationAprilTagPipeline extends AprilTagPipeline
     @Override
     public Mat processFrame(Mat input)
     {
-        super.processFrame(input);
-        ArrayList<AprilTagDetection> detections = getDetectionsUpdate();
-        synchronized (object)
+        double posey = 0, posex = 0;
+        try
         {
-            if (detections != null && detections.size() > 0)
+            super.processFrame(input);
+            ArrayList<AprilTagDetection> detections = getDetectionsUpdate();
+            synchronized (object)
             {
-                for (AprilTagDetection detection : detections)
+                if (detections != null && detections.size() > 0)
                 {
-                    if (tagList.contains(detection.id))
+                    for (AprilTagDetection detection : detections)
                     {
-                        AprilTagMetadata metadata = library.lookupTag(detection.id);
+                        if (detection.id == 5)
+                        {
+                            AprilTagMetadata metadata = library.lookupTag(detection.id);
 
-                        // TODO: after test substitute for real Pose2d
-                        double x = metadata.fieldPosition.get(0), y = metadata.fieldPosition.get(1); // get the x, y of the tag in the field
-                        pos = new double[]{x + detection.pose.y, y + detection.pose.x, pos[0]}; // heading will always be the imu one
-                        break;
+                            // TODO: after test substitute for real Pose2d
+                            double x = metadata.fieldPosition.get(0), y = metadata.fieldPosition.get(1); // get the x, y of the tag in the field
+                            posex = detection.pose.x * 12;
+                            posey = detection.pose.y * 12;
+                            pos = new double[]{x - posey, y + posex, pos[0]}; // heading will always be the imu one
+                            break;
+                        }
                     }
                 }
             }
+
+            telemetry.addData("Pose y", posey);
+            telemetry.addData("Pose x", posex);
+            telemetry.addData("New position x", pos[0]);
+            telemetry.addData("New position y", pos[1]);
+            telemetry.update();
         }
-        telemetry.addData("New position x", pos[0]);
-        telemetry.addData("New position y", pos[1]);
-        telemetry.update();
+        catch (Exception e)
+        {
+            telemetry.addData("FUCK", true);
+            telemetry.update();
+        }
         return input;
     }
 
@@ -114,13 +133,22 @@ public class RelocalizationAprilTagPipeline extends AprilTagPipeline
                     -------------
 
          */
-        synchronized (object)
+        try
         {
-            angle = Math.toRadians(angle);
-            double X_OFFSET = Math.cos(angle) * CAMERA_OFFSET;
-            double Y_OFFSET = Math.sin(angle) * CAMERA_OFFSET;
+            synchronized (object)
+            {
+                angle = Math.toRadians(angle);
+                double X_OFFSET = Math.cos(angle) * CAMERA_OFFSET;
+                double Y_OFFSET = Math.sin(angle) * CAMERA_OFFSET;
 
-            return new Pose2d(pos[0] + X_OFFSET, pos[1] + Y_OFFSET, angle);
+                return new Pose2d(pos[0] + X_OFFSET, pos[1] + Y_OFFSET, angle);
+            }
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("FUCK 2", true);
+            telemetry.update();
+            return new Pose2d(0, 0, 0);
         }
         //return new double[]{pos[0] + realX, pos[1] + realY};
     }
@@ -158,6 +186,11 @@ public class RelocalizationAprilTagPipeline extends AprilTagPipeline
                         5, new VectorF(-70.25f, 40.625f, 5.5f), DistanceUnit.INCH,
                         new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
                 .build();
+    }
+
+    public void setTelemetry(Telemetry telemetry)
+    {
+        this.telemetry = telemetry;
     }
 }
 
