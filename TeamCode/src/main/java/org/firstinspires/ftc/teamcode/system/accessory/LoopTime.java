@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class LoopTime { // Do you need to cache 2 variables instead of just time.reset()
     double dt;
     double prev_time;
+    double hz;
     Telemetry telemetry;
     public LoopTime(Telemetry telemetry)
     {
@@ -17,11 +18,11 @@ public class LoopTime { // Do you need to cache 2 variables instead of just time
 
     }
 
-    public void dt()
+    public void delta()
     {
-        // the other one would make them shorter or maybe longer because there is a telemetry call in the middle
-        double now = System.currentTimeMillis();
-        dt = now - prev_time;
+        double now = System.nanoTime();
+        dt = (now - prev_time);
+        hz = 1000000000 / dt; // using nano to see if it fix this shit, no telemetry call in between lol
         prev_time = now;
     }
 
