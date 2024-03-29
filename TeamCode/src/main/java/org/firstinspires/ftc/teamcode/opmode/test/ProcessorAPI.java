@@ -54,8 +54,8 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag", group = "Test")
-@Disabled
+@TeleOp(name = "AprilTag test processor", group = "Test")
+
 public class ProcessorAPI extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -124,7 +124,7 @@ public class ProcessorAPI extends LinearOpMode {
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
             // fx = 549.651, fy = 549.651, cx = 317.108, cy = 236.644, mason like saving the macOs users
-                .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+             .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
 
             // ... these parameters are fx, fy, cx, cy.
 
@@ -180,7 +180,7 @@ public class ProcessorAPI extends LinearOpMode {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y * 1.3291139241, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {

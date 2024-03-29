@@ -1,16 +1,27 @@
 package org.firstinspires.ftc.teamcode.system.visiontest;
 
-import android.annotation.SuppressLint;
+/*
+ * Copyright (c) 2021 OpenFTC Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -23,92 +34,73 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.apriltag.AprilTagDetectorJNI;
+import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class AprilTagPipeline extends OpenCvPipeline
+public class AprilTagPipelineOld extends OpenCvPipeline
 {
-    // STATIC CONSTANTS
+    private Telemetry telemetry;
+    private long nativeApriltagPtr;
+    private Mat grey = new Mat();
+    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
-    public static Scalar blue = new Scalar(7,197,235,255);
-    public static Scalar red = new Scalar(255,0,0,255);
-    public static Scalar green = new Scalar(0,255,0,255);
-    public static Scalar white = new Scalar(255,255,255,255);
+    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+    private final Object detectionsUpdateSync = new Object();
 
-    protected static final double FEET_PER_METER = 3.28084;
+    Mat cameraMatrix;
 
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    /*
-    public static double fx = 822.317;
-    public static double fy = 822.317;
-    public static double cx = 319.495;
-    public static double cy = 242.502;
-     */
+    Scalar blue = new Scalar(7,197,235,255);
+    Scalar red = new Scalar(255,0,0,255);
+    Scalar green = new Scalar(0,255,0,255);
+    Scalar white = new Scalar(255,255,255,255);
 
-    // fx = 549.651, fy = 549.651, cx = 317.108, cy = 236.644, mason like saving the macOs users
-
-    public static double fx = 549.651;
-    public static double fy = 549.651;
-    public static double cx = 317.108;
-    public static double cy = 236.644;
+    double fx;
+    double fy;
+    double cx;
+    double cy;
 
     // UNITS ARE METERS
-    public static double TAG_SIZE = 0.0508;
+    double TAG_SIZE;
 
-    // instance variables
+    private float decimation;
+    private boolean needToSetDecimation;
+    private final Object decimationSync = new Object();
 
-    protected long nativeApriltagPtr;
-    protected Mat grey = new Mat();
-    protected ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
-    protected ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
-    protected short detectionsCounter;
-    protected final Object detectionsUpdateSync = new Object();
-
-    protected Mat cameraMatrix;
-
-    protected double tagsizeX = TAG_SIZE;
-    protected double tagsizeY = TAG_SIZE;
-
-    protected float decimation;
-    protected boolean needToSetDecimation;
-    protected final Object decimationSync = new Object();
-
-    protected Telemetry telemetry;
-
-    public AprilTagPipeline(Telemetry telemetry)
+    public AprilTagPipelineOld()
     {
-        this.telemetry = telemetry;
+
         constructMatrix();
-    }
-    public AprilTagPipeline()
-    {
-        constructMatrix();
-    }
 
-    @Override
-    public void init(Mat frame)
-    {
         // Allocate a native context object. See the corresponding deletion in the finalizer
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
+    }
+    public AprilTagPipelineOld(Telemetry telemetry)
+    {
+        this();
+        this.telemetry = telemetry;
     }
 
     @Override
     public void finalize()
     {
-        // Delete the native context we created in the init() function
-        AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
+        // Might be null if createApriltagDetector() threw an exception
+        if(nativeApriltagPtr != 0)
+        {
+            // Delete the native context we created in the constructor
+            AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
+            nativeApriltagPtr = 0;
+        }
+        else
+        {
+            System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
+        }
     }
 
-    @SuppressLint("DefaultLocale")
     @Override
     public Mat processFrame(Mat input)
     {
-
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
@@ -127,36 +119,16 @@ public class AprilTagPipeline extends OpenCvPipeline
         synchronized (detectionsUpdateSync)
         {
             detectionsUpdate = detections;
-
         }
 
-        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
-        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
+        // For fun, use OpenCV to draw 6DOF markers on the image.
         for(AprilTagDetection detection : detections)
         {
-            detectionsCounter++;
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
-
-            Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-
-
-            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x));
-            telemetry.addLine(String.format("Translation X: %.2f in", detection.pose.x * FEET_PER_METER * 12));
-            telemetry.addLine(String.format("Translation Y: %.2f in", detection.pose.y * FEET_PER_METER * 12));
-            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y));
-            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z));
-
-            telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
-            telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
-            telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
-
-
+            Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
+            //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
+            drawAxisMarker(input, TAG_SIZE /2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            draw3dCubeMarker(input, TAG_SIZE, TAG_SIZE, TAG_SIZE, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
-
-        telemetry.update();
 
         return input;
     }
@@ -184,17 +156,8 @@ public class AprilTagPipeline extends OpenCvPipeline
             return ret;
         }
     }
-    public short getDetectionsCounter()
-    {
-        synchronized (detectionsUpdateSync)
-        {
-            short c = detectionsCounter;
-            detectionsCounter = 0;
-            return c;
-        }
-    }
 
-    public void constructMatrix()
+    void constructMatrix()
     {
         //     Construct the camera matrix.
         //
@@ -229,7 +192,7 @@ public class AprilTagPipeline extends OpenCvPipeline
      * @param tvec the translation vector of the detection
      * @param cameraMatrix the camera matrix used when finding the detection
      */
-     public void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
+    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
@@ -252,7 +215,8 @@ public class AprilTagPipeline extends OpenCvPipeline
 
         Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
     }
-    public void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
+
+    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
         //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
@@ -293,6 +257,28 @@ public class AprilTagPipeline extends OpenCvPipeline
         Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
     }
 
+    Pose aprilTagPoseToOpenCvPose(AprilTagPose aprilTagPose)
+    {
+        Pose pose = new Pose();
+        pose.tvec.put(0,0, aprilTagPose.x);
+        pose.tvec.put(1,0, aprilTagPose.y);
+        pose.tvec.put(2,0, aprilTagPose.z);
+
+        Mat R = new Mat(3, 3, CvType.CV_32F);
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                R.put(i,j, aprilTagPose.R.get(i,j));
+            }
+        }
+
+        Calib3d.Rodrigues(R, pose.rvec);
+
+        return pose;
+    }
+
     /**
      * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
      * original size of the tag.
@@ -303,7 +289,7 @@ public class AprilTagPipeline extends OpenCvPipeline
      * @param tagsizeY the original height of the tag
      * @return the 6DOF pose of the camera relative to the tag
      */
-    public Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
+    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
     {
         // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
@@ -327,15 +313,15 @@ public class AprilTagPipeline extends OpenCvPipeline
      * A simple container to hold both rotation and translation
      * vectors, which together form a 6DOF pose.
      */
-    protected class Pose
+    class Pose
     {
-        public Mat rvec;
-        public Mat tvec;
+        Mat rvec;
+        Mat tvec;
 
         public Pose()
         {
-            rvec = new Mat();
-            tvec = new Mat();
+            rvec = new Mat(3, 1, CvType.CV_32F);
+            tvec = new Mat(3, 1, CvType.CV_32F);
         }
 
         public Pose(Mat rvec, Mat tvec)
@@ -344,56 +330,4 @@ public class AprilTagPipeline extends OpenCvPipeline
             this.tvec = tvec;
         }
     }
-    protected class Tag
-    {
-        public double id, x, y, z, yaw, pitch, roll;
-        public Tag(double id, double x, double y, double z, double yaw, double pitch, double roll)
-        {
-            this.id = id;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.yaw = yaw;
-            this.pitch = pitch;
-            this.roll = roll;
-        }
-
-    }
-
-    public static AprilTagLibrary getCenterStageTagLibrary()
-    {
-        return new AprilTagLibrary.Builder()
-                .addTag(1, "BlueAllianceLeft",
-                        2, new VectorF(61.75f, 41.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(2, "BlueAllianceCenter",
-                        2, new VectorF(61.75f, 35.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(3, "BlueAllianceRight",
-                        2, new VectorF(61.75f, 29.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(4, "RedAllianceLeft",
-                        2, new VectorF(61.75f, -29.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(5, "RedAllianceCenter",
-                        2, new VectorF(61.75f, -35.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(6, "RedAllianceRight",
-                        2, new VectorF(61.75f, -41.41f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.3536f, -0.6124f, 0.6124f, -0.3536f, 0))
-                .addTag(7, "RedAudienceWallLarge",
-                        5, new VectorF(-70.25f, -40.625f, 5.5f), DistanceUnit.INCH,
-                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
-                .addTag(8, "RedAudienceWallSmall",
-                        2, new VectorF(-70.25f, -35.125f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
-                .addTag(9, "BlueAudienceWallSmall",
-                        2, new VectorF(-70.25f, 35.125f, 4f), DistanceUnit.INCH,
-                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
-                .addTag(10, "BlueAudienceWallLarge",
-                        5, new VectorF(-70.25f, 40.625f, 5.5f), DistanceUnit.INCH,
-                        new Quaternion(0.5f, -0.5f, -0.5f, 0.5f, 0))
-                .build();
-    }
-
 }

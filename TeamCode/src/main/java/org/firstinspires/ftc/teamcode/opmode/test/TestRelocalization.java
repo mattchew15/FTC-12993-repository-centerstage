@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RelocationV2Pipeline;
 import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -24,14 +25,18 @@ public class TestRelocalization extends LinearOpMode
     DriveBase driveBase = new DriveBase();
     OpenCvCamera backWebcam;
     SampleMecanumDrive drive;
-    public static int PURPLE = 0;
+
     public static int START_X = 0, START_Y = 0, START_H = 0;
-    RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
+    // RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
+    RelocationV2Pipeline relocationV2Pipeline = new RelocationV2Pipeline();
     @Override
     public void runOpMode() throws InterruptedException
     {
 
-        relocalizationAprilTagPipeline.setTelemetry(telemetry);
+        //relocationV2Pipeline = new RelocationV2Pipeline();
+        relocationV2Pipeline.setTelemetry(telemetry);
+        //relocalizationAprilTagPipeline.setTelemetry(telemetry);
+
         drive = new SampleMecanumDrive(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
@@ -40,8 +45,8 @@ public class TestRelocalization extends LinearOpMode
             @Override
             public void onOpened()
             {
-                backWebcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
-                backWebcam.setPipeline(relocalizationAprilTagPipeline);
+                backWebcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                backWebcam.setPipeline(relocationV2Pipeline);
             }
 
             @Override
@@ -62,12 +67,13 @@ public class TestRelocalization extends LinearOpMode
             if (gamepad1.left_trigger > 0.2)
             {
                 telemetry.addData("Updating pose", true);
-                drive.setPoseEstimate(relocalizationAprilTagPipeline.getPos(drive.getPoseEstimate().getHeading()));
+                //drive.setPoseEstimate(relocalizationAprilTagPipeline.getPos(drive.getPoseEstimate().getHeading()));
+                drive.setPoseEstimate(relocationV2Pipeline.getPos(drive.getPoseEstimate().getHeading()));
             }
 
-            telemetry.addData("X", drive.getPoseEstimate().getX());
-            telemetry.addData("Y", drive.getPoseEstimate().getY());
-            telemetry.addData("H", drive.getPoseEstimate().getHeading());
+            //telemetry.addData("X", drive.getPoseEstimate().getX());
+            //telemetry.addData("Y", drive.getPoseEstimate().getY());
+            //telemetry.addData("H", drive.getPoseEstimate().getHeading());
             telemetry.update();
 
 
