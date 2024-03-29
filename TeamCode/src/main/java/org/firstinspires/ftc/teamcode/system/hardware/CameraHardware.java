@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CameraHardware {
 
-    private OpenCvWebcam blueWebcam, redWebcam, backWebcam;
+    private OpenCvWebcam sideWebcam, backWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline  bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
     private PreloadDetection preloadPipeline;
@@ -30,35 +30,23 @@ public class CameraHardware {
 
     public void initWebcam(HardwareMap hwMap) {
         int cameraMonitorViewId;
-        if (BLUE_AUTO) {
-            cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            blueWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
-            blueWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    blueWebcam.setPipeline(bluePipeline);
-                    blueWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN);
+        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
+        sideWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                if (BLUE_AUTO) {
+                    sideWebcam.setPipeline(bluePipeline);
+                    sideWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN);
+                } else if (RED_AUTO) {
+                    sideWebcam.setPipeline(redPipeline);
+                    sideWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT);
                 }
-
-                @Override
-                public void onError(int errorCode) {
-                }
-            });
-        } else if (RED_AUTO) {
-            cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-            redWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
-            redWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    redWebcam.setPipeline(redPipeline);
-                    redWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT);
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                }
-            });
-        }
+            }
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
     }
 
     public void initBackWebcam(HardwareMap hardwareMap, int purplePlacement)
@@ -83,11 +71,7 @@ public class CameraHardware {
     }
 
     public void closeWebcam() {
-        if (BLUE_AUTO) {
-            blueWebcam.closeCameraDevice();
-        } else if (RED_AUTO) {
-            redWebcam.closeCameraDevice();
-        }
+        sideWebcam.closeCameraDevice();
         backWebcam.closeCameraDevice();
     }
     public Pose2d update(double angle)
