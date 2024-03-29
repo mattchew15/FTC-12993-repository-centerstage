@@ -466,7 +466,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                     // this shoudl be rememebered because we are caching fineAdjustHeight
                 }
-                //RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
+                RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
                 // idk if we need specific rail adjustment here
                 outtakeSubsystem.liftToInternalPID(liftTarget,1);
                 //TODO change to FTC libs pid with a proper derivative value

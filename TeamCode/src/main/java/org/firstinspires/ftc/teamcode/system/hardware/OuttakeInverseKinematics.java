@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.acmerobotics.dashboard.config.Config;
 
+@Config
 public class OuttakeInverseKinematics {
-    public final double
-            offset = 3,
-            slideLength = 11.811;
+    public static double offset = 3;
+    public final double slideLength = 11.811;
     public double
             distance,
             newDistance,
@@ -17,18 +17,18 @@ public class OuttakeInverseKinematics {
             varC;
     // heightStart/End is vertical height of outtake
 
-    // these functions are all intermediate steps
-    public double varL(double new_height, double robotAngle) {
+    // this functions is an intermediate step
+    public double varL(double heightEnd, double robotAngle) {
         newDistance = distance / Math.cos(robotAngle);
-        varT = new_height / Math.sqrt(3);
+        varT = heightEnd / Math.sqrt(3);
         newT = (varT + distance) / Math.cos(robotAngle) - newDistance;
         return offset + newDistance + newT;
     }
 
     // this needs to be in angles
-    public double pitchEnd(double new_height, double robotAngle) {
+    public double pitchEnd(double heightEnd, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
-        pitchEnd = Math.toDegrees(Math.atan2(new_height, varL(new_height, robotAngleRad)));
+        pitchEnd = Math.toDegrees(Math.atan2(heightEnd, varL(heightEnd, robotAngleRad)));
         if (pitchEnd > 60) {
             return 60;
         } else if (pitchEnd < 20) {
@@ -38,9 +38,9 @@ public class OuttakeInverseKinematics {
         }
     }
 
-    public double slideEnd(double new_height, double robotAngle) {
+    public double slideEnd(double heightEnd, double robotAngle) {
         robotAngleRad = Math.toRadians(robotAngle);
-        slideEnd = Math.hypot(new_height, varL(new_height, robotAngleRad) - slideLength); // might have to subtract slideLength
+        slideEnd = Math.hypot(heightEnd, varL(heightEnd, robotAngleRad) - slideLength); // might have to subtract slideLength
         if (slideEnd > 28) {
             return 28;
         } else if (slideEnd < 0) {
