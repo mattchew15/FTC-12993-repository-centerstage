@@ -27,13 +27,16 @@ public class TestRelocalization extends LinearOpMode
     SampleMecanumDrive drive;
 
     public static int START_X = 0, START_Y = 0, START_H = 0;
-    //RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
-    RelocationV2Pipeline relocationV2Pipeline;
+    // RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
+    RelocationV2Pipeline relocationV2Pipeline = new RelocationV2Pipeline();
     @Override
     public void runOpMode() throws InterruptedException
     {
 
+        //relocationV2Pipeline = new RelocationV2Pipeline();
         relocationV2Pipeline.setTelemetry(telemetry);
+        //relocalizationAprilTagPipeline.setTelemetry(telemetry);
+
         drive = new SampleMecanumDrive(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
@@ -64,6 +67,7 @@ public class TestRelocalization extends LinearOpMode
             if (gamepad1.left_trigger > 0.2)
             {
                 telemetry.addData("Updating pose", true);
+                //drive.setPoseEstimate(relocalizationAprilTagPipeline.getPos(drive.getPoseEstimate().getHeading()));
                 drive.setPoseEstimate(relocationV2Pipeline.getPos(drive.getPoseEstimate().getHeading()));
             }
 

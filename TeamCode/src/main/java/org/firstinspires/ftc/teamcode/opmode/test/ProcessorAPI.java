@@ -124,7 +124,7 @@ public class ProcessorAPI extends LinearOpMode {
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
             // fx = 549.651, fy = 549.651, cx = 317.108, cy = 236.644, mason like saving the macOs users
-            // .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+             .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
 
             // ... these parameters are fx, fy, cx, cy.
 

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.system.vision;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.getCenterStageTagLibrary;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
 import org.firstinspires.ftc.teamcode.system.visiontest.AprilTagPipeline;
+import org.firstinspires.ftc.teamcode.system.visiontest.AprilTagPipelineOld;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.opencv.core.Mat;
@@ -72,6 +75,7 @@ public class RelocationV2Pipeline extends AprilTagPipeline
         {
             super.processFrame(input);
             ArrayList<AprilTagDetection> detections = getDetectionsUpdate();
+
             synchronized (object)
             {
                 if (detections != null && detections.size() > 0)
@@ -80,15 +84,21 @@ public class RelocationV2Pipeline extends AprilTagPipeline
                     {
                         if (detection.id == 5)
                         {
+                            telemetry.addLine("we're here");
                             AprilTagMetadata metadata = library.lookupTag(detection.id);
 
                             // TODO: after test substitute for real Pose2d
                             double x = metadata.fieldPosition.get(0), y = metadata.fieldPosition.get(1); // get the x, y of the tag in the field
                             pos = new double[]{x, y}; // heading will always be the imu one
+                            poseX = detection.pose.x;
+                            poseY = detection.pose.y;
+
                             break;
                         }
                     }
                 }
+
+
             }
 
             telemetry.addData("Pose y", poseY);
@@ -96,11 +106,16 @@ public class RelocationV2Pipeline extends AprilTagPipeline
             telemetry.addData("AprilTagPos x", pos[0]);
             telemetry.addData("AprilTagPos y", pos[1]);
             telemetry.update();
+
+
+            telemetry.update();
         }
         catch (Exception e)
         {
+            //telemetry.addData("Error", e.getStackTrace());
             telemetry.addData("FUCK", true);
             telemetry.update();
+            e.printStackTrace();
         }
         return input;
     }
@@ -129,7 +144,7 @@ public class RelocationV2Pipeline extends AprilTagPipeline
         catch (Exception e)
         {
 
-            telemetry.addData("Error", e.getStackTrace());
+            //telemetry.addData("Error", e.getStackTrace());
             telemetry.addData("FUCK 2", true);
             telemetry.update();
 
