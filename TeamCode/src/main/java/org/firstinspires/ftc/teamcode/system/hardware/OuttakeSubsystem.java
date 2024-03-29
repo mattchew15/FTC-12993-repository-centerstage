@@ -44,15 +44,15 @@ public class OuttakeSubsystem {
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.505,
+            MINI_TURRET_STRAIGHT_POS = 0.507,
             MINI_TURRET_FRONTPURPLE_POS = 0.66,
             MINI_TURRET_BACKPURPLE_POS = 0.38;
 
     public static double
-            ARM_READY_POS = 0.146,
-            ARM_UPRIGHT_POS = 0.42,
-            ARM_SCORE_POS = 0.794,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.8;
+            ARM_READY_POS = 0.809,
+            ARM_UPRIGHT_POS = 0.4,
+            ARM_SCORE_POS = 0.146,
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.146;
     public static double
             PIVOT_READY_POS = 0.486,
             PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
@@ -68,7 +68,8 @@ public class OuttakeSubsystem {
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
-            PITCH_PURPLEPIXEL_POSITION = 0.65;
+            PITCH_PURPLEPIXEL_POSITION = 0.35,
+            PITCH_LOWPITCH_POSITION = 0.7;
 
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
@@ -133,7 +134,9 @@ public class OuttakeSubsystem {
     public enum OuttakeRailState {
         CENTER,
         RIGHT,
+        RIGHT_YELLOW,
         LEFT,
+        LEFT_YELLOW,
         FINE_ADJUST
     }
     public enum ArmServoState {
@@ -396,6 +399,9 @@ public class OuttakeSubsystem {
     public void setOuttakePitchPurplePixelPosition(){
         OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION);
     }
+    public void setOuttakePitchPitchDownPosition(){
+        OuttakePitchServo.setPosition(PITCH_LOWPITCH_POSITION);
+    }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
             case STRAIGHT:
@@ -421,11 +427,16 @@ public class OuttakeSubsystem {
             case CENTER:
                 setOuttakeRailServo(RAIL_CENTER_POS);
                 break;
+            case RIGHT_YELLOW:
+                setOuttakeRailServo(RAIL_RIGHT_YELLOW_POS);
             case RIGHT:
                 setOuttakeRailServo(RAIL_RIGHT_POS);
                 break;
             case LEFT:
                 setOuttakeRailServo(RAIL_LEFT_POS);
+                break;
+            case LEFT_YELLOW:
+                setOuttakeRailServo(RAIL_LEFT_YELLOW_POS);
                 break;
         }
     }
@@ -509,22 +520,6 @@ public class OuttakeSubsystem {
                 break;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // below is profile stuff
     public void rawLift(double pow)

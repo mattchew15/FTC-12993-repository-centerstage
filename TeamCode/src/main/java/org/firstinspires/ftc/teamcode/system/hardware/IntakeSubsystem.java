@@ -44,15 +44,15 @@ public class IntakeSubsystem {
     VoltageSensor voltageSensor;
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.3,
-            INTAKE_ARM_VERY_TOP_POS = 0.28,
-            INTAKE_ARM_FOUR_POS = 0.35,
-            INTAKE_ARM_MIDDLE_POS = 0.45,
-            INTAKE_ARM_BASE_POS = 0.6;
+            INTAKE_ARM_TOP_POS = 0.6,
+            INTAKE_ARM_VERY_TOP_POS = 0.45,
+            INTAKE_ARM_FOUR_POS = 0.75,
+            INTAKE_ARM_MIDDLE_POS = 0.76,
+            INTAKE_ARM_BASE_POS = 0.91;
     public static double
-            INTAKE_CHUTE_ARM_READY_POS = 0.9,
+            INTAKE_CHUTE_ARM_READY_POS = 0.905,
             INTAKE_CHUTE_ARM_HALFUP_POS = 0.38,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.38;
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.365;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.74,
             INTAKE_CLIP_OPEN_POS = 0.45;
@@ -245,7 +245,7 @@ public class IntakeSubsystem {
         //else{
         //    return false;
         //}
-        return  Math.abs(intakeSlideTarget - intakeSlidePosition) < intakeSlidethresholdDistance;
+        return  Math.abs(-intakeSlideTarget - intakeSlidePosition) < intakeSlidethresholdDistance;
     }
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow

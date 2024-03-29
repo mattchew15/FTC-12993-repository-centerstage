@@ -22,7 +22,7 @@ public class LoopTime { // Do you need to cache 2 variables instead of just time
     {
         double now = System.nanoTime();
         dt = (now - prev_time);
-        hz = 1000000000 / dt; // using nano to see if it fix this shit, no telemetry call in between lol
+        hz = 1_000_000_000 / dt; // using nano to see if it fix this shit, no telemetry call in between lol
         prev_time = now;
     }
 
@@ -35,5 +35,9 @@ public class LoopTime { // Do you need to cache 2 variables instead of just time
     public double getDt()
     {
         return dt;
+    }
+
+    public double getHz() {
+        return hz;
     }
 }

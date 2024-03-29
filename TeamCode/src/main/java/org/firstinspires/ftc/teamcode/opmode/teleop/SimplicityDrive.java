@@ -433,6 +433,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case OUTTAKE_ADJUST:
+                intakeClipHoldorNotHold(-100); // otherwise we are setting internalPID is still doing things
                 if (GlobalTimer.milliseconds() - sequenceTimer > 700){
                     intakeSubsystem.intakeSpin(0);
                 }else{
@@ -469,7 +470,6 @@ public class SimplicityDrive extends LinearOpMode {
                 //RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
                 // idk if we need specific rail adjustment here
                 outtakeSubsystem.liftToInternalPID(liftTarget,1);
-                //TODO change to FTC libs pid with a proper derivative value
 
                 if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
@@ -750,12 +750,13 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.resetOuttake();
             outtakeSubsystem.outtakeResetState = OuttakeSubsystem.OuttakeResetState.UP; // starts the thing
         } else {
-            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.5){
+            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2){
                 outtakeSubsystem.liftToInternalPID(0,1);
+
                 //outtakeSubsystem.liftMotorRawControl(0);
                 telemetry.addLine("Normal lift position");
             } else {
-                outtakeSubsystem.liftToInternalPID(-5,1);
+                outtakeSubsystem.liftTo(-100,outtakeSubsystem.liftPosition,1);
             }
         }
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);

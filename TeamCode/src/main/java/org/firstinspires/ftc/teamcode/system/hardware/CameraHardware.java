@@ -88,7 +88,7 @@ public class CameraHardware {
         } else if (RED_AUTO) {
             redWebcam.closeCameraDevice();
         }
-        backWebcam.closeCameraDevice();
+        //backWebcam.closeCameraDevice();
     }
     public Pose2d update(double angle)
     {

@@ -48,7 +48,7 @@ public class BackdropKinTest extends LinearOpMode {
 
                     pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
                     liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
-                    railTarget = (int)outtakeInverseKinematics.railEnd(prevVerticalHeight,verticalHeight, railTarget, robotAngle);
+                   // railTarget = (int)outtakeInverseKinematics.railEnd(prevVerticalHeight,verticalHeight, railTarget, robotAngle);
                 }
                 outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
                 outtakeSubsystem.pitchToInternalPID((int) pitchTarget,1);

@@ -113,7 +113,7 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
-
+/*
                 else if (gamepad1.dpad_left){
                     outtakeSubsystem.pitchToFTCLib(36);
                 }else if (gamepad1.dpad_right){
@@ -126,23 +126,27 @@ public class PIDMotorTest extends LinearOpMode {
                     outtakeSubsystem.pitchToInternalPID(30,1);
                 }
 
-/*
+ */
+
+
                 else if (gamepad1.dpad_left){
-                    intakeClipHoldorNotHold(-3);
+                    intakeSubsystem.intakeSlideInternalPID(0,1);
                 }else if (gamepad1.dpad_right){
                     intakeSubsystem.intakeSlideInternalPID(200,1);
                 }
- */
+
 
 
 
 
                 //intakeSubsystem.IntakeSlideMotor.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
-
+                telemetry.addData("intake slide target", intakeSubsystem.intakeSlideTarget);
+                telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                telemetry.addData("intake slide target reached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("lift Target Reached", outtakeSubsystem.liftTargetReached());
                 telemetry.addData("Pitch target reached", outtakeSubsystem.liftTargetReached());
-                telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
+
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
                 telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
