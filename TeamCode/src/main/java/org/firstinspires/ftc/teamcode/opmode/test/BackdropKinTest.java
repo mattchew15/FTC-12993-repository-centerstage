@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,24 +10,20 @@ import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 @TeleOp(name="Backdrop Kinematics")
-public class BackdropKinTest extends LinearOpMode
-{
-    double outtakeLiftAdjustTimer,
-            verticalHeight,
+public class BackdropKinTest extends LinearOpMode {
+    double verticalHeight,
+            prevVerticalHeight,
             pitchTarget,
             liftTarget,
-            robotAngle;
-
+            robotAngle,
+            railTarget;
     ElapsedTime GlobalTimer = new ElapsedTime();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     DriveBase driveBase = new DriveBase();
     OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
-
-
+    public void runOpMode() throws InterruptedException {
 
         outtakeSubsystem.initOuttake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
@@ -40,29 +37,27 @@ public class BackdropKinTest extends LinearOpMode
             driveBase.drivebaseSetup();
 
             GlobalTimer.reset();
-            while (!isStopRequested() && opModeIsActive())
-            {
+            while (!isStopRequested() && opModeIsActive()) {
 
-                if (gamepad1.left_trigger > 0.2)
-                {
+                if (gamepad1.left_trigger > 0.2) {
                     driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 }
-                else
-                {
+                else {
                     //in
                     verticalHeight += gamepad1.left_stick_y * 0.0005;
-                    //pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
-                    //liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
 
-                    //RAIL_SERVO_POSITION = (int)outtakeInverseKinematics.railEnd(something,backdropRelativeHeight,RAIL_SERVO_POSITION);
-                    // idk if we need specific rail adjustment here
-
+                    pitchTarget = outtakeInverseKinematics.pitchEnd(verticalHeight, robotAngle);
+                    liftTarget = outtakeInverseKinematics.slideEnd(verticalHeight, robotAngle);
+                    railTarget = (int)outtakeInverseKinematics.railEnd(prevVerticalHeight,verticalHeight, railTarget, robotAngle);
                 }
                 outtakeSubsystem.liftTo((int) liftTarget, outtakeSubsystem.liftPosition,1);
                 outtakeSubsystem.pitchToInternalPID((int) pitchTarget,1);
+                outtakeSubsystem.OuttakeRailServo.setPosition(railTarget);
+
                 telemetry.addData("Vertical Height", verticalHeight);
                 telemetry.addData("Pitch Target", pitchTarget);
                 telemetry.addData("Lift Target", liftTarget);
+                telemetry.addData("Rail Target", railTarget);
                 telemetry.update();
 
             }
