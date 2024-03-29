@@ -465,9 +465,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                         intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
 
                     }
-
                 }
-
                 break;
 
             // might need to make multiple of these states depending on the trajectory it follows -- again making methods would help alot with this

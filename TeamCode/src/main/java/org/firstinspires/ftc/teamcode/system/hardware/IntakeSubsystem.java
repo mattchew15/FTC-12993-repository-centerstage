@@ -144,7 +144,7 @@ public class IntakeSubsystem {
     // handles all of the reads in this class
     public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
-        intakeChuteArmPosition = getIntakeChuteArmPos();
+        //intakeChuteArmPosition = getIntakeChuteArmPos();
         rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
         leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
         chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();

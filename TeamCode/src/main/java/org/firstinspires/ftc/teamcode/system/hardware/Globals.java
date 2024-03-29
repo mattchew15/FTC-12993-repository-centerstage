@@ -87,10 +87,10 @@ public class Globals {
             PITCH_PURPLE_PIXEL_POSITION = 20,
             PITCH_MID_DEGREE_TICKS = 45,
 
-            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 990,
+            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 1000,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 500,
 
-            INTAKE_SLIDE_AUTO_LONG_PRESET = 990,
+            INTAKE_SLIDE_AUTO_LONG_PRESET = 1000,
 
             LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
 
