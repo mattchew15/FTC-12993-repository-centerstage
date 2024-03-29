@@ -21,8 +21,8 @@ public class LocalizationTestThread extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        //drive.startImuThread(this);
+        SampleMecanumDriveThread drive = new SampleMecanumDriveThread(hardwareMap);
+        drive.startImuThread(this);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -40,7 +40,9 @@ public class LocalizationTestThread extends LinearOpMode {
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
-            loopTime.updateLoopTime(telemetry);
+            loopTime.delta();
+            telemetry.addData("Loop", 1_000_000_00 / loopTime.getDt());
+            telemetry.addData("Hz", loopTime.getHz());
             telemetry.addLine();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

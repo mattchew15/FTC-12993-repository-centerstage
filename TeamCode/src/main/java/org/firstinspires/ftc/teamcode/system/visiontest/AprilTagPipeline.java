@@ -144,8 +144,8 @@ public class AprilTagPipeline extends OpenCvPipeline
 
             telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
             telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x));
-            telemetry.addLine(String.format("Translation X: %.2f in", detection.pose.x * 12));
-            telemetry.addLine(String.format("Translation Y: %.2f in", detection.pose.y * 12));
+            telemetry.addLine(String.format("Translation X: %.2f in", detection.pose.x * FEET_PER_METER * 12));
+            telemetry.addLine(String.format("Translation Y: %.2f in", detection.pose.y * FEET_PER_METER * 12));
             telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y));
             telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z));
 
@@ -156,7 +156,7 @@ public class AprilTagPipeline extends OpenCvPipeline
 
         }
 
-        telemetry.update();
+        //telemetry.update();
 
         return input;
     }

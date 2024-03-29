@@ -36,4 +36,9 @@ public class LoopTime { // Do you need to cache 2 variables instead of just time
     {
         return dt;
     }
+
+    public double getHz()
+    {
+        return hz;
+    }
 }
