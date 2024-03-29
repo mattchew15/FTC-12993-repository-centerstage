@@ -188,9 +188,9 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
                 telemetry.addLine("");
                 //telemetry.addData("IntakeMotor Current", intakeSubsystem.intakeCurrent);
-                telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
-                telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
-                telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
+      //          telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+      //          telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+      //          telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
                 telemetry.addLine("");
                 //telemetry.addData("IntakeChuteArmPosition", intakeSubsystem.intakeChuteArmPosition);
                 telemetry.addLine("");
@@ -201,6 +201,8 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
+
+                /*
                 log.addData(
                         outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS),
                         outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS),
@@ -212,6 +214,7 @@ public class SimplicityDrive extends LinearOpMode {
                         driveBase.BR.getCurrent(CurrentUnit.AMPS));
 
                 log.addData(outtakeState);
+                 */
 
                 /*
                 if (majorAdjustType == 1){

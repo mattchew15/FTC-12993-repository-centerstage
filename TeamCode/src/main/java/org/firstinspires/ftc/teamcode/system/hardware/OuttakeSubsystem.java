@@ -316,15 +316,16 @@ public class OuttakeSubsystem {
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
         LiftMotor.setTargetPosition(-liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LiftMotor.setPower(maxSpeed);
+        prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+        //LiftMotor.setPower(maxSpeed);
     }
     public void liftToInternalPIDTicks(int target, double maxSpeed)
     {
         liftTarget = target;
         LiftMotor.setTargetPosition(liftTarget);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
-        LiftMotor.setPower(maxSpeed);
+        prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+        //LiftMotor.setPower(maxSpeed);
     }
 
     public void pitchTo(int targetDegrees, double motorPosition, double maxSpeed){

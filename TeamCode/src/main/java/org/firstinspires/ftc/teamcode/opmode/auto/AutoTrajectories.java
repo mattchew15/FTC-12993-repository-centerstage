@@ -20,6 +20,8 @@ public class AutoTrajectories {
     public AutoTrajectories (){
     }
 
+    public boolean preExtendSlides;
+
     public static double
 
     xPosition,
@@ -79,6 +81,7 @@ public class AutoTrajectories {
 
     public void init(HardwareMap hardwareMap, LinearOpMode opMode)
     {
+        preExtendSlides = false;
         drive = new SampleMecanumDriveThread(hardwareMap);
         drive.startImuThread(opMode);
 
@@ -126,13 +129,16 @@ public class AutoTrajectories {
 
         PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
                 .lineToLinearHeading(new Pose2d(-50, -32*S, Math.toRadians(180)*S))
+                .addSpatialMarker(new Vector2d(-50, 30), () -> {
+                    preExtendSlides = true;
+                })
                 .build();
 
         PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
                 .lineToLinearHeading(new Pose2d(-55, -32*S, Math.toRadians(180)*S))
                 .build();
 
-
+/*
         AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
                 .lineToLinearHeading(new Pose2d(-54, FrontPreloadY*S, Math.toRadians(180)*S)) // hardest one closest to stack
                 .build();
@@ -142,6 +148,7 @@ public class AutoTrajectories {
         AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
                 .lineToLinearHeading(new Pose2d(-38, FrontPreloadY*S, Math.toRadians(180)*S)) // hardest one closest to stack
                 .build();
+ */
 
         /*
         driveIntoStackStraightMIDDLE = drive.trajectoryBuilder(middleDepositPose)

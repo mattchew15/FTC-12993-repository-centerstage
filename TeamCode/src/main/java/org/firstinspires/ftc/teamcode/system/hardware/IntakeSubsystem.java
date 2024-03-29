@@ -112,6 +112,7 @@ public class IntakeSubsystem {
     public boolean chuteDetectorLimitSwitchValue;
     public double intakeChuteArmPosition;
     public double intakeCurrent;
+    public double intakeSlideCurrent;
     public double intakeVelocity;
     public double robotVoltage;
 
@@ -152,11 +153,13 @@ public class IntakeSubsystem {
 
             frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
             backColourSensorValue = IntakeColourSensorBack.alpha();
-            intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
-            intakeVelocity = IntakeMotor.getVelocity();
-            robotVoltage = voltageSensor.getVoltage();
+            //intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
+            //intakeSlideCurrent = IntakeSlideMotor.getCurrent(CurrentUnit.AMPS);
+            //intakeVelocity = IntakeMotor.getVelocity();
+            //robotVoltage = voltageSensor.getVoltage();
         }
     }
+    /*
     public void intakeReads(boolean intakingState, boolean bulkReadEXP){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         intakeChuteArmPosition = getIntakeChuteArmPos();
@@ -183,6 +186,7 @@ public class IntakeSubsystem {
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
         }
     }
+     */
 
     public void intakeSlideMotorEncodersReset(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
