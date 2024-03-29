@@ -35,7 +35,9 @@ public class Globals {
     public static double
             RAIL_CENTER_POS = 0.487,
             RAIL_RIGHT_POS = 0,
-            RAIL_LEFT_POS = 1;
+            RAIL_RIGHT_YELLOW_POS = 0.2,
+            RAIL_LEFT_POS = 1,
+            RAIL_LEFT_YELLOW_POS = 0.8;
 
     // Auto States
     public static boolean
@@ -85,8 +87,10 @@ public class Globals {
             PITCH_PURPLE_PIXEL_POSITION = 20,
             PITCH_MID_DEGREE_TICKS = 45,
 
-            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 1000,
+            INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 990,
             INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE = 500,
+
+            INTAKE_SLIDE_AUTO_LONG_PRESET = 990,
 
             LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
 
