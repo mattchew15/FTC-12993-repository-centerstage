@@ -450,7 +450,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 // if adjusting to low have the pitching preset go further in
 
-                if (GlobalTimer.milliseconds() - sequenceTimer > 10){ // makes transfer better?
+                if (GlobalTimer.milliseconds() - sequenceTimer > 100){ // makes transfer better?
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
                     outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
                     intakeSubsystem.intakeSpin(0);
@@ -668,7 +668,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeState = OuttakeState.RETURN; // if b is pressed at any state then return to ready
             pivotFlipToggle.ToggleMode = false; // returning should put thing like this to default
         }
-        if (gamepad2.options || gamepad2.share){ // shouldn't need a toggle function for this
+        if (gamepad2.options){ // shouldn't need a toggle function for this
             outtakeState = OuttakeState.MANUAL_ENCODER_RESET;
         }
 

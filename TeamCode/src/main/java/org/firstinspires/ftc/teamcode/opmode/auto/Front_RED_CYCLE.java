@@ -166,13 +166,13 @@ public class Front_RED_CYCLE extends LinearOpMode {
             telemetry.addData("intakeSlidePosition", intakeSubsystem.intakeSlidePosition);
             //telemetry.addData("lift Target Reached", outtakeSubsystem.liftTargetReached());
             autoSequence();
-            if (currentState != AutoState.PRELOAD_DRIVE){
+            if (currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIXEL){
                 outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
             }
 
 
             xPosition = poseEstimate.getX();              // is in globals rn - might not work idk
-            yPosition = poseEstimate.getY();
+            //yPosition = poseEstimate.getY();
             headingPosition = poseEstimate.getHeading();
 
             //telemetry.addData("x Position", xPosition);
@@ -264,7 +264,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 intakeSubsystem.intakeSpin(1);
                 preExtendIntakeSlides();
                 if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches() || intakeSubsystem.pixelsInIntake()){ // limit switches don't touch in this case
-                    if (delay(80)){ // ensure pixels are in robot
+                    if (delay(15)){ // ensure pixels are in robot
                         intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                         autoTrajectories.outtakeDriveMiddlePath(poseEstimate,18, 30, -32);
                         resetTimer();
@@ -369,21 +369,26 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
             case OUTTAKE_PIXEL: // faster transfer
                // if (delay() 40 || (intakeSubsystem.chuteDetectorLimitSwitchValue && delay() 20)){
+                if (numCycles != 0){
+                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                } else {
+                    outtakeSubsystem.setOuttakePitchYellowPixelPosition();
+                }
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     if (delay(150)){ // time for grippers to close
                         if (numCycles == 0){ // for very first cycle
                             outtakeSubsystem.pitchToInternalPID(16,1);
                             //outtakeSubsystem.updateLiftTargetProfile(570);
-                            outtakeSubsystem.liftTo(26,outtakeSubsystem.liftPosition,1);
+                            outtakeSubsystem.liftTo(27,outtakeSubsystem.liftPosition,1);
                             railLogic();
                         } else if (numCycles == 1){
                             outtakeSubsystem.liftTo(30,outtakeSubsystem.liftPosition,1);
                             //outtakeSubsystem.updateLiftTargetProfile(650);
-                            outtakeSubsystem.pitchToInternalPID(20,1);
+                            outtakeSubsystem.pitchToInternalPID(18,1);
                         } else if (numCycles == 2){
                             //outtakeSubsystem.updateLiftTargetProfile(734);
                             outtakeSubsystem.liftTo(30,outtakeSubsystem.liftPosition,1);
-                            outtakeSubsystem.pitchToInternalPID(20,1);
+                            outtakeSubsystem.pitchToInternalPID(19,1);
                         } else if (numCycles == 3){
                             //outtakeSubsystem.updateLiftTargetProfile(780);
                             outtakeSubsystem.liftTo(28,outtakeSubsystem.liftPosition,1);
@@ -401,7 +406,11 @@ public class Front_RED_CYCLE extends LinearOpMode {
                         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
                         if (delay(210)){
-                            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE); // slides go out before arm so transfer is good
+                            if (numCycles !=0){
+                                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE); // slides go out before arm so transfer is good
+                            } else {
+                                outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.YELLOW); // slides go out before arm so transfer is good
+                            }
                             if (delay(350)){ // once chute is down
                                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                                 pivotLogic();
@@ -465,9 +474,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                         intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
 
                     }
-
                 }
-
                 break;
 
             // might need to make multiple of these states depending on the trajectory it follows -- again making methods would help alot with this

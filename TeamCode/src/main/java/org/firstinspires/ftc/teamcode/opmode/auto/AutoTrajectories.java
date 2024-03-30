@@ -129,7 +129,7 @@ public class AutoTrajectories {
 
         PreloadDrive2Front = drive.trajectoryBuilder(startPoseFront)
                 .lineToLinearHeading(new Pose2d(-50, -32*S, Math.toRadians(180)*S))
-                .addSpatialMarker(new Vector2d(-50, 30), () -> {
+                .addSpatialMarker(new Vector2d(-50, 28), () -> {
                     preExtendSlides = true;
                 })
                 .build();

@@ -52,7 +52,8 @@ public class OuttakeSubsystem {
             ARM_READY_POS = 0.809,
             ARM_UPRIGHT_POS = 0.4,
             ARM_SCORE_POS = 0.146,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.146;
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
+            ARM_SCORE_YELLOW_POS = 0.24;
     public static double
             PIVOT_READY_POS = 0.486,
             PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
@@ -69,7 +70,8 @@ public class OuttakeSubsystem {
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
             PITCH_PURPLEPIXEL_POSITION = 0.35,
-            PITCH_LOWPITCH_POSITION = 0.7;
+            PITCH_LOWPITCH_POSITION = 0.65,
+            PITCH_YELLOWPIXEL_POSITION = 0.4;
 
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
@@ -145,6 +147,7 @@ public class OuttakeSubsystem {
         CALCULATE,
         NULL,
         SCORE_PURPLE,
+        YELLOW,
         UPRIGHT
     }
 
@@ -394,7 +397,7 @@ public class OuttakeSubsystem {
             servoPositionForOverCentered = 0.15;
         }
         OuttakePitchServo.setPosition(servoPositionForOverCentered);
-        telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
+      //  telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
     }
 
     public void setOuttakePitchPurplePixelPosition(){
@@ -402,6 +405,9 @@ public class OuttakeSubsystem {
     }
     public void setOuttakePitchPitchDownPosition(){
         OuttakePitchServo.setPosition(PITCH_LOWPITCH_POSITION);
+    }
+    public void setOuttakePitchYellowPixelPosition(){
+        OuttakePitchServo.setPosition(PITCH_YELLOWPIXEL_POSITION);
     }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         switch (state) {
@@ -472,6 +478,9 @@ public class OuttakeSubsystem {
                 break;
             case UPRIGHT:
                 OuttakeArmServo.setPosition(ARM_UPRIGHT_POS);
+                break;
+            case YELLOW:
+                OuttakeArmServo.setPosition(ARM_SCORE_YELLOW_POS);
                 break;
         }
     }
