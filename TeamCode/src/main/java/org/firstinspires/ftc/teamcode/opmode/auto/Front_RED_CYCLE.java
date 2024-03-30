@@ -172,7 +172,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
 
 
             xPosition = poseEstimate.getX();              // is in globals rn - might not work idk
-            yPosition = poseEstimate.getY();
+            //yPosition = poseEstimate.getY();
             headingPosition = poseEstimate.getHeading();
 
             //telemetry.addData("x Position", xPosition);
