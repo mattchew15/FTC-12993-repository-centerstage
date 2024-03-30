@@ -49,7 +49,7 @@ public class OuttakeSubsystem {
             MINI_TURRET_BACKPURPLE_POS = 0.38;
 
     public static double
-            ARM_READY_POS = 0.809,
+            ARM_READY_POS = 0.802,
             ARM_UPRIGHT_POS = 0.4,
             ARM_SCORE_POS = 0.146,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
@@ -136,6 +136,7 @@ public class OuttakeSubsystem {
     public enum OuttakeRailState {
         CENTER,
         RIGHT,
+        CENTER_YELLOW,
         RIGHT_YELLOW,
         LEFT,
         LEFT_YELLOW,
@@ -212,18 +213,15 @@ public class OuttakeSubsystem {
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
     }
-
+/*
     public void outtakeReads(boolean dropReadyState, boolean bulkEXP){ // pass in the drop ready state so its not reading the whole time
         double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
         liftPosition =  ticksToInchesSlidesMotor(-LiftMotor.getCurrentPosition());
         pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+1; // offset and stuff covered here
         //pitchPosition = pitchTicksInitialOffset + -PitchMotor.getCurrentPosition();
-
-
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
-
         if (bulkEXP)
         {
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -232,8 +230,8 @@ public class OuttakeSubsystem {
         {
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
         }
-
     }
+ */
 
     public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
         return PitchEncoder.getVoltage() / 3.3 * 360;
@@ -433,6 +431,9 @@ public class OuttakeSubsystem {
         switch (state) {
             case CENTER:
                 setOuttakeRailServo(RAIL_CENTER_POS);
+                break;
+            case CENTER_YELLOW:
+                setOuttakeRailServo(RAIL_CENTER_YELLOW_POS);
                 break;
             case RIGHT_YELLOW:
                 setOuttakeRailServo(RAIL_RIGHT_YELLOW_POS);

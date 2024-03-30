@@ -34,6 +34,7 @@ public class Globals {
 
     public static double
             RAIL_CENTER_POS = 0.487,
+            RAIL_CENTER_YELLOW_POS = 0.37,
             RAIL_RIGHT_POS = 0,
             RAIL_RIGHT_YELLOW_POS = 0.2,
             RAIL_LEFT_POS = 1,

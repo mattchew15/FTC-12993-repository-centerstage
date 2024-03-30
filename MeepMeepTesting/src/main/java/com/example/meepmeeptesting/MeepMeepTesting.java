@@ -17,12 +17,15 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-38, -59, Math.toRadians(-180)))
+                        drive.trajectorySequenceBuilder(new Pose2d(27, -32, Math.toRadians(180)))
 
 
-                                .lineToLinearHeading(new Pose2d(-62,-32, Math.toRadians(179)))
-
-
+                                .lineToSplineHeading(new Pose2d(24.1, (-32 + 4), Math.toRadians(179)))
+                                .splineToConstantHeading(new Vector2d(20, (-32 + 10)), Math.toRadians(110))
+                                .splineToConstantHeading(new Vector2d(6, (-32 + 26.2)), Math.toRadians(180))
+                                .lineToSplineHeading(new Pose2d(5, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180))) // slower portion of spline
                                // .lineToSplineHeading(new Pose2d(20, -32, Math.toRadians(180)))
                                // .splineToConstantHeading(new Vector2d(-28, -29), Math.toRadians(180)) // end tangent affects path alot\
                                // .lineToSplineHeading(new Pose2d(-36.7, -29, Math.toRadians(180))) // seperates trajectories

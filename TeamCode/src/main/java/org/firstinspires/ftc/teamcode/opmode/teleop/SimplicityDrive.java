@@ -354,7 +354,6 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case INTAKE_TO_TRANSFER:
-
                 liftPositionChange(false,false);
                 if (GlobalTimer.milliseconds() - sequenceTimer > 80){ // gives time for pixels to orientate
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
@@ -455,7 +454,6 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
                     intakeSubsystem.intakeSpin(0);
                 }
-
                 if (GlobalTimer.milliseconds() - sequenceTimer > 0){ // run after we enter the new state
                     pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,headingPosition);
                     liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,headingPosition);
@@ -668,7 +666,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeState = OuttakeState.RETURN; // if b is pressed at any state then return to ready
             pivotFlipToggle.ToggleMode = false; // returning should put thing like this to default
         }
-        if (gamepad2.options){ // shouldn't need a toggle function for this
+        if (gamepad2.share){ // shouldn't need a toggle function for this
             outtakeState = OuttakeState.MANUAL_ENCODER_RESET;
         }
 
@@ -703,13 +701,14 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSlideMotorRawControl(0);
             } else {
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
-                intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+//                intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+                intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
             }
             telemetry.addLine("We are HOLDING STUFF IN");
         } else {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
-            //intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
-            intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+            intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+          //  intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
             intakeClipTimer = GlobalTimer.milliseconds();
             telemetry.addLine("We are trying to slide our slides in");
         }
@@ -721,13 +720,14 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeSlideInternalPID(0,1);
             } else {
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
-                intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+                intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+               // intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
             }
             telemetry.addLine("We are HOLDING STUFF IN");
         } else {
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
-            //intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
-            intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+            intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+           // intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
             intakeClipTimer = GlobalTimer.milliseconds();
             telemetry.addLine("We are trying to slide our slides in");
         }
