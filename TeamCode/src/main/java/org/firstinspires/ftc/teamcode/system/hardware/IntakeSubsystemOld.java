@@ -2,26 +2,24 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.servoCaching;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
-import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
 
 @Config
-@SuppressWarnings("unused")
-public class IntakeSubsystem
-{
+public class IntakeSubsystemOld {
 
-    public DcMotor
+    public DcMotorEx
             IntakeSlideMotor,
             IntakeMotor;
     public ServoImplEx
@@ -34,13 +32,14 @@ public class IntakeSubsystem
             IntakeColourSensorFront,
             IntakeColourSensorBack;
 
-   // public AnalogInput IntakeChuteArmEncoder;
+    public AnalogInput
+            IntakeChuteArmEncoder;
 
     public DigitalChannel RightArmLimitSwitch;
     public DigitalChannel LeftArmLimitSwitch;
-    //public DigitalChannel ChuteUpDetectorLimitSwitch;
+    public DigitalChannel ChuteUpDetectorLimitSwitch;
 
-    PhotonLynxVoltageSensor voltageSensor;
+    VoltageSensor voltageSensor;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.6,
@@ -61,9 +60,8 @@ public class IntakeSubsystem
             INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.58;
 
     final double intakeSlidethresholdDistance = 20;
-    final double intakeSlideThresholdDistanceNewThreshold = 4;
+    final double intakeSlidethresholdDistanceNewThreshold = 4;
     private double previousSpeedDirection, previousSlideMotor;
-    private double prevChute, prevArm, prevClip, prevHolder;
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeSpinState {
@@ -100,8 +98,11 @@ public class IntakeSubsystem
     }
 
     public static double intakeSlideKp = 0.01, intakeSlideKi = 0.00, intakeSlideKd = 0.0005, intakeSlideIntegralSumLimit = 10, intakeSlideKf = 0;
+    public static double intakeSlideKpFTCLIB = 0.007, intakeSlideKiFTCLIB = 0.00, intakeSlideKdFTCLIB = 0.00045;
+
     PID intakeSlidePID = new PID(intakeSlideKp,intakeSlideKi,intakeSlideKd,intakeSlideIntegralSumLimit,intakeSlideKf);
 
+    PIDController intakeSlideFTCLibPID = new PIDController(intakeSlideKpFTCLIB, intakeSlideKiFTCLIB, intakeSlideKdFTCLIB);
     // define slide position and target as class members - intake slide position can be stored so its only read once
     public double intakeSlidePosition;
     public int intakeSlideTarget;
@@ -116,12 +117,9 @@ public class IntakeSubsystem
     public double intakeVelocity;
     public double robotVoltage;
 
-    private TimedSupplier<Integer> frontColorSensorSupplier, backColorSensorSupplier;
-
     public double degreesToTicks(double degrees) { return degrees / 355; }
 
     public void initIntake(HardwareMap hwMap){
-
         IntakeSlideMotor = hwMap.get(DcMotorEx.class, "IntakeSlideMotor");
         IntakeMotor = hwMap.get(DcMotorEx.class, "IntakeMotor");
 
@@ -131,12 +129,11 @@ public class IntakeSubsystem
         IntakePixelHolderServo = hwMap.get(ServoImplEx.class,"IntakePixelHolderS");
         IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
-        //IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
+        IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
         RightArmLimitSwitch = hwMap.get(DigitalChannel.class, "RightArmLimit");
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
-
-        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 100);
-        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
+        ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteDetector");
+        voltageSensor = hwMap.voltageSensor.iterator().next();
     }
 
     public void intakeHardwareSetup(){
@@ -146,19 +143,17 @@ public class IntakeSubsystem
     }
 
     // handles all of the reads in this class
-    public void intakeReads(boolean I2C){ // pass in the state that the colour sensors need to be read in to optimize loop times
+    public void intakeReads(boolean intakingState){ // pass in the state that the colour sensors need to be read in to optimize loop times
         intakeSlidePosition = -IntakeSlideMotor.getCurrentPosition();
         //intakeChuteArmPosition = getIntakeChuteArmPos();
+        rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
+        leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
+        chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
 
-        if (I2C){ // pass in state
+        if (intakingState){ // pass in state
 
-            frontColourSensorValue = frontColorSensorSupplier.get(); // could be something else
-            backColourSensorValue = backColorSensorSupplier.get();
-            rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
-            leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
-
-            //chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
-            //voltageSensor.getCachedVoltage(); // this will always like return the valued already used by the driver hub
+            frontColourSensorValue = IntakeColourSensorFront.alpha(); // could be something else
+            backColourSensorValue = IntakeColourSensorBack.alpha();
             //intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
             //intakeSlideCurrent = IntakeSlideMotor.getCurrent(CurrentUnit.AMPS);
             //intakeVelocity = IntakeMotor.getVelocity();
@@ -201,12 +196,10 @@ public class IntakeSubsystem
     public boolean pixelsInIntake(){
         return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
     }
-    /*
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
         return IntakeChuteArmEncoder.getVoltage() / 3.3 * 360;
     }
 
-     */
 
     // methods should be camel caps
 
@@ -237,6 +230,7 @@ public class IntakeSubsystem
 
     public void intakeSlideTo(int targetRotations, double motorPosition, double maxSpeed){
         intakeSlideTarget = targetRotations;
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
         //IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         double output = intakeSlidePID.update(targetRotations,motorPosition,maxSpeed); //does a lift to with external PID instead of just regular encoders
         previousSlideMotor = motorCaching(-output, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
@@ -245,10 +239,18 @@ public class IntakeSubsystem
 
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = -rotations; // variable is public to this class?
-        IntakeSlideMotor.setTargetPosition(intakeSlideTarget); //TODO cache
+        IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(maxSpeed);
+    }
+
+    public void intakeSlideFTCLibPID(int rotations)
+    {
+        IntakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlideTarget = -rotations; // variable is public to this class?
+        double pow = intakeSlideFTCLibPID.calculate(intakeSlidePosition, intakeSlideTarget);
+        previousSlideMotor = motorCaching(-pow, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
     }
     public boolean intakeSlideTargetReached(){
         //if (intakeSlidePosition > (intakeSlideTarget - intakeSlidethresholdDistance) && intakeSlidePosition < (intakeSlideTarget + intakeSlidethresholdDistance)){
@@ -271,78 +273,58 @@ public class IntakeSubsystem
     }
 
     public void intakeArmServoState(IntakeArmServoState state) {
-        double arm = 0;
         switch (state) {
             case TOP:
-                arm = INTAKE_ARM_TOP_POS;
-                //IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
+                IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
                 break;
             case MIDDLE:
-                arm = INTAKE_ARM_MIDDLE_POS;
-                //IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
+                IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
                 break;
             case VERY_TOP:
-                arm = INTAKE_ARM_VERY_TOP_POS;
                 IntakeArmServo.setPosition(INTAKE_ARM_VERY_TOP_POS);
                 break;
             case FOUR:
-                arm = INTAKE_ARM_FOUR_POS;
-                //IntakeArmServo.setPosition(INTAKE_ARM_FOUR_POS);
+                IntakeArmServo.setPosition(INTAKE_ARM_FOUR_POS);
                 break;
             case BASE:
-                arm = INTAKE_ARM_BASE_POS;
-                //IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
+                IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;
         }
-        prevArm = servoCaching(arm, prevArm, EPSILON_DELTA, IntakeArmServo);
     }
 
     public void intakeChuteArmServoState(IntakeChuteServoState state) {
-        double chute = 0;
         switch (state) {
             case READY:
-                chute = INTAKE_CHUTE_ARM_READY_POS;
-                //IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_READY_POS);
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_READY_POS);
                 break;
             case HALF_UP:
-                chute = INTAKE_CHUTE_ARM_HALFUP_POS;
-                //IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_HALFUP_POS);
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_HALFUP_POS);
                 break;
             case TRANSFER:
-                chute = INTAKE_CHUTE_ARM_TRANSFER_POS;
-                //IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_TRANSFER_POS);
+                IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_TRANSFER_POS);
                 break;
         }
-        prevChute = servoCaching(chute, prevChute, EPSILON_DELTA, IntakeChuteArmServo);
     }
 
     public void intakeClipServoState(IntakeClipServoState state) {
-        double clip = 0;
         switch (state) {
             case HOLDING:
-                clip = INTAKE_CLIP_HOLDING_POS;
-                //IntakeClipServo.setPosition(INTAKE_CLIP_HOLDING_POS);
+                IntakeClipServo.setPosition(INTAKE_CLIP_HOLDING_POS);
                 break;
             case OPEN:
-                clip = INTAKE_CLIP_OPEN_POS;
-                //IntakeClipServo.setPosition(INTAKE_CLIP_OPEN_POS);
+                IntakeClipServo.setPosition(INTAKE_CLIP_OPEN_POS);
                 break;
         }
-        prevClip = servoCaching(clip, prevClip, EPSILON_DELTA, IntakeClipServo);
     }
 
     public void intakePixelHolderServoState(IntakePixelHolderServoState state) {
-        double holder = 0;
         switch (state) {
             case HOLDING:
-                holder = INTAKE_PIXEL_HOLDER_HOLDING_POS;
-                //IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_HOLDING_POS);
+                IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_HOLDING_POS);
                 break;
             case OPEN:
-                holder = INTAKE_PIXEL_HOLDER_OPEN_POS;
-                //IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_OPEN_POS);
+                IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_OPEN_POS);
                 break;
         }
-        prevHolder = servoCaching(holder, prevHolder, EPSILON_DELTA, IntakePixelHolderServo);
     }
 }

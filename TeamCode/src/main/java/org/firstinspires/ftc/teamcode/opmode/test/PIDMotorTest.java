@@ -41,6 +41,7 @@ public class PIDMotorTest extends LinearOpMode {
 
     private List<LynxModule> hubs;
     double intakeClipTimer;
+    private boolean prev;
 
     @Override
     public void runOpMode() {
@@ -77,10 +78,12 @@ public class PIDMotorTest extends LinearOpMode {
                 intakeSubsystem.intakeSlideMotorEncodersReset();
                 outtakeSubsystem.cacheInitialPitchValue();
 
+            int target = 0;
             while (opModeIsActive()) {
 
+
                 outtakeSubsystem.outtakeReads(false); // read at the start of the loop
-                intakeSubsystem.intakeReads(true);
+                //intakeSubsystem.intakeReads(true);
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
@@ -104,11 +107,12 @@ public class PIDMotorTest extends LinearOpMode {
 
                 else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
-                    outtakeSubsystem.liftToFTCLib(0);
+                    outtakeSubsystem.liftToInternalPID(0, 1);
                 }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
-                    outtakeSubsystem.liftToFTCLib(6);
+                    outtakeSubsystem.liftToInternalPID(5, 1);
                 }
+
 
 
 
@@ -129,11 +133,22 @@ public class PIDMotorTest extends LinearOpMode {
  */
 
 
-                else if (gamepad1.dpad_left){
-                    intakeSubsystem.intakeSlideInternalPID(0,1);
+
+                if (gamepad1.dpad_left){
+                    target = 0;
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(200,1);
+                    target = 3;
                 }
+                else if (gamepad1.dpad_up && !prev)
+                {
+                    target = 7;
+                }
+                else if (gamepad1.dpad_down && !prev)
+                {
+                    target = 12;
+                }
+
+
 
 
 
@@ -148,6 +163,7 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addData("Pitch target reached", outtakeSubsystem.liftTargetReached());
 
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
+                telemetry.addData("LiftTarget", outtakeSubsystem.liftTarget);
                 telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
                 telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);

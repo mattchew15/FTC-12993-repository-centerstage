@@ -95,21 +95,13 @@ public class DriveBase {  // no constructor for this class
         backLeftPower = Math.pow(backLeftPower, powerCoefficient);
         frontRightPower = Math.pow(frontRightPower, powerCoefficient);
         backLeftPower = Math.pow(backLeftPower, powerCoefficient);
-
          */
-
 
         previousFrontLeftPower = motorCaching(frontLeftPower, previousFrontLeftPower, EPSILON_DELTA, FL);
         previousFrontRightPower = motorCaching(frontRightPower, previousFrontRightPower, EPSILON_DELTA, FR);
         previousBackLeftPower = motorCaching(backLeftPower, previousBackLeftPower, EPSILON_DELTA, BL);
         previousBackRightPower = motorCaching(backRightPower, previousBackRightPower, EPSILON_DELTA, BR);
 
-        /*
-        FL.setPower(frontLeftPower);
-        BL.setPower(backLeftPower);
-        FR.setPower(frontRightPower);
-        BR.setPower(backRightPower);
-         */
     }
 
 
