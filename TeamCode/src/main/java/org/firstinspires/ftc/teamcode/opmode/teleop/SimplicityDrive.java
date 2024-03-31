@@ -119,7 +119,7 @@ public class SimplicityDrive extends LinearOpMode {
          */
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
-               module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+               module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
              } //
 
 

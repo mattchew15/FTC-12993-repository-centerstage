@@ -7,6 +7,7 @@ import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.Supplier;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -16,15 +17,12 @@ import org.firstinspires.ftc.teamcode.system.accessory.Tags;
 import org.firstinspires.ftc.teamcode.system.accessory.math.MathResult;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
-import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 @Config // Allows dashboard tune
-public class Globals {
+public class Globals
+{
 
     // Auto Constants
     public static double
@@ -208,28 +206,67 @@ public class Globals {
     }
 
     /**
-     *
-     * @param current current power returned from the pid
-     * @param prev previous power set to the motor
+     * @param current          current power returned from the pid
+     * @param prev             previous power set to the motor
      * @param cachingTolerance threshold for the abs difference between the powers
-     * @param motor the motor the power should bet set if one of the conditions is true
+     * @param motor            the motor the power should bet set if one of the conditions is true
      * @return the value to be cached as the previous power
      */
-    public static double motorCaching(double current, double prev, double cachingTolerance, DcMotor motor) {
+    public static double motorCaching(double current, double prev, double cachingTolerance, DcMotor motor)
+    {
         if (
             //Should it be >= or >
-            (Math.abs(current - prev) > cachingTolerance) ||
-                    (current == 0.0 && prev != 0.0) ||
-                    (current >= 1.0 && !(prev >= 1.0)) ||
-                    (current <= -1.0 && !(prev <= -1.0))
-        ) {
+                (Math.abs(current - prev) > cachingTolerance) ||
+                        (current == 0.0 && prev != 0.0) ||
+                        (current >= 1.0 && !(prev >= 1.0)) ||
+                        (current <= -1.0 && !(prev <= -1.0))
+        )
+        {
 
             prev = current;
             motor.setPower(current);
         }
-        // Returning the variable is probably the best way, using and object could work as the pointer would be the same
         return prev;
     }
+
+    public static int TargetCaching(int target, int prevTarget, double cachingTolerance, DcMotor motor)
+    {
+        if (
+                (Math.abs(target - prevTarget) > cachingTolerance)
+        )
+        {
+            motor.setTargetPosition(target);
+            prevTarget = target;
+        }
+
+        return prevTarget;
+    }
+
+    public static double servoCaching(double current, double prev, double cachingTolerance, ServoImplEx servo)
+    {
+        if (
+                (Math.abs(current - prev) > cachingTolerance) ||
+                        (current == 0.0 && prev != 0.0) ||
+                        (current >= 1.0 && !(prev >= 1.0))
+        )
+        {
+
+            prev = current;
+            servo.setPosition(current);
+        }
+
+        return prev;
+    }
+    public static DcMotor.RunMode runModeCaching(DcMotor.RunMode runMode, DcMotor.RunMode prevRunMode, DcMotor motor)
+    {
+        if (runMode != prevRunMode)
+        {
+            motor.setMode(runMode);
+            prevRunMode = runMode;
+        }
+        return prevRunMode;
+    }
+
     public static MathResult mathCaching(DoubleUnaryOperator math, double currentInput, double prevInput, double prevResult)
     {
         if (Math.abs(currentInput - prevInput) > EPSILON_DELTA)
@@ -241,6 +278,7 @@ public class Globals {
         // i have no idea why this work, to many lambdas for my brain
         return new MathResult(prevInput, prevResult);
     }
+
     public static double applyOperation(double x, DoubleUnaryOperator operator)
     {
         return operator.applyAsDouble(x);
@@ -253,10 +291,12 @@ public class Globals {
      */
     public static List<LynxModule> setHubs(List<LynxModule> hubs)
     {
-        if(hubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(hubs.get(0).getSerialNumber())){
+        if (hubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(hubs.get(0).getSerialNumber()))
+        {
             chub = hubs.get(0);
             expHub = hubs.get(1);
-        }else{
+        } else
+        {
             chub = hubs.get(1);
             expHub = hubs.get(0);
         }
@@ -273,7 +313,6 @@ public class Globals {
         return new Tags(tagsNum, tags);
 
     }
-
 
 }
 
