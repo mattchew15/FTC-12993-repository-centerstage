@@ -359,7 +359,7 @@ public class SimplicityDrive extends LinearOpMode {
                 liftPositionChange(false,false); // we dont want d1 control in this state
                 liftDown(0.07);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                if (((delay(600)) || intakeSubsystem.intakeSlidePosition < 5 && intakeSubsystem.chuteDetectorLimitSwitchValue) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1) { //((delay() 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || globalTimer > 2000
+                if (((delay(600)) || intakeSubsystem.intakeSlidePosition < 7 && intakeSubsystem.chuteDetectorLimitSwitchValue) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1) { //((delay() 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || globalTimer > 2000
                     outtakeState = OuttakeState.TRANSFER_END;
                     gamepad2.rumbleBlips(1);
                     intakeSubsystem.intakeSpin(0);
@@ -416,7 +416,6 @@ public class SimplicityDrive extends LinearOpMode {
 
             case OUTTAKE_ADJUST:
                 intakeClipHoldorNotHold(-100); // otherwise we are setting internalPID is still doing things
-
                 if (delay(500)){
                     intakeSubsystem.intakeSpin(0);
                 }else{
@@ -446,7 +445,6 @@ public class SimplicityDrive extends LinearOpMode {
                         fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
                         fineAdjustHeight.OffsetTargetPosition = (int)backdropRelativeHeight;
                     }
-
                     // this shoudl be rememebered because we are caching fineAdjustHeight
                 }
                 //RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
@@ -472,23 +470,22 @@ public class SimplicityDrive extends LinearOpMode {
                      if (gamepad1.right_stick_button){
                          if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
-                      //       telemetry.addLine("We just dropped the top");
+                             //telemetry.addLine("We just dropped the top");
                          } else if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
-                      //       telemetry.addLine("We just dropped the bottom");
+                             //telemetry.addLine("We just dropped the bottom");
                          }
                          droppedRight = true;
                      }
                      if (gamepad1.left_stick_button) {
                          if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
-                   //          telemetry.addLine("We just dropped the top");
+                             //telemetry.addLine("We just dropped the top");
                          } else if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
-                   //          telemetry.addLine("We just dropped the bottom");
+                             //telemetry.addLine("We just dropped the bottom");
                          }
                          droppedLeft = true;
-
                      }
                 }
 
@@ -554,9 +551,8 @@ public class SimplicityDrive extends LinearOpMode {
                         // the line above will retract the arm based on how far off the rail servo is at difference timing -> y = mx + c basically
                         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                         if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 3.5){ // lets slides ramming trick take over in ready state
-                            outtakeState = OuttakeState.READY; //:)
+                            outtakeState = OuttakeState.READY;
                             resetTimer();
-
                             //having these here means dont repeatedly set things so its more optimized
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.INTAKE;
                             usedTriggers = false;
@@ -941,7 +937,7 @@ public class SimplicityDrive extends LinearOpMode {
     public void bumperPressed(){
         if (gamepad1.right_bumper){
             rightBumperPreExtend = true;
-        } else if (leftBumperPreExtend){
+        } else if (gamepad1.left_bumper){
             leftBumperPreExtend = true;
         }
     }
