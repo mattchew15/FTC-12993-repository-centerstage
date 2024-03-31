@@ -238,7 +238,7 @@ public class OuttakeSubsystem {
     }
 
     public void encodersReset(){
-        PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void liftEncoderReset(){
