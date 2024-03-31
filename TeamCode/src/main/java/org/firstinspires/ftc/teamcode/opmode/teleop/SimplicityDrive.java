@@ -64,6 +64,7 @@ public class SimplicityDrive extends LinearOpMode {
     boolean initialPivot;
     boolean increaseHeight;
     boolean transferEarly;
+    boolean reArrangePixels;
 
     boolean rightBumperPreExtend;
     boolean leftBumperPreExtend;
@@ -482,12 +483,13 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 }
 
-                // Drop logic
-                 if (gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)) {
+
+                if ((gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)) || (delay(300) && reArrangePixels)) {
                     resetTimer();// reset timer
                     outtakeState = OuttakeState.DEPOSIT;
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                     gamepad2.rumbleBlips(2);
+                    reArrangePixels = false;
                 } else {
                      if (gamepad1.right_stick_button){
                          if (topIsRight){
@@ -532,8 +534,9 @@ public class SimplicityDrive extends LinearOpMode {
             case DEPOSIT:  // idk what this case does
                 // if dropping with the slides further pitched than wait for longer lmao
                 // or if we have dropped each pixel individually
-                increaseHeight = true;
-
+                if (!reArrangePixels){
+                    increaseHeight = true; // don't increase height if we have just rearranged pixels
+                }
                 /*
                 if (outtakeSubsystem.pitchEncoderPosition > 48 || (droppedRight && droppedLeft)? delay() 500:delay() 150){ // test if manual reset is ok
                     if (!gamepad1.right_bumper){
@@ -676,6 +679,12 @@ public class SimplicityDrive extends LinearOpMode {
         }
         if (gamepad2.share){ // shouldn't need a toggle function for this
             outtakeState = OuttakeState.MANUAL_ENCODER_RESET;
+        }
+
+        if (gamepad2.left_stick_button && (outtakeState != OuttakeState.READY)){
+            reArrangePixels = true;
+            outtakeState = OuttakeState.OUTTAKE_ADJUST;
+
         }
 
         if (gamepad1.left_trigger > 0.2){ // && outtakeState == OuttakeState.READY
