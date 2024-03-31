@@ -8,14 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import org.firstinspires.ftc.teamcode.system.accessory.Log;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
-import org.firstinspires.ftc.teamcode.system.accessory.supplier.AsyncSupplier;
-import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+
 @Photon
 @TeleOp
 public class SupplierTest extends LinearOpMode

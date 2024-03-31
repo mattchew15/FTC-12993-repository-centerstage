@@ -41,6 +41,7 @@ public class PIDMotorTest extends LinearOpMode {
 
     private List<LynxModule> hubs;
     double intakeClipTimer;
+    private boolean prev;
 
     @Override
     public void runOpMode() {
@@ -77,12 +78,12 @@ public class PIDMotorTest extends LinearOpMode {
                 intakeSubsystem.intakeSlideMotorEncodersReset();
                 outtakeSubsystem.cacheInitialPitchValue();
 
-            double target = 0;
+            int target = 0;
             while (opModeIsActive()) {
 
 
                 outtakeSubsystem.outtakeReads(false); // read at the start of the loop
-                intakeSubsystem.intakeReads(true);
+                //intakeSubsystem.intakeReads(true);
 
                 // can be condensed into the one class? - try ita
                 loopTime.updateLoopTime(telemetry); // this may or may not work
@@ -136,17 +137,18 @@ public class PIDMotorTest extends LinearOpMode {
                 if (gamepad1.dpad_left){
                     target = 0;
                 }else if (gamepad1.dpad_right){
-                    target = 200;
+                    target = 3;
                 }
-                else if (gamepad1.dpad_up)
+                else if (gamepad1.dpad_up && !prev)
                 {
-                    target += 100;
+                    target = 7;
                 }
-                else if (gamepad1.dpad_down)
+                else if (gamepad1.dpad_down && !prev)
                 {
-                    target -= 100;
+                    target = 12;
                 }
-                intakeSubsystem.intakeSlideFTCLibPID((int) target);
+                prev = gamepad1.dpad_down || gamepad1.dpad_up;
+                outtakeSubsystem.liftToInternalPID(target, 1);
 
 
 
@@ -161,6 +163,7 @@ public class PIDMotorTest extends LinearOpMode {
                 telemetry.addData("Pitch target reached", outtakeSubsystem.liftTargetReached());
 
                 telemetry.addData("Distance sensor value", outtakeSubsystem.outtakeDistanceSensorValue);
+                telemetry.addData("LiftTarget", outtakeSubsystem.liftTarget);
                 telemetry.addData("LiftPosition",ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
                 telemetry.addData("Lift Position Raw", outtakeSubsystem.liftPosition);
                 telemetry.addData("pitch raw position",outtakeSubsystem.pitchPosition);

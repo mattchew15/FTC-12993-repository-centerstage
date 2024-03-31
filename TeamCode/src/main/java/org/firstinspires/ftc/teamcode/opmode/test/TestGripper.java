@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystemOptimised;
 
 @TeleOp
 public class TestGripper extends LinearOpMode

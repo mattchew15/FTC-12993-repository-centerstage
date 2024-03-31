@@ -1,6 +1,19 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_SERVO_POSITION;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.degreestoTicksPitchMotor;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.expHub;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.inchesToTicksSlidesMotor;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.servoCaching;
+
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.TargetCaching;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.ticksToInchesSlidesMotor;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -9,6 +22,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,9 +35,13 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
+import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
+
 
 @Config
-public class OuttakeSubsystem {
+@SuppressWarnings("unused")
+public class OuttakeSubsystem
+{
 
     public DcMotorEx
             LiftMotor,
@@ -49,11 +67,10 @@ public class OuttakeSubsystem {
             MINI_TURRET_BACKPURPLE_POS = 0.38;
 
     public static double
-            ARM_READY_POS = 0.802,
+            ARM_READY_POS = 0.809,
             ARM_UPRIGHT_POS = 0.4,
             ARM_SCORE_POS = 0.146,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
-            ARM_SCORE_YELLOW_POS = 0.24;
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.146;
     public static double
             PIVOT_READY_POS = 0.486,
             PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
@@ -70,8 +87,7 @@ public class OuttakeSubsystem {
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
             PITCH_PURPLEPIXEL_POSITION = 0.35,
-            PITCH_LOWPITCH_POSITION = 0.65,
-            PITCH_YELLOWPIXEL_POSITION = 0.4;
+            PITCH_LOWPITCH_POSITION = 0.7;
 
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
@@ -104,6 +120,8 @@ public class OuttakeSubsystem {
     public double initialPitchDegrees;
     public double servoPositionForOverCentered;
 
+    private TimedSupplier<Double> distanceSensorSupplier;
+
     private OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     // The profile stuff
@@ -126,6 +144,10 @@ public class OuttakeSubsystem {
     private double prevLiftOutput;
     private double prevPitchOutput;
     private static final double RAIL_RANGE = 14.027;
+    private double prevTop, prevBot, prevRail, prevMiniTurret, prevArm, prevPivot, prevPitch;
+    public int prevPitchTarget, prevLiftTarget;
+    private DcMotor.RunMode prevLiftMode;
+    private boolean firstCyclePitch = true, firstCycleLift = true;
 
     public enum MiniTurretState {
         STRAIGHT,
@@ -136,7 +158,6 @@ public class OuttakeSubsystem {
     public enum OuttakeRailState {
         CENTER,
         RIGHT,
-        CENTER_YELLOW,
         RIGHT_YELLOW,
         LEFT,
         LEFT_YELLOW,
@@ -148,7 +169,6 @@ public class OuttakeSubsystem {
         CALCULATE,
         NULL,
         SCORE_PURPLE,
-        YELLOW,
         UPRIGHT
     }
 
@@ -176,21 +196,24 @@ public class OuttakeSubsystem {
     public OuttakeResetState outtakeResetState;
 
     public void initOuttake(HardwareMap hwMap){
-        LiftMotor = hwMap.get(DcMotorEx.class, "LiftMotor");
-        PitchMotor = hwMap.get(DcMotorEx.class, "PitchMotor");
+        LiftMotor = hwMap.get(DcMotorImplEx.class, "LiftMotor");
+        PitchMotor = hwMap.get(DcMotorImplEx.class, "PitchMotor");
 
-        OuttakePitchServo = hwMap.get(ServoImplEx.class,"OuttakePitchS");
-        MiniTurretServo = hwMap.get(ServoImplEx.class,"MiniTurretS");
-        OuttakeRailServo = hwMap.get(ServoImplEx.class,"OuttakeRailS");
+        OuttakePitchServo =  hwMap.get(ServoImplEx.class,"OuttakePitchS");
+        MiniTurretServo =  hwMap.get(ServoImplEx.class,"MiniTurretS");
+        OuttakeRailServo =  hwMap.get(ServoImplEx.class,"OuttakeRailS");
         OuttakeArmServo = hwMap.get(ServoImplEx.class, "OuttakeArmS");
-        PivotServo = hwMap.get(ServoImplEx.class, "PivotS");
-        GripperTopServo = hwMap.get(ServoImplEx.class, "GripperTopS");
-        GripperBottomServo = hwMap.get(ServoImplEx.class, "GripperBottomS");
+        PivotServo =  hwMap.get(ServoImplEx.class, "PivotS");
+        GripperTopServo =  hwMap.get(ServoImplEx.class, "GripperTopS");
+        GripperBottomServo =  hwMap.get(ServoImplEx.class, "GripperBottomS");
         OuttakeDistanceSensor = hwMap.get(DistanceSensor.class, "OuttakeDistanceSensor");
         PitchEncoder = hwMap.get(AnalogInput.class, "PitchEncoder");
+
+        distanceSensorSupplier = new TimedSupplier<>(() -> OuttakeDistanceSensor.getDistance(DistanceUnit.CM), 200);
     }
 
     public void hardwareSetup(){
+        // We should soon decide on a final use so no run modes writes are done
         PitchMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // run without encoder is if using external PID
         PitchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -204,24 +227,25 @@ public class OuttakeSubsystem {
     }
 
     public void outtakeReads(boolean dropReadyState){ // pass in the drop ready state so its not reading the whole time
-        double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
         liftPosition =  -LiftMotor.getCurrentPosition();
-        pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+2.8; // offset and stuff covered here
         pitchPosition = PitchMotor.getCurrentPosition();
 
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
-            outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
+            outtakeDistanceSensorValue = distanceSensorSupplier.get();
         }
     }
-/*
+
     public void outtakeReads(boolean dropReadyState, boolean bulkEXP){ // pass in the drop ready state so its not reading the whole time
         double rawPitchEncoderPosition = getPitchEncoderPos(); // this value is only used in the following calculations, and SHOULD NOT be read twice
         liftPosition =  ticksToInchesSlidesMotor(-LiftMotor.getCurrentPosition());
         pitchEncoderPosition = (rawPitchEncoderPosition *0.389921)-21.4+1; // offset and stuff covered here
         //pitchPosition = pitchTicksInitialOffset + -PitchMotor.getCurrentPosition();
+
+
         if (dropReadyState){ // troublesome i2c reads - we want to not call these every loop
             outtakeDistanceSensorValue = OuttakeDistanceSensor.getDistance(DistanceUnit.CM);
         }
+
         if (bulkEXP)
         {
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -230,15 +254,15 @@ public class OuttakeSubsystem {
         {
             expHub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
         }
+
     }
- */
 
     public double getPitchEncoderPos(){ // does work just needs to plugged in correctly
         return PitchEncoder.getVoltage() / 3.3 * 360;
     }
 
     public void encodersReset(){
-       // PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        PitchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void liftEncoderReset(){
@@ -315,8 +339,11 @@ public class OuttakeSubsystem {
 
     public void liftToInternalPID(double inches, double maxSpeed){
         liftTarget = (int)inchesToTicksSlidesMotor(inches);
-        LiftMotor.setTargetPosition(-liftTarget);
-        LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        prevLiftTarget = TargetCaching(-liftTarget, prevLiftTarget, EPSILON_DELTA, LiftMotor, firstCycleLift);
+        if (firstCycleLift) firstCycleLift = false;
+        //LiftMotor.setTargetPosition(-liftTarget);
+        //prevLiftMode = runModeCaching(DcMotor.RunMode.RUN_TO_POSITION, prevLiftMode, LiftMotor);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // should be cached by the sdk
         prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
         //LiftMotor.setPower(maxSpeed);
     }
@@ -340,7 +367,9 @@ public class OuttakeSubsystem {
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
         pitchTarget = (int)(-degreestoTicksPitchMotor(degrees) + pitchTicksInitialOffset);
-        PitchMotor.setTargetPosition(pitchTarget);
+        prevPitchTarget = TargetCaching(pitchTarget, prevPitchTarget, EPSILON_DELTA, PitchMotor, firstCyclePitch);
+        if (firstCyclePitch) firstCyclePitch = false;
+        //PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
         //PitchMotor.setPower(maxSpeed);
@@ -388,69 +417,84 @@ public class OuttakeSubsystem {
         double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
         // we dont have to worry about boundaries because the pitch has limits
         double servoPosition = PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees);
-
+        /*
         if (servoPosition > 0.15){
             servoPositionForOverCentered = servoPosition;
         } else {
             servoPositionForOverCentered = 0.15;
         }
-        OuttakePitchServo.setPosition(servoPositionForOverCentered);
-      //  telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
+
+         */
+        servoPositionForOverCentered = Math.max(servoPosition, 0.15);
+        prevPitch = servoCaching(servoPositionForOverCentered, prevPitch, EPSILON_DELTA, OuttakePitchServo);
+        telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
     }
 
     public void setOuttakePitchPurplePixelPosition(){
-        OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION);
+        prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION, prevPitch, EPSILON_DELTA, OuttakePitchServo);
+        //OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION);
     }
     public void setOuttakePitchPitchDownPosition(){
-        OuttakePitchServo.setPosition(PITCH_LOWPITCH_POSITION);
-    }
-    public void setOuttakePitchYellowPixelPosition(){
-        OuttakePitchServo.setPosition(PITCH_YELLOWPIXEL_POSITION);
+        prevPitch = servoCaching(PITCH_LOWPITCH_POSITION, prevPitch, EPSILON_DELTA, OuttakePitchServo);
+        //OuttakePitchServo.setPosition(PITCH_LOWPITCH_POSITION);
     }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
+        double miniTurret = 0;
         switch (state) {
             case STRAIGHT:
-                MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
+                miniTurret = MINI_TURRET_STRAIGHT_POS;
+                //MiniTurretServo.setPosition(MINI_TURRET_STRAIGHT_POS);
                 break;
             case FRONT_PURPLE:
-                MiniTurretServo.setPosition(MINI_TURRET_FRONTPURPLE_POS);
+                miniTurret = MINI_TURRET_FRONTPURPLE_POS;
+                //MiniTurretServo.setPosition(MINI_TURRET_FRONTPURPLE_POS);
                 break;
             case BACK_PURPLE:
-                MiniTurretServo.setPosition(MINI_TURRET_BACKPURPLE_POS);
+                miniTurret = MINI_TURRET_BACKPURPLE_POS;
+                //MiniTurretServo.setPosition(MINI_TURRET_BACKPURPLE_POS);
                 break;
         }
+        prevMiniTurret = servoCaching(miniTurret, prevMiniTurret, EPSILON_DELTA, MiniTurretServo);
     }
 
     public void miniTurretPointToBackdrop(double robotDegrees){
         if (Math.abs(robotDegrees) < 63){ // this is the max range of the miniturret as defined by the physical hardstops
-            MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
+            prevMiniTurret = servoCaching(degreesToTicksMiniTurret(robotDegrees), prevMiniTurret, EPSILON_DELTA, MiniTurretServo);
+            //MiniTurretServo.setPosition(degreesToTicksMiniTurret(robotDegrees));
         }
     }
 
     public void outtakeRailState(OuttakeRailState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
+        double rail = 0;
         switch (state) {
             case CENTER:
-                setOuttakeRailServo(RAIL_CENTER_POS);
-                break;
-            case CENTER_YELLOW:
-                setOuttakeRailServo(RAIL_CENTER_YELLOW_POS);
+                rail = RAIL_CENTER_POS;
+                //setOuttakeRailServo(RAIL_CENTER_POS);
                 break;
             case RIGHT_YELLOW:
-                setOuttakeRailServo(RAIL_RIGHT_YELLOW_POS);
+                rail = RAIL_RIGHT_YELLOW_POS;
+                //setOuttakeRailServo(RAIL_RIGHT_YELLOW_POS);
+                break;
             case RIGHT:
-                setOuttakeRailServo(RAIL_RIGHT_POS);
+                rail = RAIL_RIGHT_POS;
+                //setOuttakeRailServo(RAIL_RIGHT_POS);
                 break;
             case LEFT:
-                setOuttakeRailServo(RAIL_LEFT_POS);
+                rail = RAIL_LEFT_POS;
+                //setOuttakeRailServo(RAIL_LEFT_POS);
                 break;
             case LEFT_YELLOW:
-                setOuttakeRailServo(RAIL_LEFT_YELLOW_POS);
+                rail = RAIL_LEFT_YELLOW_POS;
+                //setOuttakeRailServo(RAIL_LEFT_YELLOW_POS);
                 break;
         }
+        prevRail = servoCaching(rail, prevRail, EPSILON_DELTA, OuttakeRailServo);
+
     }
 
     public void setOuttakeRailServo(double position){
-        OuttakeRailServo.setPosition(position);
+        prevRail = servoCaching(position, prevRail, EPSILON_DELTA, OuttakeRailServo);
+        //OuttakeRailServo.setPosition(position);
     }
 
     public void fineAdjustRail(double fineAdjust, double timer){ // this is for tinkos controls only
@@ -467,69 +511,90 @@ public class OuttakeSubsystem {
     }
 
     public void armServoState(ArmServoState state) {
+        double arm = 0;
         switch (state) {
             case READY:
-                OuttakeArmServo.setPosition(ARM_READY_POS);
+                arm = ARM_READY_POS;
+                //OuttakeArmServo.setPosition(ARM_READY_POS);
                 break;
             case SCORE:
-                OuttakeArmServo.setPosition(ARM_SCORE_POS);
+                arm = ARM_SCORE_POS;
+                //OuttakeArmServo.setPosition(ARM_SCORE_POS);
                 break;
             case SCORE_PURPLE:
-                OuttakeArmServo.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
+                arm = ARM_SCORE_PURPLE_PIXEL_POS;
+                //OuttakeArmServo.setPosition(ARM_SCORE_PURPLE_PIXEL_POS);
                 break;
             case UPRIGHT:
-                OuttakeArmServo.setPosition(ARM_UPRIGHT_POS);
-                break;
-            case YELLOW:
-                OuttakeArmServo.setPosition(ARM_SCORE_YELLOW_POS);
+                arm = ARM_UPRIGHT_POS;
+                //OuttakeArmServo.setPosition(ARM_UPRIGHT_POS);
                 break;
         }
+        prevArm = servoCaching(arm, prevArm, EPSILON_DELTA, OuttakeArmServo);
     }
 
 
    public void pivotServoState(PivotServoState state) { // this is gonna be hard to control - but have a flip button but we can work it out
+        double pivot = 0;
         switch (state) {
             case READY:
-                PivotServo.setPosition(PIVOT_READY_POS);
+                pivot = PIVOT_READY_POS;
+                //PivotServo.setPosition(PIVOT_READY_POS);
                 break;
             case DIAGONAL_LEFT:
-                PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_POS);
+                pivot = PIVOT_DIAGONAL_LEFT_POS;
+                //PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_POS);
                 break;
             case DIAGONAL_RIGHT:
-                PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_POS);
+                pivot = PIVOT_DIAGONAL_RIGHT_POS;
+                //PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_POS);
                 break;
             case DIAGONAL_LEFT_FLIPPED:
-                PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_FLIPPED_POS);
+                pivot = PIVOT_DIAGONAL_LEFT_FLIPPED_POS;
+                //PivotServo.setPosition(PIVOT_DIAGONAL_LEFT_FLIPPED_POS);
                 break;
             case DIAGONAL_RIGHT_FLIPPED:
-                PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_FLIPPED_POS);
+                pivot = PIVOT_DIAGONAL_RIGHT_FLIPPED_POS;
+                //PivotServo.setPosition(PIVOT_DIAGONAL_RIGHT_FLIPPED_POS);
                 break;
             case SIDEWAYS_LEFT:
-                PivotServo.setPosition(PIVOT_SIDEWAYS_LEFT_POS);
+                pivot = PIVOT_SIDEWAYS_LEFT_POS;
+                //PivotServo.setPosition(PIVOT_SIDEWAYS_LEFT_POS);
                 break;
             case SIDEWAYS_RIGHT:
-                PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
+                pivot = PIVOT_SIDEWAYS_RIGHT_POS;
+                //PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
                 break;
         }
+        prevPivot = servoCaching(pivot, prevPivot, EPSILON_DELTA, PivotServo);
     }
 
     public void gripperServoState(GripperServoState state) {
+        double top = 0, bot = 0;
         switch (state) {
             case GRIP:
-                GripperTopServo.setPosition(GRIPPER_TOP_GRIP_POS);
-                GripperBottomServo.setPosition(GRIPPER_BOTTOM_GRIP_POS);
+                top = GRIPPER_TOP_GRIP_POS;
+                bot = GRIPPER_BOTTOM_GRIP_POS;
+                //GripperTopServo.setPosition(GRIPPER_TOP_GRIP_POS);
+                //GripperBottomServo.setPosition(GRIPPER_BOTTOM_GRIP_POS);
                 break;
             case OPEN:
-                GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
-                GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
+                top = GRIPPER_TOP_OPEN_POS;
+                bot = GRIPPER_BOTTOM_OPEN_POS;
+                //GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
+                //GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
                 break;
             case TOP_OPEN:
-                GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
+                top = GRIPPER_TOP_OPEN_POS;
+                //GripperTopServo.setPosition(GRIPPER_TOP_OPEN_POS);
                 break;
             case BOTTOM_OPEN:
-                GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
+                bot = GRIPPER_BOTTOM_GRIP_POS;
+                //GripperBottomServo.setPosition(GRIPPER_BOTTOM_OPEN_POS);
                 break;
         }
+        prevTop = servoCaching(top, prevTop, EPSILON_DELTA, GripperTopServo);
+        prevBot = servoCaching(bot, prevBot, EPSILON_DELTA, GripperBottomServo);
     }
 
     // below is profile stuff

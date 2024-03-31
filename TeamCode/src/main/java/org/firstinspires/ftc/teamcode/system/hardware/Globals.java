@@ -229,10 +229,10 @@ public class Globals
         return prev;
     }
 
-    public static int TargetCaching(int target, int prevTarget, double cachingTolerance, DcMotor motor)
+    public static int TargetCaching(int target, int prevTarget, double cachingTolerance, DcMotor motor, boolean firstCycle)
     {
         if (
-                (Math.abs(target - prevTarget) > cachingTolerance)
+                (Math.abs(target - prevTarget) > cachingTolerance) || firstCycle
         )
         {
             motor.setTargetPosition(target);

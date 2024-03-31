@@ -1,18 +1,14 @@
+/*
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
-import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystemOptimised;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystemOptimised;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Photon
@@ -20,7 +16,7 @@ import java.util.List;
 public class TestWeirdLoopy extends LinearOpMode
 {
     LoopTime loopTime = new LoopTime();
-    OuttakeSubsystemOptimised outtakeSubsystem = new OuttakeSubsystemOptimised();
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystemOptimised intakeSubsystem = new IntakeSubsystemOptimised();
 
 
@@ -46,7 +42,8 @@ public class TestWeirdLoopy extends LinearOpMode
         {
             outtakeSubsystem.outtakeReads(false);
             //intakeSubsystem.intakeReads(true);
-            if (gamepad1.a && !prev)
+            */
+/*if (gamepad1.a && !prev)
             {
                 target -= 1;
 
@@ -58,7 +55,16 @@ public class TestWeirdLoopy extends LinearOpMode
             }
             prev = gamepad1.a || gamepad1.y;
             outtakeSubsystem.liftToInternalPID(target, 1);
+*//*
 
+            if (gamepad1.a)
+            {
+                outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
+            }
+            if (gamepad1.b)
+            {
+                outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+            }
 
             //loopTime.delta();
             //telemetry.addData("Dt", 10000000 / loopTime.getDt());
@@ -73,3 +79,4 @@ public class TestWeirdLoopy extends LinearOpMode
         }
     }
 }
+*/
