@@ -186,7 +186,6 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 module.clearBulkCache();
             }
         }
-
     }
 
     public void autoSequence(){
@@ -583,7 +582,6 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 break;
 
             case IDLE:
-                telemetry.addLine("WWWWWWWWWWW");
                 intakeSubsystem.intakeSlideInternalPID(-6,1);
                 outtakeSubsystem.liftToInternalPID(-8,1);
                 outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
@@ -675,6 +673,22 @@ public class Front_RED_CYCLE extends LinearOpMode {
             intakeSubsystem.intakeSlideInternalPID(275,0.9);
         } else if (teamPropLocation == 3){
             intakeSubsystem.intakeSlideInternalPID(300,0.9);
+        }
+    }
+    public void intakeClipHoldorNotHold(int slideToPosition){
+        if (intakeSubsystem.intakeSlidePosition < 4) {
+            if (delay(40)){
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
+                intakeSubsystem.intakeSlideMotorRawControl(0);
+            } else {
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
+//                intakeSubsystem.intakeSlideTo(slideToPosition,intakeSubsystem.intakeSlidePosition,1);
+                intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+            }
+        } else {
+            intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // this might break something when as the intake slides won't go in, but stops jittering
+            intakeSubsystem.intakeSlideInternalPID(slideToPosition,1);
+            resetTimer();
         }
     }
 }

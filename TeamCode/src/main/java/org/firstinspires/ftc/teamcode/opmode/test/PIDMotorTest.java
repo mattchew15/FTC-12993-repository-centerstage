@@ -77,7 +77,9 @@ public class PIDMotorTest extends LinearOpMode {
                 intakeSubsystem.intakeSlideMotorEncodersReset();
                 outtakeSubsystem.cacheInitialPitchValue();
 
+            double target = 0;
             while (opModeIsActive()) {
+
 
                 outtakeSubsystem.outtakeReads(false); // read at the start of the loop
                 intakeSubsystem.intakeReads(true);
@@ -112,6 +114,7 @@ public class PIDMotorTest extends LinearOpMode {
 
 
 
+
                 //outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
 /*
                 else if (gamepad1.dpad_left){
@@ -129,11 +132,21 @@ public class PIDMotorTest extends LinearOpMode {
  */
 
 
-                else if (gamepad1.dpad_left){
-                    intakeSubsystem.intakeSlideInternalPID(0,1);
+
+                if (gamepad1.dpad_left){
+                    target = 0;
                 }else if (gamepad1.dpad_right){
-                    intakeSubsystem.intakeSlideInternalPID(200,1);
+                    target = 200;
                 }
+                else if (gamepad1.dpad_up)
+                {
+                    target += 100;
+                }
+                else if (gamepad1.dpad_down)
+                {
+                    target -= 100;
+                }
+                intakeSubsystem.intakeSlideFTCLibPID((int) target);
 
 
 
