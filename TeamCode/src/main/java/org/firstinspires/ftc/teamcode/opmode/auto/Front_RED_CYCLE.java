@@ -77,7 +77,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             module.clearBulkCache();
-        } //
+        }
 
 
         outtakeSubsystem.initOuttake(hardwareMap);
@@ -295,8 +295,6 @@ public class Front_RED_CYCLE extends LinearOpMode {
                             autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.AfterPreloadDrive3Front);
                         }
                  */
-
-
                 /*
                 intakeSubsystem.intakeSlideInternalPID(0,1);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);

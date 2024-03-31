@@ -152,8 +152,6 @@ public class SimplicityDrive extends LinearOpMode {
             initialHeightStored = false;
             initialPivot = true;
             transferEarly = false;
-            //lockLowPosition = false;
-            //miniTurretPositionToggle.CycleState = 2; //straight position
             armTarget = 3;
             backdropRelativeHeight = 15; // change this variable for height
             outtakeSubsystem.cacheInitialPitchValue();
@@ -161,15 +159,15 @@ public class SimplicityDrive extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                /*
-                TODO assign OuttakeInverseKinematics and AprilTagLocalisation 'robotAngle' assign AprilTagLocalisation 'aprilTagX' and 'aprilTagY'
+                for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
+                    module.clearBulkCache();
+                }
 
-                 */
                 globalTimer = GlobalTimer.milliseconds();
                 pureHeight = backdropRelativeHeight * Math.cos(Math.toRadians(30));
                 outtakeSubsystem.outtakeReads(false); //we don't use distance sensor in tele
                 intakeSubsystem.intakeReads(outtakeState == OuttakeState.INTAKE || outtakeState == OuttakeState.AFTER_INTAKE || outtakeState == OuttakeState.INTAKE_EXTENDO);
-                // can be condensed into the one class? - try ita
+                // can be condensed into the one class? - try it
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
@@ -177,12 +175,13 @@ public class SimplicityDrive extends LinearOpMode {
                 pivotAdjust();
                 outtakeSequence();
                 sampleMecanumDrive.update();
-              //  telemetry.addData("RobotVoltage", voltageSensor.getVoltage());
+                outtakeInverseKinematics.distance = outtakeExtensionInches;
+
+                /*
                 telemetry.addData("STATE", outtakeState);
                 telemetry.addLine("");
                 telemetry.addData("liftTarget", liftTarget);
                 telemetry.addData("pitchTarget", pitchTarget);
-                telemetry.addData("Rail Servo Position", RAIL_SERVO_POSITION);
                 telemetry.addLine("");
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
                 telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
@@ -192,21 +191,8 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
-                telemetry.addLine("");
-                //telemetry.addData("IntakeMotor Current", intakeSubsystem.intakeCurrent);
-      //          telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
-      //          telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
-      //          telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
-                telemetry.addLine("");
-                //telemetry.addData("IntakeChuteArmPosition", intakeSubsystem.intakeChuteArmPosition);
-                telemetry.addLine("");
-                telemetry.addLine("");
-                //telemetry.addData("intake BTN Logic", intakeOutBtnLogic.OffsetTargetPosition);
-                //telemetry.addData("backdropRelativeHeight", backdropRelativeHeight);
-                //telemetry.addData("pureHeight",pureHeight);
-                //telemetry.addData("outtakeExtensionInches", outtakeExtensionInches);
-                outtakeInverseKinematics.distance = outtakeExtensionInches;
 
+                 */
 
                 /*
                 log.addData(
@@ -221,23 +207,8 @@ public class SimplicityDrive extends LinearOpMode {
 
                 log.addData(outtakeState);
                  */
-
-                /*
-                if (majorAdjustType == 1){
-                    telemetry.addLine("We are adjusting down");
-                } else if (majorAdjustType == 2) {
-                    telemetry.addLine("Outside of slide constraints");
-                } else if (majorAdjustType == 3){
-                    telemetry.addLine("Adjusting up");
-                }
-                 */
-                //telemetry.addData("majorAdjustType", majorAdjustType);
-                telemetry.addLine("");
-                //TODO change the heading to the heading of the bot, cache this don't call it again
                 headingPosition = Math.toDegrees(outtakeSubsystem.angleWrap(sampleMecanumDrive.getPoseEstimate().getHeading()));//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
-                telemetry.addData("heading", headingPosition); // we use this for the miniturret
-                telemetry.update();
-                log.update();
+                //log.update();
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();
                 if (gamepad1.dpad_left){
@@ -250,9 +221,10 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
                 }
                 pureHeight = prevPureHeight;
+                telemetry.update();
             }
         }
-        log.close();
+      //  log.close();
     }
 
     public void outtakeSequence(){
@@ -389,6 +361,8 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                 if (((delay(600)) || intakeSubsystem.intakeSlidePosition < 5 && intakeSubsystem.chuteDetectorLimitSwitchValue) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1) { //((delay() 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || globalTimer > 2000
                     outtakeState = OuttakeState.TRANSFER_END;
+                    gamepad2.rumbleBlips(1);
+                    intakeSubsystem.intakeSpin(0);
                     resetTimer(); // resets timer
                 }
 
@@ -442,7 +416,8 @@ public class SimplicityDrive extends LinearOpMode {
 
             case OUTTAKE_ADJUST:
                 intakeClipHoldorNotHold(-100); // otherwise we are setting internalPID is still doing things
-                if (delay(700)){
+
+                if (delay(500)){
                     intakeSubsystem.intakeSpin(0);
                 }else{
                     intakeSubsystem.intakeSpin(-0.8);
@@ -484,31 +459,39 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 }
 
-
                 if ((gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)) || (delay(300) && reArrangePixels)) {
-                    resetTimer();// reset timer
-                    outtakeState = OuttakeState.DEPOSIT;
-                    outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
-                    gamepad2.rumbleBlips(2);
-                    reArrangePixels = false;
+                    if (((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition)) <  5)|| reArrangePixels){
+                        resetTimer();// reset timer
+                        outtakeState = OuttakeState.DEPOSIT;
+                        outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                        gamepad2.rumbleBlips(2);
+                        reArrangePixels = false;
+                    }
+
                 } else {
                      if (gamepad1.right_stick_button){
                          if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
+                      //       telemetry.addLine("We just dropped the top");
                          } else if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
+                      //       telemetry.addLine("We just dropped the bottom");
                          }
                          droppedRight = true;
                      }
                      if (gamepad1.left_stick_button) {
-                         droppedLeft = true;
                          if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
+                   //          telemetry.addLine("We just dropped the top");
                          } else if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
+                   //          telemetry.addLine("We just dropped the bottom");
                          }
+                         droppedLeft = true;
+
                      }
-                 }
+                }
+
                 if (droppedLeft && droppedRight){
                     outtakeState = OuttakeState.DEPOSIT;
                     resetTimer();// reset timer
@@ -682,10 +665,9 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeState = OuttakeState.MANUAL_ENCODER_RESET;
         }
 
-        if (gamepad2.left_stick_button && (outtakeState != OuttakeState.READY)){
+        if (gamepad2.left_stick_button && (outtakeState == OuttakeState.READY)){
             reArrangePixels = true;
             outtakeState = OuttakeState.OUTTAKE_ADJUST;
-
         }
 
         if (gamepad1.left_trigger > 0.2){ // && outtakeState == OuttakeState.READY
@@ -813,7 +795,6 @@ public class SimplicityDrive extends LinearOpMode {
         fineAdjustHeight.clearOffset((int)backdropRelativeHeight);
 
     }
-
     // This function isn't run in ready state
     public void liftPositionChange(boolean D1controls, boolean afterExtended){ // if gamepad inputs don't work in this class then pass them through as parameters in the function
         if (highPreset.mode(gamepad2.y || gamepad1.y && D1controls)){ // everything in here should only run once
@@ -920,13 +901,13 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void fineAdjustHeight(double fineAdjust){
         if (globalTimer - heightAdjustTimer > 15){ // only set the position every 15 ms, once achieved cache the timer value
-            backdropRelativeHeight += -fineAdjust * 0.4;
+            backdropRelativeHeight += -fineAdjust * 0.35;
             heightAdjustTimer = globalTimer; // cache the value of the outtakerailadjust
         }
     }
     public void fineAdjustIntakeSlidesClimb(double fineAdjust){
         if (globalTimer - heightAdjustTimer > 15){
-            intakeSlideAdjustTarget += fineAdjust * 0.4;
+            intakeSlideAdjustTarget += fineAdjust * 4;
             intakeSlideAdjustTimer = globalTimer;
         }
     }
@@ -944,9 +925,9 @@ public class SimplicityDrive extends LinearOpMode {
         }
         outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
         outtakeSubsystem.liftTo(liftTarget, outtakeSubsystem.liftPosition,1);
-        outtakeSubsystem.fineAdjustRail(-gamepad2.right_stick_x + (gamepad1.right_trigger-gamepad1.left_trigger), globalTimer);
+        outtakeSubsystem.fineAdjustRail(-gamepad2.right_stick_x * 0.7 + (gamepad1.right_trigger-gamepad1.left_trigger), globalTimer);
         outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
-        //  RAIL_SERVO_POSITION += outtakeInverseKinematics.railEndTicks(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);//RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
+        //RAIL_SERVO_POSITION += outtakeInverseKinematics.railEndTicks(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);//RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
     }
 
     public void liftDown(double liftTheshold){

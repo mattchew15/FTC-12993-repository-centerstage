@@ -74,7 +74,7 @@ public class Globals
 
             RAIL_SERVO_POSITION,
             FINE_ADJUST_HEIGHT_INTERVAL = 3,
-            MIN_OUTTAKE_EXTENSION_INCHES = 15,
+            MIN_OUTTAKE_EXTENSION_INCHES = 15.5,
             A; // angle offset for autonmous
 
     public static int
@@ -104,8 +104,8 @@ public class Globals
 
             // Worlds constants
             HIGH_BACKDROP_PRESET_INCHES = 34,
-            MID_BACKDROP_PRESET_INCHES = 18,
-            LOW_BACKDROP_PRESET_INCHES = 10,
+            MID_BACKDROP_PRESET_INCHES = 19,
+            LOW_BACKDROP_PRESET_INCHES = 11,
             S = 1, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
 

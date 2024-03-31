@@ -107,10 +107,10 @@ public class PIDMotorTest extends LinearOpMode {
 
                 else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
-                    outtakeSubsystem.liftToFTCLib(0);
+                    outtakeSubsystem.liftToInternalPID(0, 1);
                 }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
-                    outtakeSubsystem.liftToFTCLib(6);
+                    outtakeSubsystem.liftToInternalPID(5, 1);
                 }
 
 
@@ -147,8 +147,8 @@ public class PIDMotorTest extends LinearOpMode {
                 {
                     target = 12;
                 }
-                prev = gamepad1.dpad_down || gamepad1.dpad_up;
-                outtakeSubsystem.liftToInternalPID(target, 1);
+
+
 
 
 

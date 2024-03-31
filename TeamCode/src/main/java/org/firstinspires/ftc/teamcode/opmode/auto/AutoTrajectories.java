@@ -301,7 +301,6 @@ public class AutoTrajectories {
     public void outtakeDriveFromAngleTurnEnd(Pose2d startTrajectory, double slowerVelocityIntoBackdrop, double endAngle, double yOffset){
         Trajectory outtakeDriveTurnEndV2 = drive.trajectoryBuilder(startTrajectory, true)
 
-
                 .splineTo(new Vector2d(-18,(MiddleLaneYDeposit+ LaneOffset)*S), Math.toRadians(0)*S)
                 .lineToSplineHeading(new Pose2d(10, (MiddleLaneYDeposit+ LaneOffset)*S, Math.toRadians(0)*S))
                 .splineTo(new Vector2d(32,(MiddleLaneYDeposit+ LaneOffset + yOffset)*S), Math.toRadians(endAngle)*S, SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
