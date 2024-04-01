@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.vision;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.getCenterStageTagLibrary;
@@ -82,7 +83,8 @@ public class RelocationV2Pipeline extends AprilTagPipeline
                 {
                     for (AprilTagDetection detection : detections)
                     {
-                        if (detection.id == 5)
+                        if (detection.id == 4
+                        )
                         {
                             telemetry.addLine("we're here");
                             AprilTagMetadata metadata = library.lookupTag(detection.id);
@@ -115,16 +117,18 @@ public class RelocationV2Pipeline extends AprilTagPipeline
             //telemetry.addData("Error", e.getStackTrace());
             telemetry.addData("FUCK", true);
             telemetry.update();
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return input;
     }
 
-    /**
+    */
+/**
      *
      * @param angle DEGREES IG THEN
      * @return
-     */
+     *//*
+
     public Pose2d getPos(double angle)
     {
 
@@ -157,3 +161,4 @@ public class RelocationV2Pipeline extends AprilTagPipeline
         this.telemetry = telemetry;
     }
 }
+*/

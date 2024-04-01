@@ -102,7 +102,6 @@ public class SimplicityDrive extends LinearOpMode {
         DEPOSIT,
         RETURN,
         MANUAL_ENCODER_RESET,
-
         PITCH_RESET,
         CLIMB_START,
         CLIMB_END,
@@ -218,7 +217,7 @@ public class SimplicityDrive extends LinearOpMode {
                     gamepad1.rumbleBlips(1);
                 }
                 if (outtakeState != OuttakeState.MANUAL_ENCODER_RESET){
-                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
                 }
                 pureHeight = prevPureHeight;
                 telemetry.update();
@@ -500,7 +499,7 @@ public class SimplicityDrive extends LinearOpMode {
                //     straightenTurret = true;
                // }
 
-                if (delay(180)){ // ensure the arm is all the way out
+                if (delay(250)){ // ensure the arm is all the way out
                 //    if (!straightenTurret){
                        // telemetry.addLine("pointing to backdrop");
                         outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);

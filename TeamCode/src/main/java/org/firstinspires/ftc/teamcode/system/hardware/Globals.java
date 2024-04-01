@@ -32,11 +32,13 @@ public class Globals
 
     public static double
             RAIL_CENTER_POS = 0.487,
-            RAIL_CENTER_YELLOW_POS = 0.37,
+            RAIL_CENTER_YELLOW_POS = 0.42,
             RAIL_RIGHT_POS = 0,
             RAIL_RIGHT_YELLOW_POS = 0.2,
             RAIL_LEFT_POS = 1,
-            RAIL_LEFT_YELLOW_POS = 0.8;
+            RAIL_LEFT_YELLOW_POS = 0.8,
+
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 6.7;
 
     // Auto States
     public static boolean
@@ -271,6 +273,7 @@ public class Globals
     {
         if (Math.abs(currentInput - prevInput) > EPSILON_DELTA)
         {
+
             prevInput = currentInput;
             prevResult = applyOperation(currentInput, math);
 
