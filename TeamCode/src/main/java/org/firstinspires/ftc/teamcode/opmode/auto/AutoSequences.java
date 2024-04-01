@@ -31,7 +31,7 @@ public class AutoSequences {
     boolean goToParkAfterOuttaking;
     boolean goBackToStack;
     double globalTimer;
-
+    Telemetry telemetry;
 
 
 
@@ -39,6 +39,10 @@ public class AutoSequences {
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     AutoTrajectories autoTrajectories = new AutoTrajectories(); // road drive class
     CameraHardware cameraHardware = new CameraHardware();
+
+    public AutoSequences(Telemetry telemetry){
+        this.telemetry = telemetry;
+    }
 
     public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode){
         outtakeSubsystem.initOuttake(hardwareMap);
@@ -102,7 +106,7 @@ public class AutoSequences {
         return false;
         }
 
-    public boolean delayState(double delayTime, Telemetry telemetry){
+    public boolean delayState(double delayTime){
         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.UPRIGHT);
         outtakeSubsystem.pitchToInternalPID(PITCH_PURPLE_PIXEL_POSITION,1);
@@ -304,7 +308,7 @@ public class AutoSequences {
         }
     }
 
-    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, Trajectory trajectory){
+    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, Trajectory trajectory){
 
         goBackToStack = false;
         parkIfStuck(5000);
@@ -328,12 +332,15 @@ public class AutoSequences {
         }
 
         // if we are switching lanes we don't extend the slides for one cycle
-        if (switchingLanes){
+        if (!extendSlides){
+            telemetry.addLine("WE DO NOT WANT TO EXTEND OUR SLIDES HERE");
+        }
+        else if (switchingLanes){
             if (numCycles != (numCyclesForSideways + 1)){// cycle we don't want to extend slides
                 intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
             }
         // if we aren't switching lanes at all we extend every time :)
-        } else {
+        }else {
             intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
         }
 
@@ -358,7 +365,7 @@ public class AutoSequences {
         return false;
     }
 
-    public boolean afterGrabOffStack(int numCyclesDropsToBase, int cycleThresholdForLongerIntake){
+    public boolean afterGrabOffStack(int numCyclesDropsToBase, int cycleThresholdForLongerIntake, double longerDelayTime, double shorterDelayTime){
 
        /*
         if (numCycles == 1 || numCycles == 3) {
@@ -369,7 +376,7 @@ public class AutoSequences {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
         }
         //TODO abstract all of the intakearm logic to its own method
-        if (numCycles == numCyclesDropsToBase || numCycles >= cycleThresholdForLongerIntake? delay(170) : delay(120)){
+        if (numCycles == numCyclesDropsToBase || numCycles >= cycleThresholdForLongerIntake? delay(longerDelayTime) : delay(shorterDelayTime)){
             resetTimer(); // resets timer
             intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
             return true;
