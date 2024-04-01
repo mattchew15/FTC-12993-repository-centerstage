@@ -192,7 +192,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 }
 
                 if (auto.drop(armHeight)){
-                currentState = AutoState.DROP;
+                currentState = AutoState.GRAB_OFF_STACK;
                 }
                 break;
             case GRAB_OFF_STACK:

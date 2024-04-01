@@ -177,7 +177,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
 
                 if (auto.drop(armHeight)){
-                    currentState = AutoState.DROP;
+                    currentState = AutoState.GRAB_OFF_STACK;
                 }
                 break;
             case GRAB_OFF_STACK:
