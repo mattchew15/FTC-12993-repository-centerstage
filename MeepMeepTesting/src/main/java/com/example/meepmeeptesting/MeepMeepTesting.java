@@ -14,15 +14,20 @@ public class MeepMeepTesting {
         double frontOffset = 12;
         Pose2d stacks = new Pose2d(-28,-36,Math.toRadians(180));
         Pose2d backdrop = new Pose2d(28,-36,Math.toRadians(180)); // not necessary lol
-
+        Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180));
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(backdrop)
+                        drive.trajectorySequenceBuilder(startPoseFront)
 
+                                .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))
 
+                                .splineToConstantHeading(new Vector2d(-40, (-28 - 22)), Math.toRadians(-35))
+                                .splineToConstantHeading(new Vector2d(-18, (-32 - 22)), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(10, -32 - 22, Math.toRadians(0)))
+                                .splineTo(new Vector2d(32,-28 - 22), Math.toRadians(14))
                                 /*
                                 .lineToSplineHeading(new Pose2d(24.1, (-32 + 4), Math.toRadians(179)))
                                 .splineToConstantHeading(new Vector2d(20, (-32 + 10)), Math.toRadians(110))
@@ -55,10 +60,11 @@ public class MeepMeepTesting {
 
  */
                                 // Below is the code for going into the stacks at an angle
-
+/*
                                 .splineTo(new Vector2d(15,-36), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-15, -36, Math.toRadians(180)))
                                 .splineTo(new Vector2d(-36,-33), Math.toRadians(160))
+                                */
 
 
                                 // Two types of end splines where we turn
@@ -74,10 +80,9 @@ public class MeepMeepTesting {
                                  */
 
                                 // type 2
-
-                                .splineTo(new Vector2d(-18,-36), Math.toRadians(0))
+                             /*   .splineTo(new Vector2d(-18,-36), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(10, -36, Math.toRadians(0)))
-                                .splineTo(new Vector2d(32,-32), Math.toRadians(14))
+                                .splineTo(new Vector2d(32,-32), Math.toRadians(14))*/
 
 
 

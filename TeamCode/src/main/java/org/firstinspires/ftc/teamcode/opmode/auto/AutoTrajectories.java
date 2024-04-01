@@ -78,7 +78,8 @@ public class AutoTrajectories {
     Trajectory PreloadDrive1, PreloadDrive2, PreloadDrive3, driveIntoStackAfterBackPreload1,
             driveIntoStackAfterBackPreload2, driveIntoStackAfterBackPreload3, PreloadDrive1Front,
             PreloadDrive2Front, PreloadDrive3Front, AfterPreloadDrive1Front, AfterPreloadDrive2Front,
-            AfterPreloadDrive3Front, driveIntoStackStraightMIDDLE, outtakeDriveMiddlePathLIVE, driveIntoStackStageFromMiddlePathStraightEndV2;
+            AfterPreloadDrive3Front, driveIntoStackStraightMIDDLE, outtakeDriveMiddlePathLIVE, driveIntoStackStageFromMiddlePathStraightEndV2,
+    firstDriveThroughTrussAfterPurple2;
 
     public void init(HardwareMap hardwareMap, LinearOpMode opMode)
     {
@@ -97,6 +98,7 @@ public class AutoTrajectories {
          PreloadDrive3 = drive.trajectoryBuilder(startPoseBack)
                 .lineToLinearHeading(new Pose2d(38,-27.7*S, Math.toRadians(159)*S))
                 .build();
+
 
          // pregenerated trajectory
         driveIntoStackStageFromMiddlePathStraightEndV2 = drive.trajectoryBuilder(new Pose2d(26,MiddleLaneYDeposit, Math.toRadians(180))) // might break because of generating trajectory
@@ -155,6 +157,13 @@ public class AutoTrajectories {
 
         PreloadDrive3Front = drive.trajectoryBuilder(startPoseFront)
                 .lineToLinearHeading(new Pose2d(-55, -32*S, Math.toRadians(180)*S))
+                .build();
+
+        firstDriveThroughTrussAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2Front.end())
+                .splineToConstantHeading(new Vector2d(-40, (MiddleLaneYDeposit + 4 - LaneOffset)), Math.toRadians(-35))
+                .splineToConstantHeading(new Vector2d(-18, (MiddleLaneYDeposit - LaneOffset)), Math.toRadians(0))
+                .lineToSplineHeading(new Pose2d(10, MiddleLaneYDeposit - LaneOffset, Math.toRadians(0)))
+                .splineTo(new Vector2d(32,MiddleLaneYDeposit + 4 - LaneOffset), Math.toRadians(14))
                 .build();
 
 /*
