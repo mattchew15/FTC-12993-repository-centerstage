@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCachin
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.servoCaching;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,7 +39,6 @@ public class IntakeSubsystem
     public DigitalChannel LeftArmLimitSwitch;
     //public DigitalChannel ChuteUpDetectorLimitSwitch;
 
-    PhotonLynxVoltageSensor voltageSensor;
 
     public static double
             INTAKE_ARM_TOP_POS = 0.6,

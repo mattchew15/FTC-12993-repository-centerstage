@@ -420,7 +420,7 @@ public class OuttakeSubsystem
         return degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
 
-    public void outtakePitchServoKeepToPitch (double pitchAngle, Telemetry telemtry){ // this assumes 0 is lowest pitch and 1 is higher pitch
+    public void outtakePitchServoKeepToPitch (double pitchAngle){ // this assumes 0 is lowest pitch and 1 is higher pitch
         double pitchServoDegrees = (Math.acos((pitchAngle-40.6238)/21.7053)/0.0147273)+5.98901;
         // we dont have to worry about boundaries because the pitch has limits
         double servoPosition = PITCH_OVERCENTERED_POSITION+degreesToTicksPitchServo(pitchServoDegrees);
@@ -434,7 +434,6 @@ public class OuttakeSubsystem
          */
         servoPositionForOverCentered = Math.max(servoPosition, 0.15);
         prevPitch = servoCaching(servoPositionForOverCentered, prevPitch, EPSILON_DELTA, OuttakePitchServo);
-        telemtry.addData("SERVOPOSITION FOR OVERCENTERED", servoPositionForOverCentered);
     }
 
     public void setOuttakePitchPurplePixelPosition(){

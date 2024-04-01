@@ -77,7 +77,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             module.clearBulkCache();
-        }
+        } //
 
 
         outtakeSubsystem.initOuttake(hardwareMap);
@@ -93,7 +93,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
-            outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+            outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
             outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
             if (teamPropLocation == 1){
                 telemetry.addLine("Front");
@@ -167,7 +167,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
             //telemetry.addData("lift Target Reached", outtakeSubsystem.liftTargetReached());
             autoSequence();
             if (currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIXEL){
-                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
             }
 
 
@@ -202,7 +202,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
                 outtakeSubsystem.pitchToInternalPID(PITCH_PURPLE_PIXEL_POSITION,1);
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
-                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
                 intakeSubsystem.intakeSlideInternalPID(0,1);
                 if (delay(0)){
                     resetTimer();
@@ -295,6 +295,8 @@ public class Front_RED_CYCLE extends LinearOpMode {
                             autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.AfterPreloadDrive3Front);
                         }
                  */
+
+
                 /*
                 intakeSubsystem.intakeSlideInternalPID(0,1);
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
@@ -376,7 +378,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
             case OUTTAKE_PIXEL: // faster transfer
                // if (delay() 40 || (intakeSubsystem.chuteDetectorLimitSwitchValue && delay() 20)){
                 if (numCycles != 0){
-                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
                 } else {
                     outtakeSubsystem.setOuttakePitchYellowPixelPosition();
                 }

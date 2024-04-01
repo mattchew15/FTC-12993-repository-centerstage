@@ -191,7 +191,7 @@ public class PIDMotorTest extends LinearOpMode {
 
                 // this is the pitch position servo kinda difficult
 
-                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition, telemetry);
+                outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
 
                 //location.update();
                 telemetry.update();

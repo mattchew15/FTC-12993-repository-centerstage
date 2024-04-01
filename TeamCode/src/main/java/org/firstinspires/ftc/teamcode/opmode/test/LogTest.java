@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.mathCaching;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,9 +51,11 @@ public class LogTest extends LinearOpMode
              */
 
             result = mathCaching(Math::cos, 0, result.getPrevInput(), result.getResult());
-            result = mathCaching(x -> (Math.cos(x) / 3), 0, result.getPrevInput(), result.getResult());
+            result = mathCaching(x -> (Math.cos(x)), 2, result.getPrevInput(), result.getResult());
 
         }
         log.close();
     }
+
+
 }

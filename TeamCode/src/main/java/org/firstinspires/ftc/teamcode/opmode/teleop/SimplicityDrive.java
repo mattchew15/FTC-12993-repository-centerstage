@@ -218,7 +218,7 @@ public class SimplicityDrive extends LinearOpMode {
                     gamepad1.rumbleBlips(1);
                 }
                 if (outtakeState != OuttakeState.MANUAL_ENCODER_RESET){
-                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition,telemetry);
+                    outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
                 }
                 pureHeight = prevPureHeight;
                 telemetry.update();
