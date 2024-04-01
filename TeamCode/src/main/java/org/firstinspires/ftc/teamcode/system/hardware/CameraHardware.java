@@ -229,6 +229,14 @@ public class CameraHardware
             }
         }
     }
+    public void pauseBackWebcam()
+    {
+        visionPortal.stopStreaming();
+    }
+    public void resumeBackWebcam()
+    {
+        visionPortal.resumeStreaming();
+    }
     public Pose2d getNewPose(Pose2d pose, Telemetry telemetry)
     {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -245,7 +253,7 @@ public class CameraHardware
 
             }
         }
-        return new Pose2d(0,0,0);
+        return pose;
     }
     public void closeBackWebcam()
     {
