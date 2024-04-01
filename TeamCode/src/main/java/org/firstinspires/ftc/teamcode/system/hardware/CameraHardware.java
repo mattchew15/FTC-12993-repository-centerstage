@@ -90,11 +90,7 @@ public class CameraHardware
     }
 
     public void closeWebcam() {
-        if (BLUE_AUTO) {
-            blueWebcam.closeCameraDevice();
-        } else if (RED_AUTO) {
-            redWebcam.closeCameraDevice();
-        }
+        sideWebcam.closeCameraDevice();
         //backWebcam.closeCameraDevice();
     }
 
