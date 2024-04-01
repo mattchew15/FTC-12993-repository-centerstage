@@ -23,22 +23,24 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class TestRelocalization extends LinearOpMode
 {
     DriveBase driveBase = new DriveBase();
-    OpenCvCamera backWebcam;
+    //OpenCvCamera backWebcam;
+    CameraHardware cameraHardware = new CameraHardware();
     SampleMecanumDrive drive;
 
     public static int START_X = 0, START_Y = 0, START_H = 0;
     // RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
-    RelocationV2Pipeline relocationV2Pipeline = new RelocationV2Pipeline();
+    //RelocationV2Pipeline relocationV2Pipeline = new RelocationV2Pipeline();
     @Override
     public void runOpMode() throws InterruptedException
     {
 
+        cameraHardware.initBackWebcamVP(hardwareMap);
         //relocationV2Pipeline = new RelocationV2Pipeline();
-        relocationV2Pipeline.setTelemetry(telemetry);
+        //relocationV2Pipeline.setTelemetry(telemetry);
         //relocalizationAprilTagPipeline.setTelemetry(telemetry);
 
         drive = new SampleMecanumDrive(hardwareMap);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -56,7 +58,7 @@ public class TestRelocalization extends LinearOpMode
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
         drive.setPoseEstimate(new Pose2d(START_X, START_Y, START_H));
-
+*/
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested())
@@ -68,18 +70,20 @@ public class TestRelocalization extends LinearOpMode
             {
                 telemetry.addData("Updating pose", true);
                 //drive.setPoseEstimate(relocalizationAprilTagPipeline.getPos(drive.getPoseEstimate().getHeading()));
-                drive.setPoseEstimate(relocationV2Pipeline.getPos(drive.getPoseEstimate().getHeading()));
+                drive.setPoseEstimate(cameraHardware.getNewPose(drive.getPoseEstimate(), telemetry));
+                // this corrects for the y value using april tags, return the same x and h than the passed ones,
+                // assumes the robot is with heading zero to the april tags
             }
 
-            //telemetry.addData("X", drive.getPoseEstimate().getX());
-            //telemetry.addData("Y", drive.getPoseEstimate().getY());
-            //telemetry.addData("H", drive.getPoseEstimate().getHeading());
+            telemetry.addData("X", drive.getPoseEstimate().getX());
+            telemetry.addData("Y", drive.getPoseEstimate().getY());
+            telemetry.addData("H", drive.getPoseEstimate().getHeading());
             telemetry.update();
 
 
 
         }
-        backWebcam.closeCameraDevice();
+        cameraHardware.closeBackWebcam();
 
 
 
