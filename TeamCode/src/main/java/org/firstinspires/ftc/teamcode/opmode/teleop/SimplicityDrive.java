@@ -102,7 +102,6 @@ public class SimplicityDrive extends LinearOpMode {
         DEPOSIT,
         RETURN,
         MANUAL_ENCODER_RESET,
-
         PITCH_RESET,
         CLIMB_START,
         CLIMB_END,
@@ -500,7 +499,7 @@ public class SimplicityDrive extends LinearOpMode {
                //     straightenTurret = true;
                // }
 
-                if (delay(180)){ // ensure the arm is all the way out
+                if (delay(250)){ // ensure the arm is all the way out
                 //    if (!straightenTurret){
                        // telemetry.addLine("pointing to backdrop");
                         outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
