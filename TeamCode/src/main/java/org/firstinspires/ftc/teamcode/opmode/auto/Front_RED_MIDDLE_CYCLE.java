@@ -144,6 +144,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 if (numCycles == 0){ // for very first cycle
                     pitchTarget = 18;
                     liftTarget = 25;
+                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,18,2,0);
                 } else if (numCycles == 1){
                     pitchTarget = 18;
                     liftTarget = 30;
@@ -152,24 +153,21 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     intakeSlideTarget = 0;
                     pitchTarget = 19;
                     liftTarget = 26.5;
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,18,2,0);
+                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStageFromMiddlePathStraightEndV2; //doesn't generate on the fly
                 } else if (numCycles == 3){
                     pitchTarget = 19;
                     liftTarget = 30;
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStageFromMiddlePathStraightEndV2; //doesn't generate on the fly
+                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,12,3,-3);
                 } else if (numCycles == 4){
                     pitchTarget = 25;
                     liftTarget = 30;
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,12,3,-3);
+                    intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,3,-170,3);
                 } else if (numCycles == 5){
                     pitchTarget = 26;
                     liftTarget = 30;
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,3,-170,3);
-                } else if (numCycles == 6){
                     auto.goToParkAfterOuttaking = true;
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                 }
-
                 boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,intakeTrajectory,railLogic,pivotLogic);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
                     currentState = AutoState.PARK;
