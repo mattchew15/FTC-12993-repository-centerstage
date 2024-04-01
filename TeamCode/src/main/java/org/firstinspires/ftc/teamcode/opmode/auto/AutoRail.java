@@ -14,10 +14,11 @@ public class AutoRail {
     boolean railGoesRight;
     AutoSequences auto;
 
-    public AutoRail(int numCyclesForExtendedRail, int yellowCycle, AutoSequences auto){
+    public AutoRail(int numCyclesForExtendedRail, int yellowCycle, AutoSequences auto, boolean railGoesRight){
         this.numCyclesForExtendedRail = numCyclesForExtendedRail;
         this.yellowCycle = yellowCycle;
         this.auto = auto;
+        this.railGoesRight = railGoesRight;
     }
     public void railLogic(){
         if (numCycles == yellowCycle){ //TODO mirror the first yellow placement
