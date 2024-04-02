@@ -201,6 +201,7 @@ public class CameraHardware
             }
         }
     }
+
     public void pauseBackWebcam()
     {
         visionPortal.stopStreaming();
@@ -226,6 +227,21 @@ public class CameraHardware
             }
         }
         return pose;
+    }
+    public Place getPreloadYellowPose(Telemetry telemetry)
+    {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null)
+            {
+
+            }
+        }
+        return Place.LEFT;
     }
     public void closeBackWebcam()
     {

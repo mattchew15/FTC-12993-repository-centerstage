@@ -13,9 +13,10 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
-
+@Deprecated
 public class PreloadDetection extends AprilTagPipeline
 {
+    // this uses opencv so is deprecated
     double[] tagList;
     private Point
             regionLeftA,

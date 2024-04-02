@@ -20,6 +20,7 @@ import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class RelocalizationAprilTagPipeline extends AprilTagPipeline
 {
     private final Object object = new Object();
