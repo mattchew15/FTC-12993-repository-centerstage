@@ -210,13 +210,12 @@ public class AutoTrajectories {
         drive.followTrajectoryAsync(driveIntoStackStraightLIVE);
     }
     public Trajectory driveIntoStackStraightTrajectory(Pose2d startTrajectory, double slowerVelocityIntoStack, int trussMiddleStage, double positiveYOffset){ // generates a live trajectory
-        Trajectory driveIntoStackStraightLIVE = drive.trajectoryBuilder(startTrajectory)
+        return drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(9, MiddleLaneYIntake*S +positiveYOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)), Math.toRadians(180)*S))
                 .splineToConstantHeading(new Vector2d(-25, MiddleLaneYIntake*S +positiveYOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S))), Math.toRadians(180)*S) // end tangent affects path alot\
                 .lineToSplineHeading(new Pose2d(-28, MiddleLaneYIntake*S +positiveYOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)), Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // seperates trajectories
                 .build();
-        return driveIntoStackStraightLIVE;
     }
 
     public void driveIntoStackStraightFromMiddleTurnDrive(Pose2d startTrajectory, double slowerVelocityIntoStack, int trussMiddleStage){ // generates a live trajectory
@@ -249,13 +248,12 @@ public class AutoTrajectories {
         drive.followTrajectoryAsync(outtakeDriveMiddlePathLIVE);
     }
     public Trajectory outtakeDriveMiddlePathTrajectory(Pose2d startTrajectory, double slowerVelocityIntoBackdrop, double depositX, double depositY){
-        Trajectory outtakeDriveMiddlePathTrajectory = drive.trajectoryBuilder(startTrajectory)
+        return drive.trajectoryBuilder(startTrajectory)
                 .lineToSplineHeading(new Pose2d(-10, depositY*S, Math.toRadians(180)*S))
                 .splineToConstantHeading(new Vector2d(22, depositY*S), Math.toRadians(0)*S) // end tangent of path
                 .lineTo(new Vector2d(depositX, depositY*S),SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoBackdrop, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // slower portion of spline
                 .build();
-        return outtakeDriveMiddlePathTrajectory;
     }
 
     public void outtakeDriveTurnEndPath(Pose2d startTrajectory, double slowerVelocityIntoBackdrop, double endAngle, double depositX, int trussMiddleStage){ // generates a live trajectory
@@ -382,7 +380,7 @@ public class AutoTrajectories {
     }
 
     public Trajectory outtakeDriveFromAngleTurnEndTrajectory(Pose2d startTrajectory, double slowerVelocityIntoBackdrop, double endAngle, double yOffset, int trussMiddleStage){
-        Trajectory outtakeDriveTurnFromAngleTurnEnd = drive.trajectoryBuilder(startTrajectory, true)
+        return drive.trajectoryBuilder(startTrajectory, true)
 
                 .splineTo(new Vector2d(-18,(MiddleLaneYDeposit+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)))*S), Math.toRadians(0)*S)
                 .lineToSplineHeading(new Pose2d(10, (MiddleLaneYDeposit+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffset*S: LaneOffset*S)))*S, Math.toRadians(0)*S))
@@ -390,7 +388,6 @@ public class AutoTrajectories {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
                 .build();
-        return outtakeDriveTurnFromAngleTurnEnd;
     }
 
     // v1 - for other purple pixel cases
@@ -434,10 +431,9 @@ public class AutoTrajectories {
         drive.followTrajectoryAsync(park);
     }
     public Trajectory parkTrajectory(Pose2d startTrajectory, int wallOrMiddle){
-        Trajectory park = drive.trajectoryBuilder(startTrajectory)
+        return drive.trajectoryBuilder(startTrajectory)
                 .lineTo(new Vector2d(ParkX, wallOrMiddle == 1?ParkWallY*S:ParkMiddleY*S)) // hardest one closest to stack
                 .build();
-        return park;
     }
 
 
