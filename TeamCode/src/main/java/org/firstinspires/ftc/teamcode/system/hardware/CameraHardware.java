@@ -229,22 +229,24 @@ public class CameraHardware
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections)
             {
-
-                if (detection.metadata != null)
+                if (detection.id == 5)
                 {
-                    //telemetry.addData("Tag id", detection.id);
-                    //telemetry.addData("Field pos", library.lookupTag(detection.id).fieldPosition.get(1));
+                    if (detection.metadata != null)
+                    {
+                        //telemetry.addData("Tag id", detection.id);
+                        //telemetry.addData("Field pos", library.lookupTag(detection.id).fieldPosition.get(1));
 //              this is y relative to the april tag                     this is x relative to the field/pose
-                    double newX = detection.ftcPose.y / 1.3285651049 + library.lookupTag(detection.id).fieldPosition.get(0);
+                        double newX = detection.ftcPose.y / 1.3285651049 + library.lookupTag(detection.id).fieldPosition.get(0);
 
 
 //              this is x relative to the april tag                     this is y relative to the field/pose
-                    double newY = detection.ftcPose.x + library.lookupTag(detection.id).fieldPosition.get(1);
+                        double newY = detection.ftcPose.x + library.lookupTag(detection.id).fieldPosition.get(1);
 
-                    Pose2d newPoses = poseCorrector.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
-                    telemetry.addData("Corrected pose", newPoses.toString());
-                    telemetry.addData("Non corrected pose", String.format("X,Y", newX ,newY));
-                    poses.add(new Pose2d(newX, newY));
+                        Pose2d newPoses = poseCorrector.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
+                        telemetry.addData("Corrected pose", newPoses.toString());
+                        telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
+                        poses.add(new Pose2d(newX, newY));
+                    }
                 }
             }
         }
