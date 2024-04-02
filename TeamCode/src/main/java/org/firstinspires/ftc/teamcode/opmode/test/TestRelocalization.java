@@ -39,6 +39,8 @@ public class TestRelocalization extends LinearOpMode
         //relocalizationAprilTagPipeline.setTelemetry(telemetry);
 
         drive = new SampleMecanumDrive(hardwareMap);
+        driveBase.initDrivebase(hardwareMap);
+        driveBase.drivebaseSetup();
         /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

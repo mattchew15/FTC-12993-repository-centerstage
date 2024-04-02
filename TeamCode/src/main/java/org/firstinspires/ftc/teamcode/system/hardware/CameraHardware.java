@@ -223,7 +223,7 @@ public class CameraHardware
 
         for (int i = 0; i <3; i++)
         {
-            List<AprilTagDetection> currentDetections = aprilTag.getFreshDetections();
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             //telemetry.addData("# AprilTags Detected", currentDetections.size());
 
             // Step through the list of detections and display info for each one.
@@ -236,15 +236,17 @@ public class CameraHardware
                         //telemetry.addData("Tag id", detection.id);
                         //telemetry.addData("Field pos", library.lookupTag(detection.id).fieldPosition.get(1));
 //              this is y relative to the april tag                     this is x relative to the field/pose
-                        double newX = detection.ftcPose.y / 1.3285651049 + library.lookupTag(detection.id).fieldPosition.get(0);
+                        double newX = library.lookupTag(detection.id).fieldPosition.get(0) - detection.ftcPose.y / 1.3285651049;
 
 
 //              this is x relative to the april tag                     this is y relative to the field/pose
                         double newY = detection.ftcPose.x + library.lookupTag(detection.id).fieldPosition.get(1);
 
                         Pose2d newPoses = poseCorrector.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
-                        telemetry.addData("Corrected pose", newPoses.toString());
-                        telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
+                        //telemetry.addData("Corrected pose", newPoses.toString());
+                        telemetry.addData("Non corrected X", newX);
+                        telemetry.addData("Non corrected Y", newY);
+                        //telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
                         poses.add(new Pose2d(newX, newY));
                     }
                 }
@@ -254,8 +256,8 @@ public class CameraHardware
         {
             double x, y;
             // we only need like 3 frames so this should be fine
-            x = (poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3;
-            y = (poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3;
+            x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3) - 5.76;
+            y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
             poses.clear();
             return true;
