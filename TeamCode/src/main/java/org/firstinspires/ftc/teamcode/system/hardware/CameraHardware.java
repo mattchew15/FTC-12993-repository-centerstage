@@ -153,9 +153,11 @@ public class CameraHardware
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
+
                 // fx = 549.651, fy = 549.651, cx = 317.108, cy = 236.644, mason like saving the macOs users
                 // our own calibrated values: Fx: 904.487 Fy: 904.487 Cx: 643.51 Cy: 361.189
-                .setLensIntrinsics(904.487, 904.487, 643.51, 361.189)
+                // new camera calibration Focals (pixels) - Fx: 905.033 Fy: 905.033 Optical center - Cx: 642.569 Cy: 359.582
+                .setLensIntrinsics(905.033, 905.033, 642.569, 359.582)
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
