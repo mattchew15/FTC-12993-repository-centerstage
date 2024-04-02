@@ -68,8 +68,13 @@ public class TestRelocalization extends LinearOpMode
             if (gamepad1.left_trigger > 0.2)
             {
                 telemetry.addData("Updating pose", true);
+
+                if((cameraHardware.getNewPose(drive.getPoseEstimate(), telemetry)));
+                {
+                    drive.setPoseEstimate(cameraHardware.getNewPose());
+                }
                 //drive.setPoseEstimate(relocalizationAprilTagPipeline.getPos(drive.getPoseEstimate().getHeading()));
-                drive.setPoseEstimate(cameraHardware.getNewPose(drive.getPoseEstimate(), telemetry));
+                //drive.setPoseEstimate(cameraHardware.getNewPose(drive.getPoseEstimate(), telemetry));
                 // this corrects for the y value using april tags, return the same x and h than the passed ones,
                 // assumes the robot is with heading zero to the april tags
             }
