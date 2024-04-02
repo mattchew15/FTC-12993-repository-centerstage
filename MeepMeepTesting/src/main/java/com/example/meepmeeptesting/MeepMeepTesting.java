@@ -62,9 +62,9 @@ public class MeepMeepTesting {
  */
                                 // Below is the code for going into the stacks at an angle
 
-                                .splineTo(new Vector2d(15,-36), Math.toRadians(180))
-                                .lineToSplineHeading(new Pose2d(-15, -36, Math.toRadians(180)))
-                                .splineTo(new Vector2d(-36,-33), Math.toRadians(160))
+//                                .splineTo(new Vector2d(15,-36), Math.toRadians(180))
+//                                .lineToSplineHeading(new Pose2d(-15, -36, Math.toRadians(180)))
+//                                .splineTo(new Vector2d(-36,-33), Math.toRadians(160))
 
 
 
