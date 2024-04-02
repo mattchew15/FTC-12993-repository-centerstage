@@ -22,13 +22,15 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPoseFront)
 
-                               /* this is the first spline for the truss side
+
                                 .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))
 
                                 .splineToConstantHeading(new Vector2d(-40, (-28 - 22)), Math.toRadians(-35))
                                 .splineToConstantHeading(new Vector2d(-18, (-32 - 22)), Math.toRadians(0))
-                                .lineToSplineHeading(new Pose2d(10, -32 - 22, Math.toRadians(0)))
-                                .splineTo(new Vector2d(32,-28 - 22), Math.toRadians(14))*/
+                                .lineToSplineHeading(new Pose2d(-15, -32 - 22, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(36, (-18 - 22)), Math.toRadians(55))
+
+
                                 /*
                                 .lineToSplineHeading(new Pose2d(24.1, (-32 + 4), Math.toRadians(179)))
                                 .splineToConstantHeading(new Vector2d(20, (-32 + 10)), Math.toRadians(110))
@@ -81,9 +83,9 @@ public class MeepMeepTesting {
                                  */
 
                                 // type 2
-                               .splineTo(new Vector2d(-18,-36), Math.toRadians(0))
+                       /*        .splineTo(new Vector2d(-18,-36), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(10, -36, Math.toRadians(0)))
-                                .splineTo(new Vector2d(32,-32), Math.toRadians(14))
+                                .splineTo(new Vector2d(32,-32), Math.toRadians(14))*/
 
 
 

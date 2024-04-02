@@ -187,11 +187,11 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
               //  telemetry.addData("PitchPositionDegrees", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
                 telemetry.addLine("");
-                telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
+              *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
 
-                 */
+
 
                 /*
                 log.addData(
@@ -614,7 +614,6 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                 break;
 
-
             case CLIMB_START:
                 if (delay(400)){
                     outtakeSubsystem.pitchTo(PITCH_CLIMB_TICKS, outtakeSubsystem.pitchEncoderPosition,1);
@@ -628,8 +627,9 @@ public class SimplicityDrive extends LinearOpMode {
                     resetTimer();
                 }
                 break;
+
             case CLIMB_END:  // idk what this case does
-                outtakeSubsystem.pitchTo(20,outtakeSubsystem.pitchEncoderPosition, 1);
+                outtakeSubsystem.pitchTo(16,outtakeSubsystem.pitchEncoderPosition, 1);
                 outtakeSubsystem.liftToInternalPID(5,1); // not quite in
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 fineAdjustIntakeSlidesClimb(gamepad1.left_trigger - gamepad1.right_trigger);
@@ -643,7 +643,6 @@ public class SimplicityDrive extends LinearOpMode {
                 } else {
                     intakeSubsystem.intakeSlideMotorRawControl(gamepad1.left_trigger - gamepad1.right_trigger); // balances the robot out
                 }
-
                  */
                 break;
         }

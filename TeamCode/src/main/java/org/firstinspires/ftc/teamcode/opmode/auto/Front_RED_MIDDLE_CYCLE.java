@@ -21,8 +21,8 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
     // this works because the parameters being passed in don't change throughout the opmode
     // same cycle numbers
-    AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto,true);
-    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry);
+    AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto,true,2);
+    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,2);
 
 
     enum AutoState {
@@ -130,7 +130,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS()){
+                if (auto.placeAndIntakeFrontMIDTRUSS(160)){
                     Trajectory startDrive = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 30, -32);
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     currentState = AutoState.TRANSFER_PIXEL;
@@ -171,9 +171,10 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 } else if (numCycles == 5){
                     pitchTarget = 26;
                     liftTarget = 30;
+                } else if (numCycles == 6){
                     auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,true);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     currentState = AutoState.PARK;
@@ -189,7 +190,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     } else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,12,3,-3);
                     } else if (numCycles == 5){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,3,-170,3);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,3,-170,3,0);
                     }
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     currentState = AutoState.DROP;
@@ -208,7 +209,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     armHeight = 3;
                 }
 
-                if (auto.drop(armHeight)){
+                if (auto.drop(armHeight, true)){
                 currentState = AutoState.GRAB_OFF_STACK;
                 }
                 break;

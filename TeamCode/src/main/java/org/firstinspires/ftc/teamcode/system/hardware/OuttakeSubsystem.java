@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_POS;
@@ -79,8 +80,8 @@ public class OuttakeSubsystem
             PIVOT_DIAGONAL_RIGHT_POS = PIVOT_READY_POS + 0.096,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = PIVOT_READY_POS + 0.486,
             PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0,
-            PIVOT_SIDEWAYS_LEFT_POS = 0.205,
-            PIVOT_SIDEWAYS_RIGHT_POS = 0.759;
+            PIVOT_SIDEWAYS_LEFT_POS = PIVOT_READY_POS - 0.276,
+            PIVOT_SIDEWAYS_RIGHT_POS = PIVOT_READY_POS + 0.276;
     public static double
             GRIPPER_TOP_GRIP_POS = 0.25,
             GRIPPER_TOP_OPEN_POS = 0.455,
@@ -165,7 +166,8 @@ public class OuttakeSubsystem
         LEFT,
         LEFT_YELLOW,
         FINE_ADJUST,
-        CENTER_YELLOW
+        CENTER_YELLOW,
+        CENTER_YELLOW_TRUSS,
     }
     public enum ArmServoState {
         READY,
@@ -279,7 +281,7 @@ public class OuttakeSubsystem
     public void liftMotorRawControl(double manualControlLift){
         LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is a write that is not needed
         //prevLiftOutput = motorCaching(-manualControlLift, prevLiftOutput, EPSILON_DELTA, LiftMotor);
-        LiftMotor.setPower(manualControlLift * 0.8);
+        LiftMotor.setPower(manualControlLift * 0.85);
     }
 
     public void pitchMotorRawControl(double manualControlTurret){
@@ -483,6 +485,9 @@ public class OuttakeSubsystem
                 break;
             case CENTER_YELLOW:
                 rail = RAIL_CENTER_YELLOW_POS;
+                break;
+            case CENTER_YELLOW_TRUSS:
+                rail = RAIL_CENTER_YELLOW_TRUSS_POS;
                 break;
             case RIGHT_YELLOW:
                 rail = RAIL_RIGHT_YELLOW_POS;

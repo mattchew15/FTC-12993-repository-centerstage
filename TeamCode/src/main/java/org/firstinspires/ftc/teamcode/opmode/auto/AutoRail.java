@@ -11,24 +11,37 @@ public class AutoRail {
 
     int numCyclesForExtendedRail;
     int yellowCycle;
+    int trussMiddleStage;
     boolean railGoesRight;
     AutoSequences auto;
 
-    public AutoRail(int numCyclesForExtendedRail, int yellowCycle, AutoSequences auto, boolean railGoesRight){
+    public AutoRail(int numCyclesForExtendedRail, int yellowCycle, AutoSequences auto, boolean railGoesRight, int trussMiddleStage){
         this.numCyclesForExtendedRail = numCyclesForExtendedRail;
         this.yellowCycle = yellowCycle;
         this.auto = auto;
         this.railGoesRight = railGoesRight;
+        this.trussMiddleStage = trussMiddleStage;
     }
     public void railLogic(){
         if (numCycles == yellowCycle){ //TODO mirror the first yellow placement
-            if (teamPropLocation == 2){
-                auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW);
-            } else if (teamPropLocation == 1){
-                auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
-            } else if (teamPropLocation == 3){
-                auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+            if (trussMiddleStage == 2){
+                if (teamPropLocation == 2){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW);
+                } else if (teamPropLocation == 1){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                } else if (teamPropLocation == 3){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                }
+            } else if (trussMiddleStage == 1){
+                if (teamPropLocation == 2){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_TRUSS);
+                } else if (teamPropLocation == 1){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                } else if (teamPropLocation == 3){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                }
             }
+
         } else if (numCycles > numCyclesForExtendedRail){
             if (S == 1){ // mirrored cases for auto
                 if (railGoesRight){

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
@@ -20,8 +21,8 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
     // this works because the parameters being passed in don't change throughout the opmode
     // same cycle numbers
-    AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto, false);
-    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry);
+    AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto, false,1);
+    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,1);
 
 
     enum AutoState{
@@ -143,7 +144,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
             case OUTTAKE_PIXEL:
                 //outtaking lengths for each cycle
                 if (!auto.autoTrajectories.drive.isBusy()){
-                    Trajectory intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,5,145,1);
+                    Trajectory intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,145,1,0);
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
 
                     currentState = AutoState.DROP;
@@ -156,7 +157,8 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
                 if (!auto.autoTrajectories.drive.isBusy()){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,16,5,4, 1);
+                    //outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2TrussTrajectory(poseEstimate,14,-176,4);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,12,4,4, 1);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;
