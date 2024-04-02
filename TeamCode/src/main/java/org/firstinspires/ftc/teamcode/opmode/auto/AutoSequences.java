@@ -116,16 +116,6 @@ public class AutoSequences {
         intakeSubsystem.intakeSlideInternalPID(0,1);
         if (delay(delayTime)){
             resetTimer();
-            if (teamPropLocation == 1){
-                autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
-                telemetry.addLine("left");
-            } else if (teamPropLocation == 2){
-                autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
-                telemetry.addLine("center");
-            } else if (teamPropLocation == 3){
-                autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
-                telemetry.addLine("right");
-            }
             return true;
         }
         return false;
@@ -162,7 +152,6 @@ public class AutoSequences {
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
             outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         }
-
         if (!autoTrajectories.drive.isBusy()){
             outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
             resetTimer();
@@ -171,13 +160,12 @@ public class AutoSequences {
         return false;
     }
 
-    public boolean placeAndIntakeFrontMIDTRUSS(Trajectory firstDrive){
+    public boolean placeAndIntakeFrontMIDTRUSS(){
         intakeSubsystem.intakeSpin(1);
         preExtendIntakeSlides();
         if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches() || intakeSubsystem.pixelsInIntake()){ // limit switches don't touch in this case
             if (delay(160)){ // ensure pixels are in robot
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
-                autoTrajectories.drive.followTrajectoryAsync(firstDrive);
                 resetTimer();
                 return true;
             }
@@ -226,7 +214,7 @@ public class AutoSequences {
         return false;
     }
 
-    public boolean outtakePixel(double correctedHeading, double liftTarget, int pitchTarget, int intakeSlideTarget, Trajectory trajectory, AutoRail autoRail, AutoPivot autoPivot){
+    public boolean outtakePixel(double correctedHeading, double liftTarget, int pitchTarget, int intakeSlideTarget, AutoRail autoRail, AutoPivot autoPivot){
         if (numCycles != 0){ // consistent across all autos
             outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE); // slides go out before arm so transfer is good
@@ -261,9 +249,6 @@ public class AutoSequences {
                         timesIntoStack = 0;
                         resetTimer();
                         intakeSubsystem.intakeSpin(0);
-                        if (trajectory != null){ // drive logic
-                            autoTrajectories.drive.followTrajectoryAsync(trajectory);
-                        }
                         return true;
                     }
                 }
@@ -308,8 +293,7 @@ public class AutoSequences {
         }
     }
 
-    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, Trajectory trajectory){
-
+    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides){
         goBackToStack = false;
         parkIfStuck(5000);
         outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
@@ -334,23 +318,22 @@ public class AutoSequences {
         // if we are switching lanes we don't extend the slides for one cycle
         if (!extendSlides){
             telemetry.addLine("WE DO NOT WANT TO EXTEND OUR SLIDES HERE");
-        }
-        else if (switchingLanes){
+        } else if (switchingLanes){
             if (numCycles != (numCyclesForSideways + 1)){// cycle we don't want to extend slides
                 intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
             }
         // if we aren't switching lanes at all we extend every time :)
-        }else {
+        } else {
             intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+            telemetry.addLine("we are extending the slides");
         }
 
-        if (xPosition < 14 && (Math.abs(correctedHeading) < 2 && numCycles < 5)){ // not for the last case??
+        if (xPosition < 14){ // not for the last case??
             intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
             if (xPosition < 12) { // for some reason we can't extend the slides unless we are further in
                 intakeSubsystem.intakeSpin(1);
                 if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
                         || (xPosition < -24 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
-                    autoTrajectories.drive.followTrajectoryAsync(trajectory);
                     resetTimer();
                     return true;
                 }
@@ -359,7 +342,6 @@ public class AutoSequences {
 
         if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){ //this isn't true unless timesIntoStack has happened at least once
             resetTimer();
-            autoTrajectories.drive.followTrajectoryAsync(trajectory);
             return true;
         }
         return false;
@@ -376,7 +358,7 @@ public class AutoSequences {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
         }
         //TODO abstract all of the intakearm logic to its own method
-        if (numCycles == numCyclesDropsToBase || numCycles >= cycleThresholdForLongerIntake? delay(longerDelayTime) : delay(shorterDelayTime)){
+        if (numCycles == numCyclesDropsToBase || (numCycles >= cycleThresholdForLongerIntake? delay(longerDelayTime) : delay(shorterDelayTime))){
             resetTimer(); // resets timer
             intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
             return true;
@@ -402,42 +384,6 @@ public class AutoSequences {
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         }
         outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
-    }
-
-    public void pivotLogic (){
-        if (numCycles == 0){
-            if (teamPropLocation == 1){
-                if (BLUE_AUTO){
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
-                }
-                else {
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
-                }
-            } else if (teamPropLocation == 2){
-                if (RED_AUTO){
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
-                }
-                else {
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
-                }
-            } else if (teamPropLocation == 3){
-                if (RED_AUTO){
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
-                }
-                else {
-                    outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
-                }
-            }
-        } else if (numCycles < 3){
-            if (BLUE_AUTO){
-                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
-            }
-            else {
-                outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
-            }
-        } else {
-            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
-        }
     }
 
 

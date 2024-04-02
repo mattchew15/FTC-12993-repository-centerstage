@@ -143,7 +143,7 @@ public class SimplicityDrive extends LinearOpMode {
             sequenceTimer = GlobalTimer.milliseconds(); // sets up timer for caching
             intakeSubsystem.intakeHardwareSetup();
             outtakeSubsystem.hardwareSetup();
-            //outtakeSubsystem.encodersReset(); // resets just the lift encoder
+            outtakeSubsystem.encodersReset(); // resets just the lift encoder
             intakeSubsystem.intakeSlideMotorEncodersReset();
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
             driveBase.drivebaseSetup();
@@ -430,7 +430,6 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if (delay(100)){ // makes transfer better?
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
-                    outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
                     intakeSubsystem.intakeSpin(0);
                 }
                 if (delay(0)){ // run after we enter the new state
@@ -495,20 +494,16 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                 // drop logic
 
-               // if (gamepad1.dpad_right){
-               //     straightenTurret = true;
-               // }
 
-                if (delay(250)){ // ensure the arm is all the way out
-                //    if (!straightenTurret){
-                       // telemetry.addLine("pointing to backdrop");
-                        outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
-                        setPivotServ();
-                  //  } else {
-                   //     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
-                   // }
-
+                if (delay(270)) { // ensure the arm is all the way out
+                    //    if (!straightenTurret){
+                    // telemetry.addLine("pointing to backdrop");
+                    outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
+                    outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
+                    setPivotServ();
                 }
+
+
                 break;
 
             case DEPOSIT:  // idk what this case does
@@ -525,6 +520,9 @@ public class SimplicityDrive extends LinearOpMode {
                     }
                 }
                  */
+                if (delay(300)){
+                    setPivotServ();
+                }
                 fineadJustStuff();
                 if (gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)){ // test if manual reset is ok
                     if (true){
@@ -591,8 +589,8 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case MANUAL_ENCODER_RESET:  // idk what this case does
-               // outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y);
-               // outtakeSubsystem.pitchMotorRawControl(gamepad2.left_stick_y);
+                outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y);
+                //outtakeSubsystem.pitchMotorRawControl(gamepad2.left_stick_y);
                 intakeSubsystem.intakeSlideMotorRawControl(gamepad2.left_trigger-gamepad2.right_trigger);
                 outtakeSubsystem.setOuttakePitchPurplePixelPosition();
                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
@@ -622,7 +620,7 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.pitchTo(PITCH_CLIMB_TICKS, outtakeSubsystem.pitchEncoderPosition,1);
                     intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 } else {
-                    outtakeSubsystem.liftTo(15,outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.liftToInternalPID(15,1);
                     outtakeSubsystem.pitchTo(PITCH_DEFAULT_DEGREE_TICKS,outtakeSubsystem.pitchEncoderPosition,1);
                 }
                 if (gamepad1.right_bumper){
@@ -853,11 +851,14 @@ public class SimplicityDrive extends LinearOpMode {
                 topIsRight = false;
             }
         } else if (gamepad2.right_trigger > 0.2){
+            telemetry.addLine("gamepad right trigger pressed");
             if (pivotFlipToggle.ToggleMode){
+                telemetry.addLine("we are here");
                 pivotState = 2;
                 topIsLeft = true;
                 topIsRight = false;
             } else {
+                telemetry.addLine("we are here 2");
                 pivotState = 3;
                 topIsRight = true;
                 topIsLeft = false;
@@ -883,6 +884,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT);
         } else if (pivotState == 2){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
+            telemetry.addLine("we should be running diagonal right flipped");
         } else if (pivotState == 3){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
         } else if (pivotState == 4){

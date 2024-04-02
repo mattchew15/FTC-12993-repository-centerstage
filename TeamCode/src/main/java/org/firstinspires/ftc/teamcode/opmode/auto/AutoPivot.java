@@ -5,21 +5,25 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RED_AUTO;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 public class AutoPivot {
     AutoSequences auto;
     int yellowCycle;
     int numCyclesForStraightPivot;
+    Telemetry telemetry;
 
-    public AutoPivot(int numCyclesForStraightPivot, int yellowCycle, AutoSequences auto){
+    public AutoPivot(int numCyclesForStraightPivot, int yellowCycle, AutoSequences auto, Telemetry telemetry){
         this.numCyclesForStraightPivot = numCyclesForStraightPivot;
         this.yellowCycle = yellowCycle;
         this.auto = auto;
+        this.telemetry = telemetry;
     }
 
     public void pivotLogic (){
         if (numCycles == yellowCycle){
+            telemetry.addLine("numCycles == yellowCycle)");
             if (teamPropLocation == 1){
                 if (BLUE_AUTO){
                     auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);

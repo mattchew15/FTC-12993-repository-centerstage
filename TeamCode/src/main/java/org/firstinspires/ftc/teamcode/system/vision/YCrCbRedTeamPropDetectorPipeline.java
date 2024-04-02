@@ -88,7 +88,7 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
         int max = Math.max(avg1, Math.max(avg2, avg3));
 
         if (max == avg1) {
-            teamPropLocation = 1;
+            //teamPropLocation = 1;
             //telemetry.addLine("Front");
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
@@ -96,7 +96,7 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
             //telemetry.addLine("Middle");
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
-            teamPropLocation = 3;
+            //teamPropLocation = 3;
             //telemetry.addLine("Back");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }

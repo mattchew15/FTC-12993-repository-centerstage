@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 
+import static org.firstinspires.ftc.teamcode.opmode.auto.Front_RED_Truss.AutoState.GRAB_OFF_STACK;
+import static org.firstinspires.ftc.teamcode.opmode.auto.Front_RED_Truss.AutoState.OUTTAKE_PIXEL;
+import static org.firstinspires.ftc.teamcode.opmode.auto.Front_RED_Truss.AutoState.TRANSFER_PIXEL;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
@@ -22,7 +25,7 @@ public class Front_RED_Truss extends LinearOpMode {
     // this works because the parameters being passed in don't change throughout the opmode
     // same cycle numbers
     AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto, false);
-    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto);
+    AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry);
 
 
     enum AutoState {
@@ -57,8 +60,6 @@ public class Front_RED_Truss extends LinearOpMode {
 
         auto.initAutoHardware(hardwareMap,this);
 
-
-
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
             auto.intializationLoop();
@@ -87,9 +88,9 @@ public class Front_RED_Truss extends LinearOpMode {
             }
 
             auto.mainAutoLoop(
-                    currentState == AutoState.OUTTAKE_PIXEL && xPosition > 24,
-                    currentState == AutoState.GRAB_OFF_STACK || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
-                    currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIXEL);
+                    currentState == OUTTAKE_PIXEL && xPosition > 24,
+                    currentState == GRAB_OFF_STACK || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
+                    currentState != AutoState.PRELOAD_DRIVE && currentState != OUTTAKE_PIXEL);
 
 
             autoSequence();
@@ -105,11 +106,22 @@ public class Front_RED_Truss extends LinearOpMode {
     }
 
     public void autoSequence(){
-        auto.goToPark(currentState == AutoState.IDLE,2);
+        auto.goToPark(currentState == AutoState.IDLE,1);
         switch (currentState) {
             case DELAY:
                 if(auto.delayState(0)){
                     currentState = AutoState.PRELOAD_DRIVE;
+
+                    if (teamPropLocation == 1){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1Front);
+                        telemetry.addLine("left");
+                    } else if (teamPropLocation == 2){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2Front);
+                        telemetry.addLine("center");
+                    } else if (teamPropLocation == 3){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3Front);
+                        telemetry.addLine("right");
+                    }
                 }
                 break;
             case PRELOAD_DRIVE:
@@ -118,52 +130,49 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PLACE_AND_INTAKE:
-                Trajectory startDrive = null;
-                if(teamPropLocation == 2){
-                    startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2; //
-                }
-
-                if (auto.placeAndIntakeFrontMIDTRUSS(startDrive)){
-                    currentState = AutoState.TRANSFER_PIXEL;
+                if (auto.placeAndIntakeFrontMIDTRUSS()){
+                    Trajectory startDrive = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 30, -32);
+                    auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
+                    currentState = TRANSFER_PIXEL;
                 }
                 break;
 
             case TRANSFER_PIXEL:
-                /*
                 if (auto.goBackToStack){
-                    currentState = AutoState.GRAB_OFF_STACK;
+                    currentState = GRAB_OFF_STACK;
                 }
-                 */
                 if (auto.transferPixel()){
-                    currentState = AutoState.OUTTAKE_PIXEL;
+                    currentState = OUTTAKE_PIXEL;
                 }
                 break;
 
             case OUTTAKE_PIXEL:
                 //outtaking lengths for each cycle
+
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
-                int intakeSlideTarget = 330; // pre-extend intake for most cycles
-                Trajectory intakeTrajectory = null;
+                int intakeSlideTarget = 0; // pre-extend intake for most cycles
                 if (numCycles == 0){ // for very first cycle
                     pitchTarget = 18;
                     liftTarget = 25;
                 } else if (numCycles == 1){
                     pitchTarget = 18;
                     liftTarget = 30;
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,4.4,160,1);
                 } else if (numCycles == 2){
-                    intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,4.4,160,1);
-                } else if (numCycles == 3){
+                    intakeSlideTarget = 0;
+                    pitchTarget = 19;
+                    liftTarget = 26.5;
                     auto.goToParkAfterOuttaking = true;
-                    intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,1);
                 }
-
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,intakeTrajectory,railLogic,pivotLogic);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
+                    Trajectory intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,1);
                     currentState = AutoState.PARK;
+                    auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                 }
                 else if (outtakePixelFinished){
+                    Trajectory intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,12,4.4,160,1);
+                    auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     currentState = AutoState.DROP;
                 }
                 break;
@@ -173,7 +182,11 @@ public class Front_RED_Truss extends LinearOpMode {
                 if (numCycles == 1){
                     armHeight = 4;
                 } else if (numCycles == 2){
-                    armHeight = 1;
+                    armHeight = 3;
+                } else if (numCycles == 3){
+                    armHeight = 5;
+                } else if (numCycles == 4) {
+                    armHeight = 3;
                 }
 
                 if (auto.drop(armHeight)){
@@ -181,17 +194,15 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
-                Trajectory outtakeTrajectory;
-                outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,12,5,4, 1);
-
-                // we don't want to pre-Extend our slides at all here
-                boolean grabOffStackFinished = auto.grabOffStack(numCycleForDifferentLane, false,false, outtakeTrajectory);
-                if (grabOffStackFinished){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, true)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
+                    Trajectory outtakeTrajectory;
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,12,5,4, 1);
+                    auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
+
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                // this will always run the longer delay time
                 if (auto.afterGrabOffStack(2,0,250,120)){
                     currentState = AutoState.TRANSFER_PIXEL;
                 }

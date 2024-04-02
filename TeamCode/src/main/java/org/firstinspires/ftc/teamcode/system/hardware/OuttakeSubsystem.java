@@ -63,14 +63,14 @@ public class OuttakeSubsystem
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.507,
-            MINI_TURRET_FRONTPURPLE_POS = 0.66,
-            MINI_TURRET_BACKPURPLE_POS = 0.38;
+            MINI_TURRET_STRAIGHT_POS = 0.53,
+            MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.16,
+            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.16;
 
     public static double
             ARM_READY_POS = 0.809,
             ARM_UPRIGHT_POS = 0.4,
-            ARM_SCORE_POS = 0.145,
+            ARM_SCORE_POS = 0.143,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
             ARM_SCORE_YELLOW_POS = 0.24;
     public static double
@@ -78,7 +78,7 @@ public class OuttakeSubsystem
             PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
             PIVOT_DIAGONAL_RIGHT_POS = PIVOT_READY_POS + 0.096,
             PIVOT_DIAGONAL_LEFT_FLIPPED_POS = PIVOT_READY_POS + 0.486,
-            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = PIVOT_READY_POS - 0.486,
+            PIVOT_DIAGONAL_RIGHT_FLIPPED_POS = 0,
             PIVOT_SIDEWAYS_LEFT_POS = 0.205,
             PIVOT_SIDEWAYS_RIGHT_POS = 0.759;
     public static double
@@ -582,9 +582,7 @@ public class OuttakeSubsystem
                 //PivotServo.setPosition(PIVOT_SIDEWAYS_RIGHT_POS);
                 break;
         }
-        if (pivot != 0){
             prevPivot = servoCaching(pivot, prevPivot, EPSILON_DELTA, PivotServo);
-        }
     }
 
     public void gripperServoState(GripperServoState state) {

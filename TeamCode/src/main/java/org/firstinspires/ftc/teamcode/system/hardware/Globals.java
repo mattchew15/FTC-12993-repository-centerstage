@@ -34,10 +34,9 @@ public class Globals
             RAIL_CENTER_POS = 0.487,
             RAIL_CENTER_YELLOW_POS = 0.42,
             RAIL_RIGHT_POS = 0,
-            RAIL_RIGHT_YELLOW_POS = 0.2,
+            RAIL_RIGHT_YELLOW_POS = 0.19,
             RAIL_LEFT_POS = 1,
             RAIL_LEFT_YELLOW_POS = 0.8,
-
             OUTTAKE_DISTANCE_AUTO_THRESHOLD = 6.7;
 
     // Auto States
