@@ -22,13 +22,21 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPoseFront)
 
+                                .lineToLinearHeading(new Pose2d(-50, -9, Math.toRadians(180)))
 
+
+                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(36, (-9 - 12)), Math.toRadians(-42))
+
+                                /*
                                 .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))
-
+                                // truss first spline for middle yellow
                                 .splineToConstantHeading(new Vector2d(-40, (-28 - 22)), Math.toRadians(-35))
                                 .splineToConstantHeading(new Vector2d(-18, (-32 - 22)), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(-15, -32 - 22, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(36, (-18 - 22)), Math.toRadians(55))
+
+                                 */
 
 
                                 /*

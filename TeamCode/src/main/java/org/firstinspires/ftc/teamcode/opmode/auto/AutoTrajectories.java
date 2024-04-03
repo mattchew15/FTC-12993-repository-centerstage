@@ -23,6 +23,7 @@ public class AutoTrajectories {
     public boolean preExtendSlides;
     public boolean dropPurple;
     public boolean extendSlidesAroundTruss;
+    public boolean extendSlidesAroundStage;
     public boolean extendOuttakeSlidesAroundTruss;
 
     public static double
@@ -82,7 +83,8 @@ public class AutoTrajectories {
             driveIntoStackAfterBackPreload2, driveIntoStackAfterBackPreload3, PreloadDrive1Front,
             PreloadDrive2Front, PreloadDrive3Front, AfterPreloadDrive1Front, AfterPreloadDrive2Front,
             AfterPreloadDrive3Front, driveIntoStackStraightMIDDLE, outtakeDriveMiddlePathLIVE, driveIntoStackStageFromMiddlePathStraightEndV2,
-    firstDriveThroughTrussAfterPurple2;
+    firstDriveThroughTrussAfterPurple2, PreloadDrive2FrontStage, PreloadDrive1FrontStage,PreloadDrive3FrontStage
+            ,firstDriveThroughStageAfterPurple2;
 
     public void init(HardwareMap hardwareMap, LinearOpMode opMode)
     {
@@ -153,7 +155,7 @@ public class AutoTrajectories {
                 .addSpatialMarker(new Vector2d(-50, 25), () -> {
                     preExtendSlides = true;
                 })
-                .addSpatialMarker(new Vector2d(-50, 31), () -> {
+                .addSpatialMarker(new Vector2d(-50, -31), () -> {
                     dropPurple = true;
                 })
                 .build();
@@ -162,22 +164,28 @@ public class AutoTrajectories {
                 .lineToLinearHeading(new Pose2d(-55, -32*S, Math.toRadians(180)*S))
                 .build();
 
-        firstDriveThroughTrussAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2Front.end(), true)
-                /*
-                .splineToConstantHeading(new Vector2d(-40, (MiddleLaneYDeposit + 4 - LaneOffsetTruss)), Math.toRadians(-35), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .splineToConstantHeading(new Vector2d(-18, (MiddleLaneYDeposit - LaneOffsetTruss)), Math.toRadians(0), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .lineToSplineHeading(new Pose2d(10, MiddleLaneYDeposit - LaneOffsetTruss, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addSpatialMarker(new Vector2d( 5, MiddleLaneYDeposit - LaneOffsetTruss), () -> {
-                    extendSlidesAroundTruss = true;
+        PreloadDrive2FrontStage = drive.trajectoryBuilder(startPoseFront)
+                .lineToLinearHeading(new Pose2d(-50, -9*S, Math.toRadians(180)*S))
+                .addSpatialMarker(new Vector2d(-50, -16), () -> {
+                    preExtendSlides = true;
                 })
-                .splineTo(new Vector2d(32,MiddleLaneYDeposit + 4 - LaneOffsetTruss), Math.toRadians(5), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                 */
+                .addSpatialMarker(new Vector2d(-50, -15), () -> {
+                    dropPurple = true;
+                })
+                .build();
 
-                .splineToConstantHeading(new Vector2d(-40, (MiddleLaneYDeposit + 4 - LaneOffsetTruss)), Math.toRadians(-35), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+        firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
+
+                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(36, (-9 - 12)), Math.toRadians(-42), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+
+                .build();
+
+
+        firstDriveThroughTrussAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2Front.end(), true)
+
+                .splineToConstantHeading(new Vector2d(-41, (MiddleLaneYDeposit + 4 - LaneOffsetTruss)), Math.toRadians(-35), SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(-18, (MiddleLaneYDeposit - LaneOffsetTruss)), Math.toRadians(0), SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -186,7 +194,7 @@ public class AutoTrajectories {
                 .addSpatialMarker(new Vector2d( 5, MiddleLaneYDeposit - LaneOffsetTruss), () -> {
                     extendSlidesAroundTruss = true;
                 })
-                .splineToConstantHeading(new Vector2d(32.1, (MiddleLaneYDeposit + 13.9 -LaneOffsetTruss)), Math.toRadians(55), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(32.1, (MiddleLaneYDeposit + 14 -LaneOffsetTruss)), Math.toRadians(55), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -390,6 +398,9 @@ public class AutoTrajectories {
                // .lineToSplineHeading(new Pose2d(-15, (MiddleLaneYDeposit+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S)))*S, Math.toRadians(180)*S))
                 .addSpatialMarker(new Vector2d(-24.5, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
                     extendSlidesAroundTruss = true;
+                })
+                .addSpatialMarker(new Vector2d(-14, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
+                    extendSlidesAroundStage = true;
                 })
                 .splineTo(new Vector2d(-36,(MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S)) + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // roughly 160

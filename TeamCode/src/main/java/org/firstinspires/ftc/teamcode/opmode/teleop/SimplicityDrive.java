@@ -190,6 +190,7 @@ public class SimplicityDrive extends LinearOpMode {
               *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
+                telemetry.addData("headingPosition", headingPosition);
 
 
 

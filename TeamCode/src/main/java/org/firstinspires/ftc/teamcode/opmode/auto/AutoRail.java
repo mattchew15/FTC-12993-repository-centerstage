@@ -40,6 +40,14 @@ public class AutoRail {
                 } else if (teamPropLocation == 3){
                     auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
                 }
+            } else if (trussMiddleStage == 3){
+                if (teamPropLocation == 2){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_TRUSS);
+                } else if (teamPropLocation == 1){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                } else if (teamPropLocation == 3){
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                }
             }
 
         } else if (numCycles > numCyclesForExtendedRail){

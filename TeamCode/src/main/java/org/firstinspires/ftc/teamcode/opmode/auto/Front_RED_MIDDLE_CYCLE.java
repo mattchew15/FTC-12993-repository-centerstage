@@ -123,7 +123,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState()){
+                if(auto.preloadDriveState(true)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
 
@@ -215,14 +215,14 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
             case GRAB_OFF_STACK:
 
-                if (auto.grabOffStack(numCycleForDifferentLane, true, true)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, true,5)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
-                    if (numCycles > 4){
+                    /*if (numCycles > 4){
                         outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,16, -5, 4,3);
-                    }
-                    else if (numCycles > 2) {
-                        //outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTurnEndStageV3Trajectory(poseEstimate,16, -5, 4,3);
+                    }*/
+                    if (numCycles > 2) {
+                        // this seems to be the best trajectory to follow
                         outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,16, 175, 4);
                         //outtakeTrajectory = null;
                     } else {
