@@ -42,7 +42,7 @@ public class AutoRail {
                 }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_TRUSS);
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_STAGE);
                 } else if (teamPropLocation == 1){
                     auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
                 } else if (teamPropLocation == 3){

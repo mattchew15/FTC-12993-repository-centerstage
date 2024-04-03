@@ -125,12 +125,12 @@ public class AutoSequences {
         return false;
 
     }
-    public boolean preloadDriveState (boolean railLeftOrRight){
+    public boolean preloadDriveState (boolean railLeftOrRight, boolean preDropPurple, double railDelay){
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-        if (delay(1000)){
+        if (delay(railDelay)){
             if (railLeftOrRight){
                 outtakeSubsystem.outtakeRailState(S != 1? OuttakeSubsystem.OuttakeRailState.RIGHT: OuttakeSubsystem.OuttakeRailState.LEFT);
             } else {
@@ -164,12 +164,14 @@ public class AutoSequences {
             intakeSubsystem.intakeSpin(1);
             preExtendIntakeSlides();
         }
-        if (autoTrajectories.dropPurple){
+        if (autoTrajectories.dropPurple && preDropPurple){
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
             outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         }
         if (!autoTrajectories.drive.isBusy()){
             outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+            outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+            outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
             resetTimer();
             return true;
         }

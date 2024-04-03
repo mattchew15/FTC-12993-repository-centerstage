@@ -177,6 +177,9 @@ public class AutoTrajectories {
         firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
 
                 .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+                .addSpatialMarker(new Vector2d( 10, -9), () -> {
+                    extendSlidesAroundTruss = true;
+                })
                 .splineToConstantHeading(new Vector2d(36, (-9 - 12)), Math.toRadians(-42), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
@@ -194,7 +197,7 @@ public class AutoTrajectories {
                 .addSpatialMarker(new Vector2d( 5, MiddleLaneYDeposit - LaneOffsetTruss), () -> {
                     extendSlidesAroundTruss = true;
                 })
-                .splineToConstantHeading(new Vector2d(32.1, (MiddleLaneYDeposit + 14 -LaneOffsetTruss)), Math.toRadians(55), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(32.1, (MiddleLaneYDeposit + 14.2 -LaneOffsetTruss)), Math.toRadians(55), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -399,7 +402,7 @@ public class AutoTrajectories {
                 .addSpatialMarker(new Vector2d(-24.5, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
                     extendSlidesAroundTruss = true;
                 })
-                .addSpatialMarker(new Vector2d(-14, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
+                .addSpatialMarker(new Vector2d(-11, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
                     extendSlidesAroundStage = true;
                 })
                 .splineTo(new Vector2d(-36,(MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S)) + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

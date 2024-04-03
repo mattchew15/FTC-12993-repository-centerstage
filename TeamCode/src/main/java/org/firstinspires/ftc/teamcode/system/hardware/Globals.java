@@ -34,7 +34,7 @@ public class Globals
             RAIL_CENTER_POS = 0.487,
             RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
-            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.36,
+            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.23,
 
             RAIL_RIGHT_POS = 0,
             RAIL_RIGHT_YELLOW_POS = RAIL_CENTER_POS - 0.297,
@@ -47,7 +47,7 @@ public class Globals
             RAIL_LEFT_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.297,
 
 
-            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 7.15;
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 10;
 
     // Auto States
     public static boolean

@@ -3,6 +3,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
-
+@Disabled
 @Autonomous(name = "Test them middle trajectories bro", group = "Autonomous")
 public class TEST_MIDDLE_TRAJECTORIES extends LinearOpMode {
 

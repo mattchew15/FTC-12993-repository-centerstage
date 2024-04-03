@@ -3,11 +3,16 @@ package org.firstinspires.ftc.teamcode.system.hardware;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_STAGE_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_STAGE_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_SERVO_POSITION;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.degreestoTicksPitchMotor;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.expHub;
@@ -70,7 +75,7 @@ public class OuttakeSubsystem
 
     public static double
             ARM_READY_POS = 0.809,
-            ARM_UPRIGHT_POS = 0.4,
+            ARM_UPRIGHT_POS = 0.55,
             ARM_SCORE_POS = 0.143,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
             ARM_SCORE_YELLOW_POS = 0.24;
@@ -494,21 +499,32 @@ public class OuttakeSubsystem
             case CENTER_YELLOW_TRUSS:
                 rail = RAIL_CENTER_YELLOW_TRUSS_POS;
                 break;
+            case CENTER_YELLOW_STAGE:
+                rail = RAIL_CENTER_YELLOW_STAGE_POS;
+                break;
             case RIGHT_YELLOW:
                 rail = RAIL_RIGHT_YELLOW_POS;
-                //setOuttakeRailServo(RAIL_RIGHT_YELLOW_POS);
+                break;
+            case RIGHT_YELLOW_STAGE:
+                rail = RAIL_RIGHT_YELLOW_STAGE_POS;
+                break;
+            case RIGHT_YELLOW_TRUSS:
+                rail = RAIL_RIGHT_YELLOW_TRUSS_POS;
                 break;
             case RIGHT:
                 rail = RAIL_RIGHT_POS;
-                //setOuttakeRailServo(RAIL_RIGHT_POS);
                 break;
             case LEFT:
                 rail = RAIL_LEFT_POS;
-                //setOuttakeRailServo(RAIL_LEFT_POS);
                 break;
             case LEFT_YELLOW:
                 rail = RAIL_LEFT_YELLOW_POS;
-                //setOuttakeRailServo(RAIL_LEFT_YELLOW_POS);
+                break;
+            case LEFT_YELLOW_STAGE:
+                rail = RAIL_LEFT_YELLOW_STAGE_POS;
+                break;
+            case LEFT_YELLOW_TRUSS:
+                rail = RAIL_LEFT_YELLOW_TRUSS_POS;
                 break;
         }
         prevRail = servoCaching(rail, prevRail, EPSILON_DELTA, OuttakeRailServo);

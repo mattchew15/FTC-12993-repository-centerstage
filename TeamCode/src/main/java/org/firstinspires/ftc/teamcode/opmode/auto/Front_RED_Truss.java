@@ -126,7 +126,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(true)){
+                if(auto.preloadDriveState(true, true,1000)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;

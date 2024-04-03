@@ -81,7 +81,7 @@ public class PIDMotorTest extends LinearOpMode {
             int target = 0;
             while (opModeIsActive()) {
 
-                outtakeSubsystem.outtakeReads(false); // read at the start of the loop
+                outtakeSubsystem.outtakeReads(true); // read at the start of the loop
                 intakeSubsystem.intakeReads(true);
 
                 // can be condensed into the one class? - try ita
