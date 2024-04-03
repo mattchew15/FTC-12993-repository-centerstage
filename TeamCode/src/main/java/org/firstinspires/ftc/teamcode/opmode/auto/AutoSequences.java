@@ -338,14 +338,17 @@ public class AutoSequences {
         if (!extendSlides){
             telemetry.addLine("WE DO NOT WANT TO EXTEND OUR SLIDES HERE");
         } else if (switchingLanes){
-            if (numCycles != (numCyclesForSideways + 1)){// don't extend slides for one cycle
-                intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+            if (numCycles == (numCyclesForSideways + 1)){// don't extend slides for one cycle
+                if (xPosition < 14) { // not for the last case??
+                    intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET, 1);
+                }
             } else if (numCycles >= numCyclesForTurnIntoStacks){
                 if (autoTrajectories.extendSlidesAroundStage){
                     intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
                 }
+            } else {
+                intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
             }
-        // if we aren't switching lanes at all we extend every time :)
         } else {
             if (numCycles >= numCyclesForTurnIntoStacks){
                 if (autoTrajectories.extendSlidesAroundStage){
@@ -353,19 +356,17 @@ public class AutoSequences {
                 }
             } else {
                 intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
-                telemetry.addLine("we are extending the slides");
             }
         }
 
-        if (xPosition < 14){ // not for the last case??
-            intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
-            if (xPosition < 12) { // for some reason we can't extend the slides unless we are further in
-                intakeSubsystem.intakeSpin(1);
-                if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
-                        || (xPosition < -24 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
-                    resetTimer();
-                    return true;
-                }
+
+        if (xPosition < 12) { // for some reason we can't extend the slides unless we are further in
+            intakeSubsystem.intakeSpin(1);
+            if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
+                    || (xPosition < -24 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
+                resetTimer();
+                autoTrajectories.extendSlidesAroundStage = false;
+                return true;
             }
         }
 
