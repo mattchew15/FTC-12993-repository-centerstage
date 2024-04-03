@@ -126,7 +126,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState()){
+                if(auto.preloadDriveState(true)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
@@ -152,7 +152,7 @@ public class Front_RED_Truss extends LinearOpMode {
 
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
-                int intakeSlideTarget = 0; // pre-extend intake for most cycles
+                int intakeSlideTarget = 90; // pre-extend a little
                 if (numCycles == 0){ // for very first cycle
                     pitchTarget = 23;
                     liftTarget = 19.4;

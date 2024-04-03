@@ -89,7 +89,7 @@ public class OuttakeSubsystem
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
-            PITCH_PURPLEPIXEL_POSITION = 0.35,
+            PITCH_PURPLEPIXEL_POSITION = 0.36,
             PITCH_LOWPITCH_POSITION = 0.7,
             PITCH_YELLOWPIXEL_POSITION = 0.4;
 
@@ -163,11 +163,16 @@ public class OuttakeSubsystem
         CENTER,
         RIGHT,
         RIGHT_YELLOW,
+        RIGHT_YELLOW_TRUSS,
+        RIGHT_YELLOW_STAGE,
         LEFT,
         LEFT_YELLOW,
+        LEFT_YELLOW_TRUSS,
+        LEFT_YELLOW_STAGE,
         FINE_ADJUST,
         CENTER_YELLOW,
         CENTER_YELLOW_TRUSS,
+        CENTER_YELLOW_STAGE
     }
     public enum ArmServoState {
         READY,
@@ -404,7 +409,7 @@ public class OuttakeSubsystem
     }
 
     public static double degreesToTicksMiniTurret(double degrees){
-        return MINI_TURRET_STRAIGHT_POS - degrees/355; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+        return MINI_TURRET_STRAIGHT_POS - degrees/350; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
     public double angleWrap(double radians) {
         while (radians > Math.PI) {

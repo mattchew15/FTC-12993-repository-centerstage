@@ -51,6 +51,8 @@ public class AutoPivot {
                 }
             } else if (trussMiddleStage == 1){ // cos they have already placed!!!
                 auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
+            } else if (trussMiddleStage == 3){
+                auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
             }
 
         } else if (numCycles > numCyclesForStraightPivot){

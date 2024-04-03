@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.Log;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 
+import org.firstinspires.ftc.teamcode.system.accessory.imu.ImuThread;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeInverseKinematics;
 import org.firstinspires.ftc.teamcode.system.accessory.Toggle;
 import org.firstinspires.ftc.teamcode.system.accessory.ToggleRisingEdge;
@@ -109,6 +110,7 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     OuttakeState outtakeState;
+    ImuThread imuThread;
 
     @Override
     public void runOpMode() {
@@ -129,9 +131,11 @@ public class SimplicityDrive extends LinearOpMode {
         driveBase.initDrivebase(hardwareMap);
         outtakeState = OuttakeState.READY;
 
+        imuThread = new ImuThread(hardwareMap);
+        imuThread.initImuThread();
+        imuThread.startThread(this);
         List<Integer> lastTrackingEncPositions = new ArrayList<>(); //
         List<Integer> lastTrackingEncVels = new ArrayList<>(); // idk what this is for but this is what sample mecanum drive does to set localizer
-        SampleMecanumDrive sampleMecanumDrive = new SampleMecanumDrive(hardwareMap);
         //StandardTrackingWheelLocalizer location = new StandardTrackingWheelLocalizer(hardwareMap,lastTrackingEncPositions,lastTrackingEncVels);
         //TwoWheelTrackingLocalizer location = new TwoWheelTrackingLocalizer(hardwareMap, sampleMecanumDrive);
 
@@ -173,7 +177,6 @@ public class SimplicityDrive extends LinearOpMode {
                 adjustRail();
                 pivotAdjust();
                 outtakeSequence();
-                sampleMecanumDrive.update();
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 /*
@@ -190,6 +193,7 @@ public class SimplicityDrive extends LinearOpMode {
               *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
+                telemetry.addData("headingPosition", headingPosition);
 
 
 
@@ -206,13 +210,13 @@ public class SimplicityDrive extends LinearOpMode {
 
                 log.addData(outtakeState);
                  */
-                headingPosition = Math.toDegrees(outtakeSubsystem.angleWrap(sampleMecanumDrive.getPoseEstimate().getHeading()));//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
+                headingPosition = Math.toDegrees(outtakeSubsystem.angleWrap(imuThread.getImuAngle()));//Math.toDegrees(outtakeSubsystem.angleWrap(location.getPoseEstimate().getHeading())); // for some reason previously the angle wrap was in this class
                 //log.update();
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();
-                if (gamepad1.dpad_left){
+                /*if (gamepad1.dpad_left){
                     sampleMecanumDrive.setPoseEstimate(new Pose2d(0,0,0));
-                }
+                }*/
                 if (gamepad2.dpad_down){
                     gamepad1.rumbleBlips(1);
                 }

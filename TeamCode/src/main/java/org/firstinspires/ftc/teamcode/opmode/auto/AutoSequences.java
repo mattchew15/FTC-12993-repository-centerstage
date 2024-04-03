@@ -121,22 +121,34 @@ public class AutoSequences {
         return false;
 
     }
-    public boolean preloadDriveState (){
+    public boolean preloadDriveState (boolean railLeftOrRight){
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         if (delay(1000)){
-            outtakeSubsystem.outtakeRailState(S != 1? OuttakeSubsystem.OuttakeRailState.RIGHT: OuttakeSubsystem.OuttakeRailState.LEFT);
+            if (railLeftOrRight){
+                outtakeSubsystem.outtakeRailState(S != 1? OuttakeSubsystem.OuttakeRailState.RIGHT: OuttakeSubsystem.OuttakeRailState.LEFT);
+            } else {
+                outtakeSubsystem.outtakeRailState(S != 1? OuttakeSubsystem.OuttakeRailState.LEFT: OuttakeSubsystem.OuttakeRailState.RIGHT);
+            }
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
             outtakeSubsystem.setOuttakePitchPurplePixelPosition();
             // turret deposit logic
             if (teamPropLocation == 1){
-                outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.FRONT_PURPLE);
+                if(railLeftOrRight){
+                    outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.FRONT_PURPLE);
+                } else {
+                    outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.BACK_PURPLE);
+                }
             } else if (teamPropLocation == 2){
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
             } else if (teamPropLocation == 3){
-                outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.BACK_PURPLE);
+                if(railLeftOrRight){
+                    outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.BACK_PURPLE);
+                } else {
+                    outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.FRONT_PURPLE);
+                }
             }
             // pre spin intake or smth
             if (delay(2000)){
@@ -300,7 +312,7 @@ public class AutoSequences {
         }
     }
 
-    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides){
+    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks){
         goBackToStack = false;
         parkIfStuck(5000);
         outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
@@ -326,13 +338,23 @@ public class AutoSequences {
         if (!extendSlides){
             telemetry.addLine("WE DO NOT WANT TO EXTEND OUR SLIDES HERE");
         } else if (switchingLanes){
-            if (numCycles != (numCyclesForSideways + 1)){// cycle we don't want to extend slides
+            if (numCycles != (numCyclesForSideways + 1)){// don't extend slides for one cycle
                 intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+            } else if (numCycles >= numCyclesForTurnIntoStacks){
+                if (autoTrajectories.extendSlidesAroundStage){
+                    intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+                }
             }
         // if we aren't switching lanes at all we extend every time :)
         } else {
-            intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
-            telemetry.addLine("we are extending the slides");
+            if (numCycles >= numCyclesForTurnIntoStacks){
+                if (autoTrajectories.extendSlidesAroundStage){
+                    intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+                }
+            } else {
+                intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET,1);
+                telemetry.addLine("we are extending the slides");
+            }
         }
 
         if (xPosition < 14){ // not for the last case??
@@ -381,15 +403,18 @@ public class AutoSequences {
         // if we are switching lanes we don't extend the slides for one cycle
 
         if (autoTrajectories.extendSlidesAroundTruss){ // not for the last case??
-            intakeSubsystem.intakeSlideInternalPID(numCycles == 1?763:820,1);
+            intakeSubsystem.intakeSlideInternalPID(numCycles == 1?763:815,1);
          // for some reason we can't extend the slides unless we are further in
             intakeSubsystem.intakeSpin(1);
-            if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
+            if (!autoTrajectories.drive.isBusy()
                     || (xPosition < -24 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
                 resetTimer();
                 autoTrajectories.extendSlidesAroundTruss = false;
                 return true;
             }
+
+        } else {
+            intakeSubsystem.intakeSlideInternalPID(0,1);
 
         }
 
