@@ -8,8 +8,7 @@ public class AprilTagLocalisation {
     public double cameraOffset = 5.76;
     public Telemetry telemetry;
 
-    public AprilTagLocalisation(Telemetry telemetry)
-    {
+    public AprilTagLocalisation(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
