@@ -112,6 +112,7 @@ public class TEST_MIDDLE_TRAJECTORIES extends LinearOpMode {
             telemetry.update();
 
         }
+        auto.storePoseEndAuto(poseEstimate);
     }
 
     public void autoSequence(){
