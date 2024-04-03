@@ -37,7 +37,7 @@ public class TestRelocalization extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
 
-        cameraHardware.initBackWebcamVP(hardwareMap);
+        cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         //relocationV2Pipeline = new RelocationV2Pipeline();
         //relocationV2Pipeline.setTelemetry(telemetry);
         //relocalizationAprilTagPipeline.setTelemetry(telemetry);
@@ -45,6 +45,7 @@ public class TestRelocalization extends LinearOpMode
         drive = new SampleMecanumDrive(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
+        drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(180)));
         /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -71,7 +72,7 @@ public class TestRelocalization extends LinearOpMode
             drive.update();
             driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x,gamepad1.right_stick_x);
             poseEstimate = drive.getPoseEstimate();
-            heading = Math.toDegrees(outtakeSubsystem.angleWrap(drive.getPoseEstimate().getHeading()));
+            heading = Math.toDegrees(outtakeSubsystem.angleWrap(drive.getPoseEstimate().getHeading() + Math.PI)) * -1;
             if (gamepad1.left_trigger > 0.2)
             {
                 telemetry.addData("Updating pose", true);
@@ -89,6 +90,7 @@ public class TestRelocalization extends LinearOpMode
             telemetry.addData("X", poseEstimate.getX());
             telemetry.addData("Y", poseEstimate.getY());
             telemetry.addData("H", heading);
+
             telemetry.update();
 
         }
