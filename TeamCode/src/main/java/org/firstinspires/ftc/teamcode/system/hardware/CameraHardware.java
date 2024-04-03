@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.util.Size;
@@ -8,17 +9,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
-import org.firstinspires.ftc.teamcode.system.visiontest.RelocalizationAprilTag;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
@@ -43,7 +43,7 @@ public class CameraHardware
     private AprilTagProcessor aprilTag;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
-    private final AprilTagLocalisation poseCorrector = new AprilTagLocalisation();
+    private final AprilTagLocalisation ATLocalisation = new AprilTagLocalisation();
     public Pose2d newPose;
 
     /**
@@ -218,7 +218,8 @@ public class CameraHardware
     {
         visionPortal.resumeStreaming();
     }
-    public Boolean getNewPose(Pose2d pose, Telemetry telemetry)
+
+    /*public Boolean getNewPose(Pose2d pose, Telemetry telemetry)
     {
 
         for (int i = 0; i <3; i++)
@@ -242,7 +243,7 @@ public class CameraHardware
 //              this is x relative to the april tag                     this is y relative to the field/pose
                         double newY = detection.ftcPose.x + library.lookupTag(detection.id).fieldPosition.get(1);
 
-                        Pose2d newPoses = poseCorrector.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
+                        //Pose2d newPoses = ATLocalisation.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
                         //telemetry.addData("Corrected pose", newPoses.toString());
                         telemetry.addData("Non corrected X", newX);
                         telemetry.addData("Non corrected Y", newY);
@@ -259,6 +260,63 @@ public class CameraHardware
             x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3) - 5.76;
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
+            poses.clear();
+            return true;
+        }
+        return false;
+    }*/
+
+    public Boolean getNewPose2(Pose2d pose, double heading, Telemetry telemetry)
+    {
+
+        for (int i = 0; i <3; i++)
+        {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            //telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+            // Step through the list of detections and display info for each one.
+            for (AprilTagDetection detection : currentDetections)
+            {
+                if (detection.id == 5)
+                {
+                    if (detection.metadata != null)
+                    {
+                        //telemetry.addData("Tag id", detection.id);
+                        //telemetry.addData("Field pos", library.lookupTag(detection.id).fieldPosition.get(1));
+                        double tagX = detection.ftcPose.x;
+                        double tagY = detection.ftcPose.y / 1.3285651049;
+
+                        double robotX = ATLocalisation.xPos(heading, tagX, tagY);
+                        double robotY = ATLocalisation.yPos(heading, tagX, tagY);
+
+//              this is y relative to the april tag                     this is x relative to the field/pose
+                        double newX = library.lookupTag(detection.id).fieldPosition.get(0) - robotX;
+
+//              this is x relative to the april tag                     this is y relative to the field/pose
+                        double newY = library.lookupTag(detection.id).fieldPosition.get(1) + robotY;
+
+                        //Pose2d newPoses = ATLocalisation.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
+                        //telemetry.addData("Corrected pose", newPoses.toString());
+                        telemetry.addData("Detected X", tagX);
+                        telemetry.addData("Detected Y", tagY);
+                        telemetry.addData("Robot X", robotX);
+                        telemetry.addData("Robot Y", robotY);
+                        telemetry.addData("Corrected X", newX);
+                        telemetry.addData("Corrected Y", newY);
+                        //telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
+                        poses.add(new Pose2d(newX, newY)); // heading?
+                    }
+                }
+            }
+        }
+        if (poses.size() >= 3)
+        {
+            double x, y;
+            // we only need like 3 frames so this should be fine
+            x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3); // - 5.76
+            y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
+            newPose = new Pose2d(x, y, heading); // this should be an average pose
+            telemetry.addData("Average pose", newPose.toString());
             poses.clear();
             return true;
         }

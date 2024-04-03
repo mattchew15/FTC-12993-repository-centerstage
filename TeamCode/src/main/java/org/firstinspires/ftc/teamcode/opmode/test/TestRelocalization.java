@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
+import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
@@ -25,6 +26,9 @@ public class TestRelocalization extends LinearOpMode
     //OpenCvCamera backWebcam;
     CameraHardware cameraHardware = new CameraHardware();
     SampleMecanumDrive drive;
+    Pose2d poseEstimate;
+    OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
+    double heading;
 
     public static int START_X = 0, START_Y = 0, START_H = 0;
     // RelocalizationAprilTagPipeline relocalizationAprilTagPipeline = new RelocalizationAprilTagPipeline();
@@ -66,12 +70,13 @@ public class TestRelocalization extends LinearOpMode
         {
             drive.update();
             driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x,gamepad1.right_stick_x);
-
+            poseEstimate = drive.getPoseEstimate();
+            heading = Math.toDegrees(outtakeSubsystem.angleWrap(drive.getPoseEstimate().getHeading()));
             if (gamepad1.left_trigger > 0.2)
             {
                 telemetry.addData("Updating pose", true);
 
-                if(cameraHardware.getNewPose(drive.getPoseEstimate(), telemetry))
+                if(cameraHardware.getNewPose2(drive.getPoseEstimate(), heading, telemetry))
                 {
                     drive.setPoseEstimate(cameraHardware.getNewPose());
                 }
@@ -81,17 +86,13 @@ public class TestRelocalization extends LinearOpMode
                 // assumes the robot is with heading zero to the april tags
             }
 
-            telemetry.addData("X", drive.getPoseEstimate().getX());
-            telemetry.addData("Y", drive.getPoseEstimate().getY());
-            telemetry.addData("H", drive.getPoseEstimate().getHeading());
+            telemetry.addData("X", poseEstimate.getX());
+            telemetry.addData("Y", poseEstimate.getY());
+            telemetry.addData("H", heading);
             telemetry.update();
-
-
 
         }
         cameraHardware.closeBackWebcam();
-
-
 
     }
 }

@@ -4,19 +4,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 public class AprilTagLocalisation {
     public double cameraOffset = 6.5;
-    public double aprilTagX, aprilTagY, robotAngle;
 
     // these functions are all intermediate steps
-    public double distance() {return Math.hypot(aprilTagY + cameraOffset, aprilTagX);}
+    public double distance(double aprilTagX, double aprilTagY) {return Math.hypot(aprilTagY + cameraOffset, aprilTagX);}
 
     // returns radians
-    public double angle() {return Math.toRadians(robotAngle) + Math.atan2(aprilTagX, aprilTagY + cameraOffset); }
+    public double angle(double robotAngle, double aprilTagX, double aprilTagY) {return Math.toRadians(robotAngle) + Math.atan2(aprilTagX, aprilTagY + cameraOffset); }
     // these functions are all intermediate steps
 
-    public double xPos() {return distance() * Math.cos(angle()); }
+    public double xPos(double robotAngle, double aprilTagX, double aprilTagY) {return distance(aprilTagX, aprilTagY) * Math.cos(angle(robotAngle, aprilTagX, aprilTagY)); }
 
-    public double yPos() {return distance() * Math.sin(angle()); }
+    public double yPos(double robotAngle, double aprilTagX, double aprilTagY) {return distance(aprilTagX, aprilTagY) * Math.sin(angle(robotAngle, aprilTagX, aprilTagY)); }
 
+/*
     public Pose2d getCorrectedPose(double robotAngle, double aprilTagX, double aprilTagY)
     {
         this.aprilTagX = aprilTagX;
@@ -26,4 +26,5 @@ public class AprilTagLocalisation {
         return new Pose2d(xPos(), yPos());
 
     }
+*/
 }
