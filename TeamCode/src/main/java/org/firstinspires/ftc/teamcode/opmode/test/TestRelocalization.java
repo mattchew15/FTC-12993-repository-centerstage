@@ -77,7 +77,7 @@ public class TestRelocalization extends LinearOpMode
             {
                 telemetry.addData("Updating pose", true);
 
-                if(cameraHardware.getNewPose2(drive.getPoseEstimate(), telemetry))
+                if(cameraHardware.getNewPose2(drive.getPoseEstimate(), 2, telemetry))
                 {
                     drive.setPoseEstimate(cameraHardware.getNewPose());
                 }
