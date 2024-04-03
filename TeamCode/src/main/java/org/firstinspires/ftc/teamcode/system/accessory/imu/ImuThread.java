@@ -54,6 +54,10 @@ public class ImuThread
         });
         thread.start();
     }
+    public void resetYaw()
+    {
+        imu.resetYaw();
+    }
     public double getImuAngle()
     {
             return imuAngle;

@@ -105,6 +105,7 @@ public class Front_RED_Truss extends LinearOpMode {
             telemetry.update();
 
         }
+        auto.storePoseEndAuto(poseEstimate);
     }
 
     public void autoSequence(){

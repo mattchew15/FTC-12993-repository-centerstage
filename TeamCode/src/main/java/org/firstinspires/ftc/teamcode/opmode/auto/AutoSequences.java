@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.system.hardware.StorePose;
 
 @Config
 public class AutoSequences {
@@ -553,6 +554,10 @@ public class AutoSequences {
 
     public void startAprilTagCamera(){
         cameraHardware.resumeBackWebcam();
+    }
+    public void storePoseEndAuto(Pose2d pose)
+    {
+        StorePose.pose = pose;
     }
 }
 

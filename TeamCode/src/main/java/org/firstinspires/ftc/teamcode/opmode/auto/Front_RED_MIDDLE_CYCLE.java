@@ -102,6 +102,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
             telemetry.update();
 
         }
+        auto.storePoseEndAuto(poseEstimate);
     }
 
     public void autoSequence(){

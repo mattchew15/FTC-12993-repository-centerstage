@@ -214,9 +214,9 @@ public class SimplicityDrive extends LinearOpMode {
                 //log.update();
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();
-                /*if (gamepad1.dpad_left){
-                    sampleMecanumDrive.setPoseEstimate(new Pose2d(0,0,0));
-                }*/
+                if (gamepad1.dpad_left){
+                    imuThread.resetYaw();
+                }
                 if (gamepad2.dpad_down){
                     gamepad1.rumbleBlips(1);
                 }

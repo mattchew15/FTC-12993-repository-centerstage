@@ -102,6 +102,7 @@ public class Front_RED_Stage extends LinearOpMode {
             telemetry.update();
 
         }
+        auto.storePoseEndAuto(poseEstimate);
     }
 
     public void autoSequence(){
