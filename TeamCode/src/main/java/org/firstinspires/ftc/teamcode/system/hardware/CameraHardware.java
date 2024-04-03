@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
+import org.firstinspires.ftc.teamcode.system.vision.PreloadDetectionPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RailExtensionPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
@@ -37,10 +39,11 @@ public class CameraHardware
     private OpenCvWebcam sideWebcam, backWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline  bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
-    private PreloadDetection preloadPipeline;
     private RelocalizationAprilTagPipeline relocalizationPipeline;
     private RailAdjustAprilTag railAdjustPipeline;
     private AprilTagProcessor aprilTag;
+    private PreloadDetectionPipeline preloadDetection;
+    private RailExtensionPipeline railExtension;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
     private AprilTagLocalisation ATLocalisation;
@@ -100,32 +103,6 @@ public class CameraHardware
         //backWebcam.closeCameraDevice();
     }
 
-    public Pose2d update(double angle)
-    {
-        return relocalizationPipeline.getPos(angle);
-    }
-
-    public void setPreloadPipeline()
-    {
-        backWebcam.setPipeline(preloadPipeline);
-    }
-
-    public Place getYellowPixelState()
-    {
-        return preloadPipeline.getYellowPixelState();
-    }
-
-    public void setRailAdjustPipeline()
-    {
-        backWebcam.setPipeline(railAdjustPipeline);
-    }
-
-    public void setRelocalizationPipeline()
-    {
-        backWebcam.setPipeline(relocalizationPipeline);
-    }
-
-
     /*
     public void initAprilTag(HardwareMap hwMap) {
         if (BLUE_AUTO) {
@@ -168,6 +145,8 @@ public class CameraHardware
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
+        preloadDetection = new PreloadDetectionPipeline(aprilTag, telemetry);
+        railExtension = new RailExtensionPipeline(aprilTag, telemetry);
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
@@ -185,6 +164,8 @@ public class CameraHardware
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
+        //builder.addProcessor(preloadDetection);
+        builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -333,20 +314,14 @@ public class CameraHardware
         return newPose;
     }
 
-    public Place getPreloadYellowPose(Telemetry telemetry)
+    public Place getPreloadYellowPose()
     {
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null)
-            {
-
-            }
-        }
-        return Place.LEFT;
+        return preloadDetection.getPreloadYellow();
+    }
+    public double getRailTarget()
+    {
+        return railExtension.getTarget();
     }
     public void closeBackWebcam()
     {

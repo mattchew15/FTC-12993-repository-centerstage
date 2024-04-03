@@ -1,14 +1,21 @@
-/*
+
 package org.firstinspires.ftc.teamcode.system.vision;
 
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.place;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
+
 import android.graphics.Canvas;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
+import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -17,7 +24,8 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
-public class PreloadDetectionPipeline implements VisionProcessor {
+public class PreloadDetectionPipeline implements VisionProcessor
+{
 
 //    private AprilTagProcessor aprilTag;
 //
@@ -25,20 +33,29 @@ public class PreloadDetectionPipeline implements VisionProcessor {
 //        this.aprilTag = aprilTag;
 //    }
 
-    private AprilTagProcessor
+    private AprilTagProcessor aprilTagProcessor;
+    private Telemetry telemetry;
+
+    public PreloadDetectionPipeline(AprilTagProcessor aprilTag, Telemetry telemetry)
+    {
+        this.aprilTagProcessor = aprilTag;
+        this.telemetry = telemetry;
+    }
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
 
     }
 
     @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
-//   List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+    public Object processFrame(Mat frame, long captureTimeNanos)
+    {
+        List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
 
-        if (currentDetections != null) {
-            for (AprilTagDetection detection : currentDetections) {
+        if (detections != null) {
+            for (AprilTagDetection detection : detections) {
                 if (detection.metadata != null) {
-                    if (detection.id == targetAprilTagID) {
+
+                    if (BLUE_AUTO ? detection.id == teamPropLocation: detection.id == teamPropLocation + 3) {
                         int leftX = Integer.MAX_VALUE;
                         int rightX = Integer.MIN_VALUE;
                         int topY = Integer.MIN_VALUE;
@@ -66,21 +83,37 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
                         Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
 
-                        int leftZoneAverage = meanColor(frame, leftInclusionZone, leftExclusionZone);
-                        int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
+                        int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0, 0, 0));
+                        int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0, 0, 0));
+
+
+                        telemetry.addData("Left zone", leftZoneAverage);
+                        telemetry.addData("Right zone", rightZoneAverage);
+                        telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
+                        if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage < 100) // diff is small and the there is no pixel in the middle so avg is also low
+                        {
+                            place = Globals.Place.NONE;
+                        } else if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage > 100) // diff is small and the there is a pixel in the middle so avg is high
+                        {
+                            place = Globals.Place.MIDDLE;
+                        } else
+                        {
+                            place = leftZoneAverage > rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT;
+                        }
+
+                        //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);
+                        //Imgproc.rectangle(input, rightInclusionZone, new Scalar(0, 0, 255), 2);
+
 
 //                        System.out.println("LEFTAVG " + leftZoneAverage);
 //                        System.out.println("RIGHTAVG " + rightZoneAverage);
 
-                        preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
-                        System.out.println("PRELOADED ZONE: " + preloadedZone);
-                        Globals.PRELOAD = preloadedZone;
                     }
                 }
             }
@@ -95,33 +128,13 @@ public class PreloadDetectionPipeline implements VisionProcessor {
 
     }
 
-    public Location getPreloadedZone() {
-        return this.preloadedZone;
+    public Globals.Place getPreloadYellow()
+    {
+        return place;
     }
-
-    public int getTargetAprilTagID() {
-        return this.targetAprilTagID;
-    }
-
-    public void setTargetAprilTagID(Location preloadLocation) {
-        targetAprilTagID = 0;
-        switch (preloadLocation) {
-            case LEFT:
-                targetAprilTagID = 1;
-                break;
-            case CENTER:
-                targetAprilTagID = 2;
-                break;
-            case RIGHT:
-                targetAprilTagID = 3;
-                break;
-            default:
-                break;
-        }
-
-        if (Globals.ALLIANCE == Location.RED) targetAprilTagID += 3;
-    }
-
+    // i guess we can iterate mannualy through so we can exclude the backdrop areas
+    // but i am not sure if that is needed, we can probably assume that the lighting will be equal
+    // and both areas will have the same standard value, idk
     public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
         if (frame == null) {
             System.out.println("frame is bad");
@@ -152,4 +165,4 @@ public class PreloadDetectionPipeline implements VisionProcessor {
     }
 
 
-}*/
+}
