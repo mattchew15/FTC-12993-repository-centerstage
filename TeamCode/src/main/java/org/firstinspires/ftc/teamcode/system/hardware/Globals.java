@@ -32,12 +32,13 @@ public class Globals
 
     public static double
             RAIL_CENTER_POS = 0.487,
-            RAIL_CENTER_YELLOW_POS = 0.42,
+            RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_RIGHT_POS = 0,
-            RAIL_RIGHT_YELLOW_POS = 0.19,
+            RAIL_RIGHT_YELLOW_POS = RAIL_CENTER_POS - 0.297,
+            RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
             RAIL_LEFT_POS = 1,
-            RAIL_LEFT_YELLOW_POS = 0.8,
-            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 6.7;
+            RAIL_LEFT_YELLOW_POS = RAIL_CENTER_POS - 0.313,
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 7.2;
 
     // Auto States
     public static boolean

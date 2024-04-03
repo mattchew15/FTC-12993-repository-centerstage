@@ -42,8 +42,8 @@ public class IntakeSubsystem
 
     public static double
             INTAKE_ARM_TOP_POS = 0.6,
-            INTAKE_ARM_VERY_TOP_POS = 0.45,
-            INTAKE_ARM_FOUR_POS = 0.75,
+            INTAKE_ARM_VERY_TOP_POS = 0.44,
+            INTAKE_ARM_FOUR_POS = 0.74,
             INTAKE_ARM_MIDDLE_POS = 0.76,
             INTAKE_ARM_BASE_POS = 0.91;
     public static double
@@ -260,7 +260,7 @@ public class IntakeSubsystem
 
     public void intakeSlideMotorRawControl(double manualcontrolintakeslide){ // shouldn't have to do this - will be too slow
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.6, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
+        previousSlideMotor = motorCaching(manualcontrolintakeslide * -0.75, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(manualcontrolintakeslide * -0.6);
     }
 
