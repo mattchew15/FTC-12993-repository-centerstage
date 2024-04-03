@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Test them trajectories bro", group = "Autonomous")
-public class TEST_TRAJECTORIES extends LinearOpMode {
+@Autonomous(name = "Test them middle trajectories bro", group = "Autonomous")
+public class TEST_MIDDLE_TRAJECTORIES extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
 
@@ -61,7 +61,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
         } //
 
         auto.initAutoHardware(hardwareMap,this);
-       // auto.cameraHardware.initBackWebcamVP(hardwareMap);
+        // auto.cameraHardware.initBackWebcamVP(hardwareMap);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -82,7 +82,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
         if (isStopRequested()) return;
         // runs instantly once
         auto.afterWaitForStart();
-      //  auto.cameraHardware.pauseBackWebcam();
+        //  auto.cameraHardware.pauseBackWebcam();
         currentState = AutoState.DELAY;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -115,7 +115,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
 
     public void autoSequence(){
         auto.outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
-       // auto.goToPark(currentState == AutoState.IDLE,1);
+        // auto.goToPark(currentState == AutoState.IDLE,1);
         auto.intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
         switch (currentState) {
             case DELAY:
@@ -123,7 +123,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
                     auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1Front);
                     telemetry.addLine("left");
                 } else if (true){
-                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2Front);
+                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontStage);
                     telemetry.addLine("center");
                 } else if (teamPropLocation == 3){
                     auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3Front);
@@ -132,11 +132,11 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
                 currentState = AutoState.PRELOAD_DRIVE;
                 break;
             case PRELOAD_DRIVE:
-                    currentState = AutoState.PLACE_AND_INTAKE;
+                currentState = AutoState.PLACE_AND_INTAKE;
                 break;
             case PLACE_AND_INTAKE:
                 if (!auto.autoTrajectories.drive.isBusy()){
-                    Trajectory startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2;
+                    Trajectory startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2;
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     currentState = AutoState.TRANSFER_PIXEL;
                 }
@@ -148,7 +148,12 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
 
             case OUTTAKE_PIXEL:
                 // apriltag relocalization, compare offsets for this and the telemetry of the odo
-
+                if (auto.cameraHardware.getNewPose2(poseEstimate, 1, telemetry))
+                {
+                    Pose2d pose = auto.cameraHardware.getNewPose();
+                    newX = pose.getX();
+                    newY = pose.getY();
+                }
                 offsetX = xPosition - newX;
                 offsetY = yPosition - newY;
                 //telemetry.addData("X offset", newX);

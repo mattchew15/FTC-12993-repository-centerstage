@@ -113,7 +113,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
                     } else if (teamPropLocation == 2){
-                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2Front);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontStage);
                         telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3Front);

@@ -4,9 +4,11 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.Middle
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.headingPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEstimate;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosition;
+import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -48,7 +50,8 @@ public class AutoSequences {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         autoTrajectories.init(hardwareMap, opMode);
-        cameraHardware.initWebcam(hardwareMap);
+        //cameraHardware.initWebcam(hardwareMap);
+        cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
     }
 
     public void intializationLoop (){
@@ -80,7 +83,7 @@ public class AutoSequences {
         numCycles = 0;
         outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
         autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
-        cameraHardware.closeWebcam(); // reduces loop times
+        //cameraHardware.closeWebcam(); // reduces loop times
     }
     public void mainAutoLoop(boolean outtakeReads, boolean intakeReads, boolean notPitchingStates){
         outtakeSubsystem.outtakeReads(outtakeReads); // might need to change this
@@ -92,6 +95,7 @@ public class AutoSequences {
 
         }
         xPosition = poseEstimate.getX();
+        yPosition = poseEstimate.getY();
         headingPosition = poseEstimate.getHeading();
         correctedHeading = angleWrap(Math.toDegrees(headingPosition) - 180);
         autoTrajectories.drive.update();
@@ -532,6 +536,21 @@ public class AutoSequences {
         if (delay(delayTime)){
             parkIfStuck = true;
         }
+    }
+    public void resetPosWithAprilTags(int tagBeingUsed){
+        if (cameraHardware.getNewPose2(poseEstimate, tagBeingUsed, telemetry))
+        {
+            Pose2d pose = cameraHardware.getNewPose();
+           /* newX = pose.getX();
+            newY = pose.getY();*/
+            autoTrajectories.drive.setPoseEstimate(pose);
+            cameraHardware.pauseBackWebcam();
+
+        }
+    }
+
+    public void startAprilTagCamera(){
+        cameraHardware.resumeBackWebcam();
     }
 }
 

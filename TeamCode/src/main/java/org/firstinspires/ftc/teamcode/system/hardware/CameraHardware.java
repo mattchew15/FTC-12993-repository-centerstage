@@ -74,7 +74,7 @@ public class CameraHardware
         });
     }
 
-    public void initBackWebcamEOCV(HardwareMap hardwareMap, int purplePlacement)
+/*    public void initBackWebcamEOCV(HardwareMap hardwareMap, int purplePlacement)
     {
         backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"));
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -93,7 +93,7 @@ public class CameraHardware
             public void onError(int errorCode) {
             }
         });
-    }
+    }*/
 
     public void closeWebcam() {
         sideWebcam.closeCameraDevice();
@@ -267,9 +267,10 @@ public class CameraHardware
         return false;
     }*/
 
-    public Boolean getNewPose2(Pose2d pose, double heading, Telemetry telemetry)
+    public Boolean getNewPose2(Pose2d pose, double lane, Telemetry telemetry)
     {
 
+        double heading = Math.toDegrees(angleWrap(pose.getHeading() + Math.PI)) * -1;
         for (int i = 0; i <3; i++)
         {
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -278,7 +279,8 @@ public class CameraHardware
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections)
             {
-                if (detection.id == 5)
+
+                if (BLUE_AUTO? detection.id == lane: detection.id == lane + 3) //TODO: set of tags
                 {
                     if (detection.metadata != null)
                     {
@@ -298,14 +300,15 @@ public class CameraHardware
 
                         //Pose2d newPoses = ATLocalisation.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
                         //telemetry.addData("Corrected pose", newPoses.toString());
-                        telemetry.addData("Detected X", tagX);
+                        /*telemetry.addData("Detected X", tagX);
                         telemetry.addData("Detected Y", tagY);
                         telemetry.addData("Robot X", robotX);
                         telemetry.addData("Robot Y", robotY);
                         telemetry.addData("Corrected X", newX);
-                        telemetry.addData("Corrected Y", newY);
+                        telemetry.addData("Corrected Y", newY);*/
                         //telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
-                        poses.add(new Pose2d(newX, newY)); // heading?
+                        poses.add(new Pose2d(newX + (-5.9675), newY + (3.325))); // heading?
+                        break;
                     }
                 }
             }
@@ -317,7 +320,8 @@ public class CameraHardware
             x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3); // - 5.76
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
-            telemetry.addData("Average pose", newPose.toString());
+            telemetry.addData("Relocalized x", newPose.getX());
+            telemetry.addData("Relocalized y", newPose.getY());
             poses.clear();
             return true;
         }
