@@ -177,7 +177,7 @@ public class AutoTrajectories {
         firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
 
                 .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
-                .addSpatialMarker(new Vector2d( 10, -9), () -> {
+                .addSpatialMarker(new Vector2d( 4, -9), () -> {
                     extendSlidesAroundTruss = true;
                 })
                 .splineToConstantHeading(new Vector2d(36, (-9 - 12)), Math.toRadians(-42), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

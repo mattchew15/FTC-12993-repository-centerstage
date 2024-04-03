@@ -123,7 +123,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(false, false,1600)){
+                if(auto.preloadDriveState(false, true,1600)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
 
@@ -193,9 +193,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     } else if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,18,3,0);
                     } else if (numCycles == 3){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-166,3,0);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-160,3,0);
                     } else if (numCycles == 4){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-166,3,0);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-160,3,0);
                     }
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     currentState = AutoState.DROP;
