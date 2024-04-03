@@ -43,7 +43,7 @@ public class CameraHardware
     private AprilTagProcessor aprilTag;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
-    private final AprilTagLocalisation ATLocalisation = new AprilTagLocalisation();
+    private AprilTagLocalisation ATLocalisation;
     public Pose2d newPose;
 
     /**
@@ -147,8 +147,9 @@ public class CameraHardware
 
      */
 
-    public void initBackWebcamVP(HardwareMap hardwareMap)
+    public void initBackWebcamVP(HardwareMap hardwareMap, Telemetry telemetry)
     {
+        ATLocalisation = new AprilTagLocalisation(telemetry);
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
                 .setDrawCubeProjection(false)
@@ -315,7 +316,7 @@ public class CameraHardware
             // we only need like 3 frames so this should be fine
             x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3); // - 5.76
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
-            newPose = new Pose2d(x, y, heading); // this should be an average pose
+            newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
             telemetry.addData("Average pose", newPose.toString());
             poses.clear();
             return true;
