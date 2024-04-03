@@ -142,13 +142,14 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
                 break;
 
             case OUTTAKE_PIXEL:
+
                 //outtaking lengths for each cycle
-                if (!auto.autoTrajectories.drive.isBusy()){
+               /* if (!auto.autoTrajectories.drive.isBusy()){
                     Trajectory intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,145,1,0);
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
 
                     currentState = AutoState.DROP;
-                }
+                }*/
                 break;
             case DROP:
                 currentState = AutoState.GRAB_OFF_STACK;
