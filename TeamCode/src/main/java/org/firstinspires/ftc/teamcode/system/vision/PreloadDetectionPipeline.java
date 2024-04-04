@@ -98,10 +98,10 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
                         if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage < 100) // diff is small and the there is no pixel in the middle so avg is also low
                         {
-                            place = Globals.Place.NONE;
+                            place = Globals.Place.MIDDLE;
                         } else if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage > 100) // diff is small and the there is a pixel in the middle so avg is high
                         {
-                            place = Globals.Place.MIDDLE;
+                            place = Globals.Place.NONE;
                         } else
                         {
                             place = leftZoneAverage > rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT;

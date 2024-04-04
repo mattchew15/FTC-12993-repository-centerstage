@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.RailExtensionPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.RailExtensionPipelineTemp;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
@@ -43,7 +44,7 @@ public class CameraHardware
     private RailAdjustAprilTag railAdjustPipeline;
     private AprilTagProcessor aprilTag;
     private PreloadDetectionPipeline preloadDetection;
-    private RailExtensionPipeline railExtension;
+    private RailExtensionPipelineTemp railExtension;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
     private AprilTagLocalisation ATLocalisation;
@@ -146,7 +147,7 @@ public class CameraHardware
 
                 .build();
         preloadDetection = new PreloadDetectionPipeline(aprilTag, telemetry);
-        railExtension = new RailExtensionPipeline(aprilTag, telemetry);
+        railExtension = new RailExtensionPipelineTemp(aprilTag, telemetry);
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
@@ -164,7 +165,7 @@ public class CameraHardware
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        builder.addProcessor(preloadDetection);
+        //builder.addProcessor(preloadDetection);
         builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
