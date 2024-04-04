@@ -23,6 +23,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
+@Deprecated
 public class RailExtensionPipeline implements VisionProcessor
 {
 

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.util.Size;
@@ -12,12 +11,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
-import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
-import org.firstinspires.ftc.teamcode.system.vision.PreloadDetectionPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RailExtensionPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.RailExtensionPipelineTemp;
+import org.firstinspires.ftc.teamcode.system.vision.DashBoardProcessor;
+import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.PreloadDetectionPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.RailExtensionPipelineTemp;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
@@ -45,6 +42,7 @@ public class CameraHardware
     private AprilTagProcessor aprilTag;
     private PreloadDetectionPipeline preloadDetection;
     private RailExtensionPipelineTemp railExtension;
+    private DashBoardProcessor dashBoardProcessor;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
     private AprilTagLocalisation ATLocalisation;
@@ -148,6 +146,7 @@ public class CameraHardware
                 .build();
         preloadDetection = new PreloadDetectionPipeline(aprilTag, telemetry);
         railExtension = new RailExtensionPipelineTemp(aprilTag, telemetry);
+        dashBoardProcessor = new DashBoardProcessor();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
@@ -165,11 +164,13 @@ public class CameraHardware
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        //builder.addProcessor(preloadDetection);
-        builder.addProcessor(railExtension);
+        builder.addProcessor(preloadDetection);
+        builder.addProcessor(dashBoardProcessor);
+        //builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
+        //FtcDashboard.getInstance().startCameraStream(, 10);
         library = getCenterStageTagLibrary();
 
 
