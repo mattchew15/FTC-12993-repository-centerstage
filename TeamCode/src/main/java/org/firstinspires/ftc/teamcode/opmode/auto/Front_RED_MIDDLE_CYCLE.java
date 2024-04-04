@@ -178,7 +178,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 } else if (numCycles == 6){
                     //auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, true);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, true, true, true);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
@@ -226,7 +226,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
             case GRAB_OFF_STACK:
 
-                if (auto.grabOffStack(numCycleForDifferentLane, true, true,5, INTAKE_SLIDE_AUTO_LONG_PRESET)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, true,5, INTAKE_SLIDE_AUTO_LONG_PRESET, 0)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
                     /*if (numCycles > 4){

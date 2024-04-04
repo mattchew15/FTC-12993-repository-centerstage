@@ -42,8 +42,8 @@ public class IntakeSubsystem
 
     public static double
             INTAKE_ARM_TOP_POS = 0.6,
-            INTAKE_ARM_VERY_TOP_POS = 0.44,
-            INTAKE_ARM_FOUR_POS = 0.74,
+            INTAKE_ARM_VERY_TOP_POS = 0.35,
+            INTAKE_ARM_FOUR_POS = 0.64,
             INTAKE_ARM_MIDDLE_POS = 0.76,
             INTAKE_ARM_BASE_POS = 0.91;
     public static double
@@ -58,7 +58,7 @@ public class IntakeSubsystem
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.255,
             INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.58;
 
-    final double intakeSlidethresholdDistance = 25;
+    final double intakeSlidethresholdDistance = 12;
     final double intakeSlideThresholdDistanceNewThreshold = 4;
     private double previousSpeedDirection, previousSlideMotor;
     private double prevChute, prevArm, prevClip, prevHolder;

@@ -52,7 +52,29 @@ public class AutoPivot {
             } else if (trussMiddleStage == 1){ // cos they have already placed!!!
                 auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
             } else if (trussMiddleStage == 3){
-                auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
+                if (teamPropLocation == 1){
+                    if (RED_AUTO){
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
+                    }
+                    else {
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
+                    }
+                } else if (teamPropLocation == 2){
+                    if (RED_AUTO){
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
+                    }
+                    else {
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
+                    }
+                } else if (teamPropLocation == 3){
+                    if (RED_AUTO){
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
+                    }
+                    else {
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
+                    }
+                }
+
             }
 
         } else if (numCycles > numCyclesForStraightPivot){

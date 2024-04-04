@@ -101,7 +101,7 @@ public class Front_RED_Truss extends LinearOpMode {
             autoSequence();
             loopTime.delta();
             telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
-            telemetry.addData("Target rail pos", auto.cameraHardware.getRailTarget(auto.correctedHeading, auto.outtakeSubsystem.liftPosition, auto.outtakeSubsystem.pitchEncoderPosition));
+            telemetry.addData("Target rail pos", auto.cameraHardware.getRailTarget(auto.correctedHeading,ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition));
             telemetry.addData("numCycles", numCycles);
             telemetry.addData("outtakeDistanceSensorValue", auto.outtakeSubsystem.outtakeDistanceSensorValue);
             telemetry.addData("xPosition", xPosition);
@@ -166,7 +166,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 int intakeSlideTarget = 90; // pre-extend a little
                 double railTarget;
                 if (numCycles == 0){ // for very first cycle
-                    railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading, auto.outtakeSubsystem.liftPosition, auto.outtakeSubsystem.pitchEncoderPosition);
+                    railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading,ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition);
                     railLogic.setRailTargetFromAprilTag(railTarget);
                     pitchTarget = 23;
                     liftTarget = 19.4;
@@ -178,7 +178,7 @@ public class Front_RED_Truss extends LinearOpMode {
                     liftTarget = 27;
                     auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,false,false);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,false,false, false, true);
 
                 if (outtakePixelFinished){
                     auto.cameraHardware.pauseBackWebcam();
@@ -223,7 +223,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 if (auto.grabOffStackTruss()){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,4,4, 1);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,5.5,4, 1);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;

@@ -70,13 +70,13 @@ public class OuttakeSubsystem
 
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.53,
-            MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.16,
-            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.16;
+            MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.1,
+            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.1;
 
     public static double
             ARM_READY_POS = 0.809,
             ARM_UPRIGHT_POS = 0.55,
-            ARM_SCORE_POS = 0.15,
+            ARM_SCORE_POS = 0.165,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
             ARM_SCORE_YELLOW_POS = 0.24;
     public static double

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Size;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -56,6 +58,7 @@ public class VisionPortalStreamingOpMode extends LinearOpMode {
         new VisionPortal.Builder()
                 .addProcessor(processor)
                 .setCamera(hardwareMap.get(WebcamName.class, "Back camera"))
+                .setCameraResolution(new Size(1280, 720))
                 .build();
 
         FtcDashboard.getInstance().startCameraStream(processor, 0);

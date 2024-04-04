@@ -34,7 +34,7 @@ public class Globals
             RAIL_CENTER_POS = 0.487,
             RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
-            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.25,
+            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.23,
 
             RAIL_RIGHT_POS = 0,
             RAIL_RIGHT_YELLOW_POS = RAIL_CENTER_POS - 0.297,
@@ -61,7 +61,7 @@ public class Globals
         NONE
     }
 
-    public static Place place;
+    public static Place place = Place.RIGHT;
 
     // Team Prop Location
     public static int teamPropLocation = 1;
@@ -322,6 +322,11 @@ public class Globals
     {
         return new Tags(tagsNum, tags);
 
+    }
+
+    public static double inchesToTicksRailCorrected(double in)
+    {
+        return in / 25.207 * -1;
     }
 
 }

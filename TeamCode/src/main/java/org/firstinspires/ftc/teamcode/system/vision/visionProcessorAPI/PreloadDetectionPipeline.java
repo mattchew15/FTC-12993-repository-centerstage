@@ -80,32 +80,23 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         int exclusionZoneWidth = (int) (tagWidth * 0.28);
                         int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 140, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 140, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
 
-                        int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0, 0, 0));
-                        int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0, 0, 0));
+                        int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
+                        int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
 
 
                         telemetry.addData("Left zone", leftZoneAverage);
                         telemetry.addData("Right zone", rightZoneAverage);
                         telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
-                        if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage < 100) // diff is small and the there is no pixel in the middle so avg is also low
-                        {
-                            place = Globals.Place.MIDDLE;
-                        } else if (Math.abs(leftZoneAverage - rightZoneAverage) < 35 && leftZoneAverage > 100) // diff is small and the there is a pixel in the middle so avg is high
-                        {
-                            place = Globals.Place.NONE;
-                        } else
-                        {
-                            place = leftZoneAverage > rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT;
-                        }
+                        place = leftZoneAverage > rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT;
 
                         //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);
                         //Imgproc.rectangle(input, rightInclusionZone, new Scalar(0, 0, 255), 2);

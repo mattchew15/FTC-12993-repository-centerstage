@@ -166,12 +166,12 @@ public class CameraHardware
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
         builder.addProcessor(preloadDetection);
-        builder.addProcessor(dashBoardProcessor);
-        builder.addProcessor(railExtension);
+        //builder.addProcessor(dashBoardProcessor);
+        //builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-        FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 10);
+        //FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 0);
         library = getCenterStageTagLibrary();
 
 
@@ -324,7 +324,7 @@ public class CameraHardware
     public double getRailTarget(double heading, double slideLength, double pitchAngle)
     {
         double distance = slideLength * Math.cos(Math.toRadians(pitchAngle));
-        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
+        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(heading) * -1);
         return railExtension.getTarget() + railAdjustment;
     }
     public void closeBackWebcam()
