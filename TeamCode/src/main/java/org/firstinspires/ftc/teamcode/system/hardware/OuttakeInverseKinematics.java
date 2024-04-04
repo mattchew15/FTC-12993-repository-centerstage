@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.PITCH_OFFSET;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import static org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem.RAIL_RANGE;
 
 public class OuttakeInverseKinematics {
     OuttakeSubsystem outtakeSubsystem;
-    public final double
-            offset = 3,
-            slideLength = 11.811;
+    public final double slideLength = 11.811;
     public double
             distance,
             newDistance,
@@ -24,7 +24,7 @@ public class OuttakeInverseKinematics {
         newDistance = distance / Math.cos(robotAngle);
         varT = new_height / Math.sqrt(3);
         newT = (varT + distance) / Math.cos(robotAngle) - newDistance;
-        return offset + newDistance + newT;
+        return PITCH_OFFSET + newDistance + newT;
     }
 
     // this needs to be in angles

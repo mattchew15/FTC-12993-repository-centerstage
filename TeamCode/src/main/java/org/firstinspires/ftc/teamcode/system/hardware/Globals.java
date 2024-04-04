@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 @Config // Allows dashboard tune
 public class Globals
 {
-
+    public static double PITCH_OFFSET = 3;
     // Auto Constants
     public static double
             autoTimer,
