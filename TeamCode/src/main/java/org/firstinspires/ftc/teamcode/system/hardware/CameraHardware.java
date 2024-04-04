@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -166,11 +167,11 @@ public class CameraHardware
         builder.addProcessor(aprilTag);
         builder.addProcessor(preloadDetection);
         builder.addProcessor(dashBoardProcessor);
-        //builder.addProcessor(railExtension);
+        builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-        //FtcDashboard.getInstance().startCameraStream(, 10);
+        FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 10);
         library = getCenterStageTagLibrary();
 
 
@@ -320,13 +321,10 @@ public class CameraHardware
     {
         return preloadDetection.getPreloadYellow();
     }
-    public double getRailTarget(double heading, double slideLength, double pitchAngle)
+    public double getRailTarget()
     {
-        double distance = slideLength * Math.cos(Math.toRadians(pitchAngle));
-        double railAdjust = (distance + PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
-        return railExtension.getTarget() + railAdjust;
+        return railExtension.getTarget();
     }
-
     public void closeBackWebcam()
     {
         visionPortal.close();
