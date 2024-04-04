@@ -164,7 +164,7 @@ public class CameraHardware
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        //builder.addProcessor(preloadDetection);
+        builder.addProcessor(preloadDetection);
         builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
@@ -316,7 +316,6 @@ public class CameraHardware
 
     public Place getPreloadYellowPose()
     {
-
         return preloadDetection.getPreloadYellow();
     }
     public double getRailTarget()
@@ -331,4 +330,25 @@ public class CameraHardware
 
     //Pipeline has to be in the same class as where webcam stuff is initialized
     public AprilTagProcessor getAprilTag() { return aprilTag; }
+
+    public void pauseRailProcessor()
+    {
+        visionPortal.setProcessorEnabled(railExtension, false);
+    }
+    public void resumeRailProcessor()
+    {
+        visionPortal.setProcessorEnabled(railExtension, true);
+    }
+    public void pausePreloadProcessor()
+    {
+        visionPortal.setProcessorEnabled(preloadDetection, false);
+    }
+    public void resumePreloadProcessor()
+    {
+        visionPortal.setProcessorEnabled(preloadDetection, true);
+    }
+
+    public void setDefaultRailPos(double defaultTehe){
+        railExtension.setDefault(defaultTehe);
+    }
 }

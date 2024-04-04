@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.vision;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.place;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 
@@ -29,10 +30,17 @@ public class RailExtensionPipeline implements VisionProcessor
     AprilTagProcessor processor;
     Telemetry telemetry;
     double target = 0.49;
+    double defaultTehee = RAIL_CENTER_POS;
     public RailExtensionPipeline(AprilTagProcessor processor, Telemetry telemetry)
     {
         this.processor = processor;
         this.telemetry = telemetry;
+    }
+    public RailExtensionPipeline(AprilTagProcessor processor, double defaultTehee, Telemetry telemetry)
+    {
+        this.processor = processor;
+        this.telemetry = telemetry;
+        this.defaultTehee = defaultTehee;
     }
     private final double MAX_RAIL = 11.38; // inches c
     @Override
@@ -51,7 +59,7 @@ public class RailExtensionPipeline implements VisionProcessor
                     if (BLUE_AUTO ? detection.id == 4 - teamPropLocation : detection.id == teamPropLocation + 3)
                     {
                         double x = detection.ftcPose.x;
-                        MathUtils.clamp(x, -MAX_RAIL, MAX_RAIL);
+                        x = MathUtils.clamp(x, -MAX_RAIL, MAX_RAIL);
                         telemetry.addData("Error (In)", x);
                         x = errorToTickPosition(x);
                         telemetry.addData("Ticks raw target", x);
@@ -81,10 +89,12 @@ public class RailExtensionPipeline implements VisionProcessor
                         telemetry.addData("Target offseted", x);
                         // 5.91 * Math.PI * 2 / 355
                         target = x;
+
                     }
                 }
             }
         }
+        else target = defaultTehee;
 
 
         return null;
@@ -117,5 +127,9 @@ public class RailExtensionPipeline implements VisionProcessor
     public double InchesToTicksInches(double inches)
     {
         return inches / 25.207; // 14.027; //* 0.01;
+    }
+    public void setDefault(double defaultTehee)
+    {
+        this.defaultTehee = defaultTehee;
     }
 }

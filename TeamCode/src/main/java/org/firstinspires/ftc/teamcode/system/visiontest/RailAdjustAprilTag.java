@@ -22,7 +22,7 @@ import org.openftc.apriltag.AprilTagDetection;
 
 
 import java.util.ArrayList;
-
+@Deprecated
 public class RailAdjustAprilTag extends AprilTagPipeline
 {
     //AprilTagProcessor aprilTagProcessor = new AprilTagProcessor.Builder().setLensIntrinsics().build();

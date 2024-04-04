@@ -83,8 +83,8 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
                         Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 140, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 140, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);

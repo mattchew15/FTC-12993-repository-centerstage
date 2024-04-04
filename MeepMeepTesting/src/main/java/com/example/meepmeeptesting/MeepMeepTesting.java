@@ -24,9 +24,8 @@ public class MeepMeepTesting {
 
                                 .lineToLinearHeading(new Pose2d(-50, -9, Math.toRadians(180)))
 
-
                                 .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(36, (-9 - 12)), Math.toRadians(-42))
+                                .splineToConstantHeading(new Vector2d(36, (-9 - 7)), Math.toRadians(-38))
 
                                 /*
                                 .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))

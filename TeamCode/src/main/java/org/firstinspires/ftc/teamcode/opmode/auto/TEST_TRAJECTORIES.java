@@ -173,7 +173,7 @@ public class TEST_TRAJECTORIES extends LinearOpMode {
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
                     //outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2TrussTrajectory(poseEstimate,14,-176,4);
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,12,4,4, 1);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,12,32,4,4, 1);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;

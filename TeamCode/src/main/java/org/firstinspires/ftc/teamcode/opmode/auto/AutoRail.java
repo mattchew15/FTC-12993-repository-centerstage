@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.S;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 
+import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 public class AutoRail {
@@ -13,6 +15,7 @@ public class AutoRail {
     int yellowCycle;
     int trussMiddleStage;
     boolean railGoesRight;
+    double railAprilTagTarget;
     AutoSequences auto;
 
     public AutoRail(int numCyclesForExtendedRail, int yellowCycle, AutoSequences auto, boolean railGoesRight, int trussMiddleStage){
@@ -22,6 +25,11 @@ public class AutoRail {
         this.railGoesRight = railGoesRight;
         this.trussMiddleStage = trussMiddleStage;
     }
+
+    public void setRailTargetFromAprilTag(double railTarget){
+        railAprilTagTarget = railTarget;
+    }
+
     public void railLogic(){
         if (numCycles == yellowCycle){ //TODO mirror the first yellow placement
             if (trussMiddleStage == 2){
@@ -34,7 +42,12 @@ public class AutoRail {
                 }
             } else if (trussMiddleStage == 1){
                 if (teamPropLocation == 2){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_TRUSS);
+                    //auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_TRUSS);
+                    //if (auto.cameraHardware.getPreloadYellowPose() == Globals.Place.LEFT){
+
+                    //}
+                    auto.cameraHardware.setDefaultRailPos(RAIL_CENTER_YELLOW_POS);
+                    auto.outtakeSubsystem.setOuttakeRailServo(railAprilTagTarget);
                 } else if (teamPropLocation == 1){
                     auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
                 } else if (teamPropLocation == 3){
@@ -44,9 +57,9 @@ public class AutoRail {
                 if (teamPropLocation == 2){
                     auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_STAGE);
                 } else if (teamPropLocation == 1){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT_YELLOW_STAGE);
                 } else if (teamPropLocation == 3){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT_YELLOW_STAGE);
                 }
             }
 

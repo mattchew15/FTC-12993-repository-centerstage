@@ -28,7 +28,8 @@ public class Front_RED_Truss extends LinearOpMode {
     AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto, false, 1);
     AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,1);
 
-
+    Trajectory intakeTrajectoryCycle1;
+    Trajectory intakeTrajectoryCycle2;
 
     enum AutoState {
         DELAY,
@@ -82,7 +83,9 @@ public class Front_RED_Truss extends LinearOpMode {
         // runs instantly once
         auto.afterWaitForStart();
         currentState = AutoState.DELAY;
-        DriveConstants.MAX_VEL = 50;
+
+
+        DriveConstants.MAX_VEL = 53;
 
         while (opModeIsActive() && !isStopRequested()) {
             // Reading at the start of the loop
@@ -91,14 +94,21 @@ public class Front_RED_Truss extends LinearOpMode {
             }
 
             auto.mainAutoLoop(
-                    currentState == OUTTAKE_PIXEL && xPosition > 24,
+                    currentState == OUTTAKE_PIXEL && xPosition > 20,
                     currentState == GRAB_OFF_STACK || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
                     currentState != AutoState.PRELOAD_DRIVE && currentState != OUTTAKE_PIXEL);
 
             autoSequence();
             loopTime.delta();
+            telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
+            telemetry.addData("Target rail pos", auto.cameraHardware.getRailTarget());
+            telemetry.addData("numCycles", numCycles);
+            telemetry.addData("outtakeDistanceSensorValue", auto.outtakeSubsystem.outtakeDistanceSensorValue);
+            telemetry.addData("xPosition", xPosition);
+            telemetry.addData("yPosition", yPosition);
+            telemetry.addData("headingPosition", headingPosition);
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
-            telemetry.addData("Hz", loopTime.getHz());
+            //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
             telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
@@ -127,12 +137,12 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(true, true,1000)){
+                if(auto.preloadDriveState(true, true,1000,0.38)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(250)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(500,0.38)){
                     Trajectory startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2;
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     currentState = TRANSFER_PIXEL;
@@ -154,7 +164,10 @@ public class Front_RED_Truss extends LinearOpMode {
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
                 int intakeSlideTarget = 90; // pre-extend a little
+                double railTarget;
                 if (numCycles == 0){ // for very first cycle
+                    railTarget = auto.cameraHardware.getRailTarget();
+                    railLogic.setRailTargetFromAprilTag(railTarget);
                     pitchTarget = 23;
                     liftTarget = 19.4;
                 } else if (numCycles == 1){
@@ -165,24 +178,24 @@ public class Front_RED_Truss extends LinearOpMode {
                     liftTarget = 27;
                     auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,false);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,false,false);
 
-                // TODO add dislacement marker right here mate
                 if (outtakePixelFinished){
-                    Trajectory intakeTrajectory = null;
-                    if(numCycles == 1){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,148,1,0.9);
-                    } else if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,145,1,2.5);
-                    }
-                    if (intakeTrajectory != null){
-                        auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
-                    }
+                    auto.cameraHardware.pauseBackWebcam();
                     currentState = AutoState.DROP;
+                    if (numCycles == 1){
+                        intakeTrajectoryCycle1 = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,148,1,0.9);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle1);
+                    } else if (numCycles == 2){
+                        intakeTrajectoryCycle2 = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,145,1,2.6);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
+                    }
+
                 }
+
+
                 break;
             case DROP:
-
                 int armHeight = 0;
                 if (numCycles == 1){
                     armHeight = 4;
@@ -193,7 +206,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 } else if (numCycles == 4) {
                     armHeight = 3;
                 }
-                if (auto.drop(armHeight,numCycles != 1)){
+                if (auto.drop(armHeight,numCycles != 1, 110)){
                     currentState = AutoState.GRAB_OFF_STACK;
                     if (auto.goToParkAfterOuttaking){
                         Trajectory intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,1);
@@ -203,10 +216,14 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
+                if (xPosition < -24.5){
+                    auto.autoTrajectories.extendSlidesAroundTruss = true;
+                }
+
                 if (auto.grabOffStackTruss()){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,4,4, 1);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,4,4, 1);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;

@@ -58,7 +58,7 @@ public class IntakeSubsystem
             INTAKE_PIXEL_HOLDER_OPEN_POS = 0.255,
             INTAKE_PIXEL_HOLDER_HOLDING_POS = 0.58;
 
-    final double intakeSlidethresholdDistance = 20;
+    final double intakeSlidethresholdDistance = 25;
     final double intakeSlideThresholdDistanceNewThreshold = 4;
     private double previousSpeedDirection, previousSlideMotor;
     private double prevChute, prevArm, prevClip, prevHolder;

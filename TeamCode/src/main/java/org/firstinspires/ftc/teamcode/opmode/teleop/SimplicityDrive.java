@@ -381,7 +381,7 @@ public class SimplicityDrive extends LinearOpMode {
                 bumperPressed();
                 liftPositionChange(false, false);
                 outtakeSubsystem.liftToInternalPID(0,1);
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
+                //intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 if (delay(40)){ // delay for the transfer to push in
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     liftDown(0.05);
@@ -444,7 +444,7 @@ public class SimplicityDrive extends LinearOpMode {
                         fineAdjustHeight.downToggle(gamepad2.left_bumper);
                         backdropRelativeHeight = fineAdjustHeight.OffsetTargetPosition;
                     } else {
-                        fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
+                       // fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
                         fineAdjustHeight.OffsetTargetPosition = (int)backdropRelativeHeight;
                     }
                     // this shoudl be rememebered because we are caching fineAdjustHeight
@@ -524,10 +524,11 @@ public class SimplicityDrive extends LinearOpMode {
                     }
                 }
                  */
+                outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
                 if (delay(300)){
                     setPivotServ();
+                    fineadJustStuff();
                 }
-                fineadJustStuff();
                 if (gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)){ // test if manual reset is ok
                     if (true){
                         outtakeState = OuttakeState.RETURN;
@@ -593,7 +594,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case MANUAL_ENCODER_RESET:  // idk what this case does
-                outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y);
+                outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y + 0.2);
                 //outtakeSubsystem.pitchMotorRawControl(gamepad2.left_stick_y);
                 intakeSubsystem.intakeSlideMotorRawControl(gamepad2.left_trigger-gamepad2.right_trigger);
                 outtakeSubsystem.setOuttakePitchPurplePixelPosition();
@@ -622,6 +623,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (delay(400)){
                     outtakeSubsystem.pitchTo(PITCH_CLIMB_TICKS, outtakeSubsystem.pitchEncoderPosition,1);
                     intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
+                    intakeSubsystem.intakeSlideInternalPID(100,1);
                 } else {
                     outtakeSubsystem.liftToInternalPID(15,1);
                     outtakeSubsystem.pitchTo(PITCH_DEFAULT_DEGREE_TICKS,outtakeSubsystem.pitchEncoderPosition,1);

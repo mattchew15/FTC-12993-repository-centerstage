@@ -34,7 +34,7 @@ public class Globals
             RAIL_CENTER_POS = 0.487,
             RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
-            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.23,
+            RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.25,
 
             RAIL_RIGHT_POS = 0,
             RAIL_RIGHT_YELLOW_POS = RAIL_CENTER_POS - 0.297,
@@ -45,9 +45,7 @@ public class Globals
             RAIL_LEFT_YELLOW_POS = RAIL_CENTER_POS + 0.313,
             RAIL_LEFT_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.297,
             RAIL_LEFT_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.297,
-
-
-            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 10;
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 8;
 
     // Auto States
     public static boolean
@@ -66,7 +64,7 @@ public class Globals
     public static Place place;
 
     // Team Prop Location
-    public static int teamPropLocation = 2;
+    public static int teamPropLocation = 1;
     public static LynxModule chub, expHub;
     public static double EPSILON_DELTA = 0.005;
 
