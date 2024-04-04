@@ -101,7 +101,7 @@ public class Front_RED_Truss extends LinearOpMode {
             autoSequence();
             loopTime.delta();
             telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
-            telemetry.addData("Target rail pos", auto.cameraHardware.getRailTarget());
+            telemetry.addData("Target rail pos", auto.cameraHardware.getRailTarget(auto.correctedHeading, auto.outtakeSubsystem.liftPosition, auto.outtakeSubsystem.pitchEncoderPosition));
             telemetry.addData("numCycles", numCycles);
             telemetry.addData("outtakeDistanceSensorValue", auto.outtakeSubsystem.outtakeDistanceSensorValue);
             telemetry.addData("xPosition", xPosition);
@@ -166,7 +166,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 int intakeSlideTarget = 90; // pre-extend a little
                 double railTarget;
                 if (numCycles == 0){ // for very first cycle
-                    railTarget = auto.cameraHardware.getRailTarget();
+                    railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading, auto.outtakeSubsystem.liftPosition, auto.outtakeSubsystem.pitchEncoderPosition);
                     railLogic.setRailTargetFromAprilTag(railTarget);
                     pitchTarget = 23;
                     liftTarget = 19.4;

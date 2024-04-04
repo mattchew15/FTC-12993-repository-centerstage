@@ -319,9 +319,11 @@ public class CameraHardware
     {
         return preloadDetection.getPreloadYellow();
     }
-    public double getRailTarget()
+    public double getRailTarget(double heading, double slideLength, double pitchAngle)
     {
-        return railExtension.getTarget();
+        double distance = slideLength * Math.cos(Math.toRadians(pitchAngle));
+        double railAdjust = (distance + PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
+        return railExtension.getTarget() + railAdjust;
     }
     public void closeBackWebcam()
     {
