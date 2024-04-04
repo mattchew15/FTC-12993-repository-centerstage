@@ -96,7 +96,7 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         telemetry.addData("Left zone", leftZoneAverage);
                         telemetry.addData("Right zone", rightZoneAverage);
                         telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
-                        place = leftZoneAverage > rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT;
+                        place = leftZoneAverage < rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT; // this should be correct now
 
                         //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);
                         //Imgproc.rectangle(input, rightInclusionZone, new Scalar(0, 0, 255), 2);

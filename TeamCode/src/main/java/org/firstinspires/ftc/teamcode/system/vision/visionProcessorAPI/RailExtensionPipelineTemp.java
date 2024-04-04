@@ -68,7 +68,7 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                     detection = dect;
                 }
             }
-            if (detection != null)
+            if (detection != null) // this is ugly but like necessary
             {
                 if (detection.metadata != null)
                 {
@@ -90,15 +90,16 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                             // the no break is intentional lol
 
                         case LEFT:
-                            x += 0.05950727972; // positive servo ticks
+                            x += InchesToTicksInches(1.5); // positive servo ticks
                             break;
                         case NONE:
                             x += 0;
                             break;
                         case RIGHT:
-                            x -= 0.05950727972; // negative servo ticks
+                            x -= InchesToTicksInches(1.5); // negative servo ticks
                             break;
                     }
+                    //x += InchesToTicksInches(0.2);
                     telemetry.addData("Target Tag", targetTag);
                     telemetry.addData("Seen Tag", tagWeSee);
                     telemetry.addData("Target offseted", x);

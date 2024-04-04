@@ -24,6 +24,7 @@ public class Front_RED_Stage extends LinearOpMode {
     // same cycle numbers
     AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto,true,3);
     AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,3);
+    private double railTarget;
 
 
     enum AutoState {
@@ -101,7 +102,7 @@ public class Front_RED_Stage extends LinearOpMode {
             telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
             telemetry.addData("Case", place);
             telemetry.addData("Rail target", auto.cameraHardware.getRailTarget(auto.correctedHeading,ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition));
-
+            telemetry.addData("X pos", xPosition);
             telemetry.update();
 
         }
@@ -165,24 +166,28 @@ public class Front_RED_Stage extends LinearOpMode {
                 Trajectory intakeTrajectory = null;
                 boolean extendStraightAway = true;
                 boolean openGrippers = true;
-                double railTarget;
                 if (numCycles == 0){
                     intakeSlideTarget = 10;
                     if (auto.delay(100)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     }
-                    if (xPosition > 15){
+                    if (xPosition > 17){
                         // stop yellow detection
                         auto.cameraHardware.pausePreloadProcessor();
                         //TODO make the pause only run once
-                        railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading,ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition),auto.outtakeSubsystem.pitchEncoderPosition);
+                        if (xPosition > 27)
+                        {
+                            railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading, ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition);
+                        }
                         railLogic.setRailTargetFromAprilTag(railTarget);
                     }
-                    pitchTarget = 24; // yellow pixel should be pitched higher
-                    liftTarget = 13.5;
+
+                    pitchTarget = 29; // yellow pixel should be pitched higher
+                    liftTarget = 14.5;
                     extendStraightAway = false;
                     openGrippers = false;
-                } else if (numCycles == 1){
+                } else if (numCycles == 1)
+                {
                     pitchTarget = 23;
                     liftTarget = 30;
                 } else if (numCycles == 2){
@@ -243,7 +248,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (numCycles == 1){ // for very first cycle
                         intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
                         if (intakeTrajectoryAfterDrop != null){
-                            auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
+                            //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
                         }
                     }
                     if (auto.globalTimer > 25500){
@@ -261,7 +266,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
                 boolean extendSlides = true;
                 if (numCycles == 1){
-                    delayBeforeRetracting = 400;
+                    delayBeforeRetracting = 800;
                 }
                 if (numCycles == 3){
                     intakeSlidePosition = 760;

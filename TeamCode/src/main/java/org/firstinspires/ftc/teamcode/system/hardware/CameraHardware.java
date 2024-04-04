@@ -38,8 +38,6 @@ public class CameraHardware
     private OpenCvWebcam sideWebcam, backWebcam;
     private final YCrCbBlueTeamPropDetectorPipeline  bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
     private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
-    private RelocalizationAprilTagPipeline relocalizationPipeline;
-    private RailAdjustAprilTag railAdjustPipeline;
     private AprilTagProcessor aprilTag;
     private PreloadDetectionPipeline preloadDetection;
     private RailExtensionPipelineTemp railExtension;
@@ -58,8 +56,8 @@ public class CameraHardware
     public void initWebcam(HardwareMap hwMap)
     {
         int cameraMonitorViewId;
-        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
+        //cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"));
         sideWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -167,12 +165,15 @@ public class CameraHardware
         builder.addProcessor(aprilTag);
         builder.addProcessor(preloadDetection);
         //builder.addProcessor(dashBoardProcessor);
-        //builder.addProcessor(railExtension);
+        builder.addProcessor(railExtension);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
         //FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 0);
         library = getCenterStageTagLibrary();
+        visionPortal.setProcessorEnabled(preloadDetection, true);
+        visionPortal.setProcessorEnabled(railExtension, true);
+
 
 
     }
@@ -324,8 +325,9 @@ public class CameraHardware
     public double getRailTarget(double heading, double slideLength, double pitchAngle)
     {
         double distance = slideLength * Math.cos(Math.toRadians(pitchAngle));
-        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(heading) * -1);
-        return railExtension.getTarget() + railAdjustment;
+        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
+        //return railExtension.getTarget() - railAdjustment;
+        return railExtension.getTarget();
     }
     public void closeBackWebcam()
     {

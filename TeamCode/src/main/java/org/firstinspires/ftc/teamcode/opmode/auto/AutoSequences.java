@@ -84,7 +84,7 @@ public class AutoSequences {
         numCycles = 0;
         outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
         autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
-        //cameraHardware.closeWebcam(); // reduces loop times
+        cameraHardware.closeWebcam(); // reduces loop times
     }
     public void mainAutoLoop(boolean outtakeReads, boolean intakeReads, boolean notPitchingStates){
         outtakeSubsystem.outtakeReads(outtakeReads); // might need to change this
