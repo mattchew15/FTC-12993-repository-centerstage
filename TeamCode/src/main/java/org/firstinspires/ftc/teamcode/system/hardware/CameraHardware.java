@@ -326,7 +326,6 @@ public class CameraHardware
         double railAdjust = (distance + PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
         return railExtension.getTarget() + railAdjust;
     }
-
     public void closeBackWebcam()
     {
         visionPortal.close();
