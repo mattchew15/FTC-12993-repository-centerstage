@@ -35,6 +35,7 @@ public class PreloadDetectionPipeline implements VisionProcessor
     private AprilTagProcessor aprilTagProcessor;
     private Telemetry telemetry;
     private int yOffSet = 90;
+    private double i = 2.5;
 
     public PreloadDetectionPipeline(AprilTagProcessor aprilTag, Telemetry telemetry)
     {
@@ -50,70 +51,87 @@ public class PreloadDetectionPipeline implements VisionProcessor
     public Object processFrame(Mat frame, long captureTimeNanos)
     {
         List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
+        try
+        {
+            if (detections != null)
+            {
+                for (AprilTagDetection detection : detections)
+                {
+                    if (detection.metadata != null)
+                    {
+                        if (BLUE_AUTO ? detection.id == 4 - teamPropLocation : detection.id == teamPropLocation + 3)
+                        {
+                            int leftX = Integer.MAX_VALUE;
+                            int rightX = Integer.MIN_VALUE;
+                            int topY = Integer.MIN_VALUE;
+                            int bottomY = Integer.MAX_VALUE;
 
-        if (detections != null) {
-            for (AprilTagDetection detection : detections) {
-                if (detection.metadata != null) {
-                    if (BLUE_AUTO ? detection.id == 4 - teamPropLocation: detection.id == teamPropLocation + 3) {
-                        int leftX = Integer.MAX_VALUE;
-                        int rightX = Integer.MIN_VALUE;
-                        int topY = Integer.MIN_VALUE;
-                        int bottomY = Integer.MAX_VALUE;
+                            for (Point point : detection.corners)
+                            {
+                                if (point.x < leftX) leftX = (int) point.x;
+                                if (point.x > rightX) rightX = (int) point.x;
+                                if (point.y > topY) topY = (int) point.y;
+                                if (point.y < bottomY) bottomY = (int) point.y;
+                            }
 
-                        for (Point point : detection.corners) {
-                            if (point.x < leftX) leftX = (int) point.x;
-                            if (point.x > rightX) rightX = (int) point.x;
-                            if (point.y > topY) topY = (int) point.y;
-                            if (point.y < bottomY) bottomY = (int) point.y;
-                        }
+                            // this step is like necessary because int as arguments ig
+                            int tagCenterX = (int) detection.center.x;
+                            int tagCenterY = (int) detection.center.y;
 
-                        // this step is like necessary because int as arguments ig
-                        int tagCenterX = (int) detection.center.x;
-                        int tagCenterY = (int) detection.center.y;
+                            int tagWidth = rightX - leftX;
+                            int tagHeight = topY - bottomY;
 
-                        int tagWidth = rightX - leftX;
-                        int tagHeight = topY - bottomY;
+                            int inclusionZoneWidth = (int) (tagWidth * 1.5);
+                            int inclusionZoneHeight = (int) (tagHeight * 1.5);
 
-                        int inclusionZoneWidth = (int) (tagWidth * 1.5);
-                        int inclusionZoneHeight = (int) (tagHeight * 1.5);
+                            // TODO: empirically tune this
 
-                        // TODO: empirically tune this
-                        yOffSet = (int) (tagHeight * 0.75);
-                        //int exclusionZoneWidth = (int) (tagWidth * 0.28);
-                        //int exclusionZoneHeight = (int) (tagHeight * 0.28);
+                            if (tagCenterY - tagHeight * i - inclusionZoneHeight < 0)
+                            {
+                                i = 2;
+                            }
+                            yOffSet = (int) (tagHeight * i);
 
-                        //yOffSet = (int) Math.round(1.034 * detection.ftcPose.y + 44.48);
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
+                            //int exclusionZoneWidth = (int) (tagWidth * 0.28);
+                            //int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        //Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
-                        //Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                            //yOffSet = (int) Math.round(1.034 * detection.ftcPose.y + 44.48);
+                            Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
+                            Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
-                        Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
+                            //Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                            //Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
 
-                        double leftZoneAverage = Core.mean(frame.submat(leftInclusionZone)).val[0];
-                        double rightZoneAverage = Core.mean(frame.submat(rightInclusionZone)).val[0];
+                            Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
+                            Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
 
-                        //int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
-                        //int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
+                            double leftZoneAverage = Core.mean(frame.submat(leftInclusionZone)).val[0];
+                            double rightZoneAverage = Core.mean(frame.submat(rightInclusionZone)).val[0];
+
+                            //int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
+                            //int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
 
 
-                        //telemetry.addData("Left zone", leftZoneAverage);
-                        //telemetry.addData("Right zone", rightZoneAverage);
-                        //telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
-                        place = leftZoneAverage < rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT; // this should be correct now
+                            //telemetry.addData("Left zone", leftZoneAverage);
+                            //telemetry.addData("Right zone", rightZoneAverage);
+                            //telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
+                            place = leftZoneAverage < rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT; // this should be correct now
 
-                        //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);
-                        //Imgproc.rectangle(input, rightInclusionZone, new Scalar(0, 0, 255), 2);
+                            //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);
+                            //Imgproc.rectangle(input, rightInclusionZone, new Scalar(0, 0, 255), 2);
 
 
 //                        System.out.println("LEFTAVG " + leftZoneAverage);
 //                        System.out.println("RIGHTAVG " + rightZoneAverage);
 
+                        }
                     }
                 }
             }
+        }
+        catch (Exception e)
+        {
+
         }
 
 
