@@ -10,7 +10,6 @@ import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -35,6 +34,7 @@ public class PreloadDetectionPipeline implements VisionProcessor
 
     private AprilTagProcessor aprilTagProcessor;
     private Telemetry telemetry;
+    private int yOffSet = 90;
 
     public PreloadDetectionPipeline(AprilTagProcessor aprilTag, Telemetry telemetry)
     {
@@ -68,6 +68,7 @@ public class PreloadDetectionPipeline implements VisionProcessor
                             if (point.y < bottomY) bottomY = (int) point.y;
                         }
 
+                        // this step is like necessary because int as arguments ig
                         int tagCenterX = (int) detection.center.x;
                         int tagCenterY = (int) detection.center.y;
 
@@ -77,20 +78,26 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         int inclusionZoneWidth = (int) (tagWidth * 1.5);
                         int inclusionZoneHeight = (int) (tagHeight * 1.5);
 
-                        int exclusionZoneWidth = (int) (tagWidth * 0.28);
-                        int exclusionZoneHeight = (int) (tagHeight * 0.28);
+                        // TODO: empirically tune this
+                        yOffSet = (int) (tagHeight * 0.75);
+                        //int exclusionZoneWidth = (int) (tagWidth * 0.28);
+                        //int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
+                        //yOffSet = (int) Math.round(1.034 * detection.ftcPose.y + 44.48);
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                        //Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
+                        //Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
 
-                        int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
-                        int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
+                        double leftZoneAverage = Core.mean(frame.submat(leftInclusionZone)).val[0];
+                        double rightZoneAverage = Core.mean(frame.submat(rightInclusionZone)).val[0];
+
+                        //int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
+                        //int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
 
 
                         telemetry.addData("Left zone", leftZoneAverage);
@@ -126,9 +133,9 @@ public class PreloadDetectionPipeline implements VisionProcessor
     // i guess we can iterate mannualy through so we can exclude the backdrop areas
     // but i am not sure if that is needed, we can probably assume that the lighting will be equal
     // and both areas will have the same standard value, idk
-    public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
+    /*public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
         if (frame == null) {
-            System.out.println("frame is bad");
+            //System.out.println("frame is bad");
             return 0;
         }
 
@@ -154,6 +161,6 @@ public class PreloadDetectionPipeline implements VisionProcessor
 
         return count > 0 ? sum / count : 0;
     }
-
+*/
 
 }

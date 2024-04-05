@@ -8,9 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
 import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
+import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.PreloadDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -24,28 +26,12 @@ public class TestPreload extends LinearOpMode
     SampleMecanumDrive drive;
     public static int PURPLE = 0;
     public static int START_X = 0, START_Y = 0, START_H = 0;
-    PreloadDetection preloadDetectionPipeline;
+    CameraHardware cameraHardware = new CameraHardware();
     @Override
     public void runOpMode() throws InterruptedException
     {
-
-        preloadDetectionPipeline = new PreloadDetection(telemetry);
+        cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         drive = new SampleMecanumDrive(hardwareMap);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        backWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Back camera"), cameraMonitorViewId);
-        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                backWebcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
-                backWebcam.setPipeline(preloadDetectionPipeline);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
         drive.setPoseEstimate(new Pose2d(START_X, START_Y, START_H));
@@ -60,7 +46,7 @@ public class TestPreload extends LinearOpMode
             if (gamepad1.left_trigger > 0.2)
             {
 
-                telemetry.addData("Detecting pixel", preloadDetectionPipeline.getYellowPixelState());
+                telemetry.addData("Detecting pixel", cameraHardware.getPreloadYellowPose());
 
             }
 
