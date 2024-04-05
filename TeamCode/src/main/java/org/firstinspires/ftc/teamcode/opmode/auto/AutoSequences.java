@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.MiddleLaneYDeposit;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.headingPosition;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.poseEstimate;
@@ -7,10 +8,13 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.xPosit
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosition;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import android.graphics.Path;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -38,7 +42,7 @@ public class AutoSequences {
     boolean goBackForYellowPixel;
    // int trussMiddleStage;
     Telemetry telemetry;
-
+    Gamepad gamepad1;
 
 
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
@@ -59,18 +63,36 @@ public class AutoSequences {
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
     }
 
-    public void intializationLoop (){
+    public void intializationLoop (boolean intakeArmTop){
+        //cameraHardware.pauseBackWebcam();
+        cameraHardware.pausePreloadProcessor();
         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
-        intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+        if (intakeArmTop){
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+        } else {
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+        }
+
         //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
         outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
+        //TODO fix this
+        if (gamepad1.dpad_left)
+        {
+            place = Globals.Place.LEFT;
+        } else if (gamepad1.dpad_right)
+        {
+            place = Place.RIGHT;
+        }
+        telemetry.addData("Yellow Location:", cameraHardware.getPreloadYellowPose());
+
     }
 
-    public void afterWaitForStart(){
-
+    public void afterWaitForStart(Pose2d startPose){
         GlobalTimer = new ElapsedTime(System.nanoTime());
+        //cameraHardware.resumeBackWebcam();
+        //cameraHardware.resumePreloadProcessor();
         GlobalTimer.reset();
         autoTimer = GlobalTimer.milliseconds();
 
@@ -87,7 +109,7 @@ public class AutoSequences {
         autoTimer = 0;
         numCycles = 0;
         outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
-        autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
+        autoTrajectories.drive.setPoseEstimate(startPose);
         cameraHardware.closeWebcam(); // reduces loop times
     }
     public void mainAutoLoop(boolean outtakeReads, boolean intakeReads, boolean notPitchingStates){
@@ -182,7 +204,8 @@ public class AutoSequences {
         }
         return false;
     }
-    public boolean placeLoadDriveStateBack(){
+    public boolean preloadDriveStateBack(){
+        outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         if (delay(300)) {
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
         }
@@ -219,38 +242,44 @@ public class AutoSequences {
         return false;
     }
 
-    public boolean placeAndIntakeBackSTage(double delayTimeForIntake, double slideExtendSpeed, boolean reExtendSlides){
+    public boolean placeAndIntakeBackSTage(double slideExtendSpeed){
         if (teamPropLocation == 1){
-            intakeSubsystem.intakeSlideInternalPID(260,slideExtendSpeed);
+            intakeSubsystem.intakeSlideInternalPID(710,slideExtendSpeed);
+            outtakeSubsystem.liftToInternalPID(13.5,0.6);
         } else if (teamPropLocation == 2){
-            intakeSubsystem.intakeSlideInternalPID(200,slideExtendSpeed); // 265 previously
+            intakeSubsystem.intakeSlideInternalPID(570,slideExtendSpeed); // 265 previously
+            outtakeSubsystem.liftToInternalPID(13.5,0.5);
         } else if (teamPropLocation == 3){
-            intakeSubsystem.intakeSlideInternalPID(60,slideExtendSpeed);
+            intakeSubsystem.intakeSlideInternalPID(150,slideExtendSpeed);
+            outtakeSubsystem.liftToInternalPID(13.5,0.6);
         }
 
-        outtakeSubsystem.liftToInternalPID(10,0.5);
-        outtakeSubsystem.pitchToInternalPID(30,1);
-
+        if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > 4){
+            outtakeSubsystem.pitchToInternalPID(18,1);
+        }
+        double railOffset;
         double railTarget = cameraHardware.getRailTarget(correctedHeading, ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition), outtakeSubsystem.pitchEncoderPosition);
-
-        double railOffset = 0;
-        if (place == Globals.Place.RIGHT){
-            railOffset = inchesToTicksRailCorrected(1.6);
-        } else if (place == Globals.Place.LEFT){
-            railOffset = inchesToTicksRailCorrected(-1.6);
+        if (teamPropLocation == 1){
+            railOffset = inchesToTicksRailCorrected(0.6);
+            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
+        } else{
+            railOffset = inchesToTicksRailCorrected(-0.6);
+            outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT);
         }
-        outtakeSubsystem.setOuttakeRailServo(railTarget - railOffset);
-        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
 
-        if (intakeSubsystem.intakeSlideTargetReached() && outtakeSubsystem.liftTargetReached()){ // limit switches don't touch in this case
-            if (delay(delayTimeForIntake)){ // ensure pixels are in robot
-                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
-                if(reExtendSlides && !intakeSubsystem.pixelsInIntake()){
-                    intakeSubsystem.intakeSlideInternalPID(0,1);
-                    goBackForYellowPixel = true;
+        outtakeSubsystem.setOuttakeRailServo(railTarget + railOffset);
+
+        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
+        outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
+
+        if (intakeSubsystem.intakeSlideTargetReached() && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > 13){ // limit switches don't touch in this case
+            if (delay(180)){ // ensure pixels are in robot
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
+                if (delay(500)){
+                    outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                    resetTimer();
+                    return true;
                 }
-                resetTimer();
-                return true;
             }
         } else {
             resetTimer();
@@ -648,6 +677,10 @@ public class AutoSequences {
     public void storePoseEndAuto(Pose2d pose)
     {
         StorePose.pose = pose;
+    }
+
+    public void setGamepad1(Gamepad gamepad1) {
+        this.gamepad1 = gamepad1;
     }
 }
 

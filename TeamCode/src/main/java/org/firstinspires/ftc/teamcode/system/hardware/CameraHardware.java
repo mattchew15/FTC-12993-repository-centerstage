@@ -322,7 +322,7 @@ public class CameraHardware
 
     public Place getPreloadYellowPose()
     {
-        return preloadDetection.getPreloadYellow();
+        return place;
     }
     public double getRailTarget(double headingDegrees, double slideLengthInch, double pitchAngleDegrees)
     {
@@ -370,3 +370,4 @@ public class CameraHardware
         return railExtension.getTargetTag();
     }
 }
+

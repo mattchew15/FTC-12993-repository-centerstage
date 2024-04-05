@@ -66,7 +66,7 @@ public class TEST_MIDDLE_TRAJECTORIES extends LinearOpMode {
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
-            auto.intializationLoop();
+            auto.intializationLoop(true);
             if (teamPropLocation == 1){
                 telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
@@ -82,7 +82,7 @@ public class TEST_MIDDLE_TRAJECTORIES extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart();
+        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront);
         //  auto.cameraHardware.pauseBackWebcam();
         currentState = AutoState.DELAY;
 
