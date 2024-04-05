@@ -54,8 +54,7 @@ public class PreloadDetectionPipeline implements VisionProcessor
         if (detections != null) {
             for (AprilTagDetection detection : detections) {
                 if (detection.metadata != null) {
-
-                    if (BLUE_AUTO ? detection.id == teamPropLocation: detection.id == teamPropLocation + 3) {
+                    if (BLUE_AUTO ? detection.id == 4 - teamPropLocation: detection.id == teamPropLocation + 3) {
                         int leftX = Integer.MAX_VALUE;
                         int rightX = Integer.MIN_VALUE;
                         int topY = Integer.MIN_VALUE;
@@ -100,9 +99,9 @@ public class PreloadDetectionPipeline implements VisionProcessor
                         //int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
 
 
-                        telemetry.addData("Left zone", leftZoneAverage);
-                        telemetry.addData("Right zone", rightZoneAverage);
-                        telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
+                        //telemetry.addData("Left zone", leftZoneAverage);
+                        //telemetry.addData("Right zone", rightZoneAverage);
+                        //telemetry.addData("Diff", Math.abs(leftZoneAverage - rightZoneAverage));
                         place = leftZoneAverage < rightZoneAverage ? Globals.Place.LEFT : Globals.Place.RIGHT; // this should be correct now
 
                         //Imgproc.rectangle(input, leftInclusionZone, new Scalar(0, 0, 255), 2);

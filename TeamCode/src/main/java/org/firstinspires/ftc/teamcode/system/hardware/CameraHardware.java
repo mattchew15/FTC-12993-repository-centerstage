@@ -36,8 +36,8 @@ public class CameraHardware
 {
 
     private OpenCvWebcam sideWebcam, backWebcam;
-    private final YCrCbBlueTeamPropDetectorPipeline  bluePipeline = new YCrCbBlueTeamPropDetectorPipeline();
-    private final YCrCbRedTeamPropDetectorPipeline redPipeline = new YCrCbRedTeamPropDetectorPipeline();
+    private YCrCbBlueTeamPropDetectorPipeline  bluePipeline;
+    private YCrCbRedTeamPropDetectorPipeline redPipeline;
     private AprilTagProcessor aprilTag;
     private PreloadDetectionPipeline preloadDetection;
     private RailExtensionPipelineTemp railExtension;
@@ -53,11 +53,13 @@ public class CameraHardware
     private VisionPortal visionPortal;
     private AprilTagLibrary library;
 
-    public void initWebcam(HardwareMap hwMap)
+    public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
     {
+        bluePipeline = new YCrCbBlueTeamPropDetectorPipeline(telemetry);
+        redPipeline = new YCrCbRedTeamPropDetectorPipeline(telemetry);
         int cameraMonitorViewId;
-        //cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"));
+        cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Side camera"), cameraMonitorViewId);
         sideWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -155,11 +157,11 @@ public class CameraHardware
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
-        builder.enableLiveView(true);
+        builder.enableLiveView(false);
 
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG); // higher fps
+        /*builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG); // higher fps
 
-        builder.setAutoStopLiveView(false);
+        builder.setAutoStopLiveView(false);*/
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
