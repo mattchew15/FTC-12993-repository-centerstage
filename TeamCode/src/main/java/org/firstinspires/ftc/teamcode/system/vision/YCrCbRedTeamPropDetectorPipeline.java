@@ -49,6 +49,11 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     // Average Cr values in each rectangle.
     private int avg1, avg2, avg3;
 
+    public YCrCbRedTeamPropDetectorPipeline(Telemetry telemetry)
+    {
+        this.telemetry = telemetry;
+    }
+
     // Take the RGB frame and convert to YCrCb, then extract the Cr channel.
     private void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
@@ -73,6 +78,7 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         inputToCr(input);
+        Core.flip(input, input, 0);
 
         //Average pixel value of each Cr channel.
         avg1 = (int) Core.mean(region1Cr).val[0];
@@ -89,22 +95,19 @@ public class YCrCbRedTeamPropDetectorPipeline extends OpenCvPipeline {
 
         if (max == avg1) {
             teamPropLocation = 1;
-            //telemetry.addLine("Front");
+            telemetry.addLine("Left");
             Imgproc.rectangle(input, region1A, region1B, green, -1);
         } else if (max == avg2) {
             teamPropLocation = 2;
-            //telemetry.addLine("Middle");
+            telemetry.addLine("Center");
             Imgproc.rectangle(input, region2A, region2B, green, -1);
         } else {
             teamPropLocation = 3;
-            //telemetry.addLine("Back");
+            telemetry.addLine("Right");
             Imgproc.rectangle(input, region3A, region3B, green, -1);
         }
+        telemetry.addData("Team Prop Location", teamPropLocation);
 
         return input;
-    }
-    public void setTelemetry(Telemetry telemetry)
-    {
-        this.telemetry = telemetry;
     }
 }

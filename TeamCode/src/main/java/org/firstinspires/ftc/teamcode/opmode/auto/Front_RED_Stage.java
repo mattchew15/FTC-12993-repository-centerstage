@@ -66,11 +66,11 @@ public class Front_RED_Stage extends LinearOpMode {
         while (!isStarted()) { // initialization loop
             auto.intializationLoop();
             if (teamPropLocation == 1){
-                telemetry.addLine("Front");
+                telemetry.addLine("Left");
             } else if (teamPropLocation == 2){
-                telemetry.addLine("Middle");
+                telemetry.addLine("Center");
             } else if (teamPropLocation == 3){
-                telemetry.addLine("Back");
+                telemetry.addLine("Right");
             }
             telemetry.addData("S", S);
             telemetry.update();
@@ -139,11 +139,10 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (yPosition > -20){
                     railDelay = 0;
                 }
-                if(auto.preloadDriveState(false, false,railDelay, 0.4)){
+                if(auto.preloadDriveState(false, true,railDelay, 0.4)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
-
 
             case PLACE_AND_INTAKE:
                 if (auto.placeAndIntakeFrontMIDTRUSS(230,0.4, true)){
@@ -164,7 +163,8 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 break;
             case GO_BACK_FOR_YELLOW:
-                if (auto.reExtendSLidesForYellow(230,0.5)){
+
+                if (auto.reExtendSLidesForYellow(1500,0.6)){
                     Trajectory startDrive = null;
                     if (teamPropLocation == 2){
                         startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2;
