@@ -48,7 +48,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SetAuto.setRedAuto();
-
+        auto.setGamepad1(gamepad1);
 
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -62,7 +62,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
-            auto.intializationLoop();
+            auto.intializationLoop(true);
             if (teamPropLocation == 1){
                 telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
@@ -78,7 +78,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart();
+        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront);
         currentState = AutoState.DELAY;
 
         while (opModeIsActive() && !isStopRequested()) {

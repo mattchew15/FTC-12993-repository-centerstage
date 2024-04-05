@@ -95,13 +95,13 @@ public class AutoTrajectories {
 
         // static trajectories - might have to make these public
          PreloadDrive1 = drive.trajectoryBuilder(startPoseBack)
-                .lineToLinearHeading(new Pose2d(33,-24*S, Math.toRadians(180)*S))
+                .lineToLinearHeading(new Pose2d(36,-29*S, Math.toRadians(180)*S))
                 .build();
          PreloadDrive2 = drive.trajectoryBuilder(startPoseBack)
-                .lineToLinearHeading(new Pose2d(35.5,-24.4*S, Math.toRadians(171)*S))
+                .lineToLinearHeading(new Pose2d(36,-27*S, Math.toRadians(174)*S))
                 .build();
          PreloadDrive3 = drive.trajectoryBuilder(startPoseBack)
-                .lineToLinearHeading(new Pose2d(38,-27.7*S, Math.toRadians(159)*S))
+                .lineToLinearHeading(new Pose2d(36,-34*S, Math.toRadians(180)*S))
                 .build();
         driveIntoStackStageFromMiddlePathStraightEndV1 = drive.trajectoryBuilder(new Pose2d(26,MiddleLaneYDeposit, Math.toRadians(180))) // might break because of generating trajectory
                 .lineToSplineHeading(new Pose2d(32, (MiddleLaneYDeposit + 4)*S, Math.toRadians(175)*S), SampleMecanumDrive.getVelocityConstraint(28, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -222,7 +222,7 @@ public class AutoTrajectories {
                 .addSpatialMarker(new Vector2d( 31, -9), () -> {
                     extendSlidesAroundTruss = true;
                 })
-                .splineToConstantHeading(new Vector2d(35, (-9 - 15)), Math.toRadians(-42), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(36, (-9 - 15)), Math.toRadians(-42), SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
                 .build();
