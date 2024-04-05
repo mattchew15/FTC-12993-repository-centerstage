@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_STAGE_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_STAGE_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_STAGE_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.S;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.inchesToTicksRailCorrected;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
@@ -22,7 +25,7 @@ public class AutoRail {
     boolean railGoesRight;
     double railAprilTagTarget;
 
-    final double pivotOffset = 1.51;
+    final double pivotOffset = 0.6;
 
     AutoSequences auto;
 
@@ -48,23 +51,22 @@ public class AutoRail {
                 } else if (teamPropLocation == 3){
                     auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
                 }
-            } else if (trussMiddleStage == 1){
-                if (teamPropLocation == 2){
-                 setAprilTagRailThingy(RAIL_CENTER_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
-                } else if (teamPropLocation == 1){
-                    setAprilTagRailThingy(RAIL_LEFT_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
-                } else if (teamPropLocation == 3){
-                    setAprilTagRailThingy(RAIL_RIGHT_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
-                }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
-                   // auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW_STAGE);
-                    auto.cameraHardware.setDefaultRailPos(RAIL_CENTER_YELLOW_POS);
-                    auto.outtakeSubsystem.setOuttakeRailServo(railAprilTagTarget);
+                    setAprilTagRailThingy(RAIL_CENTER_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
                 } else if (teamPropLocation == 1){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT_YELLOW_STAGE);
+                    setAprilTagRailThingy(RAIL_LEFT_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 3){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT_YELLOW_STAGE);
+                    setAprilTagRailThingy(RAIL_RIGHT_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
+                }
+            } else if (trussMiddleStage == 1){
+                if (teamPropLocation == 2){
+                    // the pivot is the same as stage side just different for center case
+                    setAprilTagRailThingy(RAIL_CENTER_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
+                } else if (teamPropLocation == 1){
+                    setAprilTagRailThingy(RAIL_LEFT_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
+                } else if (teamPropLocation == 3){
+                    setAprilTagRailThingy(RAIL_RIGHT_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
                 }
             }
 

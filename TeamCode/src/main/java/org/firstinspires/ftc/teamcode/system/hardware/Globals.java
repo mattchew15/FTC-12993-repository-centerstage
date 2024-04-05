@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 @Config // Allows dashboard tune
 public class Globals
 {
-    public static double PITCH_OFFSET = 3;
+    public static double PITCH_OFFSET = 2.8;
     // Auto Constants
     public static double
             autoTimer,
@@ -46,6 +46,7 @@ public class Globals
             RAIL_LEFT_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.297,
             RAIL_LEFT_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.297,
             OUTTAKE_DISTANCE_AUTO_THRESHOLD = 8;
+
 
     // Auto States
     public static boolean

@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -131,7 +132,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(50,0.35)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(50,0.35, false)){
                     Trajectory startDrive = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 29, -32);
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     currentState = AutoState.TRANSFER_PIXEL;
@@ -149,6 +150,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
 
             case OUTTAKE_PIXEL:
                 //outtaking lengths for each cycle
+
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
                 int intakeSlideTarget = 330; // pre-extend intake for most cycles
@@ -190,7 +192,11 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     } else if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,2,0,-28.5, -25);
                     } else if (numCycles == 3){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStageFromMiddlePathStraightEndV2; //doesn't generate on the fly
+                        if (teamPropLocation == 1){
+                            intakeTrajectory = auto.autoTrajectories.driveIntoStackStageFromMiddlePathStraightEndV2; //doesn't generate on the fly
+                        } else {
+                            intakeTrajectory = auto.autoTrajectories.driveIntoStackStageFromMiddlePathStraightEndV1; //doesn't generate on the fly
+                        }
                     } else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,-3,-28.5, -25);
                     } else if (numCycles == 5){
@@ -198,6 +204,9 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
 
                    //     intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-160,3,0);
                     }
+                    // happens when the robot is stopped - after generating trajectories so we get a good reading
+                    auto.resetPosWithAprilTags(2);
+
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     }
@@ -229,12 +238,12 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 if (auto.grabOffStack(numCycleForDifferentLane, true, true,5, INTAKE_SLIDE_AUTO_LONG_PRESET, 0)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
-                    /*if (numCycles > 4){
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,16, -5, 4,3);
-                    }*/
-                    if (numCycles > 2) {
+                    if (numCycles > 4) {
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate, 17, 175, 4);
+                    }
+                    else if (numCycles > 2) {
                         // this seems to be the best trajectory to follow
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,17, 175, 4);
+                        outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, 4);
                     } else {
                         outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,17, 26, MiddleLaneYDeposit);
                     }

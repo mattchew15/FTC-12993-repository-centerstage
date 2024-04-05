@@ -142,7 +142,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(500,0.38)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(500,0.38, false)){
                     Trajectory startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2;
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     currentState = TRANSFER_PIXEL;

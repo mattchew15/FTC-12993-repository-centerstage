@@ -620,6 +620,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case CLIMB_START:
+                outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
                 if (delay(400)){
                     outtakeSubsystem.pitchTo(PITCH_CLIMB_TICKS, outtakeSubsystem.pitchEncoderPosition,1);
                     intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);

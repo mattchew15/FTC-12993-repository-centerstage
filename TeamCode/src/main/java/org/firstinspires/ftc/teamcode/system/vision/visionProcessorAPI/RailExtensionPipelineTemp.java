@@ -28,6 +28,9 @@ public class RailExtensionPipelineTemp implements VisionProcessor
     double target = 0.49;
     double BACKDROP_SHIFT = 0.23;
     double defaultTehee = RAIL_CENTER_POS;
+    private double targetTag;
+    private double tagWeSee;
+
     public RailExtensionPipelineTemp(AprilTagProcessor processor, Telemetry telemetry)
     {
         this.processor = processor;
@@ -44,8 +47,8 @@ public class RailExtensionPipelineTemp implements VisionProcessor
     public Object processFrame(Mat frame, long captureTimeNanos)
     {
         List<AprilTagDetection> detections = processor.getDetections();
-        double tagWeSee = 0;
-        double targetTag = BLUE_AUTO ? 4 - teamPropLocation : teamPropLocation + 3;
+        tagWeSee = 0;
+        targetTag = BLUE_AUTO ? 4 - teamPropLocation : teamPropLocation + 3;
         AprilTagDetection detection = null;
         if (detections != null)
         {
@@ -105,12 +108,12 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                     telemetry.addData("Target offseted", x);
                     // 5.91 * Math.PI * 2 / 355
                     double d = 0;
-                    if (tagWeSee != 0)
+                    if (tagWeSee != targetTag)
                     {
                          d = (tagWeSee - targetTag) * BACKDROP_SHIFT;
                     }
                     x += d;
-                    target = x;
+                    target = MathUtils.clamp(x, 0, 1);
                 }
             }
         }
@@ -149,5 +152,13 @@ public class RailExtensionPipelineTemp implements VisionProcessor
     public void setDefault(double defaultTehee)
     {
         this.defaultTehee = defaultTehee;
+    }
+    public double getTargetTag()
+    {
+        return targetTag;
+    }
+    public double getTagWeSee()
+    {
+        return tagWeSee;
     }
 }

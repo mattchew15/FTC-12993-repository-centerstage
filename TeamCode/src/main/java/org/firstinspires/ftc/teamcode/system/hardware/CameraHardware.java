@@ -322,12 +322,13 @@ public class CameraHardware
     {
         return preloadDetection.getPreloadYellow();
     }
-    public double getRailTarget(double heading, double slideLength, double pitchAngle)
+    public double getRailTarget(double headingDegrees, double slideLengthInch, double pitchAngleDegrees)
     {
-        double distance = slideLength * Math.cos(Math.toRadians(pitchAngle));
-        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(heading));
-        //return railExtension.getTarget() - railAdjustment;
-        return railExtension.getTarget();
+        double distance = slideLengthInch * Math.cos(Math.toRadians(pitchAngleDegrees)); // inches
+        double railAdjustment = (distance - PITCH_OFFSET) * Math.sin(Math.toRadians(headingDegrees)); // inches
+        return railExtension.getTarget() + inchesToTicksRailCorrected(railAdjustment); // ticks
+//        return railExtension.getTarget(); // ticks??
+
     }
     public void closeBackWebcam()
     {
@@ -357,5 +358,13 @@ public class CameraHardware
 
     public void setDefaultRailPos(double defaultTehe){
         railExtension.setDefault(defaultTehe);
+    }
+    public double getSeenTags()
+    {
+        return railExtension.getTagWeSee();
+    }
+    public double getTargetTag()
+    {
+        return railExtension.getTargetTag();
     }
 }
