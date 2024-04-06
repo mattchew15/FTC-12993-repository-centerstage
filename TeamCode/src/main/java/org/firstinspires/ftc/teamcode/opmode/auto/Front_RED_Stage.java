@@ -80,8 +80,9 @@ public class Front_RED_Stage extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront);
+        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront, false);
         currentState = AutoState.DELAY;
+
 
         while (opModeIsActive() && !isStopRequested()) {
             // Reading at the start of the loop
@@ -162,9 +163,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     }
                 }
                 break;
-            case GO_BACK_FOR_YELLOW:
 
-                if (auto.reExtendSLidesForYellow(1500,0.6)){
+            case GO_BACK_FOR_YELLOW:
+                if (auto.reExtendSLidesForYellow(1500,0.34)){
                     Trajectory startDrive = null;
                     if (teamPropLocation == 2){
                         startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2;
@@ -198,13 +199,12 @@ public class Front_RED_Stage extends LinearOpMode {
                 boolean openGrippers = true;
                 if (numCycles == 0){
                     intakeSlideTarget = 10;
-                    if (xPosition > 10){
+                    if (xPosition > 8){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     }
                     if (xPosition > 17){
                         // stop yellow detection
                         auto.cameraHardware.pausePreloadProcessor();
-                        //TODO make the pause only run once
                         railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading, ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition);
                         railLogic.setRailTargetFromAprilTag(railTarget);
                     }
@@ -248,7 +248,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,20,-3,-160,3,0);
                     }
 
-                    auto.resetPosWithAprilTags(1);
+                    auto.resetPosWithAprilTags(3);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
@@ -278,18 +278,18 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (numCycles == 1){ // for very first cycle
                         intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
                         if (intakeTrajectoryAfterDrop != null){
-                            //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
+                            auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
                         }
                     }
                     if (auto.globalTimer > 25500){
-                        auto.parkIfStuck(0); // huh
+                        auto.parkIfStuck = true; // should force into park before doing another cycle
                     } else {
-                        //currentState = AutoState.GRAB_OFF_STACK;
+                        currentState = AutoState.GRAB_OFF_STACK;
                     }
                 }
                 break;
             case GRAB_OFF_STACK:
-                if (xPosition < -18){
+                if (xPosition < -17.7){
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
                 double delayBeforeRetracting = 0;

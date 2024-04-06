@@ -70,8 +70,10 @@ public class OuttakeSubsystem
 
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.53,
-            MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.1,
-            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.1;
+            MINI_TURRET_FRONTPURPLE_STAGE_POS = MINI_TURRET_STRAIGHT_POS - 0.1,
+            MINI_TURRET_BACKPURPLE_STAGE_POS = MINI_TURRET_STRAIGHT_POS + 0.15,
+            MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.095,
+            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.068;
 
     public static double
             ARM_READY_POS = 0.809,
@@ -94,7 +96,7 @@ public class OuttakeSubsystem
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
-            PITCH_PURPLEPIXEL_POSITION = 0.36,
+            PITCH_PURPLEPIXEL_POSITION = 0.38,
             PITCH_LOWPITCH_POSITION = 0.7,
             PITCH_YELLOWPIXEL_POSITION = 0.4;
 
@@ -162,7 +164,9 @@ public class OuttakeSubsystem
         STRAIGHT,
         POINT_TO_BACKDROP,
         BACK_PURPLE,
-        FRONT_PURPLE
+        FRONT_PURPLE,
+        FRONT_STAGE_PURPLE,
+        BACK_STAGE_PURPLE
     }
     public enum OuttakeRailState {
         CENTER,
@@ -475,6 +479,12 @@ public class OuttakeSubsystem
             case BACK_PURPLE:
                 miniTurret = MINI_TURRET_BACKPURPLE_POS;
                 //MiniTurretServo.setPosition(MINI_TURRET_BACKPURPLE_POS);
+                break;
+            case BACK_STAGE_PURPLE:
+                miniTurret = MINI_TURRET_BACKPURPLE_STAGE_POS;
+                break;
+            case FRONT_STAGE_PURPLE:
+                miniTurret = MINI_TURRET_FRONTPURPLE_STAGE_POS;
                 break;
         }
         prevMiniTurret = servoCaching(miniTurret, prevMiniTurret, EPSILON_DELTA, MiniTurretServo);

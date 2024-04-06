@@ -84,7 +84,6 @@ public class PreloadDetectionPipeline implements VisionProcessor
                             int inclusionZoneWidth = (int) (tagWidth * 1.5);
                             int inclusionZoneHeight = (int) (tagHeight * 1.5);
 
-                            // TODO: empirically tune this
 
                             if (tagCenterY - tagHeight * i - inclusionZoneHeight < 0)
                             {

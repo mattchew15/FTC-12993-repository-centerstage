@@ -78,7 +78,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront);
+        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront, false);
         currentState = AutoState.DELAY;
 
         while (opModeIsActive() && !isStopRequested()) {

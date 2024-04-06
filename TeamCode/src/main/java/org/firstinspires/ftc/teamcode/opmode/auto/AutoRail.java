@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
@@ -53,20 +54,20 @@ public class AutoRail {
                 }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
-                    setAprilTagRailThingy(RAIL_CENTER_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
                 } else if (teamPropLocation == 1){
-                    setAprilTagRailThingy(RAIL_LEFT_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 3){
-                    setAprilTagRailThingy(RAIL_RIGHT_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
                 }
             } else if (trussMiddleStage == 1){
                 if (teamPropLocation == 2){
                     // the pivot is the same as stage side just different for center case
-                    setAprilTagRailThingy(RAIL_CENTER_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 1){
-                    setAprilTagRailThingy(RAIL_LEFT_YELLOW_STAGE_POS,pivotOffset,pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 3){
-                    setAprilTagRailThingy(RAIL_RIGHT_YELLOW_STAGE_POS,-pivotOffset,-pivotOffset);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
                 }
             }
 

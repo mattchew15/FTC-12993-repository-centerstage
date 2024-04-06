@@ -388,5 +388,14 @@ public class CameraHardware
     {
         return railExtension.getTargetTag();
     }
+    public void pauseAprilTagProcessor()
+    {
+        visionPortal.setProcessorEnabled(aprilTag, false);
+    }
+    public void resumeAprilTagProcessor()
+    {
+        visionPortal.setProcessorEnabled(aprilTag, true);
+    }
+
 }
 
