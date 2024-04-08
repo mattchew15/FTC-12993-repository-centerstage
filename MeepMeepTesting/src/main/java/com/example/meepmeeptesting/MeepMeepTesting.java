@@ -12,7 +12,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(700);
         double frontOffset = 12;
-        Pose2d stacks = new Pose2d(-28,-36,Math.toRadians(180));
+        Pose2d stacks = new Pose2d(32,-12,Math.toRadians(180));
         Pose2d backdrop = new Pose2d(28,-36,Math.toRadians(180)); // not necessary lol
         Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180));
 
@@ -20,12 +20,19 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPoseFront)
+                        drive.trajectorySequenceBuilder(stacks)
 
-                                .lineToLinearHeading(new Pose2d(-50, -9, Math.toRadians(180)))
+//                                .lineToSplineHeading(new Pose2d(28, (-28), Math.toRadians(-5)))
+//
+//                                .lineToSplineHeading(new Pose2d(32, -28, Math.toRadians(-5)))
 
-                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(36, (-9 - 7)), Math.toRadians(-38))
+                                .lineToSplineHeading(new Pose2d(22, -12, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(22, -12), Math.toRadians(-7)) // end tangent of path
+
+
+
+//                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+//                                .splineToConstantHeading(new Vector2d(36, (-9 - 7)), Math.toRadians(-38))
 
                                 /*
                                 .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))

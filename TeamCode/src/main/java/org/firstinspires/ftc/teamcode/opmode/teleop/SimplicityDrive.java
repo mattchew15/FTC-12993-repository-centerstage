@@ -180,8 +180,9 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSequence();
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
-                /*
+
                 telemetry.addData("STATE", outtakeState);
+                /*
                 telemetry.addLine("");
                 telemetry.addData("liftTarget", liftTarget);
                 telemetry.addData("pitchTarget", pitchTarget);

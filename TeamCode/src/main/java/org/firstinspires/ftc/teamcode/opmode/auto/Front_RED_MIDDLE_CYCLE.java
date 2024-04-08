@@ -18,7 +18,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
     int numCycleForDifferentLane = 2;
 
     //Accessories
-    AutoSequences auto = new AutoSequences(telemetry);
+    AutoSequences auto = new AutoSequences(telemetry,2);
     LoopTime loopTime = new LoopTime();
     // this works because the parameters being passed in don't change throughout the opmode
     // same cycle numbers
@@ -243,7 +243,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     }
                     else if (numCycles > 2) {
                         // this seems to be the best trajectory to follow
-                        outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, 4);
+                        outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, -5,4);
                     } else {
                         outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,17, 26, MiddleLaneYDeposit);
                     }

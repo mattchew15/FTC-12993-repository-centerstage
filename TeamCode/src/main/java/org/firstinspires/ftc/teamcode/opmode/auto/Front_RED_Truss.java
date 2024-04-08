@@ -22,7 +22,7 @@ public class Front_RED_Truss extends LinearOpMode {
     boolean frontOrBackAuto;
 
     //Accessories
-    AutoSequences auto = new AutoSequences(telemetry);
+    AutoSequences auto = new AutoSequences(telemetry,1);
     LoopTime loopTime = new LoopTime();
     // this works because the parameters being passed in don't change throughout the opmode
     // same cycle numbers

@@ -13,12 +13,12 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Back Red Truss", group = "Autonomous")
-public class Back_RED_Truss extends LinearOpMode {
+@Autonomous(name = "Back Blue Truss", group = "Autonomous")
+public class Back_BLUE_Truss extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double positiveDriftOffset = 0;
-    double delayForYellow = 0;
+    double delayForYellow = 8;
     boolean frontOrBackAuto;
 
     //Accessories
@@ -56,7 +56,7 @@ public class Back_RED_Truss extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         frontOrBackAuto = false;
-        SetAuto.setRedAuto();
+        SetAuto.setBlueAuto();
         auto.setGamepad1(gamepad1);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -182,18 +182,16 @@ public class Back_RED_Truss extends LinearOpMode {
                     if (auto.goBackForYellowPixel){
                         currentState = AutoState.GO_BACK_FOR_YELLOW;
                     } else{
-                        if (auto.GlobalTimer.seconds() > delayForYellow){ // the robot takes 3 seconds to go deposit yellow after this
-                            Trajectory startDrive = null;
-                            if (teamPropLocation == 2){
-                                startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2;
-                            } else if (teamPropLocation == 1){
-                                startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple1;
-                            } else if (teamPropLocation == 3){
-                                startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple3;
-                            }
-                            auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
-                            currentState = AutoState.TRANSFER_PIXEL;
+                        Trajectory startDrive = null;
+                        if (teamPropLocation == 2){
+                            startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple2;
+                        } else if (teamPropLocation == 1){
+                            startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple1;
+                        } else if (teamPropLocation == 3){
+                            startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple3;
                         }
+                        auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
+                        currentState = AutoState.TRANSFER_PIXEL;
                     }
                 }
                 break;
@@ -345,12 +343,12 @@ public class Back_RED_Truss extends LinearOpMode {
             case AFTER_GRAB_OFF_STACK:
                 if (auto.afterGrabOffStack(2,2,300,200)){
                     if (!auto.intakeSubsystem.pixelsInIntake()){
-                    currentState = AutoState.GO_BACK_FOR_WHITES;
+                        currentState = AutoState.GO_BACK_FOR_WHITES;
                     } else {
-                    currentState = AutoState.TRANSFER_PIXEL;
-                    Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 5, 6, 1);
-                    auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
+                        currentState = AutoState.TRANSFER_PIXEL;
+                        Trajectory outtakeTrajectory;
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 5, 6, 1);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                     }
                 }
                 break;

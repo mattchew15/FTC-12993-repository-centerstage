@@ -28,11 +28,11 @@ public class AutoPivot {
             //telemetry.addLine("numCycles == yellowCycle)");
             if (trussMiddleStage == 2){
                 if (teamPropLocation == 1){
-                    if (BLUE_AUTO){
-                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                    if (RED_AUTO){
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
                     }
                     else {
-                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
                     }
                 } else if (teamPropLocation == 2){
                     if (RED_AUTO){
@@ -43,10 +43,10 @@ public class AutoPivot {
                     }
                 } else if (teamPropLocation == 3){
                     if (RED_AUTO){
-                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_LEFT);
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
                     }
                     else {
-                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.SIDEWAYS_RIGHT);
+                        auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT_FLIPPED);
                     }
                 }
             } else if (trussMiddleStage == 1){ // cos they have already placed!!!

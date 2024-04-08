@@ -43,14 +43,14 @@ public class AutoRail {
     }
 
     public void railLogic(){
-        if (numCycles == yellowCycle){ //TODO mirror the first yellow placement
+        if (numCycles == yellowCycle){
             if (trussMiddleStage == 2){
                 if (teamPropLocation == 2){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER_YELLOW);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 1){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
                 } else if (teamPropLocation == 3){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
                 }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){

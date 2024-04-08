@@ -40,7 +40,7 @@ public class AutoSequences {
     boolean goBackToStack;
     double globalTimer;
     boolean goBackForYellowPixel;
-   // int trussMiddleStage;
+    int trussMiddleStage;
     Telemetry telemetry;
     Gamepad gamepad1;
 
@@ -50,9 +50,9 @@ public class AutoSequences {
     AutoTrajectories autoTrajectories = new AutoTrajectories(); // road drive class
     CameraHardware cameraHardware = new CameraHardware();
 
-    public AutoSequences(Telemetry telemetry){
+    public AutoSequences(Telemetry telemetry, int trussMiddleStage){
         this.telemetry = telemetry;
-        //this.trussMiddleStage = trussMiddleStage;
+        this.trussMiddleStage = trussMiddleStage;
     }
 
     public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode){
@@ -193,7 +193,12 @@ public class AutoSequences {
 
         if (autoTrajectories.preExtendSlides){
             intakeSubsystem.intakeSpin(1);
-            preExtendIntakeSlides(slideExtendSpeed,0);
+            if (trussMiddleStage == 3){
+                preExtendIntakeSlidesStage(slideExtendSpeed,0);
+            }
+            else{
+                preExtendIntakeSlides(slideExtendSpeed,0);
+            }
         }
         if (autoTrajectories.dropPurple && preDropPurple){
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
@@ -222,7 +227,12 @@ public class AutoSequences {
     }
 
     public boolean placeAndIntakeFrontMIDTRUSS(double delayTimeForIntake, double slideExtendSpeed, boolean reExtendSlides){
-        preExtendIntakeSlides(slideExtendSpeed,0);
+        if (trussMiddleStage == 3){
+            preExtendIntakeSlidesStage(slideExtendSpeed,0);
+        }
+         else{
+            preExtendIntakeSlides(slideExtendSpeed,0);
+        }
         if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches()){ // limit switches don't touch in this case
             if (delay(delayTimeForIntake)){ // ensure pixels are in robot
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
@@ -294,7 +304,13 @@ public class AutoSequences {
     public boolean reExtendSLidesForYellow(double delayTimeForSlides, double slideExtendSpeed){
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         if (delay(250)){ // limit switches don't touch in this case
-            preExtendIntakeSlides(slideExtendSpeed, 100);
+            if (trussMiddleStage == 3){
+                preExtendIntakeSlidesStage(slideExtendSpeed,80);
+            }
+            else{
+                preExtendIntakeSlides(slideExtendSpeed,80);
+            }
+
             intakeSubsystem.intakeSpin(1);
             if (delay(delayTimeForSlides)){
                 //if (delay(delayTimeForIntake)){ // ensure pixels are in robot
@@ -352,7 +368,7 @@ public class AutoSequences {
 
     public boolean outtakePixel(double correctedHeading, double liftTarget, int pitchTarget, int intakeSlideTarget, AutoRail autoRail,
     AutoPivot autoPivot, boolean extendStraightAway, boolean distanceSensorForCycleZero, boolean differentPitchForYellowRail, boolean openGrippers){
-        //cameraHardware.resumeBackWebcam();
+
         if (extendStraightAway || autoTrajectories.extendSlidesAroundTruss){
             if (numCycles == 0 && !autoTrajectories.extendSlidesAroundTruss? delay(500):true){
                 if (numCycles == 0 && differentPitchForYellowRail){ // consistent across all autos
@@ -462,7 +478,7 @@ public class AutoSequences {
             }
             // retracting arm depending on where the rail was at
             if (numCycles > numCyclesForSideways){ // wait for the outtake rail to retract
-                if (delay(600 + delayBeforeRetracting)){
+                if (delay(100 + delayBeforeRetracting)){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 }
@@ -644,6 +660,15 @@ public class AutoSequences {
     }
 
     public void preExtendIntakeSlides(double slideExtendSpeed, int slideOffset){
+        if (teamPropLocation == 1){
+            intakeSubsystem.intakeSlideInternalPID(24 + slideOffset,slideExtendSpeed);
+        } else if (teamPropLocation == 2){
+            intakeSubsystem.intakeSlideInternalPID(280 + slideOffset,slideExtendSpeed); // 265 previously
+        } else if (teamPropLocation == 3){
+            intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
+        }
+    }
+    public void preExtendIntakeSlidesStage(double slideExtendSpeed, int slideOffset){
         if (teamPropLocation == 1){
             intakeSubsystem.intakeSlideInternalPID(24 + slideOffset,slideExtendSpeed);
         } else if (teamPropLocation == 2){
