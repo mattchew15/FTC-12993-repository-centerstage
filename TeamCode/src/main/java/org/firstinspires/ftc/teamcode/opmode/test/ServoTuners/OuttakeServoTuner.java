@@ -15,13 +15,13 @@ public class OuttakeServoTuner extends LinearOpMode {
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
 
     public static double
-            OUTTAKE_PITCH_POS = 0.5,
-            MINI_TURRET_POS = 0.5,
-            OUTTAKE_RAIL_POS = 0.5,
-            OUTTAKE_ARM_POS = 0.5,
-            PIVOT_POS = 0.5,
-            GRIPPER_TOP_POS = 0.5,
-            GRIPPER_BOTTOM_POS = 0.5;
+            OUTTAKE_PITCH_POS = 0.18,
+            MINI_TURRET_POS = 0.53,
+            OUTTAKE_RAIL_POS = 0.487,
+            OUTTAKE_ARM_POS = 0.55,
+            PIVOT_POS = 0.486,
+            GRIPPER_TOP_POS = 0.455,
+            GRIPPER_BOTTOM_POS = 0.545;
 
     @Override
     public void runOpMode() {
@@ -47,8 +47,6 @@ public class OuttakeServoTuner extends LinearOpMode {
             outtakeSubsystem.PivotServo.setPosition(PIVOT_POS);
             outtakeSubsystem.GripperTopServo.setPosition(GRIPPER_TOP_POS);
             outtakeSubsystem.GripperBottomServo.setPosition(GRIPPER_BOTTOM_POS);
-
-
         }
     }
 }
