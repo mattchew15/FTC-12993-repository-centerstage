@@ -55,12 +55,13 @@ public class AutoSequences {
         this.trussMiddleStage = trussMiddleStage;
     }
 
-    public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode){
+    public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode, Pose2d startPose){
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         autoTrajectories.init(hardwareMap, opMode);
         cameraHardware.initWebcam(hardwareMap, telemetry);
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
+        autoTrajectories.drive.setPoseEstimate(startPose);
     }
 
     public void intializationLoop (boolean intakeArmTop){
@@ -88,7 +89,7 @@ public class AutoSequences {
 
     }
 
-    public void afterWaitForStart(Pose2d startPose, boolean pausePreloadProcessor){
+    public void afterWaitForStart( boolean pausePreloadProcessor){
 
         GlobalTimer = new ElapsedTime(System.nanoTime());
 
@@ -113,7 +114,6 @@ public class AutoSequences {
         autoTimer = 0;
         numCycles = 0;
         outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
-        autoTrajectories.drive.setPoseEstimate(startPose);
         cameraHardware.closeWebcam(); // reduces loop times
     }
     public void mainAutoLoop(boolean outtakeReads, boolean intakeReads, boolean notPitchingStates){

@@ -702,7 +702,7 @@ public class SimplicityDrive extends LinearOpMode {
 
     public void intakeClipHoldorNotHold(int slideToPosition, int closeThreshold){
         if (intakeSubsystem.intakeSlidePosition < closeThreshold) {
-            if (globalTimer - intakeClipTimer > 60){
+            if (globalTimer - intakeClipTimer > 90){
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
                 intakeSubsystem.intakeSlideMotorRawControl(0);
             } else {
@@ -719,7 +719,7 @@ public class SimplicityDrive extends LinearOpMode {
     }
     public void intakeClipHoldorNotHoldWithoutPowerCutout(int slideToPosition){
         if (intakeSubsystem.intakeSlidePosition < 5) {
-            if (globalTimer - intakeClipTimer > 60){
+            if (globalTimer - intakeClipTimer > 100){
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
                 intakeSubsystem.intakeSlideInternalPID(0,1);
             } else {
@@ -853,7 +853,9 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     public void pivotAdjust(){
-        if (gamepad2.left_trigger > 0.2) {
+        if (gamepad2.dpad_down || (outtakeState == OuttakeState.DEPOSIT && reArrangePixels)){
+            pivotState = 6; // this case will get hit first
+        } else if (gamepad2.left_trigger > 0.2) {
             if (pivotFlipToggle.ToggleMode){
                 pivotState = 0;
                 topIsRight = true;
@@ -885,8 +887,6 @@ public class SimplicityDrive extends LinearOpMode {
             pivotState = 5;
             topIsRight = true;
             topIsLeft = false;
-        } else if (gamepad2.dpad_down){
-            pivotState = 6;
         }
     }
 

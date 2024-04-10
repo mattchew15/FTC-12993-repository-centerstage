@@ -17,6 +17,7 @@ public class Front_RED_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
+    boolean frontOrBackAuto;
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -40,9 +41,13 @@ public class Front_RED_Stage extends LinearOpMode {
         AFTER_GRAB_OFF_STACK,
         AFTER_GRAB_OFF_STACK_TOP,
         OUTTAKE_PIXEL_NO_INTAKE_SLIDES,
-        PARK,
         GO_BACK_FOR_YELLOW,
+        GO_BACK_FOR_WHITES,
+        PARK,
         IDLE,
+        DELAY_BACK,
+        PRELOAD_DRIVE_BACK,
+        PLACE_AND_INTAKE_BACK
     }
 
     AutoState currentState;
@@ -50,22 +55,20 @@ public class Front_RED_Stage extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        frontOrBackAuto = true;
         SetAuto.setRedAuto();
         auto.setGamepad1(gamepad1);
-
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this);
-
-
+        auto.initAutoHardware(hardwareMap,this, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
-            auto.intializationLoop(true);
+            auto.intializationLoop(frontOrBackAuto);
             if (teamPropLocation == 1){
                 telemetry.addLine("Left");
             } else if (teamPropLocation == 2){
@@ -81,9 +84,14 @@ public class Front_RED_Stage extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront, false);
-        currentState = AutoState.DELAY;
+        auto.afterWaitForStart(false);
+        if (frontOrBackAuto){
+            currentState = AutoState.DELAY;
+        } else {
+            currentState = AutoState.DELAY_BACK;
+        }
 
+        // can set drive constraints here
 
         while (opModeIsActive() && !isStopRequested()) {
             // Reading at the start of the loop
@@ -96,22 +104,16 @@ public class Front_RED_Stage extends LinearOpMode {
                     currentState == AutoState.GRAB_OFF_STACK || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
                     currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIXEL);
 
-
-            if (place == Place.LEFT){
-                RAIL_CENTER_YELLOW_STAGE_POS += inchesToTicksRailCorrected(-3);
-            }
-
             autoSequence();
             loopTime.delta();
+            telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
             telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
-            telemetry.addData("Case", place);
-            telemetry.addData("Rail target", auto.cameraHardware.getRailTarget(auto.correctedHeading,ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition));
-            telemetry.addData("X pos", xPosition);
-            telemetry.addData("TagTarget", auto.cameraHardware.getTargetTag());
-            telemetry.addData("Tag we see", auto.cameraHardware.getSeenTags());
+            telemetry.addData("numCycles", numCycles);
+            telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
+
             telemetry.update();
 
         }
@@ -121,6 +123,33 @@ public class Front_RED_Stage extends LinearOpMode {
     public void autoSequence(){
         auto.goToPark(currentState == AutoState.IDLE,2);
         switch (currentState) {
+            case DELAY_BACK:
+                if(auto.delayState(0)){
+                    currentState = AutoState.PRELOAD_DRIVE_BACK;
+                    if (teamPropLocation == 1){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
+                        telemetry.addLine("left");
+                    } else if (teamPropLocation == 2){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
+                        telemetry.addLine("center");
+                    } else if (teamPropLocation == 3){
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3);
+                        telemetry.addLine("right");
+                    }
+                }
+                break;
+            case PRELOAD_DRIVE_BACK:
+                if(auto.preloadDriveStateBack()){
+                    currentState = AutoState.PLACE_AND_INTAKE_BACK;
+                }
+                break;
+            case PLACE_AND_INTAKE_BACK:
+                if (auto.placeAndIntakeBackSTage(0.8)){
+                    currentState = AutoState.DROP;
+                }
+                break;
+
+
             case DELAY:
                 if(auto.delayState(0)){
                     if (teamPropLocation == 1){
@@ -143,7 +172,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(230,1, true)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(250,1, true)){
                    // if (auto.goBackForYellowPixel){
                      //   currentState = AutoState.GO_BACK_FOR_YELLOW;
                    // } else {
@@ -164,7 +193,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 break;
 
             case GO_BACK_FOR_YELLOW:
-                if (auto.reExtendSLidesForYellow(1000,0.35)){
+                if (auto.reExtendSLidesForYellow(1200,0.35)){
                     if (auto.GlobalTimer.seconds() > delayForYellow){
                         Trajectory startDrive = null;
                         if (teamPropLocation == 2){
@@ -344,5 +373,3 @@ public class Front_RED_Stage extends LinearOpMode {
 
     }
 }
-
-

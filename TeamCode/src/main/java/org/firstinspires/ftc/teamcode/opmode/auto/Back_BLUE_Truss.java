@@ -56,6 +56,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         frontOrBackAuto = false;
+        // sets values for generating trajectories
         SetAuto.setBlueAuto();
         auto.setGamepad1(gamepad1);
 
@@ -64,7 +65,8 @@ public class Back_BLUE_Truss extends LinearOpMode {
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this);
+        // generates trajectories for everything
+        auto.initAutoHardware(hardwareMap,this,frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -84,7 +86,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack, !frontOrBackAuto);
+        auto.afterWaitForStart(!frontOrBackAuto);
         if (frontOrBackAuto){
             currentState = AutoState.DELAY;
         } else {

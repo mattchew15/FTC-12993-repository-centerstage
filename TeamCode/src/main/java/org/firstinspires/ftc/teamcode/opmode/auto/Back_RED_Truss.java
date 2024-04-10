@@ -21,6 +21,7 @@ public class Back_RED_Truss extends LinearOpMode {
     double delayForYellow = 0;
     boolean frontOrBackAuto;
 
+
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,1);
     LoopTime loopTime = new LoopTime();
@@ -64,7 +65,7 @@ public class Back_RED_Truss extends LinearOpMode {
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this);
+        auto.initAutoHardware(hardwareMap,this, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -84,7 +85,7 @@ public class Back_RED_Truss extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack, !frontOrBackAuto);
+        auto.afterWaitForStart(!frontOrBackAuto);
         if (frontOrBackAuto){
             currentState = AutoState.DELAY;
         } else {

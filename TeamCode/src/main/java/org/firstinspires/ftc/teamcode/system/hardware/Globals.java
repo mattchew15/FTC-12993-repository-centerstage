@@ -116,7 +116,7 @@ public class Globals
             HIGH_BACKDROP_PRESET_INCHES = 34,
             MID_BACKDROP_PRESET_INCHES = 19,
             LOW_BACKDROP_PRESET_INCHES = 11,
-            S = 1, // the side multiplier to change sides for autonomous
+            S, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
 
 

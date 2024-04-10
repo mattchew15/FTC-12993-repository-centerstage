@@ -64,7 +64,7 @@ public class Front_RED_Truss extends LinearOpMode {
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this);
+        auto.initAutoHardware(hardwareMap,this, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -84,7 +84,7 @@ public class Front_RED_Truss extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack, !frontOrBackAuto);
+        auto.afterWaitForStart(!frontOrBackAuto);
         if (frontOrBackAuto){
             currentState = AutoState.DELAY;
         } else {

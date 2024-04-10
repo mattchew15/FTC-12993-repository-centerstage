@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
@@ -142,6 +143,7 @@ public class IntakeSubsystem
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
        // IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSpinState = IntakeSpinState.INTAKE;
+        IntakeArmServo.setDirection(Servo.Direction.REVERSE);
     }
 
     // handles all of the reads in this class

@@ -56,7 +56,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this);
+        auto.initAutoHardware(hardwareMap,this,auto.autoTrajectories.startPoseFront);
 
 
 
@@ -78,7 +78,7 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(auto.autoTrajectories.startPoseFront, false);
+        auto.afterWaitForStart(false);
         currentState = AutoState.DELAY;
 
         while (opModeIsActive() && !isStopRequested()) {
