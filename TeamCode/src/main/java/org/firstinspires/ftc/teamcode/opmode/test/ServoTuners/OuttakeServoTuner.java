@@ -37,7 +37,6 @@ public class OuttakeServoTuner extends LinearOpMode {
             telemetry.addData("Pmw low", outtakeSubsystem.OuttakeArmServo.getPwmRange().usPulseLower);
             telemetry.addData("Pmw low", outtakeSubsystem.OuttakeArmServo.getPwmRange().usPulseUpper);
             telemetry.update();
-
              */
 
             outtakeSubsystem.OuttakePitchServo.setPosition(OUTTAKE_PITCH_POS);
