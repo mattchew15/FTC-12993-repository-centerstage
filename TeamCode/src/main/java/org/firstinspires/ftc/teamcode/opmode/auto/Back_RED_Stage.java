@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Front Stage 2+9", group = "Autonomous")
-public class Front_RED_Stage extends LinearOpMode {
+@Autonomous(name = "Back Stage 2+10", group = "Autonomous") //:))))
+public class Back_RED_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
@@ -173,22 +173,22 @@ public class Front_RED_Stage extends LinearOpMode {
 
             case PLACE_AND_INTAKE:
                 if (auto.placeAndIntakeFrontMIDTRUSS(250,1, true)){
-                   // if (auto.goBackForYellowPixel){
-                     //   currentState = AutoState.GO_BACK_FOR_YELLOW;
-                   // } else {
-                        if (auto.GlobalTimer.seconds() > delayForYellow){
-                            Trajectory startDrive = null;
-                            if (teamPropLocation == 2){
-                                startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2;
-                            } else if (teamPropLocation == 1){
-                                startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple1;
-                            } else if (teamPropLocation == 3){
-                                startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple3;
-                            }
-                            auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
-                            currentState = AutoState.TRANSFER_PIXEL;
+                    // if (auto.goBackForYellowPixel){
+                    //   currentState = AutoState.GO_BACK_FOR_YELLOW;
+                    // } else {
+                    if (auto.GlobalTimer.seconds() > delayForYellow){
+                        Trajectory startDrive = null;
+                        if (teamPropLocation == 2){
+                            startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2;
+                        } else if (teamPropLocation == 1){
+                            startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple1;
+                        } else if (teamPropLocation == 3){
+                            startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple3;
                         }
-                   // }
+                        auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
+                        currentState = AutoState.TRANSFER_PIXEL;
+                    }
+                    // }
                 }
                 break;
 
@@ -342,9 +342,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     Trajectory outtakeTrajectory = null;
                     if (numCycles < 4) {
                         // this is the old spline path
-                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 178, -4,4);
-                   //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
-                   //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
+                        outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 178, -4,4);
+                        //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
+                        //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
 
                     }
                     if (outtakeTrajectory != null){

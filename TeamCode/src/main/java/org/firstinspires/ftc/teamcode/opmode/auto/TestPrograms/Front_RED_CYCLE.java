@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode.opmode.auto;
+package org.firstinspires.ftc.teamcode.opmode.auto.TestPrograms;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories;
 import org.firstinspires.ftc.teamcode.opmode.teleop.SimplicityDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -23,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
 import android.provider.Settings;
 import android.view.ViewTreeObserver;
-
+@Disabled
 @Autonomous(name = "Front Red Cycle Auto", group = "Autonomous")
 public class Front_RED_CYCLE extends LinearOpMode {
 
@@ -127,7 +129,7 @@ public class Front_RED_CYCLE extends LinearOpMode {
         autoTimer = 0;
         numCycles = 0;
         outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
-        autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
+       // autoTrajectories.drive.setPoseEstimate(autoTrajectories.startPoseFront);
 
         currentState = AutoState.DELAY;
        // cameraHardware.closeWebcam(); // reduces loop times
@@ -208,13 +210,13 @@ public class Front_RED_CYCLE extends LinearOpMode {
                     resetTimer();
                     currentState = AutoState.PRELOAD_DRIVE;
                     if (teamPropLocation == 1){
-                        autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
+                      //  autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive1Front);
                         telemetry.addLine("left");
                     } else if (teamPropLocation == 2){
-                        autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
+                      //  autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive2Front);
                         telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
-                        autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
+                      //  autoTrajectories.drive.followTrajectoryAsync(autoTrajectories.PreloadDrive3Front);
                         telemetry.addLine("right");
                     }
                 }

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
 public class IntakeSubsystem
 {
 
-    public DcMotor
+    public DcMotorEx
             IntakeSlideMotor,
             IntakeMotor;
     public ServoImplEx
@@ -37,11 +38,11 @@ public class IntakeSubsystem
 
     public DigitalChannel RightArmLimitSwitch;
     public DigitalChannel LeftArmLimitSwitch;
-    //public DigitalChannel ChuteUpDetectorLimitSwitch;
+    public DigitalChannel ChuteUpDetectorLimitSwitch;
 
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.6,
+            INTAKE_ARM_TOP_POS = 0.58,
             INTAKE_ARM_VERY_TOP_POS = 0.35,
             INTAKE_ARM_FOUR_POS = 0.64,
             INTAKE_ARM_MIDDLE_POS = 0.76,
@@ -132,6 +133,7 @@ public class IntakeSubsystem
         //IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
         RightArmLimitSwitch = hwMap.get(DigitalChannel.class, "RightArmLimit");
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
+        ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteLimitSwitch");
 
         backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 100);
         frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
@@ -141,6 +143,7 @@ public class IntakeSubsystem
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
        // IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSpinState = IntakeSpinState.INTAKE;
+        IntakeArmServo.setDirection(Servo.Direction.REVERSE);
     }
 
     // handles all of the reads in this class
@@ -155,7 +158,7 @@ public class IntakeSubsystem
             rightArmLimitSwitchValue = !RightArmLimitSwitch.getState();
             leftArmLimitSwitchValue = !LeftArmLimitSwitch.getState();
 
-            //chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
+            chuteDetectorLimitSwitchValue = !ChuteUpDetectorLimitSwitch.getState();
             //voltageSensor.getCachedVoltage(); // this will always like return the valued already used by the driver hub
             //intakeCurrent = IntakeMotor.getCurrent(CurrentUnit.AMPS);
             //intakeSlideCurrent = IntakeSlideMotor.getCurrent(CurrentUnit.AMPS);

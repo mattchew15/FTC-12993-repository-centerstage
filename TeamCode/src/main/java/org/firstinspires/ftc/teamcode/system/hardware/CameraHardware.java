@@ -52,6 +52,8 @@ public class CameraHardware
      */
     private VisionPortal visionPortal;
     private AprilTagLibrary library;
+    private int tagWeSee;
+    private int targetTag;
 
     public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
     {
@@ -254,20 +256,37 @@ public class CameraHardware
         return false;
     }*/
 
-    public Boolean getNewPose2(Pose2d pose, double lane, Telemetry telemetry)
+    public Boolean getNewPose2(Pose2d pose, int lane, Telemetry telemetry)
     {
 
         double heading = Math.toDegrees(angleWrap(pose.getHeading() + Math.PI)) * -1;
         for (int i = 0; i <3; i++)
         {
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            List<AprilTagDetection> detections = aprilTag.getDetections();
             //telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-            // Step through the list of detections and display info for each one.
-            for (AprilTagDetection detection : currentDetections)
+            tagWeSee = 0;
+            targetTag = BLUE_AUTO ? lane : 7 - lane;
+            AprilTagDetection detection = null;
+            if (detections != null)
             {
-
-                if (BLUE_AUTO? detection.id == lane: detection.id == lane + 3) //TODO: set of tags
+                for (AprilTagDetection dect : detections)
+                {
+                    if (dect.id == targetTag)
+                    {
+                        tagWeSee = targetTag;
+                        detection = dect;
+                        break;
+                    } else if (dect.id == 2 || dect.id == 5)
+                    {
+                        tagWeSee = dect.id;
+                        detection = dect;
+                    } else
+                    {
+                        tagWeSee = dect.id;
+                        detection = dect;
+                    }
+                }
+                if (detection != null)
                 {
                     if (detection.metadata != null)
                     {
@@ -287,12 +306,12 @@ public class CameraHardware
 
                         //Pose2d newPoses = ATLocalisation.getCorrectedPose(pose.getHeading(), detection.ftcPose.x, detection.ftcPose.y / 1.3285651049);
                         //telemetry.addData("Corrected pose", newPoses.toString());
-                        /*telemetry.addData("Detected X", tagX);
-                        telemetry.addData("Detected Y", tagY);
-                        telemetry.addData("Robot X", robotX);
-                        telemetry.addData("Robot Y", robotY);
-                        telemetry.addData("Corrected X", newX);
-                        telemetry.addData("Corrected Y", newY);*/
+                    /*telemetry.addData("Detected X", tagX);
+                    telemetry.addData("Detected Y", tagY);
+                    telemetry.addData("Robot X", robotX);
+                    telemetry.addData("Robot Y", robotY);
+                    telemetry.addData("Corrected X", newX);
+                    telemetry.addData("Corrected Y", newY);*/
                         //telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
                         poses.add(new Pose2d(newX + (-5.9675), newY + (3.325))); // heading?
                         break;
@@ -369,5 +388,14 @@ public class CameraHardware
     {
         return railExtension.getTargetTag();
     }
+    public void pauseAprilTagProcessor()
+    {
+        visionPortal.setProcessorEnabled(aprilTag, false);
+    }
+    public void resumeAprilTagProcessor()
+    {
+        visionPortal.setProcessorEnabled(aprilTag, true);
+    }
+
 }
 

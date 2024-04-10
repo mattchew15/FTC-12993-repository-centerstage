@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import org.firstinspires.ftc.teamcode.system.visiontest.AprilTagPipeline;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.opencv.core.Core;
@@ -23,6 +24,7 @@ import org.openftc.apriltag.AprilTagDetectorJNI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+@Deprecated
 
 public class RelocalizationAprilTag extends AprilTagPipeline
 {

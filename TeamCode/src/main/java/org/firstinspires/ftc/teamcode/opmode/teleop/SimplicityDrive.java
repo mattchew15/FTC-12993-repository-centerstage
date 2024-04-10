@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.Log;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
@@ -179,8 +180,9 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSequence();
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
-                /*
+
                 telemetry.addData("STATE", outtakeState);
+                /*
                 telemetry.addLine("");
                 telemetry.addData("liftTarget", liftTarget);
                 telemetry.addData("pitchTarget", pitchTarget);
@@ -191,10 +193,12 @@ public class SimplicityDrive extends LinearOpMode {
               //  telemetry.addData("PitchPositionDegrees", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
                 telemetry.addLine("");
               *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
-                telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
-                telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
-                telemetry.addData("headingPosition", headingPosition);
-
+                //telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
+                //telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
+                //telemetry.addData("headingPosition", headingPosition);
+                telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+                telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+                telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
 
 
                 /*
@@ -239,7 +243,7 @@ public class SimplicityDrive extends LinearOpMode {
                 intakeTarget = 0;
                 pitchTarget = PITCH_DEFAULT_DEGREE_TICKS;
 
-                intakeClipHoldorNotHold(-100);
+                intakeClipHoldorNotHold(-100, 8);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
                 if (delay(100)){
@@ -266,7 +270,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case INTAKE:
-                intakeClipHoldorNotHold(-100);
+                intakeClipHoldorNotHold(-100, 6);
                 intakeSubsystem.intakeSpin(1);
                 if (false){ // 10 amps is assumed stalling - should tune
                     intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.SPIT_OUT; // should initiate a reversing sequence
@@ -352,7 +356,7 @@ public class SimplicityDrive extends LinearOpMode {
                         }
                     }
                 }
-                intakeClipHoldorNotHold(-100); // backs up intake slides into robot
+                intakeClipHoldorNotHold(-100,8); // backs up intake slides into robot
 
                 break;
 
@@ -418,7 +422,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case OUTTAKE_ADJUST:
-                intakeClipHoldorNotHold(-100); // otherwise we are setting internalPID is still doing things
+                intakeClipHoldorNotHold(-10,8); // otherwise we are setting internalPID is still doing things
                 if (delay(500)){
                     intakeSubsystem.intakeSpin(0);
                 }else{
@@ -465,7 +469,6 @@ public class SimplicityDrive extends LinearOpMode {
                         outtakeState = OuttakeState.DEPOSIT;
                         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         gamepad2.rumbleBlips(2);
-                        reArrangePixels = false;
                     }
 
                 } else {
@@ -539,7 +542,10 @@ public class SimplicityDrive extends LinearOpMode {
 
             case RETURN:
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
-                intakeClipHoldorNotHold(-10);
+                intakeClipHoldorNotHold(-10,7);
+                if (reArrangePixels){
+                    RAIL_SERVO_POSITION = RAIL_CENTER_POS;
+                }
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
@@ -563,6 +569,7 @@ public class SimplicityDrive extends LinearOpMode {
                             straightenTurret = false;
                             initialHeightStored = false; // resets this each cycle
                             initialPivot = true; // so that it pivots out left as default
+                            reArrangePixels = false;
 
                             rightBumperPreExtend = false;
                             leftBumperPreExtend = false;
@@ -693,9 +700,9 @@ public class SimplicityDrive extends LinearOpMode {
         }
     }
 
-    public void intakeClipHoldorNotHold(int slideToPosition){
-        if (intakeSubsystem.intakeSlidePosition < 4) {
-            if (globalTimer - intakeClipTimer > 60){
+    public void intakeClipHoldorNotHold(int slideToPosition, int closeThreshold){
+        if (intakeSubsystem.intakeSlidePosition < closeThreshold) {
+            if (globalTimer - intakeClipTimer > 90){
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
                 intakeSubsystem.intakeSlideMotorRawControl(0);
             } else {
@@ -712,7 +719,7 @@ public class SimplicityDrive extends LinearOpMode {
     }
     public void intakeClipHoldorNotHoldWithoutPowerCutout(int slideToPosition){
         if (intakeSubsystem.intakeSlidePosition < 5) {
-            if (globalTimer - intakeClipTimer > 60){
+            if (globalTimer - intakeClipTimer > 100){
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING); // turn the intake slide pid running to pos off to save battery draw
                 intakeSubsystem.intakeSlideInternalPID(0,1);
             } else {
@@ -749,7 +756,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.outtakeResetState = OuttakeSubsystem.OuttakeResetState.UP; // starts the thing
         } else {
             if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2){
-                outtakeSubsystem.liftToInternalPID(0,1);
+                outtakeSubsystem.liftToInternalPID(0,0.3);
 
                 //outtakeSubsystem.liftMotorRawControl(0);
             } else {
@@ -846,7 +853,9 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     public void pivotAdjust(){
-        if (gamepad2.left_trigger > 0.2) {
+        if (gamepad2.dpad_down || (outtakeState == OuttakeState.DEPOSIT && reArrangePixels)){
+            pivotState = 6; // this case will get hit first
+        } else if (gamepad2.left_trigger > 0.2) {
             if (pivotFlipToggle.ToggleMode){
                 pivotState = 0;
                 topIsRight = true;
@@ -878,8 +887,6 @@ public class SimplicityDrive extends LinearOpMode {
             pivotState = 5;
             topIsRight = true;
             topIsLeft = false;
-        } else if (gamepad2.dpad_down){
-            pivotState = 6;
         }
     }
 
