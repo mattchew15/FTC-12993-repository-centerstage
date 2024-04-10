@@ -308,10 +308,14 @@ public class Back_RED_Stage extends LinearOpMode {
 
                 if (auto.drop(armHeight, false, delayTime)){
                     if (numCycles == 1){ // for very first cycle
-                        intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
-                        if (intakeTrajectoryAfterDrop != null){
-                            auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
+                        if (teamPropLocation == 1){
+                            auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage1);
+                        } else if (teamPropLocation == 2){
+                            auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage2);
+                        } else if (teamPropLocation == 3){
+                            auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
                         }
+                    //    intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
                     }
                     if (auto.globalTimer > 25500){
                         auto.parkIfStuck = true; // should force into park before doing another cycle
@@ -345,7 +349,6 @@ public class Back_RED_Stage extends LinearOpMode {
                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 178, -4,4);
                         //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
                         //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
-
                     }
                     if (outtakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);

@@ -296,8 +296,8 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                     }
-                    delayTime = 690;
-                    armHeight = 4;
+                    delayTime = frontOrBackAuto? 690:350;
+                    armHeight = 5;
                 } else if (numCycles == 2){
                     armHeight = 3;
                 } else if (numCycles == 3){
@@ -313,7 +313,7 @@ public class Front_RED_Stage extends LinearOpMode {
                             auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
                         }
                     }
-                    if (auto.globalTimer > 25500){
+                    if (auto.GlobalTimer.seconds() > 25.5){
                         auto.parkIfStuck = true; // should force into park before doing another cycle
                     } else {
                         currentState = AutoState.GRAB_OFF_STACK;
@@ -345,7 +345,6 @@ public class Front_RED_Stage extends LinearOpMode {
                          outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 178, -4,4);
                    //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
                    //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
-
                     }
                     if (outtakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);

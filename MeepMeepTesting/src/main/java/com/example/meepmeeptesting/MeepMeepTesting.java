@@ -12,7 +12,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(700);
         double frontOffset = 12;
-        Pose2d stacks = new Pose2d(32,-12,Math.toRadians(180));
+        Pose2d stacks = new Pose2d(36,-21,Math.toRadians(180));
         Pose2d backdrop = new Pose2d(28,-36,Math.toRadians(180)); // not necessary lol
         Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180));
 
@@ -25,9 +25,13 @@ public class MeepMeepTesting {
 //                                .lineToSplineHeading(new Pose2d(28, (-28), Math.toRadians(-5)))
 //
 //                                .lineToSplineHeading(new Pose2d(32, -28, Math.toRadians(-5)))
-
+/*
                                 .lineToSplineHeading(new Pose2d(22, -12, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(22, -12), Math.toRadians(-7)) // end tangent of path
+                                .splineToConstantHeading(new Vector2d(22, -12), Math.toRadians(-7)) // end tangent of path*/
+
+                                /*.lineToSplineHeading(new Pose2d(27, -28, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(-10, -28), Math.toRadians(180)) // end tangent affects path alot\
+                                .lineToSplineHeading(new Pose2d(-26, -28, Math.toRadians(180))) // seperates trajectories*/
 
 
 
@@ -37,22 +41,30 @@ public class MeepMeepTesting {
                                 /*
                                 .lineToLinearHeading(new Pose2d(-50, -32, Math.toRadians(180)))
                                 // truss first spline for middle yellow
+
                                 .splineToConstantHeading(new Vector2d(-40, (-28 - 22)), Math.toRadians(-35))
                                 .splineToConstantHeading(new Vector2d(-18, (-32 - 22)), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(-15, -32 - 22, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(36, (-18 - 22)), Math.toRadians(55))
 
                                  */
-
-
-                                /*
-                                .lineToSplineHeading(new Pose2d(24.1, (-32 + 4), Math.toRadians(179)))
-                                .splineToConstantHeading(new Vector2d(20, (-32 + 10)), Math.toRadians(110))
-                                .splineToConstantHeading(new Vector2d(6, (-32 + 26.2)), Math.toRadians(180))
-                                .lineToSplineHeading(new Pose2d(5, (-32 + 26.2), Math.toRadians(180)))
+                                // -29
+                                /*.splineToConstantHeading(new Vector2d(28, (-32 + 10)), Math.toRadians(110))
+                                .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180))) // slower portion of spline
-                                 */
+                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
+
+                                // -21
+                                .splineToConstantHeading(new Vector2d(27, (-32 + 10 + 8)), Math.toRadians(110))
+                                .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
+                                .lineToSplineHeading(new Pose2d(-17, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
+
+                                //-15
+                              /*  .splineToConstantHeading(new Vector2d(24, (-32 + 25)), Math.toRadians(170))
+                                .splineToConstantHeading(new Vector2d(10, (-32 + 26.2)), Math.toRadians(180))
+                                .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
                                 /*
                                 .lineToSplineHeading(new Pose2d(20, -32, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(-28, -29), Math.toRadians(180)) // end tangent affects path alot\

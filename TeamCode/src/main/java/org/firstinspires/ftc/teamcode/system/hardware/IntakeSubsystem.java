@@ -42,10 +42,10 @@ public class IntakeSubsystem
 
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.58,
+            INTAKE_ARM_TOP_POS = 0.49,
             INTAKE_ARM_VERY_TOP_POS = 0.35,
-            INTAKE_ARM_FOUR_POS = 0.64,
-            INTAKE_ARM_MIDDLE_POS = 0.76,
+            INTAKE_ARM_FOUR_POS = 0.57,
+            INTAKE_ARM_MIDDLE_POS = 0.68,
             INTAKE_ARM_BASE_POS = 0.91;
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.905,
@@ -142,7 +142,7 @@ public class IntakeSubsystem
     public void intakeHardwareSetup(){
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
        // IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeSpinState = IntakeSpinState.INTAKE;
+       //intakeSpinState = IntakeSpinState.INTAKE;
         IntakeArmServo.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -211,7 +211,7 @@ public class IntakeSubsystem
 
     // methods should be camel caps
 
-    public void intakePixels(double timer) {
+   /* public void intakePixels(double timer) {
         switch (intakeSpinState) {
             case INTAKE:
                 intakeSpin(1);
@@ -227,7 +227,7 @@ public class IntakeSubsystem
                 }
                 break;
         }
-    }
+    }*/
 
 
     public void intakeSpin(double speedDirection){
