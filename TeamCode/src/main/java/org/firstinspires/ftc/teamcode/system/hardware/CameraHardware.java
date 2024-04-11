@@ -186,7 +186,6 @@ public class CameraHardware
                 // new camera calibration Focals (pixels) - Fx: 905.033 Fy: 905.033 Optical center - Cx: 642.569 Cy: 359.582
                 .setLensIntrinsics(905.033, 905.033, 642.569, 359.582)
                 // ... these parameters are fx, fy, cx, cy.
-
                 .build();
         preloadDetection = new PreloadDetectionPipeline(aprilTag, telemetry);
         railExtension = new RailExtensionPipelineTemp(aprilTag, telemetry);
@@ -213,7 +212,7 @@ public class CameraHardware
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-        visionPortal.stopLiveView(); // idk this should work ig tbh why does it work like this i am literally setting it to false and this sh
+        //visionPortal.stopLiveView(); // idk this should work ig tbh why does it work like this i am literally setting it to false and this sh
         //FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 0);
         library = getCenterStageTagLibrary();
         visionPortal.setProcessorEnabled(preloadDetection, true);

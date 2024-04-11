@@ -20,6 +20,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
+import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
 
 @Config
 @TeleOp(name="Test Rail", group = "Test")
@@ -41,6 +42,7 @@ public class TestRelocalization extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
+        setBlueAuto();
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         //relocationV2Pipeline = new RelocationV2Pipeline();
         //relocationV2Pipeline.setTelemetry(telemetry);

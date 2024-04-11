@@ -29,7 +29,6 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
     AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,3);
     private double railTarget;
 
-
     enum AutoState {
         DELAY,
         PRELOAD_DRIVE,
@@ -89,7 +88,7 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(false, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
+        auto.afterWaitForStart(!frontOrBackAuto, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
         //auto.autoTrajectories.drive.setPoseEstimate(auto.autoTrajectories.startPoseBack);
 
         if (frontOrBackAuto){
@@ -127,7 +126,10 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
     }
 
     public void autoSequence(){
-        auto.goToPark(currentState == AutoState.IDLE,2);
+        if (auto.goToPark(currentState == AutoState.IDLE,2)){
+            currentState = AutoState.IDLE;
+        }
+
         switch (currentState) {
             case DELAY_BACK:
                 if(auto.delayState(0)){
@@ -156,6 +158,8 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
                 break;
 
 
+
+
             case DELAY:
                 if(auto.delayState(0)){
                     if (teamPropLocation == 1){
@@ -172,7 +176,7 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(false, true,950, 1)){
+                if(auto.preloadDriveState(false, true,950, 1, false)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
@@ -302,10 +306,13 @@ public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
                 double delayTime = 90;
                 int armHeight = 0;
                 if (numCycles == 1){
+                    if (!frontOrBackAuto){
+                        auto.intakeSubsystem.intakeSlideInternalPID(0,1);
+                    }
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                     }
-                    delayTime = frontOrBackAuto? 690:350;
+                    delayTime = frontOrBackAuto? 690:100;
                     armHeight = 5;
                 } else if (numCycles == 2){
                     armHeight = 3;

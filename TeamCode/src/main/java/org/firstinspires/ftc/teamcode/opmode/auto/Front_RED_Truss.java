@@ -127,7 +127,9 @@ public class Front_RED_Truss extends LinearOpMode {
     }
 
     public void autoSequence(){
-        auto.goToPark(currentState == AutoState.IDLE,1);
+        if (auto.goToPark(currentState == AutoState.IDLE,1)){
+            currentState = AutoState.IDLE;
+        }
         switch (currentState) {
             case DELAY_BACK:
                 if(auto.delayState(0)){
@@ -172,7 +174,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(true, true,1000,1)){
+                if(auto.preloadDriveState(true, true,1000,1, false)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
@@ -273,10 +275,10 @@ public class Front_RED_Truss extends LinearOpMode {
                         // intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,148,1,0.9);
                         // this cycle runs on the drop case now
                     } else if (numCycles == 2){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,148,1,positiveDriftOffset);
-                        //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,148,1,positiveDriftOffset,-36);
+                        //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);36
                     } else if (numCycles == 3){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6,143,1,positiveDriftOffset);
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6,143,1,positiveDriftOffset,-36);
                         //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     }
                     auto.resetPosWithAprilTags(1);
@@ -316,7 +318,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 if (auto.drop(armHeight,auto.goToParkAfterOuttaking, delayTime)){
                     if (numCycles == 1){ // for very first cycle
-                        intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,150,1,positiveDriftOffset);
+                        intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,150,1,positiveDriftOffset,-36);
                         if (intakeTrajectoryAfterDrop != null){
                             auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
                         }
@@ -347,8 +349,9 @@ public class Front_RED_Truss extends LinearOpMode {
                         currentState = AutoState.GO_BACK_FOR_WHITES;
                     } else {
                         currentState = AutoState.TRANSFER_PIXEL;
+
                         Trajectory outtakeTrajectory;
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 5, 6, 1);
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 5, 6, 1,2);
                         auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                     }
                 }
@@ -357,7 +360,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 if(auto.reExtendSlidesForTrussSide()){
                     currentState = AutoState.TRANSFER_PIXEL;
                     Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,5,6, 1);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,5,6, 1,2);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;

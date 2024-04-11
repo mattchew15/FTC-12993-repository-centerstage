@@ -125,7 +125,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(true,true,1000,0.7)){
+                if(auto.preloadDriveState(true,true,1000,0.7, true)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
 

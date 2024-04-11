@@ -47,6 +47,7 @@ public class FullSystemTest extends LinearOpMode
         driveBase.drivebaseSetup();
         outtakeSubsystem.hardwareSetup();
         intakeSubsystem.intakeHardwareSetup();
+        outtakeSubsystem.cacheInitialPitchValue();
         SampleMecanumDriveThread sampleMecanumDrive = new SampleMecanumDriveThread(hardwareMap);
         sampleMecanumDrive.startImuThread(this);
 

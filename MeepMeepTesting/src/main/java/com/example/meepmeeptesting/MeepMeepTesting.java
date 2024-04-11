@@ -22,6 +22,19 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(stacks)
 
+                                //.lineToSplineHeading(new Pose2d(35, -36, Math.toRadians(180)))
+                                //.splineToConstantHeading(new Vector2d(-16.5, -36), Math.toRadians(180)) // end tangent affects path alot\
+
+                                /*.addSpatialMarker(new Vector2d(-24.5, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
+                                    extendSlidesAroundTruss = true;
+                                })*/
+                                /* .addSpatialMarker(new Vector2d(-11, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
+                                     extendSlidesAroundStage = true;
+                                 })
+
+                                 */
+                                //.splineTo(new Vector2d(-36,-32), Math.toRadians(155)) // roughly 160
+
 //                                .lineToSplineHeading(new Pose2d(28, (-28), Math.toRadians(-5)))
 //
 //                                .lineToSplineHeading(new Pose2d(32, -28, Math.toRadians(-5)))
@@ -55,7 +68,7 @@ public class MeepMeepTesting {
                                 .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
 
                                 // -21
-                                .splineToConstantHeading(new Vector2d(27, (-32 + 10 + 8)), Math.toRadians(110))
+                                .splineToConstantHeading(new Vector2d(23, (-32 + 10 + 8)), Math.toRadians(110))
                                 .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-17, (-32 + 26.2), Math.toRadians(180)))
                                 .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))

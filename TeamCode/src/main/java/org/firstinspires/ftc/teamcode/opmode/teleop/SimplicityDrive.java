@@ -157,7 +157,7 @@ public class SimplicityDrive extends LinearOpMode {
             initialPivot = true;
             transferEarly = false;
             armTarget = 3;
-            backdropRelativeHeight = 15; // change this variable for height
+            backdropRelativeHeight = 12; // change this variable for height
             outtakeSubsystem.cacheInitialPitchValue();
             RAIL_SERVO_POSITION = RAIL_CENTER_POS;
 

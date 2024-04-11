@@ -137,8 +137,8 @@ public class IntakeSubsystem
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
         ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteLimitSwitch");
 
-        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 100);
-        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 100);
+        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 90);
+        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 90);
     }
 
     public void intakeHardwareSetup(){
