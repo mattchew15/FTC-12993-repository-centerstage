@@ -213,6 +213,7 @@ public class CameraHardware
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
+        visionPortal.stopLiveView(); // idk this should work ig tbh why does it work like this i am literally setting it to false and this sh
         //FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 0);
         library = getCenterStageTagLibrary();
         visionPortal.setProcessorEnabled(preloadDetection, true);
@@ -420,9 +421,9 @@ public class CameraHardware
     public void setDefaultRailPos(double defaultTehe){
         railExtension.setDefault(defaultTehe);
     }
-    public double getSeenTags()
+    public double getNumSeenTags()
     {
-        return railExtension.getTagWeSee();
+        return aprilTag.getDetections().size();
     }
     public double getTargetTag()
     {
