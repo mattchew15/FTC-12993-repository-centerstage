@@ -66,7 +66,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
         } //
 
         // generates trajectories for everything
-        auto.initAutoHardware(hardwareMap,this,frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
+        auto.initAutoHardware(hardwareMap,this);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -86,7 +86,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(!frontOrBackAuto);
+        auto.afterWaitForStart(!frontOrBackAuto, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
         if (frontOrBackAuto){
             currentState = AutoState.DELAY;
         } else {

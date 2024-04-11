@@ -55,26 +55,26 @@ public class AutoSequences {
         this.trussMiddleStage = trussMiddleStage;
     }
 
-    public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode, Pose2d startPose){
+    public void initAutoHardware (HardwareMap hardwareMap, LinearOpMode opMode){
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         autoTrajectories.init(hardwareMap, opMode);
         cameraHardware.initWebcam(hardwareMap, telemetry);
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
-        autoTrajectories.drive.setPoseEstimate(startPose);
+        intakeSubsystem.initIntake(hardwareMap);
+        outtakeSubsystem.initOuttake(hardwareMap);
     }
 
     public void intializationLoop (boolean intakeArmTop){
         //cameraHardware.pauseBackWebcam();
-
         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         if (intakeArmTop){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         } else {
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+            telemetry.addLine("ArmToBase");
         }
-
         //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
         outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
@@ -89,10 +89,10 @@ public class AutoSequences {
 
     }
 
-    public void afterWaitForStart( boolean pausePreloadProcessor){
+    public void afterWaitForStart( boolean pausePreloadProcessor, Pose2d startPose){
 
         GlobalTimer = new ElapsedTime(System.nanoTime());
-
+        autoTrajectories.drive.setPoseEstimate(startPose);
         if (pausePreloadProcessor){
             cameraHardware.pausePreloadProcessor();
         }
@@ -103,8 +103,6 @@ public class AutoSequences {
 
         goToPark = true;
 
-        intakeSubsystem.intakeHardwareSetup();
-        outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
         intakeSubsystem.intakeSlideMotorEncodersReset();
         outtakeSubsystem.cacheInitialPitchValue();
@@ -161,7 +159,7 @@ public class AutoSequences {
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
-        if (delay(railDelay)){
+        if (Math.abs(yPosition) < 38){
             if (railLeftOrRight){
                 outtakeSubsystem.outtakeRailState(S != 1? OuttakeSubsystem.OuttakeRailState.RIGHT: OuttakeSubsystem.OuttakeRailState.LEFT);
             } else {
@@ -302,8 +300,8 @@ public class AutoSequences {
         return false;
     }
     public boolean reExtendSLidesForYellow(double delayTimeForSlides, double slideExtendSpeed){
-        intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         if (delay(250)){ // limit switches don't touch in this case
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
             if (trussMiddleStage == 3){
                 preExtendIntakeSlidesStage(slideExtendSpeed,80);
             }
@@ -315,7 +313,6 @@ public class AutoSequences {
             if (delay(delayTimeForSlides)){
                 //if (delay(delayTimeForIntake)){ // ensure pixels are in robot
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
-                    resetTimer();
                     return true;
                // }
             } else {

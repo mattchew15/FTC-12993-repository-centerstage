@@ -464,7 +464,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
 
                 if ((gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)) || (delay(300) && reArrangePixels)) {
-                    if (((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition)) <  5)|| reArrangePixels){
+                    if (((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition)) < 5) || reArrangePixels){
                         resetTimer();// reset timer
                         outtakeState = OuttakeState.DEPOSIT;
                         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
@@ -475,20 +475,16 @@ public class SimplicityDrive extends LinearOpMode {
                      if (gamepad1.right_stick_button){
                          if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
-                             //telemetry.addLine("We just dropped the top");
                          } else if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
-                             //telemetry.addLine("We just dropped the bottom");
                          }
                          droppedRight = true;
                      }
                      if (gamepad1.left_stick_button) {
                          if (topIsLeft){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.TOP_OPEN);
-                             //telemetry.addLine("We just dropped the top");
                          } else if (topIsRight){
                              outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.BOTTOM_OPEN);
-                             //telemetry.addLine("We just dropped the bottom");
                          }
                          droppedLeft = true;
                      }
@@ -519,6 +515,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (!reArrangePixels){
                     increaseHeight = true; // don't increase height if we have just rearranged pixels
                 }
+
                 /*
                 if (outtakeSubsystem.pitchEncoderPosition > 48 || (droppedRight && droppedLeft)? delay() 500:delay() 150){ // test if manual reset is ok
                     if (!gamepad1.right_bumper){
@@ -585,7 +582,7 @@ public class SimplicityDrive extends LinearOpMode {
                     }
                 }
                 if (pitchTarget > 36){
-                    if (delay(220)){ // if we are pitching down wait a little bit
+                    if (delay(250)){ // if we are pitching down wait a little bit
                         outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                     }
                 } else {
@@ -756,7 +753,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.outtakeResetState = OuttakeSubsystem.OuttakeResetState.UP; // starts the thing
         } else {
             if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2){
-                outtakeSubsystem.liftToInternalPID(0,0.3);
+                outtakeSubsystem.liftToInternalPID(0,1);
 
                 //outtakeSubsystem.liftMotorRawControl(0);
             } else {

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 
+import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,7 +32,9 @@ public class TestPreload extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
+        setBlueAuto();
+        //cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
+        cameraHardware.initWebcam(hardwareMap, telemetry);
         drive = new SampleMecanumDrive(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();

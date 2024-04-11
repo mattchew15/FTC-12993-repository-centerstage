@@ -71,7 +71,7 @@ public class PIDMotorTest extends LinearOpMode {
 
                 GlobalTimer = new ElapsedTime(System.nanoTime());
                 GlobalTimer.reset();
-               // intakeSubsystem.intakeHardwareSetup();
+                intakeSubsystem.intakeHardwareSetup();
                 outtakeSubsystem.hardwareSetup();
                 driveBase.drivebaseSetup();
                 outtakeSubsystem.encodersReset();
@@ -106,10 +106,12 @@ public class PIDMotorTest extends LinearOpMode {
 
                 else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
-                    outtakeSubsystem.liftToInternalPID(0, 1);
+                   // outtakeSubsystem.liftToInternalPID(0, 1);
+                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 }else if (gamepad1.y){
                     //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
-                    outtakeSubsystem.liftToInternalPID(5, 1);
+                   // outtakeSubsystem.liftToInternalPID(5, 1);
+                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
                 }
 
 

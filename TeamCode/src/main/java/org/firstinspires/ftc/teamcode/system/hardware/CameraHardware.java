@@ -55,7 +55,7 @@ public class CameraHardware
     private int tagWeSee;
     private int targetTag;
 
-    public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
+    /*public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
     {
         bluePipeline = new YCrCbBlueTeamPropDetectorPipeline(telemetry);
         redPipeline = new YCrCbRedTeamPropDetectorPipeline(telemetry);
@@ -77,7 +77,48 @@ public class CameraHardware
             public void onError(int errorCode) {
             }
         });
+    }*/
+    public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
+    {
+        if (BLUE_AUTO)
+        {
+            bluePipeline = new YCrCbBlueTeamPropDetectorPipeline(telemetry);
+            int cameraMonitorViewId;
+            cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+            sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam Blue"), cameraMonitorViewId);
+            sideWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    sideWebcam.setPipeline(bluePipeline);
+                    sideWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN);
+                }
+                @Override
+                public void onError(int errorCode) {
+                }
+            });
+
+        }
+        else
+        {
+            redPipeline = new YCrCbRedTeamPropDetectorPipeline(telemetry);
+            int cameraMonitorViewId;
+            cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+            sideWebcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam Red"), cameraMonitorViewId);
+            sideWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    sideWebcam.setPipeline(redPipeline);
+                    sideWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT);
+                }
+                @Override
+                public void onError(int errorCode) {
+                }
+            });
+
+        }
+
     }
+
 
 /*    public void initBackWebcamEOCV(HardwareMap hardwareMap, int purplePlacement)
     {
@@ -160,7 +201,6 @@ public class CameraHardware
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
         builder.enableLiveView(false);
-
         /*builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG); // higher fps
 
         builder.setAutoStopLiveView(false);*/

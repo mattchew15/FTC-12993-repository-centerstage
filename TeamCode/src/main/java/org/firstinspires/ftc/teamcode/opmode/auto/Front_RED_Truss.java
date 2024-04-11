@@ -18,7 +18,7 @@ public class Front_RED_Truss extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double positiveDriftOffset = 0;
-    double delayForYellow = 8;
+    double delayForYellow = 0; // delay is zero for now
     boolean frontOrBackAuto;
 
     //Accessories
@@ -64,7 +64,7 @@ public class Front_RED_Truss extends LinearOpMode {
             module.clearBulkCache();
         } //
 
-        auto.initAutoHardware(hardwareMap,this, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
+        auto.initAutoHardware(hardwareMap,this);
 
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
@@ -84,7 +84,7 @@ public class Front_RED_Truss extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         // runs instantly once
-        auto.afterWaitForStart(!frontOrBackAuto);
+        auto.afterWaitForStart(!frontOrBackAuto, frontOrBackAuto? auto.autoTrajectories.startPoseFront: auto.autoTrajectories.startPoseBack);
         if (frontOrBackAuto){
             currentState = AutoState.DELAY;
         } else {
@@ -208,6 +208,7 @@ public class Front_RED_Truss extends LinearOpMode {
                             startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple3;
                         }
                         auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
+                        auto.resetTimer(); // we have to reset the timer here because of yellow delay
                         currentState = AutoState.TRANSFER_PIXEL;
                     }
                 }

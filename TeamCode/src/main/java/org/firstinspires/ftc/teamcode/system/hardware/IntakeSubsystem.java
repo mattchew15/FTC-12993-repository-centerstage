@@ -48,9 +48,10 @@ public class IntakeSubsystem
             INTAKE_ARM_MIDDLE_POS = 0.68,
             INTAKE_ARM_BASE_POS = 0.91;
     public static double
-            INTAKE_CHUTE_ARM_READY_POS = 0.905,
-            INTAKE_CHUTE_ARM_HALFUP_POS = 0.38,
-            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.365;
+            INTAKE_CHUTE_ARM_READY_POS = 0.918,
+
+            INTAKE_CHUTE_ARM_TRANSFER_POS = 0.4,
+            INTAKE_CHUTE_ARM_HALFUP_POS = INTAKE_CHUTE_ARM_TRANSFER_POS;
     public static double
             INTAKE_CLIP_HOLDING_POS = 0.74,
             INTAKE_CLIP_OPEN_POS = 0.45;
@@ -131,6 +132,7 @@ public class IntakeSubsystem
         IntakeColourSensorFront = hwMap.get(ColorSensor.class,"IntakeColourSensorFront");
         IntakeColourSensorBack = hwMap.get(ColorSensor.class,"IntakeColourSensorBack");
         //IntakeChuteArmEncoder = hwMap.get(AnalogInput.class, "IntakeChuteArmEncoder");
+
         RightArmLimitSwitch = hwMap.get(DigitalChannel.class, "RightArmLimit");
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
         ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteLimitSwitch");
@@ -200,7 +202,7 @@ public class IntakeSubsystem
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 350) && (backColourSensorValue > 350); // should work
+        return (frontColourSensorValue > 500) && (backColourSensorValue > 500); // should work
     }
     /*
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly
@@ -272,30 +274,28 @@ public class IntakeSubsystem
     }
 
     public void intakeArmServoState(IntakeArmServoState state) {
-        double arm = 0;
         switch (state) {
             case TOP:
-                arm = INTAKE_ARM_TOP_POS;
+                prevArm = servoCaching(INTAKE_ARM_TOP_POS, prevArm, EPSILON_DELTA, IntakeArmServo);
                 //IntakeArmServo.setPosition(INTAKE_ARM_TOP_POS);
                 break;
             case MIDDLE:
-                arm = INTAKE_ARM_MIDDLE_POS;
+                prevArm = servoCaching(INTAKE_ARM_MIDDLE_POS, prevArm, EPSILON_DELTA, IntakeArmServo);
                 //IntakeArmServo.setPosition(INTAKE_ARM_MIDDLE_POS);
                 break;
             case VERY_TOP:
-                arm = INTAKE_ARM_VERY_TOP_POS;
-                IntakeArmServo.setPosition(INTAKE_ARM_VERY_TOP_POS);
+                prevArm = servoCaching(INTAKE_ARM_VERY_TOP_POS, prevArm, EPSILON_DELTA, IntakeArmServo);
+                //IntakeArmServo.setPosition(INTAKE_ARM_VERY_TOP_POS);
                 break;
             case FOUR:
-                arm = INTAKE_ARM_FOUR_POS;
+                prevArm = servoCaching(INTAKE_ARM_FOUR_POS, prevArm, EPSILON_DELTA, IntakeArmServo);
                 //IntakeArmServo.setPosition(INTAKE_ARM_FOUR_POS);
                 break;
             case BASE:
-                arm = INTAKE_ARM_BASE_POS;
+                prevArm = servoCaching(INTAKE_ARM_BASE_POS, prevArm, EPSILON_DELTA, IntakeArmServo);
                 //IntakeArmServo.setPosition(INTAKE_ARM_BASE_POS);
                 break;
         }
-        prevArm = servoCaching(arm, prevArm, EPSILON_DELTA, IntakeArmServo);
     }
 
     public void intakeChuteArmServoState(IntakeChuteServoState state) {

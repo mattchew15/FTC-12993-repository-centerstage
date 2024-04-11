@@ -115,7 +115,7 @@ public class OuttakeSubsystem
     public PIDController pitchFTCLibPID = new PIDController(PitchFTCLIBKp,PitchFTCLIBKi,PitchFTCLIBKd);
     public PIDController liftFTCLibPID = new PIDController(LiftFTCLIBKp,LiftFTCLIBKi,LiftFTCLIBKd);
 
-    final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(2); // could change this to a number in ticks
+    final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(1.5); // could change this to a number in ticks
     final double LIFT_THRESHOLD_DISTANCE = inchesToTicksSlidesMotor(0.4);
 
     public int pitchTarget;
