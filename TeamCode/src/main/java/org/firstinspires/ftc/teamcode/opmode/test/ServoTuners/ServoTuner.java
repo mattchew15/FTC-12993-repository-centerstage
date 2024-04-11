@@ -17,11 +17,11 @@ public class ServoTuner extends LinearOpMode {
     DriveBase driveBase = new DriveBase();
 
     public static double
-            DRONE_POS = 0.5,
-            INTAKE_ARM_POS = 0.5,
-            INTAKE_CHUTE_ARM_POS = 0.5,
-            INTAKE_CLIP_POS = 0.5,
-            INTAKE_PIXEL_HOLDER_POS = 0.5,
+            DRONE_POS = 0.43,
+            INTAKE_ARM_POS = 0.91,
+            INTAKE_CHUTE_ARM_POS = 0.905,
+            INTAKE_CLIP_POS = 0.45,
+            INTAKE_PIXEL_HOLDER_POS = 0.255,
             OUTTAKE_PITCH_POS = 0.5,
             MINI_TURRET_POS = 0.5,
             OUTTAKE_RAIL_POS = 0.5,
@@ -39,11 +39,11 @@ public class ServoTuner extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            //driveBase.DroneServo.setPosition(DRONE_POS);
-            //intakeSubsystem.IntakeArmServo.setPosition(INTAKE_ARM_POS);
-            //intakeSubsystem.IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_POS);
-            //intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
-            //intakeSubsystem.IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_POS);
+            driveBase.DroneServo.setPosition(DRONE_POS);
+            intakeSubsystem.IntakeArmServo.setPosition(INTAKE_ARM_POS);
+            intakeSubsystem.IntakeChuteArmServo.setPosition(INTAKE_CHUTE_ARM_POS);
+            intakeSubsystem.IntakeClipServo.setPosition(INTAKE_CLIP_POS);
+            intakeSubsystem.IntakePixelHolderServo.setPosition(INTAKE_PIXEL_HOLDER_POS);
             outtakeSubsystem.OuttakePitchServo.setPosition(OUTTAKE_PITCH_POS);
             outtakeSubsystem.MiniTurretServo.setPosition(MINI_TURRET_POS);
             outtakeSubsystem.OuttakeRailServo.setPosition(OUTTAKE_RAIL_POS);

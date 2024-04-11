@@ -15,11 +15,11 @@ public class IntakeDBServoTuner extends LinearOpMode {
     DriveBase driveBase = new DriveBase();
 
     public static double
-            DRONE_POS = 0.5,
-            INTAKE_ARM_POS = 0.5,
-            INTAKE_CHUTE_ARM_POS = 0.5,
-            INTAKE_CLIP_POS = 0.5,
-            INTAKE_PIXEL_HOLDER_POS = 0.5;
+            DRONE_POS = 0.43,
+            INTAKE_ARM_POS = 0.91,
+            INTAKE_CHUTE_ARM_POS = 0.905,
+            INTAKE_CLIP_POS = 0.45,
+            INTAKE_PIXEL_HOLDER_POS = 0.255;
 
     @Override
     public void runOpMode() {
