@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Front Blue Truss", group = "Autonomous")
+@Autonomous(name = "Front Blue Truss Auto", group = "Autonomous")
 public class Front_BLUE_Truss extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;

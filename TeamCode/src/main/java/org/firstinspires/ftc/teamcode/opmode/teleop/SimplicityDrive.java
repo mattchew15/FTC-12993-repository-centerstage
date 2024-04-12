@@ -196,9 +196,10 @@ public class SimplicityDrive extends LinearOpMode {
                 //telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 //telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
                 //telemetry.addData("headingPosition", headingPosition);
-                telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+
+                //telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
                 telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
-                telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
+                //telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
 
 
                 /*
@@ -644,7 +645,13 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.liftToInternalPID(5,1); // not quite in
                 intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 fineAdjustIntakeSlidesClimb(gamepad1.left_trigger - gamepad1.right_trigger);
-                intakeSubsystem.intakeSlideInternalPID(550 + (int)intakeSlideAdjustTarget,1);
+                if (delay(100)){
+                    if (intakeSubsystem.intakeSlideTargetReached()){ // slows the climb down a teeny tiny little bit
+                        intakeSubsystem.intakeSlideInternalPID(550 + (int)intakeSlideAdjustTarget,1);
+                    } else {
+                        intakeSubsystem.intakeSlideInternalPID(550 + (int)intakeSlideAdjustTarget,0.4);
+                    }
+                }
                 /*
                 if (!climbAdjustIntakeSlides){
                     intakeSubsystem.intakeSlideInternalPID(300,1);

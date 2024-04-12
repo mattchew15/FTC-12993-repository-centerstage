@@ -87,7 +87,7 @@ public class AutoTrajectories {
         firstDriveThroughTrussAfterPurple2,firstDriveThroughTrussAfterPurple1,firstDriveThroughTrussAfterPurple3,
         PreloadDrive2FrontStage, PreloadDrive1FrontStage,PreloadDrive3FrontStage
         ,firstDriveThroughStageAfterPurple2, firstDriveThroughStageAfterPurple3, firstDriveThroughStageAfterPurple1,
-        driveIntoStacksAfterYellowStage2, driveIntoStacksAfterYellowStage1, driveIntoStacksAfterYellowStage3;
+        driveIntoStacksAfterYellowStage2, driveIntoStacksAfterYellowStage1, driveIntoStacksAfterYellowStage3,PreloadDrive3FrontFirst,PreloadDrive3FrontSecond;
 
     public void init(HardwareMap hardwareMap, LinearOpMode opMode)
     {
@@ -221,6 +221,14 @@ public class AutoTrajectories {
                     dropPurple = true;
                 })
                 .build();
+
+        PreloadDrive3FrontFirst = drive.trajectoryBuilder(startPoseFront)
+                .lineToLinearHeading(new Pose2d(-22, -24*S, Math.toRadians(180)*S))
+                .build();
+        PreloadDrive3FrontSecond = drive.trajectoryBuilder(PreloadDrive3FrontFirst.end())
+                .lineToLinearHeading(new Pose2d(-60, -9*S, Math.toRadians(176)*S))
+                .build();
+
         firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
 
                 .lineToSplineHeading(new Pose2d(20, -9*S, Math.toRadians(180)*S))
