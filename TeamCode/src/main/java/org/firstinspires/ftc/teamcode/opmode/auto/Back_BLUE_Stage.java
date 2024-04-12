@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
 
-@Autonomous(name = "BackStage Blue 2+10", group = "Autonomous") // Front Stage 2+9
+@Autonomous(name = "Back Blue Stage Auto", group = "Autonomous") // Front Stage 2+9
 public class Back_BLUE_Stage extends LinearOpMode { //Front_RED_Stage
 
     int numCycleForDifferentLane = 0;

@@ -215,6 +215,78 @@ public class AutoSequences {
         }
         return false;
     }
+
+    public boolean preloadDriveState3 (boolean railLeftOrRight, boolean preDropPurple, double railDelay, double slideExtendSpeed, boolean preExtendSlides){
+        outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
+        intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
+        intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
+        intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+
+        outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+        if (Math.abs(yPosition) < 38){
+            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
+            outtakeSubsystem.setOuttakePitchPurplePixelPosition();
+            // turret deposit logic
+        }
+
+        if (!autoTrajectories.drive.isBusy()){
+            outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+            outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+
+            resetTimer();
+            return true;
+        }
+        return false;
+    }
+    public boolean afterPreloadDriveState3(double delayTimeForIntake, double slideExtendSpeed, boolean reExtendSlides){
+
+        outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+        outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+        if (outtakeSubsystem.pitchPosition > 23 && globalTimer-autoTimer>60){
+            outtakeSubsystem.liftToInternalPID(-0.2,1);
+        }
+        if (!autoTrajectories.drive.isBusy()){
+            resetTimer();
+            return true;
+
+        }
+        return false;
+    }
+
+    public boolean intakeTopPixel3 (double delayTimeForIntake, double slideExtendSpeed, boolean reExtendSlides){
+        intakeSubsystem.intakeSpin(1);
+        if (trussMiddleStage == 3){
+            preExtendIntakeSlidesStage(slideExtendSpeed,0);
+        }
+        else{
+            preExtendIntakeSlides(slideExtendSpeed,0);
+        }
+        if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches()){ // limit switches don't touch in this case
+            if (delay(delayTimeForIntake)){ // ensure pixels are in robot
+                intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
+                if(reExtendSlides && !intakeSubsystem.pixelsInIntake()){
+                    intakeSubsystem.intakeSlideInternalPID(0,1);
+                    goBackForYellowPixel = true;
+                }
+                resetTimer();
+                return true;
+            }
+        } else {
+            resetTimer(); // spams timer reset - sneaky trick
+            intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
+        }
+        outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
+        outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+        outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+        if (outtakeSubsystem.pitchPosition > 23 && globalTimer-autoTimer>60){
+            outtakeSubsystem.liftToInternalPID(-0.2,1);
+        }
+        return false;
+    }
+
+
+
     public boolean preloadDriveStateBack(){
         outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
         if (delay(300)) {
@@ -508,7 +580,7 @@ public class AutoSequences {
             telemetry.addLine("WE DO NOT WANT TO EXTEND OUR SLIDES HERE");
         } else if (switchingLanes){
             if (numCycles == (numCyclesForSideways + 1)){// don't extend slides for one cycle
-                if (xPosition < 14) { // not for the last case??
+                if (xPosition < 18) { // not for the last case??
                     intakeSubsystem.intakeSlideInternalPID(INTAKE_SLIDE_AUTO_LONG_PRESET, 1);
                 }
             } else if (numCycles >= numCyclesForTurnIntoStacks){
