@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Front Red Stage Auto", group = "Autonomous")
+@Autonomous(name = "Front Blue Stage Auto", group = "Autonomous")
 public class Front_BLUE_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
@@ -48,7 +48,9 @@ public class Front_BLUE_Stage extends LinearOpMode {
         IDLE,
         DELAY_BACK,
         PRELOAD_DRIVE_BACK,
-        PLACE_AND_INTAKE_BACK
+        PLACE_AND_INTAKE_BACK,
+        PRELOAD_DRIVE_CASE_3,
+        AFTER_PRELOAD_DRIVE_3
     }
 
     AutoState currentState;
@@ -71,11 +73,11 @@ public class Front_BLUE_Stage extends LinearOpMode {
         while (!isStarted()) { // initialization loop
             auto.intializationLoop(frontOrBackAuto);
             if (teamPropLocation == 1){
-                telemetry.addLine("Left");
+                telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
-                telemetry.addLine("Center");
+                telemetry.addLine("Middle");
             } else if (teamPropLocation == 3){
-                telemetry.addLine("Right");
+                telemetry.addLine("Back");
             }
             telemetry.addData("S", S);
             telemetry.update();
@@ -132,13 +134,10 @@ public class Front_BLUE_Stage extends LinearOpMode {
                     currentState = AutoState.PRELOAD_DRIVE_BACK;
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
-                        telemetry.addLine("left");
                     } else if (teamPropLocation == 2){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
-                        telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3);
-                        telemetry.addLine("right");
                     }
                 }
                 break;
@@ -153,7 +152,6 @@ public class Front_BLUE_Stage extends LinearOpMode {
                 }
                 break;
 
-
             case DELAY:
                 if(auto.delayState(0)){
                     if (teamPropLocation == 1){
@@ -163,12 +161,32 @@ public class Front_BLUE_Stage extends LinearOpMode {
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontStage);
                         telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
-                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontStage);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontFirst);
                         telemetry.addLine("right");
                     }
-                    currentState = AutoState.PRELOAD_DRIVE;
+                    if (teamPropLocation != 3){
+                        currentState = AutoState.PRELOAD_DRIVE;
+                    } else {
+                        currentState = AutoState.PRELOAD_DRIVE_CASE_3;
+                    }
+
                 }
                 break;
+
+            case PRELOAD_DRIVE_CASE_3:
+                if (auto.preloadDriveState3()){
+                    currentState = AutoState.AFTER_PRELOAD_DRIVE_3;
+                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontSecond);
+                }
+                break;
+
+            case AFTER_PRELOAD_DRIVE_3:
+                if (auto.afterPreloadDriveState3()){
+                    currentState = AutoState.PLACE_AND_INTAKE;
+                    auto.frontThirdCase = true;
+                }
+                break;
+
             case PRELOAD_DRIVE:
                 if(auto.preloadDriveState(false, true,950, .5, false)){
                     currentState = AutoState.PLACE_AND_INTAKE;
@@ -344,17 +362,31 @@ public class Front_BLUE_Stage extends LinearOpMode {
                 double delayBeforeRetracting = 0;
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
                 boolean extendSlides = false;
+                double xPosSlideThresh = -10;
                 if (numCycles == 1){
                     delayBeforeRetracting = 500;
+                    if (xPosition < -17){
+                        auto.autoTrajectories.extendSlidesAroundStage = true;
+                    }
+                    if (S == 1){
+                        extendSlides = true;
+                    }
+                }
+                if (numCycles == 2){
+                    if (xPosition < -14){
+                        auto.autoTrajectories.extendSlidesAroundStage = true;
+                    }if (S == 1){
+                        extendSlides = true;
+                    }
                 }
                 if (numCycles == 3){
-                    intakeSlidePosition = 760;
+                    intakeSlidePosition = 800;
                     extendSlides = false;
                 } else if (numCycles == 4){
                     intakeSlidePosition = 800;
                     extendSlides = false;
                 }
-                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory = null;
                     if (numCycles >= 3) { // for the longer delay we follow the trajectory after the wait - just so its more consistent hopefully

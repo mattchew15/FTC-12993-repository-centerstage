@@ -48,7 +48,9 @@ public class Front_RED_Stage extends LinearOpMode {
         IDLE,
         DELAY_BACK,
         PRELOAD_DRIVE_BACK,
-        PLACE_AND_INTAKE_BACK
+        PLACE_AND_INTAKE_BACK,
+        PRELOAD_DRIVE_CASE_3,
+        AFTER_PRELOAD_DRIVE_3
     }
 
     AutoState currentState;
@@ -71,11 +73,11 @@ public class Front_RED_Stage extends LinearOpMode {
         while (!isStarted()) { // initialization loop
             auto.intializationLoop(frontOrBackAuto);
             if (teamPropLocation == 1){
-                telemetry.addLine("Left");
+                telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
-                telemetry.addLine("Center");
+                telemetry.addLine("Middle");
             } else if (teamPropLocation == 3){
-                telemetry.addLine("Right");
+                telemetry.addLine("Back");
             }
             telemetry.addData("S", S);
             telemetry.update();
@@ -132,13 +134,10 @@ public class Front_RED_Stage extends LinearOpMode {
                     currentState = AutoState.PRELOAD_DRIVE_BACK;
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
-                        telemetry.addLine("left");
                     } else if (teamPropLocation == 2){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
-                        telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3);
-                        telemetry.addLine("right");
                     }
                 }
                 break;
@@ -153,7 +152,6 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 break;
 
-
             case DELAY:
                 if(auto.delayState(0)){
                     if (teamPropLocation == 1){
@@ -163,20 +161,40 @@ public class Front_RED_Stage extends LinearOpMode {
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontStage);
                         telemetry.addLine("center");
                     } else if (teamPropLocation == 3){
-                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontStage);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontFirst);
                         telemetry.addLine("right");
                     }
-                    currentState = AutoState.PRELOAD_DRIVE;
+                    if (teamPropLocation != 3){
+                        currentState = AutoState.PRELOAD_DRIVE;
+                    } else {
+                        currentState = AutoState.PRELOAD_DRIVE_CASE_3;
+                    }
+
                 }
                 break;
+
+            case PRELOAD_DRIVE_CASE_3:
+                if (auto.preloadDriveState3()){
+                    currentState = AutoState.AFTER_PRELOAD_DRIVE_3;
+                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontSecond);
+                }
+                break;
+
+            case AFTER_PRELOAD_DRIVE_3:
+                if (auto.afterPreloadDriveState3()){
+                    currentState = AutoState.PLACE_AND_INTAKE;
+                    auto.frontThirdCase = true;
+                }
+                break;
+
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(false, true,950, 1, false)){
+                if(auto.preloadDriveState(false, true,950, .5, false)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(250,1, true)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(250,.5, true)){
                     if (auto.goBackForYellowPixel){
                         currentState = AutoState.GO_BACK_FOR_YELLOW;
                     } else {
@@ -230,7 +248,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 //outtaking lengths for each cycle
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
-                int intakeSlideTarget = 330; // pre-extend intake for most cycles
+                int intakeSlideTarget = 350; // pre-extend intake for most cycles
                 Trajectory intakeTrajectory = null;
                 boolean openGrippers = true;
                 boolean extendStraightAway = false;
@@ -343,18 +361,32 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 double delayBeforeRetracting = 0;
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
-                boolean extendSlides = true;
+                boolean extendSlides = false;
+                double xPosSlideThresh = -10;
                 if (numCycles == 1){
                     delayBeforeRetracting = 500;
+                    if (S == 1? xPosition < 10 : xPosition < -17){
+                        auto.autoTrajectories.extendSlidesAroundStage = true;
+                    }
+                   /* if (S == 1){
+                        extendSlides = true;
+                    }*/
+                }
+                if (numCycles == 2){
+                    if (S == 1? xPosition < 10 : xPosition < -14){
+                        auto.autoTrajectories.extendSlidesAroundStage = true;
+                    }/*if (S == 1){
+                        extendSlides = true;
+                    }*/
                 }
                 if (numCycles == 3){
-                    intakeSlidePosition = 760;
+                    intakeSlidePosition = 800;
                     extendSlides = false;
                 } else if (numCycles == 4){
                     intakeSlidePosition = 800;
                     extendSlides = false;
                 }
-                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory = null;
                     if (numCycles >= 3) { // for the longer delay we follow the trajectory after the wait - just so its more consistent hopefully
@@ -364,9 +396,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     }
                     else{// (numCycles < 4) {
                         // this is the old spline path
-                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,16, 177, -6,3);
-                   //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
-                   //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
+                        outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,16, 177, -6,3);
+                        //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
+                        //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
                     }
                     if (outtakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);

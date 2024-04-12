@@ -70,7 +70,9 @@ public class OuttakeSubsystem
 
     public static double
             MINI_TURRET_STRAIGHT_POS = 0.53,
-            MINI_TURRET_FRONTPURPLE_STAGE_POS = MINI_TURRET_STRAIGHT_POS - 0.07,
+            MINI_TURRET_FRONTPURPLE_STAGE_POS_RED = MINI_TURRET_STRAIGHT_POS - 0.07,
+            MINI_TURRET_FRONTPURPLE_STAGE_POS_BLUE = MINI_TURRET_STRAIGHT_POS + 0.07,
+
             MINI_TURRET_BACKPURPLE_STAGE_POS = MINI_TURRET_STRAIGHT_POS + 0.16,
             MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.095,
             MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.068;
@@ -96,7 +98,8 @@ public class OuttakeSubsystem
             GRIPPER_BOTTOM_OPEN_POS = 0.545;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
-            PITCH_PURPLEPIXEL_POSITION = 0.38,
+            PITCH_PURPLEPIXEL_POSITION = 0.365,
+            PITCH_PURPLEPIXEL_POSITION_THIRDCASE = 0.18,
             PITCH_LOWPITCH_POSITION = 0.7,
             PITCH_YELLOWPIXEL_POSITION = 0.4;
 
@@ -165,7 +168,8 @@ public class OuttakeSubsystem
         POINT_TO_BACKDROP,
         BACK_PURPLE,
         FRONT_PURPLE,
-        FRONT_STAGE_PURPLE,
+        FRONT_STAGE_PURPLE_RED,
+        FRONT_STAGE_PURPLE_BLUE,
         BACK_STAGE_PURPLE
     }
     public enum OuttakeRailState {
@@ -460,6 +464,10 @@ public class OuttakeSubsystem
     public void setOuttakePitchYellowPixelPosition(){
         prevPitch = servoCaching(PITCH_YELLOWPIXEL_POSITION, prevPitch, EPSILON_DELTA, OuttakePitchServo);
     }
+    public void setOuttakePitchPurplePixelThirdCasePosition(){
+        OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION_THIRDCASE);
+        //prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
+    }
 
     public void setOuttakePitchPitchDownPosition(){
         prevPitch = servoCaching(PITCH_LOWPITCH_POSITION, prevPitch, EPSILON_DELTA, OuttakePitchServo);
@@ -483,8 +491,11 @@ public class OuttakeSubsystem
             case BACK_STAGE_PURPLE:
                 miniTurret = MINI_TURRET_BACKPURPLE_STAGE_POS;
                 break;
-            case FRONT_STAGE_PURPLE:
-                miniTurret = MINI_TURRET_FRONTPURPLE_STAGE_POS;
+            case FRONT_STAGE_PURPLE_RED:
+                miniTurret = MINI_TURRET_FRONTPURPLE_STAGE_POS_RED;
+                break;
+            case FRONT_STAGE_PURPLE_BLUE:
+                miniTurret = MINI_TURRET_FRONTPURPLE_STAGE_POS_BLUE;
                 break;
         }
         prevMiniTurret = servoCaching(miniTurret, prevMiniTurret, EPSILON_DELTA, MiniTurretServo);

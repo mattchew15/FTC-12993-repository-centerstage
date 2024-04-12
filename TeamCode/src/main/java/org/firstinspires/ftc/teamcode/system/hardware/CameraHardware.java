@@ -436,6 +436,5 @@ public class CameraHardware
     {
         visionPortal.setProcessorEnabled(aprilTag, true);
     }
-
 }
 

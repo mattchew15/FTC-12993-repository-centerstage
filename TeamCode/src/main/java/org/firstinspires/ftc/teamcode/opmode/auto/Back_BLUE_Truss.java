@@ -345,7 +345,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,2,300,200)){
+                if (auto.afterGrabOffStack(2,2,350,250)){
                     if (!auto.intakeSubsystem.pixelsInIntake()){
                         currentState = AutoState.GO_BACK_FOR_WHITES;
                     } else {
