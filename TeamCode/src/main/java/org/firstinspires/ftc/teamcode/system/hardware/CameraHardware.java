@@ -302,6 +302,7 @@ public class CameraHardware
         double heading = Math.toDegrees(angleWrap(pose.getHeading() + Math.PI)) * -1;
         for (int i = 0; i <3; i++)
         {
+            if (poses.size() >= 3) poses.clear();
             List<AprilTagDetection> detections = aprilTag.getDetections();
             //telemetry.addData("# AprilTags Detected", currentDetections.size());
             tagWeSee = 0;
@@ -353,8 +354,8 @@ public class CameraHardware
                     telemetry.addData("Corrected X", newX);
                     telemetry.addData("Corrected Y", newY);*/
                         //telemetry.addData("Non corrected pose", String.format("X,Y", newX, newY));
-                        poses.add(new Pose2d(newX + (-5.9675), newY + (3.325))); // heading?
-                        break;
+                        poses.add(new Pose2d(newX + (-5.9675), newY + 0));//(3.325))); // heading?
+                        //break;
                     }
                 }
             }

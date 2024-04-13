@@ -48,7 +48,6 @@ public class ImuThread
                 {
                     imuAngle = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
                     imuVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
-
                 }
             }
         });

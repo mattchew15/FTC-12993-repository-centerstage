@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.accessory.Log;
@@ -112,6 +116,7 @@ public class SimplicityDrive extends LinearOpMode {
 
     OuttakeState outtakeState;
     ImuThread imuThread;
+    IMU imu;
 
     @Override
     public void runOpMode() {
@@ -132,6 +137,11 @@ public class SimplicityDrive extends LinearOpMode {
         driveBase.initDrivebase(hardwareMap);
         outtakeState = OuttakeState.READY;
 
+//        imu = hardwareMap.get(BHI260IMU.class, "imu");
+//        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+
         imuThread = new ImuThread(hardwareMap);
         imuThread.initImuThread();
         imuThread.startThread(this);
@@ -150,7 +160,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.hardwareSetup();
             outtakeSubsystem.encodersReset(); // resets just the lift encoder
             intakeSubsystem.intakeSlideMotorEncodersReset();
-            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
             driveBase.drivebaseSetup();
             MaxExtension = true;
             initialHeightStored = false;
@@ -195,13 +205,16 @@ public class SimplicityDrive extends LinearOpMode {
               *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 //telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 //telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
-                //telemetry.addData("headingPosition", headingPosition);
+                telemetry.addData("headingPosition", headingPosition);
+               // telemetry.addData("Raw heading", AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
                 //telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
                 telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
                 //telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
 
-
+                if (gamepad1.right_stick_button){
+                    intakeSubsystem.intakeSpin(-1);
+                }
                 /*
                 log.addData(
                         outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS),
@@ -220,7 +233,13 @@ public class SimplicityDrive extends LinearOpMode {
                 //clears the cache at the end of the loop
                 // PhotonCore.CONTROL_HUB.clearBulkCache();
                 if (gamepad1.dpad_left){
+                    imuThread.initImuThread();
                     imuThread.resetYaw();
+                    //imu.close();
+//                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+//                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                            RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+//                    imu.resetYaw();
                 }
                 if (gamepad2.dpad_down){
                     gamepad1.rumbleBlips(1);
@@ -263,7 +282,7 @@ public class SimplicityDrive extends LinearOpMode {
                 setIntakeArmHeight();
 
                 if (gamepad1.b||gamepad2.b){
-                    intakeSubsystem.intakeSpin(-0.52);
+                    intakeSubsystem.intakeSpin(-0.6);
                 } else {
                     intakeSubsystem.intakeSpin(0);
                 }
@@ -545,7 +564,7 @@ public class SimplicityDrive extends LinearOpMode {
                     RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 }
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
-                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                 intakeSubsystem.intakeSpin(-0.3);
                 outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
@@ -571,6 +590,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                             rightBumperPreExtend = false;
                             leftBumperPreExtend = false;
+                            RAIL_SERVO_POSITION = RAIL_CENTER_POS;
 
                             outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES; // change if we want to extend more when not at max
                             if (increaseHeight){ // if it has been deposited

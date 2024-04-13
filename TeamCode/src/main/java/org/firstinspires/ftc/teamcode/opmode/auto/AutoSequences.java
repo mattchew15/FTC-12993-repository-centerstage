@@ -103,7 +103,7 @@ public class AutoSequences {
         if (pausePreloadProcessor){
             cameraHardware.pausePreloadProcessor();
         } else {
-            cameraHardware.resumePreloadProcessor();
+            //cameraHardware.resumePreloadProcessor();
         }
         //cameraHardware.resumeBackWebcam();
         //cameraHardware.resumePreloadProcessor();
@@ -398,7 +398,7 @@ public class AutoSequences {
         if (intakeSubsystem.intakeSlidePosition < 8){
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
         }
-        if ((numCycles == 0? delay(390): delay(220)) && intakeSubsystem.intakeSlidePosition < 550){ // time for pixel holder to close/reverse
+        if ((numCycles == 0? delay(390): delay(220)) && intakeSubsystem.intakeSlidePosition < 630){ // time for pixel holder to close/reverse
             telemetry.addLine("WE DIDN'T REVERSE THE FUCKING INTAKE BOYS");
             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
             // goes back into the stack
@@ -419,7 +419,7 @@ public class AutoSequences {
             if (numCycles == 0){
                 intakeSubsystem.intakeSpin(-0.7); // this doesn't happen for very long
             } else {
-                intakeSubsystem.intakeSpin(-1); // this doesn't happen for very long
+                intakeSubsystem.intakeSpin(-0.7); // this doesn't happen for very long
             }
            //} else {
 //                intakeSubsystem.intakeSpin(1); // this doesn't happen for very long
@@ -525,7 +525,7 @@ public class AutoSequences {
         }
     }
 
-    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks, int intakeSlidePosition, double delayBeforeRetracting, double xPositionForSlideExtension){
+    public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks, int intakeSlidePosition, double delayBeforeRetracting, double xPositionForSlideExtension, boolean retractSlidesBeforeExtending){
         goBackToStack = false;
         parkIfStuck(6000);
 
@@ -588,6 +588,8 @@ public class AutoSequences {
                 autoTrajectories.extendSlidesAroundStage = false;
                 return true;
             }
+        } else if (retractSlidesBeforeExtending){
+            intakeSubsystem.intakeSlideInternalPID(0,1);
         }
 
         if (intakeSubsystem.pixelsInIntake() && timesIntoStack !=0){ //this isn't true unless timesIntoStack has happened at least once
@@ -744,7 +746,7 @@ public class AutoSequences {
     }
     public void preExtendIntakeSlidesStage(double slideExtendSpeed, int slideOffset){
         if (teamPropLocation == 1 || frontThirdCase){
-            intakeSubsystem.intakeSlideInternalPID(55 + slideOffset,slideExtendSpeed);
+            intakeSubsystem.intakeSlideInternalPID(60 + slideOffset,slideExtendSpeed);
         } else if (teamPropLocation == 2){
             intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
         } else if (teamPropLocation == 3){
@@ -793,15 +795,20 @@ public class AutoSequences {
         }
     }
     public void resetPosWithAprilTags(int tagBeingUsed){
-        if (cameraHardware.getNewPose2(poseEstimate, tagBeingUsed, telemetry))
-        {
-            Pose2d pose = cameraHardware.getNewPose();
-           /* newX = pose.getX();
-            newY = pose.getY();*/
-            autoTrajectories.drive.setPoseEstimate(pose);
-            //cameraHardware.pauseBackWebcam();
-
-        }
+//        if (cameraHardware.getNewPose2(poseEstimate, tagBeingUsed, telemetry))
+//        {
+//            telemetry.addLine("WE are reseting the pose!!!!!");
+//            Pose2d pose = cameraHardware.getNewPose();
+//           /* newX = pose.getX();
+//            newY = pose.getY();*/
+//            autoTrajectories.drive.setPoseEstimate(pose);
+//            //cameraHardware.pauseBackWebcam();
+//
+//        }
+//        else
+//        {
+//            telemetry.addLine("We didn't reset the pose boys!!!!");
+//        }
     }
 
     public void startAprilTagCamera(){

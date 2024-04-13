@@ -18,7 +18,7 @@ public class Front_RED_Truss extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double positiveDriftOffset = 0;
-    double delayForYellow = 0; // delay is zero for now
+    double delayForYellow = 8;
     boolean frontOrBackAuto;
 
     //Accessories
@@ -56,6 +56,7 @@ public class Front_RED_Truss extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         frontOrBackAuto = true;
+        // sets values for generating trajectories
         SetAuto.setRedAuto();
         auto.setGamepad1(gamepad1);
 
@@ -64,6 +65,7 @@ public class Front_RED_Truss extends LinearOpMode {
             module.clearBulkCache();
         } //
 
+        // generates trajectories for everything
         auto.initAutoHardware(hardwareMap,this);
 
         // trajectories that aren't changing should all be here
@@ -174,7 +176,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case PRELOAD_DRIVE:
-                if(auto.preloadDriveState(true, true,1000,1, false)){
+                if(auto.preloadDriveState(true, false,1000,1, true)){
                     currentState = AutoState.PLACE_AND_INTAKE;
                 }
                 break;
@@ -210,7 +212,6 @@ public class Front_RED_Truss extends LinearOpMode {
                             startDrive = auto.autoTrajectories.firstDriveThroughTrussAfterPurple3;
                         }
                         auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
-                        auto.resetTimer(); // we have to reset the timer here because of yellow delay
                         currentState = AutoState.TRANSFER_PIXEL;
                     }
                 }
@@ -275,10 +276,10 @@ public class Front_RED_Truss extends LinearOpMode {
                         // intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,148,1,0.9);
                         // this cycle runs on the drop case now
                     } else if (numCycles == 2){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,148,1,positiveDriftOffset,-36);
-                        //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);36
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,155,1,positiveDriftOffset, -36);
+                        //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     } else if (numCycles == 3){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6,143,1,positiveDriftOffset,-36);
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6,146,1,positiveDriftOffset,-36);
                         //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     }
                     auto.resetPosWithAprilTags(1);
@@ -318,7 +319,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 if (auto.drop(armHeight,auto.goToParkAfterOuttaking, delayTime)){
                     if (numCycles == 1){ // for very first cycle
-                        intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,150,1,positiveDriftOffset,-36);
+                        intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,155,1,positiveDriftOffset, -36);
                         if (intakeTrajectoryAfterDrop != null){
                             auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
                         }
@@ -344,14 +345,13 @@ public class Front_RED_Truss extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,2,300,200)){
+                if (auto.afterGrabOffStack(2,2,350,250)){
                     if (!auto.intakeSubsystem.pixelsInIntake()){
                         currentState = AutoState.GO_BACK_FOR_WHITES;
                     } else {
                         currentState = AutoState.TRANSFER_PIXEL;
-
                         Trajectory outtakeTrajectory;
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 5, 6, 1,2);
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate, 18, 29.8, 4, 4, 1,1);
                         auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                     }
                 }
@@ -360,7 +360,7 @@ public class Front_RED_Truss extends LinearOpMode {
                 if(auto.reExtendSlidesForTrussSide()){
                     currentState = AutoState.TRANSFER_PIXEL;
                     Trajectory outtakeTrajectory;
-                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,5,6, 1,2);
+                    outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromAngleTurnEndTrajectory(poseEstimate,18,29.8,5,6, 1,1);
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
                 }
                 break;
