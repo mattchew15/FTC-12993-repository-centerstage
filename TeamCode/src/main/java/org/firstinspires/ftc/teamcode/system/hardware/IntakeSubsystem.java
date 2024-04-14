@@ -137,8 +137,8 @@ public class IntakeSubsystem
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
         ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteLimitSwitch");
 
-        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 90);
-        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 90);
+        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 70);
+        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 70);
     }
 
     public void intakeHardwareSetup(){
@@ -202,7 +202,7 @@ public class IntakeSubsystem
     }
 
     public boolean pixelsInIntake(){
-        return (frontColourSensorValue > 500) && (backColourSensorValue > 500); // should work
+        return (frontColourSensorValue > 400) && (backColourSensorValue > 400); // should work
     }
     /*
     public double getIntakeChuteArmPos(){ // does work just needs to plugged in correctly

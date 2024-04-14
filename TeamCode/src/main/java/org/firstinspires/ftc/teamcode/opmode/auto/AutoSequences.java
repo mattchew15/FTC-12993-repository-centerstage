@@ -309,7 +309,7 @@ public class AutoSequences {
 
     public boolean placeAndIntakeBackSTage(double slideExtendSpeed){
         if (teamPropLocation == 1){
-            intakeSubsystem.intakeSlideInternalPID(710,slideExtendSpeed);
+            intakeSubsystem.intakeSlideInternalPID(733,slideExtendSpeed);
             outtakeSubsystem.liftToInternalPID(13.9,0.9);
         } else if (teamPropLocation == 2){
             intakeSubsystem.intakeSlideInternalPID(470,slideExtendSpeed); // 265 previously
@@ -398,7 +398,7 @@ public class AutoSequences {
         if (intakeSubsystem.intakeSlidePosition < 8){
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
         }
-        if ((numCycles == 0? delay(390): delay(220)) && intakeSubsystem.intakeSlidePosition < 630){ // time for pixel holder to close/reverse
+        if ((numCycles == 0? delay(390): delay(310)) && trussMiddleStage == 1? intakeSubsystem.intakeSlidePosition < 530: intakeSubsystem.intakeSlidePosition < 595){ // time for pixel holder to close/reverse
             telemetry.addLine("WE DIDN'T REVERSE THE FUCKING INTAKE BOYS");
             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
             // goes back into the stack
@@ -417,9 +417,13 @@ public class AutoSequences {
           //  if (delay(0)){
             telemetry.addLine("REVERSE THE FUCKING INTAKE");
             if (numCycles == 0){
-                intakeSubsystem.intakeSpin(-0.7); // this doesn't happen for very long
+                intakeSubsystem.intakeSpin(-1); // this doesn't happen for very long
             } else {
-                intakeSubsystem.intakeSpin(-0.7); // this doesn't happen for very long
+                if (trussMiddleStage == 3){
+                    intakeSubsystem.intakeSpin(-1); // this doesn't happen for very long
+                } else {
+                    intakeSubsystem.intakeSpin(-0.7); // this doesn't happen for very long
+                }
             }
            //} else {
 //                intakeSubsystem.intakeSpin(1); // this doesn't happen for very long
@@ -539,7 +543,7 @@ public class AutoSequences {
             }
             // retracting arm depending on where the rail was at
             if (numCycles > numCyclesForSideways){ // wait for the outtake rail to retract
-                if (delay(100 + delayBeforeRetracting)){
+                if (delay(50 + delayBeforeRetracting)){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 }
@@ -649,14 +653,17 @@ public class AutoSequences {
     }
 
     public boolean reExtendSlidesForTrussSide(){
-        if (numCycles > 2){
-            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
-        } else {
-            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
-        }
+
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         int slideOffset = 110;
         if(delay(430)){
+            if (numCycles == 2) {
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+            } else if (numCycles == 1) {
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
+            }else if (numCycles > 2){
+                intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
+            }
             intakeSubsystem.intakeSlideInternalPID(numCycles == 1?770 + slideOffset:numCycles == 2?815 + slideOffset:960 + slideOffset,0.6);
             intakeSubsystem.intakeSpin(1);
             if(intakeSubsystem.pixelsInIntake()){
@@ -669,7 +676,7 @@ public class AutoSequences {
             }
         } else {
             intakeSubsystem.intakeSlideInternalPID(470,1);
-            intakeSubsystem.intakeSpin(-0.6);
+            intakeSubsystem.intakeSpin(-0.35);
             intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
         }
         return false;

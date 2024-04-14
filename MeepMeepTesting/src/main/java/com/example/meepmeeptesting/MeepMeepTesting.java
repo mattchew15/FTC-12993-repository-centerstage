@@ -15,12 +15,37 @@ public class MeepMeepTesting {
         Pose2d stacks = new Pose2d(36,-21,Math.toRadians(180));
         Pose2d backdrop = new Pose2d(28,-36,Math.toRadians(180)); // not necessary lol
         Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180));
+        Pose2d thirdDriveStage = new Pose2d(36, -29, Math.toRadians(180));
+
+        // front side truss auto first drive endings:
+
+        Pose2d teamProp2 =new Pose2d(36,-32.8, Math.toRadians(180));
+        Pose2d teamProp1 = new Pose2d(36,-32.8 + 3.5, Math.toRadians(180));
+        Pose2d teamProp3 =new Pose2d(36,-32.8 - 15, Math.toRadians(180));
+
+
+        Pose2d backteamProp1 = new Pose2d(36,-29, Math.toRadians(180));
+        Pose2d backteamProp2 = new Pose2d(36,-26, Math.toRadians(174));
+        Pose2d backteamProp3 = new Pose2d(36,-34, Math.toRadians(180));
+
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(stacks)
+                        drive.trajectorySequenceBuilder(backteamProp1)
+
+                            // drive into stacks truss teamprop3
+
+                          /*      .lineToSplineHeading(new Pose2d(27.5, -47.8 + 5.3, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(-16.5, -52.8), Math.toRadians(180)) // end tangent affects path alot\
+                                .splineTo(new Vector2d(-36,-47.8), Math.toRadians(155)) // roughly 160*/
+
+                                /*.addSpatialMarker(new Vector2d(-24.5, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
+                                  extendSlidesAroundTruss = true;
+                              })*/
+                                /* .addSpatialMarker(new Vector2d(-11, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -
+
 
                                 //.lineToSplineHeading(new Pose2d(35, -36, Math.toRadians(180)))
                                 //.splineToConstantHeading(new Vector2d(-16.5, -36), Math.toRadians(180)) // end tangent affects path alot\
@@ -59,19 +84,20 @@ public class MeepMeepTesting {
                                 .splineToConstantHeading(new Vector2d(-18, (-32 - 22)), Math.toRadians(0))
                                 .lineToSplineHeading(new Pose2d(-15, -32 - 22, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(36, (-18 - 22)), Math.toRadians(55))
+*/
 
-                                 */
-                                // -29
-                                /*.splineToConstantHeading(new Vector2d(28, (-32 + 10)), Math.toRadians(110))
+                                // -29 - back stage 2
+                                .lineToSplineHeading(new Pose2d(33, (-32 + 11), Math.toRadians(180)))
+                                //.splineToConstantHeading(new Vector2d(33, (-32 + 11)), Math.toRadians(110))
                                 .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
+                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))
 
                                 // -21
-                                .splineToConstantHeading(new Vector2d(23, (-32 + 10 + 8)), Math.toRadians(110))
+                               /* .splineToConstantHeading(new Vector2d(23, (-32 + 10 + 8)), Math.toRadians(110))
                                 .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-17, (-32 + 26.2), Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))*/
 
                                 //-15
                               /*  .splineToConstantHeading(new Vector2d(24, (-32 + 25)), Math.toRadians(170))
@@ -79,6 +105,7 @@ public class MeepMeepTesting {
                                 .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
                                 .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
                                 /*
+
                                 .lineToSplineHeading(new Pose2d(20, -32, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(-28, -29), Math.toRadians(180)) // end tangent affects path alot\
                                 .lineToSplineHeading(new Pose2d(-36.7, -29, Math.toRadians(180))) // seperates trajectories

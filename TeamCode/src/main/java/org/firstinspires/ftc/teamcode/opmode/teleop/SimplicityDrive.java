@@ -59,6 +59,7 @@ public class SimplicityDrive extends LinearOpMode {
     double intakeSlideAdjustTimer;
     double intakeSlideAdjustTarget;
     double adjustHeightCache;
+    double prevExtensionValue;
     double globalTimer;
 
     boolean usedTriggers;
@@ -85,6 +86,7 @@ public class SimplicityDrive extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
    // ToggleUpDown miniTurretPositionToggle = new ToggleUpDown(3, 0); // one starts at the centre
     Toggle pivotFlipToggle = new Toggle();
+    Toggle changeExtension = new Toggle();
     ToggleUpOrDown fineAdjustHeight = new ToggleUpOrDown(FINE_ADJUST_HEIGHT_INTERVAL, FINE_ADJUST_HEIGHT_INTERVAL, (int)backdropRelativeHeight); // this isn't updating throughout the loop
     ToggleUpOrDown intakeOutBtnLogic = new ToggleUpOrDown(1,1,0);
     ToggleRisingEdge gamepadRightBumperRisingEdge = new ToggleRisingEdge();
@@ -371,7 +373,7 @@ public class SimplicityDrive extends LinearOpMode {
                                 outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                                 resetTimer(); // resets timer
                             }
-                        }else {
+                        } else {
                             intakeSubsystem.intakeSpin(-1); // reverse intake
                         }
                     }
@@ -406,16 +408,17 @@ public class SimplicityDrive extends LinearOpMode {
                 liftPositionChange(false, false);
                 outtakeSubsystem.liftToInternalPID(0,1);
                 //intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
-                if (delay(40)){ // delay for the transfer to push in
+                if (delay(45)){ // delay for the transfer to push in
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-                    liftDown(0.05);
                     if (delay(170)){ // enough time for grippers to close
                        //intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
-                        if (delay(150)){ //&& ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1
+                        if (delay(160)){ //&& ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1
                             //outtakeSubsystem.liftToInternalPID(0,1);
-                            if (delay(650)){
+                            if (delay(240)){
+                                outtakeSubsystem.liftMotorRawControl(0);
                                 intakeSubsystem.intakeSpin(0);
                             }
+                            intakeClipHoldorNotHold(-8,7); // backs up intake slides into robot
                             if (gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper) || rightBumperPreExtend) { //.mode is returns a boolean
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
@@ -430,25 +433,36 @@ public class SimplicityDrive extends LinearOpMode {
                                 extendOuttake();
                             }
                         }else {
-                            // intakeSubsystem.intakeSpin(-0.35);
+                            liftDown(0.05);
+                            intakeClipHoldorNotHoldWithoutPowerCutout(-8); // backs up intake slides into robot
                         }
                     } else {
-                        //outtakeSubsystem.liftToInternalPID(-3,1); // so lift goes in while gripping
+                        intakeClipHoldorNotHoldWithoutPowerCutout(-8); // backs up intake slides into robot
+                        liftDown(0.05);
                     }
                 } else {
-                    //outtakeSubsystem.liftToInternalPID(-3,1); // so that lift goes in while gripping
+                    intakeClipHoldorNotHoldWithoutPowerCutout(-8); // backs up intake slides into robot
+                    liftDown(0.05);
                 }
-                intakeClipHoldorNotHoldWithoutPowerCutout(-8); // backs up intake slides into robot
                 break;
 
             case OUTTAKE_ADJUST:
+
+
+                if (changeExtension.ToggleMode){
+                    outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES;
+                } else {
+                    outtakeExtensionInches = prevExtensionValue;
+                    prevExtensionValue = outtakeExtensionInches; // this should work idk
+                }
+
                 intakeClipHoldorNotHold(-10,8); // otherwise we are setting internalPID is still doing things
                 if (delay(500)){
                     intakeSubsystem.intakeSpin(0);
                 }else{
                     intakeSubsystem.intakeSpin(-0.8);
                 }
-
+                changeExtension.ToggleMode(gamepad1.left_bumper);
                 liftPositionChange(true,true);
                 // tinkos major adjustment
                 // driver 2 fine adjusts rail
@@ -474,8 +488,9 @@ public class SimplicityDrive extends LinearOpMode {
                     // this shoudl be rememebered because we are caching fineAdjustHeight
                 }
                 //RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
-                // idk if we need specific rail adjustment here
-                outtakeSubsystem.liftToInternalPID(liftTarget,1);
+
+                // the line below tries to reduce the robot tipping from slides going out too fast
+                outtakeSubsystem.liftToInternalPID(liftTarget, MaxExtension&&(backdropRelativeHeight<19)&&((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition))>8)?0.7:1);
 
                 if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
@@ -525,7 +540,6 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
                     setPivotServ();
                 }
-
 
                 break;
 
@@ -580,6 +594,7 @@ public class SimplicityDrive extends LinearOpMode {
                             resetTimer();
                             //having these here means dont repeatedly set things so its more optimized
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.INTAKE;
+                            changeExtension.ToggleMode = false;
                             usedTriggers = false;
                             droppedRight = false;
                             droppedLeft = false;
