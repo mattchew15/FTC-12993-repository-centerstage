@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
@@ -19,7 +20,7 @@ public class Back_RED_Stage extends LinearOpMode {
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
     boolean frontOrBackAuto;
-    double endAngleForStacks = -172;
+    double endAngleForStacks = -175.3;
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -115,7 +116,13 @@ public class Back_RED_Stage extends LinearOpMode {
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
             telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
-            telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
+
+
+            // TODO this will tank our looptimes
+            telemetry.addData("IntakeSlideMotor Current", auto.intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("LiftMotor Current", auto.outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("PitchMotor Current", auto.outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
+
 
             telemetry.update();
 
@@ -246,11 +253,11 @@ public class Back_RED_Stage extends LinearOpMode {
                 //outtaking lengths for each cycle
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
-                int intakeSlideTarget = 350; // pre-extend intake for most cycles
+                int intakeSlideTarget = 270; // pre-extend intake for most cycles
                 Trajectory intakeTrajectory = null;
                 boolean openGrippers = true;
                 boolean extendStraightAway = false;
-                if (xPosition > -10 && numCycles != 0){ // custom extend on the first cycle
+                if (xPosition > -5 && numCycles != 0){ // custom extend on the first cycle
                     auto.autoTrajectories.extendSlidesAroundTruss = true;
                 }
                 if (numCycles == 0){
@@ -270,13 +277,13 @@ public class Back_RED_Stage extends LinearOpMode {
                     openGrippers = false;
                 } else if (numCycles == 1)
                 {
-                    pitchTarget = 23;
+                    pitchTarget = 19;
                     liftTarget = 30;
                 } else if (numCycles == 2){
-                    pitchTarget = 24;
+                    pitchTarget = 23;
                     liftTarget = 30.5;
                 } else if (numCycles == 3){
-                    pitchTarget = 26;
+                    pitchTarget = 25;
                     liftTarget = 31;
                     intakeSlideTarget = 0;
                 } else if (numCycles == 4){
@@ -299,8 +306,10 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,22,3,1,-27.5, -20);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
-                    } /*else if (numCycles == 4){
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2.5,endAngleForStacks,3,0,-14);
+                    }
+                    //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
+                    /*else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
                     }*/
 
@@ -372,7 +381,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
-                if (xPosition < -20 ){ // Math.abs(endAngleForStacks) - Math.abs(Math.toDegrees(headingPosition)) < 2.5
+                if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
                 double delayBeforeRetracting = 0;
@@ -383,9 +392,11 @@ public class Back_RED_Stage extends LinearOpMode {
                 double xSplineValue = 7;
                 double yOffset = 3.5;
                 double endTangent = -6;
+                double slideSpeed = 1;
                 if (numCycles == 1){
                     delayBeforeRetracting = 500;
                     retractSlides = true;
+                    slideSpeed = 0.5;
                     if (S == 1? xPosition < 12 : xPosition < -17){
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }
@@ -394,6 +405,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     }*/
                 }
                 if (numCycles == 2){
+                    slideSpeed = 0.5;
                     if (S == 1? xPosition < 12 : xPosition < -14){
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }/*if (S == 1){
@@ -401,14 +413,15 @@ public class Back_RED_Stage extends LinearOpMode {
                     }*/
                 }
                 if (numCycles == 3 || numCycles == 4){
-                    intakeSlidePosition = 800;
+
+                    intakeSlidePosition = 775;
                     xSplineValue = 3;
                     yOffset = 6.5;
                     extendSlides = false;
                     retractSlides = true;
                     endTangent = -7;
                 }
-                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh, retractSlides)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh, retractSlides, slideSpeed)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory = null;
                     //  if (numCycles >= 3) { // for the longer delay we follow the trajectory after the wait - just so its more consistent hopefully
