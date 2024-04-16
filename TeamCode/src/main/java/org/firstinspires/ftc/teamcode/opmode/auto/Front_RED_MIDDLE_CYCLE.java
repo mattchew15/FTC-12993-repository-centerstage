@@ -235,7 +235,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
             case GRAB_OFF_STACK:
 
-                if (auto.grabOffStack(numCycleForDifferentLane, true, true,5, INTAKE_SLIDE_AUTO_LONG_PRESET, 0, 30, false)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, true,5, INTAKE_SLIDE_AUTO_LONG_PRESET, 0, 30, false,1)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory;
                     if (numCycles > 4) {

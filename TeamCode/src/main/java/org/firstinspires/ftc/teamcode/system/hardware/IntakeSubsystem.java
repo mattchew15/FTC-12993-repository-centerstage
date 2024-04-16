@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.system.hardware;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.EPSILON_DELTA;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.TargetCaching;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.motorCaching;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.servoCaching;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -64,6 +64,8 @@ public class IntakeSubsystem
     final double intakeSlideThresholdDistanceNewThreshold = 4;
     private double previousSpeedDirection, previousSlideMotor;
     private double prevChute, prevArm, prevClip, prevHolder;
+    private int previousSlideTarget;
+    private boolean firstCycle = true;
 
     // slightly more optimal to do enums - also means we will never double write
     public enum IntakeSpinState {
@@ -137,8 +139,8 @@ public class IntakeSubsystem
         LeftArmLimitSwitch = hwMap.get(DigitalChannel.class, "LeftArmLimit");
         ChuteUpDetectorLimitSwitch = hwMap.get(DigitalChannel.class, "ChuteLimitSwitch");
 
-        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 70);
-        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 70);
+        backColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorBack.alpha(), 90);
+        frontColorSensorSupplier = new TimedSupplier<>(() -> IntakeColourSensorFront.alpha(), 90);
     }
 
     public void intakeHardwareSetup(){
@@ -248,7 +250,9 @@ public class IntakeSubsystem
 
     public void intakeSlideInternalPID(int rotations, double maxSpeed){
         intakeSlideTarget = -rotations; // variable is public to this class?
-        IntakeSlideMotor.setTargetPosition(intakeSlideTarget); //TODO cache
+        previousSlideTarget = TargetCaching(intakeSlideTarget, previousSlideTarget, 0.0005, IntakeSlideMotor, firstCycle);
+        if (firstCycle) firstCycle = false;
+        //IntakeSlideMotor.setTargetPosition(intakeSlideTarget);
         IntakeSlideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         previousSlideMotor = motorCaching(maxSpeed, previousSlideMotor, EPSILON_DELTA, IntakeSlideMotor);
         //IntakeSlideMotor.setPower(maxSpeed);

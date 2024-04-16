@@ -403,7 +403,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     intakeSlidePosition = 800;
                     extendSlides = false;
                 }
-                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh, retractSlides)){
+                if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh, retractSlides,0.6)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
                     Trajectory outtakeTrajectory = null;
                   //  if (numCycles >= 3) { // for the longer delay we follow the trajectory after the wait - just so its more consistent hopefully

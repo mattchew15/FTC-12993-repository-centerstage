@@ -372,8 +372,8 @@ public class OuttakeSubsystem
         //LiftMotor.setTargetPosition(-liftTarget);
         //prevLiftMode = runModeCaching(DcMotor.RunMode.RUN_TO_POSITION, prevLiftMode, LiftMotor);
         LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // should be cached by the sdk
-        //prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, EPSILON_DELTA, LiftMotor);
-        LiftMotor.setPower(maxSpeed);
+        prevLiftOutput = motorCaching(maxSpeed, prevLiftOutput, 0.0005, LiftMotor);
+        //LiftMotor.setPower(maxSpeed);
     }
     public void liftToInternalPIDTicks(int target, double maxSpeed)
     {
@@ -395,12 +395,12 @@ public class OuttakeSubsystem
 
     public void pitchToInternalPID(int degrees, double maxSpeed){
         pitchTarget = (int)(-degreestoTicksPitchMotor(degrees) + pitchTicksInitialOffset);
-        prevPitchTarget = TargetCaching(pitchTarget, prevPitchTarget, 0, PitchMotor, firstCyclePitch);
+        prevPitchTarget = TargetCaching(pitchTarget, prevPitchTarget, 0.0005, PitchMotor, firstCyclePitch);
         if (firstCyclePitch) firstCyclePitch = false;
         //PitchMotor.setTargetPosition(pitchTarget);
         PitchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, EPSILON_DELTA, PitchMotor);
-        PitchMotor.setPower(maxSpeed);
+        prevPitchOutput = motorCaching(maxSpeed, prevPitchOutput, 0.0005, PitchMotor);
+        //PitchMotor.setPower(maxSpeed);
     }
     public void pitchToFTCLib(int degrees)
     {
@@ -466,6 +466,7 @@ public class OuttakeSubsystem
     }
     public void setOuttakePitchPurplePixelThirdCasePosition(){
         OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION_THIRDCASE);
+        prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
         //prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
     }
 

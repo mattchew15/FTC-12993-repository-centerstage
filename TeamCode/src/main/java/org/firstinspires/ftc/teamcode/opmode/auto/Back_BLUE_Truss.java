@@ -359,6 +359,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
+                auto.lockTo(auto.autoTrajectories.trussSideStackCoordinate);
                 if (auto.afterGrabOffStack(2,2,350,250)){
                     if (!auto.intakeSubsystem.pixelsInIntake()){
                         currentState = AutoState.GO_BACK_FOR_WHITES;

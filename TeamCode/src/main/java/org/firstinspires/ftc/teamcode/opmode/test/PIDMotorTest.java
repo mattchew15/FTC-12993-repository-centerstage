@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoSequences;
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
@@ -31,7 +34,7 @@ public class PIDMotorTest extends LinearOpMode {
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem(); // test to see if you get a null pointer error if you remove this - to test if the robothardware.setupHardware is inefficient
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     LoopTime loopTime = new LoopTime(); // might have to create new instance of class instead of just declaring it (who knows)
-
+    AutoSequences auto = new AutoSequences(telemetry,1);
     // uses the ElapsedTime class from the SDK to create variable GlobalTimer
     ElapsedTime GlobalTimer;
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -64,6 +67,7 @@ public class PIDMotorTest extends LinearOpMode {
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
         driveBase.initDrivebase(hardwareMap);
+        //auto.initAutoHardware(hardwareMap,this);
 
        // IntakeSlideMotor = hardwareMap.get(DcMotorEx.class, "IntakeSlideMotor");
         waitForStart();
@@ -77,6 +81,7 @@ public class PIDMotorTest extends LinearOpMode {
                 outtakeSubsystem.encodersReset();
                 intakeSubsystem.intakeSlideMotorEncodersReset();
                 outtakeSubsystem.cacheInitialPitchValue();
+             //   auto.setPoseEstimateToZero();
 
             int target = 0;
             while (opModeIsActive()) {
@@ -88,7 +93,7 @@ public class PIDMotorTest extends LinearOpMode {
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
                 if(gamepad1.a){
-                    outtakeSubsystem.liftTo(0, outtakeSubsystem.liftPosition, 1);
+                   // auto.lockTo(new Pose2d(1,1,1));
                 }
                 else if (gamepad1.b){
                     outtakeSubsystem.liftTo(6, outtakeSubsystem.liftPosition, 1);
@@ -96,13 +101,14 @@ public class PIDMotorTest extends LinearOpMode {
 
 
                 //driveBase.motorDirectionTest(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_y,gamepad1.right_stick_x);
-/*
                 else if (gamepad1.y) {
-                    outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+                    //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+                    intakeSubsystem.intakeSlideInternalPID(0,1);
                 } else if (gamepad1.x){
-                    outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
+                    //outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
+                    intakeSubsystem.intakeSlideInternalPID(100,1);
                 }
- */
+
 
                 else if (gamepad1.x){
                     //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);

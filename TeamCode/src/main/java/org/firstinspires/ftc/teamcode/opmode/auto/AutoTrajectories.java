@@ -26,7 +26,7 @@ public class AutoTrajectories {
     public boolean extendSlidesAroundStage;
     public boolean extendOuttakeSlidesAroundTruss;
     public boolean extendSlidesForBackAutos;
-
+    Pose2d trussSideStackCoordinate;
     public static double
 
     xPosition,
@@ -512,6 +512,8 @@ public class AutoTrajectories {
     }
 
     public Trajectory driveIntoStackAngledAfterAngledOuttakeTrajectory(Pose2d startTrajectory, double slowerVelocityIntoStack, double yOffset, double endAngle, int trussMiddleStage, double positiveYDriftOffset, double intakeX){
+        trussSideStackCoordinate = new Pose2d(intakeX,(MiddleLaneYDeposit+positiveYDriftOffset+ -LaneOffsetTruss + yOffset),endAngle);
+
         return drive.trajectoryBuilder(startTrajectory)
                 // FOR THAT ONE CASE MOVE BACK SO WE DONT HIT THE TRUSS                                                                         // the below code adds an offset so it doesn't swing as far for the first cycle specifically
                 .lineToSplineHeading(new Pose2d((teamPropLocation == 3 && trussMiddleStage == 1)||(teamPropLocation == 3 && trussMiddleStage == 3)? 27:18, (MiddleLaneYDeposit+positiveYDriftOffset + (numCycles == 0 && trussMiddleStage == 1? 5:-1) + (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss: LaneOffsetTruss)))*S, Math.toRadians(180)*S),SampleMecanumDrive.getVelocityConstraint(trussMiddleStage == 1 || (trussMiddleStage == 3 && teamPropLocation == 3)? 35: DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -529,7 +531,9 @@ public class AutoTrajectories {
                 .splineTo(new Vector2d(intakeX,(MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss: LaneOffsetTruss)) + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // roughly 160
                 .build();
+
     }
+
 
     public Trajectory driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(Pose2d startTrajectory, double slowerVelocityIntoStack, double yOffset, double endAngle, int trussMiddleStage, double positiveYDriftOffset, double xSplineStart){
         return drive.trajectoryBuilder(startTrajectory)
@@ -543,7 +547,7 @@ public class AutoTrajectories {
                  })
 
                  */
-                .splineTo(new Vector2d(-33.5,(MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss: LaneOffsetTruss)) + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineTo(new Vector2d(-32.5,(MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss: LaneOffsetTruss)) + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // roughly 160
                 .build();
     }

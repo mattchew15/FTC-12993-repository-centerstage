@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -105,23 +106,23 @@ public class Back_RED_Stage extends LinearOpMode {
 
             auto.mainAutoLoop(
                     currentState == AutoState.OUTTAKE_PIXEL && xPosition > 20,
-                    currentState == AutoState.GRAB_OFF_STACK || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
+                    (currentState == AutoState.GRAB_OFF_STACK && xPosition < -25) || currentState == AutoState.AFTER_GRAB_OFF_STACK || currentState == AutoState.PLACE_AND_INTAKE,
                     currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIXEL);
 
             autoSequence();
             loopTime.delta();
-            telemetry.addData("numCycles", numCycles);
+            //telemetry.addData("numCycles", numCycles);
             telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
-            telemetry.addData("Auto State", currentState);
-            telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
+            //telemetry.addData("Auto State", currentState);
+            //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
             // TODO this will tank our looptimes
-            telemetry.addData("IntakeSlideMotor Current", auto.intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
+          /*  telemetry.addData("IntakeSlideMotor Current", auto.intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("LiftMotor Current", auto.outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
-            telemetry.addData("PitchMotor Current", auto.outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("PitchMotor Current", auto.outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));*/
 
 
             telemetry.update();
@@ -278,7 +279,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 } else if (numCycles == 1)
                 {
                     pitchTarget = 19;
-                    liftTarget = 30;
+                    liftTarget = 28.4;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 30.5;
@@ -304,9 +305,9 @@ public class Back_RED_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,22,3,1,-27.5, -20);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,1,-27.5, -20);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2.5,endAngleForStacks,3,0,-14);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.1,yPosition,headingPosition),20,-2.5,endAngleForStacks,3,0,-13);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -327,10 +328,13 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
-                            auto.outtakeSubsystem.liftToInternalPID(0,0.3);
+                            auto.outtakeSubsystem.liftToInternalPID(0,0.4);
                         } // so we don't rely on a drive back
                     }
-                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:690):350;
+                    if(auto.delay(270) && !frontOrBackAuto){
+                        auto.outtakeSubsystem.liftToInternalPID(0,0.5);
+                    }
+                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:690):300;
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
@@ -384,19 +388,19 @@ public class Back_RED_Stage extends LinearOpMode {
                 if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
-                double delayBeforeRetracting = 0;
+                double delayBeforeRetracting = 50;
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
                 boolean extendSlides = false;
                 double xPosSlideThresh = -10;
                 boolean retractSlides = false;
                 double xSplineValue = 7;
-                double yOffset = 3.5;
+                double yOffset = 3.7;
                 double endTangent = -6;
                 double slideSpeed = 1;
                 if (numCycles == 1){
                     delayBeforeRetracting = 500;
                     retractSlides = true;
-                    slideSpeed = 0.5;
+                    slideSpeed = 0.8;
                     if (S == 1? xPosition < 12 : xPosition < -17){
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }
@@ -405,7 +409,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     }*/
                 }
                 if (numCycles == 2){
-                    slideSpeed = 0.5;
+                    slideSpeed = 0.7;
                     if (S == 1? xPosition < 12 : xPosition < -14){
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }/*if (S == 1){
