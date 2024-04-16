@@ -442,8 +442,8 @@ public class CameraHardware
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
 
-            //ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
-            //ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
+            ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
+            ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
             poses.clear();
             return true;
         }
