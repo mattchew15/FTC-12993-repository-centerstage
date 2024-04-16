@@ -21,7 +21,7 @@ public class Back_RED_Stage extends LinearOpMode {
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
     boolean frontOrBackAuto;
-    double endAngleForStacks = -175.3;
+    double endAngleForStacks = -174;
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -221,7 +221,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 break;
 
             case GO_BACK_FOR_YELLOW:
-                if (auto.reExtendSLidesForYellow(1200,0.35)){
+                if (auto.reExtendSLidesForYellow(1200,0.15)){
                     if (auto.GlobalTimer.seconds() > delayForYellow){
                         Trajectory startDrive = null;
                         if (teamPropLocation == 2){
@@ -279,7 +279,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 } else if (numCycles == 1)
                 {
                     pitchTarget = 19;
-                    liftTarget = 28.4;
+                    liftTarget = 27;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 30.5;
@@ -307,7 +307,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,1,-27.5, -20);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.1,yPosition,headingPosition),20,-2.5,endAngleForStacks,3,0,-13);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.1,yPosition,headingPosition),20,-2.5,endAngleForStacks,3,0,-16.5);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -388,7 +388,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
-                double delayBeforeRetracting = 50;
+                double delayBeforeRetracting = 100;
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
                 boolean extendSlides = false;
                 double xPosSlideThresh = -10;
@@ -404,6 +404,8 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (S == 1? xPosition < 12 : xPosition < -17){
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }
+                    /*yOffset = 4;
+                    xSplineValue = 6;*/
                    /* if (S == 1){
                         extendSlides = true;
                     }*/
@@ -418,7 +420,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 if (numCycles == 3 || numCycles == 4){
 
-                    intakeSlidePosition = 775;
+                    intakeSlidePosition = 778;
                     xSplineValue = 3;
                     yOffset = 6.5;
                     extendSlides = false;

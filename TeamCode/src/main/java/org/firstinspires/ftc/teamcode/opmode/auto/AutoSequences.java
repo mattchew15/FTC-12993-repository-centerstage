@@ -172,7 +172,18 @@ public class AutoSequences {
         return false;
 
     }
+    public void extendIntakeArms(){
+        if (delay(900)){
+            intakeSubsystem.intakeSlideInternalPID(0,1);
+        } else {
+            intakeSubsystem.intakeSlideInternalPID(150,1);
+        }
+    }
+
     public boolean preloadDriveState (boolean railLeftOrRight, boolean preDropPurple, double railDelay, double slideExtendSpeed, boolean preExtendSlides){
+
+        //extendIntakeArms();
+
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
@@ -231,6 +242,9 @@ public class AutoSequences {
     }
 
     public boolean preloadDriveState3 (){
+
+        //extendIntakeArms();
+
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
@@ -406,8 +420,8 @@ public class AutoSequences {
         intakeSubsystem.intakeSlideInternalPID(-20,1);
         if (intakeSubsystem.intakeSlidePosition < 8){
             intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.HOLDING);
-        }
-        if ((numCycles == 0? delay(390): delay(310)) && trussMiddleStage == 1? intakeSubsystem.intakeSlidePosition < 530: intakeSubsystem.intakeSlidePosition < 595){ // time for pixel holder to close/reverse
+        } //
+        if ( (numCycles == 0? delay(850): delay(310)) && (trussMiddleStage == 1? intakeSubsystem.intakeSlidePosition < 530: intakeSubsystem.intakeSlidePosition < 595)){ // time for pixel holder to close/reverse
             //telemetry.addLine("WE DIDN'T REVERSE THE FUCKING INTAKE BOYS");
             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP);
             // goes back into the stack
@@ -557,7 +571,7 @@ public class AutoSequences {
             }
             // retracting arm depending on where the rail was at
             if (numCycles > numCyclesForSideways){ // wait for the outtake rail to retract
-                if (delay(115 + delayBeforeRetracting)){
+                if (delay(10 + delayBeforeRetracting)){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 }
@@ -776,16 +790,15 @@ public class AutoSequences {
     public void preExtendIntakeSlidesStage(double slideExtendSpeed, int slideOffset){
         if (teamPropLocation == 1 || frontThirdCase){
             //intakeSubsystem.intakeSlideInternalPID(60 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(60+slideOffset,40,0.2,1);
+            intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,1);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(290+slideOffset,60,0.2,1);
+            intakeSlideToSlowedEnd(290+slideOffset,90,slideExtendSpeed,1);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(372+slideOffset,60,0.2,1);
+            intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,1);
         }
     }
-
 
     public void intakeClipHoldorNotHold(int slideToPosition){
         if (intakeSubsystem.intakeSlidePosition < 4) {
@@ -838,20 +851,20 @@ public class AutoSequences {
     }
 
     public void resetPosWithAprilTags(int tagBeingUsed){
-//        if (cameraHardware.getNewPose2(poseEstimate, tagBeingUsed, telemetry))
-//        {
-//            telemetry.addLine("WE are reseting the pose!!!!!");
-//            Pose2d pose = cameraHardware.getNewPose();
-//           /* newX = pose.getX();
-//            newY = pose.getY();*/
-//            autoTrajectories.drive.setPoseEstimate(pose);
-//            //cameraHardware.pauseBackWebcam();
-//
-//        }
-//        else
-//        {
-//            telemetry.addLine("We didn't reset the pose boys!!!!");
-//        }
+        if (cameraHardware.getNewPose3(poseEstimate, tagBeingUsed, telemetry))
+        {
+            telemetry.addLine("WE are reseting the pose!!!!!");
+            Pose2d pose = cameraHardware.getNewPose();
+           /* newX = pose.getX();
+            newY = pose.getY();*/
+            autoTrajectories.drive.setPoseEstimate(pose);
+            //cameraHardware.pauseBackWebcam();
+
+        }
+        else
+        {
+            telemetry.addLine("We didn't reset the pose boys!!!!");
+        }
     }
 
     public void lockTo(Pose2d targetPos){
