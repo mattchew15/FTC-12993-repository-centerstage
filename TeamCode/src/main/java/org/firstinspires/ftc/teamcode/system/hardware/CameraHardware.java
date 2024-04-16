@@ -410,12 +410,12 @@ public class CameraHardware
                     if (heading < -0.31 && heading > -0.32) heading = 0.0; // veer said this is necessary
 
                     double tagX = detection.ftcPose.x;
-                    double tagY = (detection.ftcPose.y / 1.3285651049);// + 5.76 ;
+                    double tagY = (detection.ftcPose.y / 1.3285651049) + 5.76 ;
 
                     cameraX = tagX * Math.sin(heading) + tagY * Math.cos(heading);
                     cameraY = tagX * Math.cos(heading) - tagY * Math.sin(heading);
 
-                    double cameraOffset = 5.76;
+                   /* double cameraOffset = 5.76;
 
                     double r = cameraOffset;
                     double offsetTheta = heading; //pose.getHeading() * -1;
@@ -425,9 +425,9 @@ public class CameraHardware
                     ROBOT_Y = cameraY + robotCenterPosition.getY();
 
                     //robotX += 5.76; // camera off set1
-
-                    newX = library.lookupTag(detection.id).fieldPosition.get(0) - ROBOT_X;
-                    newY = library.lookupTag(detection.id).fieldPosition.get(1) + ROBOT_Y;
+*/
+                    newX = library.lookupTag(detection.id).fieldPosition.get(0) - cameraX;
+                    newY = library.lookupTag(detection.id).fieldPosition.get(1) + cameraY;
 
                     //poses.add(new Pose2d(newX + (-5.9675), newY + (3.325)));
                     poses.add(new Pose2d(newX + (0), newY + (0)));
