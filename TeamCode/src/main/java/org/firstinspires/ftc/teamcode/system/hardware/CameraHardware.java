@@ -407,10 +407,10 @@ public class CameraHardware
                 if (detection.metadata != null)
                 {
                     double heading = Math.toRadians(-detection.ftcPose.yaw);
-                    if (heading == -0.31) heading = 0.0; // veer said this is necessary
+                    if (heading < -0.31 && heading > -0.32) heading = 0.0; // veer said this is necessary
 
                     double tagX = detection.ftcPose.x;
-                    double tagY = (detection.ftcPose.y / 1.3285651049) + 5.76 ;
+                    double tagY = (detection.ftcPose.y / 1.3285651049);// + 5.76 ;
 
                     cameraX = tagX * Math.sin(heading) + tagY * Math.cos(heading);
                     cameraY = tagX * Math.cos(heading) - tagY * Math.sin(heading);
@@ -418,7 +418,7 @@ public class CameraHardware
                     double cameraOffset = 5.76;
 
                     double r = cameraOffset;
-                    double offsetTheta = pose.getHeading() * -1;
+                    double offsetTheta = heading; //pose.getHeading() * -1;
                     Pose2d robotCenterPosition = new Pose2d(cameraX - r*Math.cos(offsetTheta),cameraY + r*Math.sin(offsetTheta),pose.getHeading());
 
                     ROBOT_X = cameraX + robotCenterPosition.getX();

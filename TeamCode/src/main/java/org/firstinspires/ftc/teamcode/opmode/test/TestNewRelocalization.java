@@ -30,7 +30,7 @@ public class TestNewRelocalization extends LinearOpMode
         waitForStart();
         while (opModeIsActive())
         {
-            sampleMecanumDrive.update();
+
             driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             if (gamepad1.left_trigger > 0.2)
@@ -47,6 +47,7 @@ public class TestNewRelocalization extends LinearOpMode
             telemetry.addData("Camera X", cameraHardware.cameraX);
             telemetry.addData("Camera Y", cameraHardware.cameraY);
 
+            sampleMecanumDrive.update(); // this should fixthe heading ig
             telemetry.update();
         }
     }

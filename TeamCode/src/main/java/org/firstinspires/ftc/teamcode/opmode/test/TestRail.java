@@ -1,30 +1,24 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
-import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
-import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
+
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
+import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setRedAuto;
 
 @Config
 @TeleOp(name="Test Rail", group = "Test")
-public class TestRelocalization extends LinearOpMode
+public class TestRail extends LinearOpMode
 {
     DriveBase driveBase = new DriveBase();
     //OpenCvCamera backWebcam;
@@ -42,7 +36,8 @@ public class TestRelocalization extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        setBlueAuto();
+        //setBlueAuto();
+        setRedAuto();
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         //relocationV2Pipeline = new RelocationV2Pipeline();
         //relocationV2Pipeline.setTelemetry(telemetry);
@@ -168,6 +163,7 @@ public class TestRelocalization extends LinearOpMode
             telemetry.addData("X", poseEstimate.getX());
             telemetry.addData("Y", poseEstimate.getY());
             telemetry.addData("H", heading);
+            telemetry.addData("Yellow Placement", Globals.place);
 
 
 
