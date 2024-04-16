@@ -54,6 +54,7 @@ public class CameraHardware
     private AprilTagLibrary library;
     private int tagWeSee;
     private int targetTag;
+    public double X_OFFSET, Y_OFFSET;
 
     /*public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
     {
@@ -433,11 +434,19 @@ public class CameraHardware
             x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3);
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
+
+            X_OFFSET = returnOffSet(newPose.getX(), pose.getX());
+            Y_OFFSET = returnOffSet(newPose.getY(), pose.getY());
             poses.clear();
             return true;
         }
         return false;
 
+    }
+
+    public double returnOffSet(double calculated, double actual)
+    {
+        return actual - calculated;
     }
 
 
