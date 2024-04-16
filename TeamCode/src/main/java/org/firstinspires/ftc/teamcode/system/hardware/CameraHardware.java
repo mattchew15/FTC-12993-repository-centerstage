@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -16,10 +15,8 @@ import org.firstinspires.ftc.teamcode.system.accessory.AprilTagLocalisation;
 import org.firstinspires.ftc.teamcode.system.vision.DashBoardProcessor;
 import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.PreloadDetectionPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.RailExtensionPipelineTemp;
-import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbBlueTeamPropDetectorPipeline;
 import org.firstinspires.ftc.teamcode.system.vision.YCrCbRedTeamPropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.system.visiontest.RailAdjustAprilTag;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
@@ -54,7 +51,9 @@ public class CameraHardware
     private AprilTagLibrary library;
     private int tagWeSee;
     private int targetTag;
-    public double X_OFFSET, Y_OFFSET;
+    public double ROBOT_X, ROBOT_Y;
+    public double newX, newY;
+    public double cameraY, cameraX;
 
     /*public void initWebcam(HardwareMap hwMap, Telemetry telemetry)
     {
@@ -411,16 +410,24 @@ public class CameraHardware
                     if (heading == -0.31) heading = 0.0; // veer said this is necessary
 
                     double tagX = detection.ftcPose.x;
-                    double tagY = detection.ftcPose.y / 1.3285651049;
+                    double tagY = (detection.ftcPose.y / 1.3285651049) + 5.76 ;
 
-                    double robotX = tagX * Math.sin(heading) + tagY * Math.cos(heading);
-                    double robotY = tagX * Math.cos(heading) - tagY * Math.sin(heading);
+                    cameraX = tagX * Math.sin(heading) + tagY * Math.cos(heading);
+                    cameraY = tagX * Math.cos(heading) - tagY * Math.sin(heading);
 
-                    robotX += 5.76; // camera off set
+                    double cameraOffset = 5.76;
 
+                    double r = cameraOffset;
+                    double offsetTheta = pose.getHeading() * -1;
+                    Pose2d robotCenterPosition = new Pose2d(cameraX - r*Math.cos(offsetTheta),cameraY + r*Math.sin(offsetTheta),pose.getHeading());
 
-                    double newX = library.lookupTag(detection.id).fieldPosition.get(0) - robotX;
-                    double newY = library.lookupTag(detection.id).fieldPosition.get(1) + robotY;
+                    ROBOT_X = cameraX + robotCenterPosition.getX();
+                    ROBOT_Y = cameraY + robotCenterPosition.getY();
+
+                    //robotX += 5.76; // camera off set1
+
+                    newX = library.lookupTag(detection.id).fieldPosition.get(0) - ROBOT_X;
+                    newY = library.lookupTag(detection.id).fieldPosition.get(1) + ROBOT_Y;
 
                     //poses.add(new Pose2d(newX + (-5.9675), newY + (3.325)));
                     poses.add(new Pose2d(newX + (0), newY + (0)));
@@ -435,8 +442,8 @@ public class CameraHardware
             y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
             newPose = new Pose2d(x, y, pose.getHeading()); // this should be an average pose
 
-            X_OFFSET = returnOffSet(newPose.getX(), pose.getX());
-            Y_OFFSET = returnOffSet(newPose.getY(), pose.getY());
+            //ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
+            //ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
             poses.clear();
             return true;
         }

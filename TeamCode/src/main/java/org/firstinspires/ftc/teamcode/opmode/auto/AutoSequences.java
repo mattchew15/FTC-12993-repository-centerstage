@@ -793,7 +793,7 @@ public class AutoSequences {
             intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,1);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(290+slideOffset,90,slideExtendSpeed,1);
+            intakeSlideToSlowedEnd(290+slideOffset,180,slideExtendSpeed,1);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
             intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,1);
