@@ -35,6 +35,11 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(backteamProp3)
 
+                                .splineToConstantHeading(new Vector2d(24, (-30 + 10 + 8)), Math.toRadians(110))
+                                .splineToConstantHeading(new Vector2d(5, (-6)), Math.toRadians(180))
+                                .lineToSplineHeading(new Pose2d(-17, (-6), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-27, (-6), Math.toRadians(180)))
+
                             // drive into stacks truss teamprop3
 
                           /*      .lineToSplineHeading(new Pose2d(27.5, -47.8 + 5.3, Math.toRadians(180)))
@@ -87,11 +92,11 @@ public class MeepMeepTesting {
 */
 
                                 // -29 - back stage 2
-                                .lineToSplineHeading(new Pose2d(33, (-32 + 11), Math.toRadians(180)))
+                             /*   .lineToSplineHeading(new Pose2d(33, (-32 + 11), Math.toRadians(180)))
                                 //.splineToConstantHeading(new Vector2d(33, (-32 + 11)), Math.toRadians(110))
                                 .splineToConstantHeading(new Vector2d(5, (-32 + 26.2)), Math.toRadians(180))
                                 .lineToSplineHeading(new Pose2d(-27, (-32 + 26.2), Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(-37, (-32 + 26.2), Math.toRadians(180)))*/
 
                                 // -21
                                /* .splineToConstantHeading(new Vector2d(23, (-32 + 10 + 8)), Math.toRadians(110))

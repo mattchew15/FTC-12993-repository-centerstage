@@ -100,6 +100,11 @@ public class AutoSequences {
         {
             place = Place.RIGHT;
         }
+        if (gamepad1.dpad_up){
+            isArmDown = false;
+        } else if(gamepad1.dpad_down){
+            isArmDown = true;
+        }
         telemetry.addData("Yellow Location:", cameraHardware.getPreloadYellowPose());
     }
 
@@ -159,6 +164,9 @@ public class AutoSequences {
         }
 
     public boolean delayState(double delayTime){
+        if (!frontOrBackAuto){
+            intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+        }
         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.UPRIGHT);
         outtakeSubsystem.pitchToInternalPID(PITCH_PURPLE_PIXEL_POSITION,1);
@@ -412,7 +420,7 @@ public class AutoSequences {
         return false;
     }
 
-    public boolean transferPixel(){
+    public boolean transferPixel(boolean gripEarly){
         parkIfStuck(5500);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         liftDown(0.1);
@@ -428,11 +436,14 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
-            if ((intakeSubsystem.intakeSlidePosition < 12 || (intakeSubsystem.intakeSlidePosition < 16 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
+            if ((intakeSubsystem.intakeSlidePosition < 9 || (intakeSubsystem.intakeSlidePosition < 12 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(0,1); // power draw reasons
                     resetTimer();
+                    if (gripEarly){
+                        outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
+                    }
             //    }
                 return true;
             }
@@ -461,7 +472,6 @@ public class AutoSequences {
         if (extendStraightAway || autoTrajectories.extendSlidesAroundTruss){
             if (numCycles == 0 && !autoTrajectories.extendSlidesAroundTruss? delay(500):true){
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 if (numCycles == 0 && differentPitchForYellowRail){ // consistent across all autos
                     outtakeSubsystem.setOuttakePitchYellowPixelPosition();
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.YELLOW); // slides go out before arm so transfer is good
@@ -472,6 +482,7 @@ public class AutoSequences {
 
                 if (delay(160)){ // time for grippers to close
                     // lift and pitch to
+                    intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                     outtakeSubsystem.liftToInternalPID(liftTarget,1);
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
 
@@ -487,7 +498,7 @@ public class AutoSequences {
                     if (delay(350)){ // once chute is down
                         outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                         if(extendRailLate){
-                            if (xPosition > 15){
+                            if (xPosition > 16.2){
                                 autoRail.railLogic();
                             }
                         } else {
@@ -571,11 +582,6 @@ public class AutoSequences {
         goBackToStack = false;
         parkIfStuck(6000);
 
-        if (armHeight == 6){
-            if (intakeSubsystem.frontColourSensorValue > 1000){
-                armHeight = 5;
-            }
-        }
         armLogic(armHeight);
 
         if (numCycles == 1 && trussMiddleStage == 3){
@@ -636,13 +642,20 @@ public class AutoSequences {
 
         if (!extendSlides? autoTrajectories.extendSlidesAroundStage: xPosition < 18){ // this is kinda useless and dum
             intakeSubsystem.intakeSpin(1);
+
+            if (armHeight == 6){
+                if (intakeSubsystem.frontColourSensorValue > 1000 || intakeSubsystem.backColourSensorValue > 1000){
+                    armHeight = 5;
+                }
+            }
+
             if (intakeSlidePosition - intakeSubsystem.intakeSlidePosition < 70){ // this makes sure slides are holding well at the end
                 intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,1);
             }
             else {
                 intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,slideSpeed);
             }
-            if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
+            if (!autoTrajectories.drive.isBusy() || ((intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue) && xPosition < -25)
                     || (xPosition < -25 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
                 resetTimer();
                 if (armHeight == 6){
@@ -690,7 +703,7 @@ public class AutoSequences {
 
         if (autoTrajectories.extendSlidesAroundTruss){ // not for the last case??
             //intakeSubsystem.intakeSlideInternalPID(numCycles == 1?770:numCycles == 2?815:970,1);
-            intakeSlideToSlowedEnd(numCycles == 1?770:numCycles == 2?815:970,110,0.2,1);
+            intakeSlideToSlowedEnd(numCycles == 1?800:numCycles == 2?815:970,110,0.2,1);
          // for some reason we can't extend the slides unless we are further in
             intakeSubsystem.intakeSpin(1);
             if (!autoTrajectories.drive.isBusy() && intakeSubsystem.intakeSlideTargetReached()){ // || xPosition < -27 && intakeSubsystem.pixelsInIntake()
@@ -781,6 +794,9 @@ public class AutoSequences {
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
         }
         outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+        if (globalTimer > 29500){ // open at the end to deposit pixels
+            outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+        }
     }
 
 
@@ -816,15 +832,21 @@ public class AutoSequences {
         }
     }
     public void preExtendIntakeSlidesStage(double slideExtendSpeed, int slideOffset){
+        double maxSpeed;
+        if (slideOffset != 0){
+            maxSpeed = slideExtendSpeed + 0.03;
+        } else{
+            maxSpeed = 1;
+        }
         if (teamPropLocation == 1 || frontThirdCase){
             //intakeSubsystem.intakeSlideInternalPID(60 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,1);
+            intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(290+slideOffset,180,slideExtendSpeed,1);
+            intakeSlideToSlowedEnd(290+slideOffset,180,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,1);
+            intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,maxSpeed);
         }
     }
 

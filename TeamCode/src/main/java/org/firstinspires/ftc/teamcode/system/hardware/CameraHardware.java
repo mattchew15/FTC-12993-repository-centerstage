@@ -452,7 +452,7 @@ public class CameraHardware
             ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
             ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
 //            if (Math.abs(ROBOT_X) > 5) newPose = new Pose2d(pose.getX(), newPose.getY(), pose.getHeading());
-            if (Math.abs(ROBOT_Y) > 2.5) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+            if (Math.abs(ROBOT_Y) > 0) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
             poses.clear();
             return true;
         }/*

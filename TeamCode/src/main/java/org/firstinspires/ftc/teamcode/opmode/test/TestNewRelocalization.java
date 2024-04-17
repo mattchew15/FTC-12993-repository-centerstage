@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setRedAuto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -17,12 +18,13 @@ public class TestNewRelocalization extends LinearOpMode
     DriveBase driveBase = new DriveBase();
     @Override
     public void runOpMode() throws InterruptedException {
-        setRedAuto();
+        //setRedAuto();
+        setBlueAuto();
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
         SampleMecanumDriveThread sampleMecanumDrive = new SampleMecanumDriveThread(hardwareMap);
         sampleMecanumDrive.startImuThread(this);
-        sampleMecanumDrive.setPoseEstimate(new Pose2d(40, -35 , Math.toRadians(180)));
+        sampleMecanumDrive.setPoseEstimate(new Pose2d(40, 35 , Math.toRadians(180)));
         CameraHardware cameraHardware = new CameraHardware();
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         cameraHardware.pauseRailProcessor();

@@ -222,7 +222,7 @@
                     if (auto.goBackToStack){
                         currentState = AutoState.GRAB_OFF_STACK;
                     }
-                    if (auto.transferPixel()){
+                    if (auto.transferPixel(numCycles==0?false:true)){
                         currentState = AutoState.OUTTAKE_PIXEL;
                     }
                     break;

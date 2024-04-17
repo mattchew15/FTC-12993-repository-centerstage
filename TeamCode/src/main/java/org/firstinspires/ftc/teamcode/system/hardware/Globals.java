@@ -24,7 +24,10 @@ import java.util.function.DoubleUnaryOperator;
 public class Globals
 {
     public static double PITCH_OFFSET = 2.8;
-    public static double BLUE_AUTO_OFFSET = 1.9;
+    //public static double BLUE_AUTO_OFFSET = 1.9;
+    public static boolean isArmDown;
+    public static boolean frontOrBackAuto;
+
     // Auto Constants
     public static double
             autoTimer,
@@ -51,7 +54,7 @@ public class Globals
             RAIL_LEFT_YELLOW_POS = RAIL_CENTER_POS + 0.313,
             RAIL_LEFT_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.297,
             RAIL_LEFT_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.297,
-            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 9;
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 8.8;
 
 
     // Auto States
@@ -96,7 +99,7 @@ public class Globals
     public static int
             PITCH_OFFSET_VALUE = 319,
             PITCH_DEFAULT_DEGREE_TICKS = 36,
-            PITCH_CLIMB_TICKS = 65,
+            PITCH_CLIMB_TICKS = 67,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
             PITCH_PURPLE_PIXEL_POSITION = 20,
