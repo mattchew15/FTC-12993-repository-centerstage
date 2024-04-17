@@ -430,7 +430,14 @@ public class CameraHardware
                     newY = library.lookupTag(detection.id).fieldPosition.get(1) + cameraY;
 
                     //poses.add(new Pose2d(newX + (-5.9675), newY + (3.325)));
-                    poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
+                    if (BLUE_AUTO)
+                    {
+                        poses.add(new Pose2d(newX + (-5.371), newY - (2.516)));
+                    } else
+                    {
+                        poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
+                    }
+                    //poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
                 }
             }
         }
