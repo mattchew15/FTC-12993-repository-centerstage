@@ -5,10 +5,12 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_LESS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_TRUSS_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_LESS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_STAGE_POS;
@@ -185,7 +187,9 @@ public class OuttakeSubsystem
         FINE_ADJUST,
         CENTER_YELLOW,
         CENTER_YELLOW_TRUSS,
-        CENTER_YELLOW_STAGE
+        CENTER_YELLOW_STAGE,
+        RIGHT_LESS,
+        LEFT_LESS
     }
     public enum ArmServoState {
         READY,
@@ -549,6 +553,13 @@ public class OuttakeSubsystem
             case LEFT_YELLOW_TRUSS:
                 rail = RAIL_LEFT_YELLOW_TRUSS_POS;
                 break;
+            case RIGHT_LESS:
+                rail = RAIL_LEFT_LESS_POS;
+                break;
+            case LEFT_LESS:
+                rail = RAIL_RIGHT_LESS_POS;
+                break;
+
         }
         prevRail = servoCaching(rail, prevRail, EPSILON_DELTA, OuttakeRailServo);
     }

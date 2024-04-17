@@ -74,16 +74,33 @@ public class AutoRail {
         } else if (numCycles > numCyclesForExtendedRail){
             if (S == 1){ // mirrored cases for auto
                 if (railGoesRight){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    if (trussMiddleStage == 3){
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT_LESS);
+                    } else {
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    }
+
                 } else {
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    if (trussMiddleStage == 3){
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT_LESS);
+                    } else {
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    }
                 }
 
             } else{
                 if (railGoesRight){
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    if (trussMiddleStage == 3){
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT_LESS);
+                    } else {
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.LEFT);
+                    }
                 } else {
-                    auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    if (trussMiddleStage == 3){
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT_LESS);
+                    } else {
+                        auto.outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.RIGHT);
+                    }
                 }
             }
         } else {

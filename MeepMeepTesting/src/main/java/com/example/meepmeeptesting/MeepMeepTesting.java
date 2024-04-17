@@ -33,7 +33,7 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(backteamProp1)
+                        drive.trajectorySequenceBuilder(backteamProp2)
 
                             // drive into stacks truss teamprop3
 

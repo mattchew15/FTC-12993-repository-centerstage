@@ -22,7 +22,7 @@ public class TestNewRelocalization extends LinearOpMode
         driveBase.drivebaseSetup();
         SampleMecanumDriveThread sampleMecanumDrive = new SampleMecanumDriveThread(hardwareMap);
         sampleMecanumDrive.startImuThread(this);
-        sampleMecanumDrive.setPoseEstimate(new Pose2d(0, 0 , 0));
+        sampleMecanumDrive.setPoseEstimate(new Pose2d(40, -35 , Math.toRadians(180)));
         CameraHardware cameraHardware = new CameraHardware();
         cameraHardware.initBackWebcamVP(hardwareMap, telemetry);
         cameraHardware.pauseRailProcessor();

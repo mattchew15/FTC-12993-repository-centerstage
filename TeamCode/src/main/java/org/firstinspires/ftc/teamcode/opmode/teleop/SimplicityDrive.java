@@ -192,8 +192,8 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSequence();
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
-
                 telemetry.addData("STATE", outtakeState);
+                //telemetry.addData("arm height")
                 /*
                 telemetry.addLine("");
                 telemetry.addData("liftTarget", liftTarget);
@@ -216,6 +216,8 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if (gamepad1.right_stick_button){
                     intakeSubsystem.intakeSpin(-1);
+                } if (gamepad1.dpad_down){
+                    RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 }
                 /*
                 log.addData(
@@ -415,7 +417,8 @@ public class SimplicityDrive extends LinearOpMode {
                         if (delay(160)){ //&& ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1
                             //outtakeSubsystem.liftToInternalPID(0,1);
                             if (delay(240)){
-                                outtakeSubsystem.liftMotorRawControl(0);
+                                //outtakeSubsystem.liftMotorRawControl(0);
+                                outtakeSubsystem.liftToInternalPID(0,1);
                                 intakeSubsystem.intakeSpin(0);
                             }
                             intakeClipHoldorNotHold(-8,7); // backs up intake slides into robot
@@ -424,12 +427,14 @@ public class SimplicityDrive extends LinearOpMode {
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                                 resetTimer();// reset timer
                                 MaxExtension = true;
+
                                 extendOuttake();
                             } else if (gamepadLeftBumperRisingEdge.mode(gamepad1.left_bumper) || leftBumperPreExtend){
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                                 resetTimer();// reset timer
                                 MaxExtension = false;
+                                outtakeSubsystem.liftToInternalPID(0,1);
                                 extendOuttake();
                             }
                         }else {
@@ -451,6 +456,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if (changeExtension.ToggleMode){
                     outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES;
+                    //RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 } else {
                     outtakeExtensionInches = prevExtensionValue;
                     prevExtensionValue = outtakeExtensionInches; // this should work idk
@@ -490,7 +496,7 @@ public class SimplicityDrive extends LinearOpMode {
                 //RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);
 
                 // the line below tries to reduce the robot tipping from slides going out too fast
-                outtakeSubsystem.liftToInternalPID(liftTarget, MaxExtension&&(backdropRelativeHeight<19)&&((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition))>8)?0.7:1);
+                outtakeSubsystem.liftToInternalPID(liftTarget, 1); //MaxExtension&&(backdropRelativeHeight<19)&&((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition))>8)?0.7:
 
                 if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > LIFT_HITS_WHILE_PITCHING_THRESHOLD) { // so shit doesn't hit the thing when pitching
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
@@ -559,7 +565,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                  */
                 outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
-                if (delay(300)){
+                if (delay(300) || reArrangePixels){
                     setPivotServ();
                     fineadJustStuff();
                 }
@@ -594,7 +600,7 @@ public class SimplicityDrive extends LinearOpMode {
                             resetTimer();
                             //having these here means dont repeatedly set things so its more optimized
                             intakeSubsystem.intakeSpinState = IntakeSubsystem.IntakeSpinState.INTAKE;
-                            changeExtension.ToggleMode = false;
+                            changeExtension.ToggleMode = true;
                             usedTriggers = false;
                             droppedRight = false;
                             droppedLeft = false;
@@ -605,7 +611,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                             rightBumperPreExtend = false;
                             leftBumperPreExtend = false;
-                            RAIL_SERVO_POSITION = RAIL_CENTER_POS;
+                            //RAIL_SERVO_POSITION = RAIL_CENTER_POS;
 
                             outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES; // change if we want to extend more when not at max
                             if (increaseHeight){ // if it has been deposited
@@ -794,7 +800,7 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.resetOuttake();
             outtakeSubsystem.outtakeResetState = OuttakeSubsystem.OuttakeResetState.UP; // starts the thing
         } else {
-            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2){
+            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.3){
                 outtakeSubsystem.liftToInternalPID(0,1);
 
                 //outtakeSubsystem.liftMotorRawControl(0);
@@ -936,7 +942,6 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT);
         } else if (pivotState == 2){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT_FLIPPED);
-            telemetry.addLine("we should be running diagonal right flipped");
         } else if (pivotState == 3){
             outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
         } else if (pivotState == 4){

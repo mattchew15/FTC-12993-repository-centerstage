@@ -21,7 +21,8 @@ public class Front_RED_Stage extends LinearOpMode {
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
     boolean frontOrBackAuto;
-    double endAngleForStacks = -174;
+    double endAngleForStacks = -173;
+    boolean didWeFuckingRelocalize = false;
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -116,6 +117,14 @@ public class Front_RED_Stage extends LinearOpMode {
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
+
+
+            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
+            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
+
+            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
+            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
+            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
             //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
@@ -238,6 +247,11 @@ public class Front_RED_Stage extends LinearOpMode {
                 break;
 
             case TRANSFER_PIXEL:
+                if (numCycles == 0 && frontOrBackAuto){
+                    if (xPosition>-50 && xPosition<10){
+                        auto.intakeSubsystem.intakeSpin(-1);
+                    }
+                }
                 if (numCycles < 3){
                     auto.goBackToStack(3,6,-29.3);
                 }
@@ -299,23 +313,26 @@ public class Front_RED_Stage extends LinearOpMode {
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                 }
                 else if (outtakePixelFinished){
-                    auto.resetPosWithAprilTags(3);
+
                     if (numCycles == 1){
+
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,1,-27.5, -20);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,2.3,-27.5, -20);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.1,yPosition,headingPosition),20,-2.5,endAngleForStacks,3,0,-16.5);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),20,-3,endAngleForStacks,3,3,-17);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
                     }*/
+                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     }
+
                     currentState = AutoState.DROP;
                 }
                 break;
@@ -337,7 +354,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -346,7 +363,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         armHeight = 3;
                     }
                 } else if (numCycles == 3){
-                    armHeight = 5;
+                    armHeight = 6;
                 } else if (numCycles == 4) {
                     armHeight = 3;
                 }
@@ -370,10 +387,10 @@ public class Front_RED_Stage extends LinearOpMode {
                             } else if (teamPropLocation == 3){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterBackStage3);
                             }
-                           /* intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
+                            intakeTrajectoryAfterDrop = auto.autoTrajectories.driveIntoStackStraightTrajectory(poseEstimate,20,3,0,-27,-17);
                             if (intakeTrajectoryAfterDrop != null){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryAfterDrop);
-                            }*/
+                            }
                         }
                     }
                     if (auto.GlobalTimer.seconds() > 25.1){
@@ -400,7 +417,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     delayBeforeRetracting = 500;
                     retractSlides = true;
                     slideSpeed = 0.8;
-                    if (S == 1? xPosition < 12 : xPosition < -17){
+                    if (S == 1? xPosition < 12 :xPosition < 12 ){//xPosition < -17
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }
                     /*yOffset = 4;
@@ -411,7 +428,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 if (numCycles == 2){
                     slideSpeed = 0.7;
-                    if (S == 1? xPosition < 12 : xPosition < -14){
+                    if (S == 1? xPosition < 12 : xPosition < 12){ //  xPosition < -14
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }/*if (S == 1){
                         extendSlides = true;

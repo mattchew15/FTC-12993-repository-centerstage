@@ -374,7 +374,7 @@ public class CameraHardware
     }
     public boolean getNewPose3(Pose2d pose, int lane, Telemetry telemetry)
     {
-        for (int i = 0; i <3; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (poses.size() >= 3) poses.clear();
             List<AprilTagDetection> detections = aprilTag.getDetections();
@@ -407,10 +407,10 @@ public class CameraHardware
                 if (detection.metadata != null)
                 {
                     double heading = Math.toRadians(-detection.ftcPose.yaw);
-                    if (heading < -0.31 && heading > -0.32) heading = 0.0; // veer said this is necessary
+                    //if (heading < -0.31 && heading > -0.32) heading = 0.0; // veer said this is necessary
 
                     double tagX = detection.ftcPose.x;
-                    double tagY = (detection.ftcPose.y / 1.3285651049) + 5.76 ;
+                    double tagY = (detection.ftcPose.y / 1.3285651049) + 5.76  ;
 
                     cameraX = tagX * Math.sin(heading) + tagY * Math.cos(heading);
                     cameraY = tagX * Math.cos(heading) - tagY * Math.sin(heading);
@@ -430,7 +430,7 @@ public class CameraHardware
                     newY = library.lookupTag(detection.id).fieldPosition.get(1) + cameraY;
 
                     //poses.add(new Pose2d(newX + (-5.9675), newY + (3.325)));
-                    poses.add(new Pose2d(newX + (0), newY + (0)));
+                    poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
                 }
             }
         }
@@ -446,7 +446,24 @@ public class CameraHardware
             ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
             poses.clear();
             return true;
-        }
+        }/*
+        if (poses.size() >= 1)
+        {
+            double x = pose.getX();
+            double y = pose.getY();
+
+            // we only need like 3 frames so this should be fine
+            //x = ((poses.get(0).getX() + poses.get(1).getX() + poses.get(2).getX()) / 3);
+            //y = (poses.get(0).getY() + poses.get(1).getY() + poses.get(2).getY()) / 3;
+            newPose = new Pose2d(poses.get(0).getX(), poses.get(0).getY(), pose.getHeading()); // this should be an average pose
+            //if (Math.abs(pose.getX() - newPose.getX()) > 3 || Math.abs(pose.getY() - newPose.getY()) > 3) return false;
+
+            ROBOT_X = returnOffSet(newPose.getX(), x);
+            ROBOT_Y = returnOffSet(newPose.getY(), y);
+            poses.clear();
+            return true;
+        }*/
+
         return false;
 
     }
@@ -509,7 +526,7 @@ public class CameraHardware
     }
     public double getTargetTag()
     {
-        return railExtension.getTargetTag();
+        return targetTag;
     }
     public void pauseAprilTagProcessor()
     {

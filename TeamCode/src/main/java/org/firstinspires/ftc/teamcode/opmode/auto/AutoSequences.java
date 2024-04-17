@@ -48,6 +48,7 @@ public class AutoSequences {
     Telemetry telemetry;
     Gamepad gamepad1;
     HardwareMap hwMap;
+    int armHeight;
 
     final double xyP = 1;
     final double headingP = 1;
@@ -540,23 +541,37 @@ public class AutoSequences {
         return false;
     }
 
-    public void armLogic(int armHeight){
-        if (armHeight == 1){
+    public void armLogic(int armHeights){
+        if (armHeights == 1){
+            armHeight = armHeights;
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
-        } else if (armHeight == 3){
+        } else if (armHeights == 3){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
-        } else if (armHeight == 4){
+            armHeight = armHeights;
+        } else if (armHeights == 4){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.FOUR);
-        } else if (armHeight == 5){
+            armHeight = armHeights;
+        } else if (armHeights == 5){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
-        } else if (armHeight == 6){
+            armHeight = armHeights;
+        } else if (armHeights == 6){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+            armHeight = armHeights;
         }
     }
 
     public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks, int intakeSlidePosition, double delayBeforeRetracting, double xPositionForSlideExtension, boolean retractSlidesBeforeExtending, double slideSpeed){
         goBackToStack = false;
         parkIfStuck(6000);
+
+        if (armHeight == 6){
+            if (intakeSubsystem.frontColourSensorValue > 1000){
+                armHeight = 5;
+            }
+        }
+        armLogic(armHeight);
+
+
 
         if (delay(delayBeforeRetracting)){
             outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
@@ -571,7 +586,7 @@ public class AutoSequences {
             }
             // retracting arm depending on where the rail was at
             if (numCycles > numCyclesForSideways){ // wait for the outtake rail to retract
-                if (delay(10 + delayBeforeRetracting)){
+                if (delay(60 + delayBeforeRetracting)){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 }
@@ -621,6 +636,10 @@ public class AutoSequences {
             if (!autoTrajectories.drive.isBusy() || intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue
                     || (xPosition < -25 && intakeSubsystem.pixelsInIntake())){ // do stuff with sensor to make better
                 resetTimer();
+                if (armHeight == 6){
+                    armHeight = 5;
+                    armLogic(armHeight);
+                }
                 autoTrajectories.extendSlidesAroundStage = false;
                 return true;
             }
@@ -850,7 +869,7 @@ public class AutoSequences {
 
     }
 
-    public void resetPosWithAprilTags(int tagBeingUsed){
+    public boolean resetPosWithAprilTags(int tagBeingUsed){
         if (cameraHardware.getNewPose3(poseEstimate, tagBeingUsed, telemetry))
         {
             telemetry.addLine("WE are reseting the pose!!!!!");
@@ -859,11 +878,13 @@ public class AutoSequences {
             newY = pose.getY();*/
             autoTrajectories.drive.setPoseEstimate(pose);
             //cameraHardware.pauseBackWebcam();
+            return true;
 
         }
         else
         {
             telemetry.addLine("We didn't reset the pose boys!!!!");
+            return false;
         }
     }
 

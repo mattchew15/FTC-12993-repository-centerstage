@@ -32,7 +32,12 @@ public class Globals
 
     public static double
             RAIL_CENTER_POS = 0.487,
-            RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
+
+            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS + 0.4,
+            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS - 0.4,
+
+
+    RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
             RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.23,
 
@@ -45,7 +50,7 @@ public class Globals
             RAIL_LEFT_YELLOW_POS = RAIL_CENTER_POS + 0.313,
             RAIL_LEFT_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.297,
             RAIL_LEFT_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.297,
-            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 8;
+            OUTTAKE_DISTANCE_AUTO_THRESHOLD = 9;
 
 
     // Auto States
@@ -113,9 +118,9 @@ public class Globals
             LIFT_HITS_WHILE_PITCHING_THRESHOLD = 3,
 
             // Worlds constants
-            HIGH_BACKDROP_PRESET_INCHES = 34,
-            MID_BACKDROP_PRESET_INCHES = 19,
-            LOW_BACKDROP_PRESET_INCHES = 11,
+            HIGH_BACKDROP_PRESET_INCHES = 36,
+            MID_BACKDROP_PRESET_INCHES = 21,
+            LOW_BACKDROP_PRESET_INCHES = 14,
             S, // the side multiplier to change sides for autonomous
             LEFT_OR_RIGHT;
 
