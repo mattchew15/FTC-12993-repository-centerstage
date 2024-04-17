@@ -24,6 +24,7 @@ import java.util.function.DoubleUnaryOperator;
 public class Globals
 {
     public static double PITCH_OFFSET = 2.8;
+    public static double BLUE_AUTO_OFFSET = 1.9;
     // Auto Constants
     public static double
             autoTimer,
@@ -33,8 +34,8 @@ public class Globals
     public static double
             RAIL_CENTER_POS = 0.487,
 
-            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS + 0.4,
-            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS - 0.4,
+            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS + 0.38,
+            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS - 0.38,
 
 
     RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,

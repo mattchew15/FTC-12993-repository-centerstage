@@ -428,7 +428,7 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
-            if ((intakeSubsystem.intakeSlidePosition < 6 || (intakeSubsystem.intakeSlidePosition < 8 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
+            if ((intakeSubsystem.intakeSlidePosition < 12 || (intakeSubsystem.intakeSlidePosition < 16 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(0,1); // power draw reasons
@@ -457,9 +457,11 @@ public class AutoSequences {
     }
 
     public boolean outtakePixel(double correctedHeading, double liftTarget, int pitchTarget, int intakeSlideTarget, AutoRail autoRail,
-    AutoPivot autoPivot, boolean extendStraightAway, boolean distanceSensorForCycleZero, boolean differentPitchForYellowRail, boolean openGrippers){
+    AutoPivot autoPivot, boolean extendStraightAway, boolean distanceSensorForCycleZero, boolean differentPitchForYellowRail, boolean openGrippers, boolean extendRailLate){
         if (extendStraightAway || autoTrajectories.extendSlidesAroundTruss){
             if (numCycles == 0 && !autoTrajectories.extendSlidesAroundTruss? delay(500):true){
+                outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
+                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
                 if (numCycles == 0 && differentPitchForYellowRail){ // consistent across all autos
                     outtakeSubsystem.setOuttakePitchYellowPixelPosition();
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.YELLOW); // slides go out before arm so transfer is good
@@ -467,9 +469,8 @@ public class AutoSequences {
                     outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE); // slides go out before arm so transfer is good
                 }
-                outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
-                intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN);
-                if (delay(150)){ // time for grippers to close
+
+                if (delay(160)){ // time for grippers to close
                     // lift and pitch to
                     outtakeSubsystem.liftToInternalPID(liftTarget,1);
                     outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
@@ -485,7 +486,13 @@ public class AutoSequences {
 
                     if (delay(350)){ // once chute is down
                         outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
-                        autoRail.railLogic();
+                        if(extendRailLate){
+                            if (xPosition > 15){
+                                autoRail.railLogic();
+                            }
+                        } else {
+                            autoRail.railLogic();
+                        }
                         autoPivot.pivotLogic();
                         if (!autoTrajectories.drive.isBusy() || ((outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) && (distanceSensorForCycleZero || numCycles != 0) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > (liftTarget - 4))) {
                             // line above determines when we drop the pixels
@@ -571,7 +578,9 @@ public class AutoSequences {
         }
         armLogic(armHeight);
 
-
+        if (numCycles == 1 && trussMiddleStage == 3){
+            outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+        }
 
         if (delay(delayBeforeRetracting)){
             outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
@@ -586,7 +595,7 @@ public class AutoSequences {
             }
             // retracting arm depending on where the rail was at
             if (numCycles > numCyclesForSideways){ // wait for the outtake rail to retract
-                if (delay(60 + delayBeforeRetracting)){
+                if (delay(numCycles == 1?250:65 + delayBeforeRetracting)){
                     outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
                     outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
                 }
@@ -840,6 +849,10 @@ public class AutoSequences {
             if (!intakeSubsystem.pixelsInIntake()){
                 goBackToStack = true;
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+                armHeight = 1;
+                if (trussMiddleStage == 3 && numCycles == 1){
+                    armHeight = 4;
+                }
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 timesIntoStack += 1;

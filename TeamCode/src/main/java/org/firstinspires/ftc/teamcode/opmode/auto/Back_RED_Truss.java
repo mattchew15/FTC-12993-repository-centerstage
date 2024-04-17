@@ -267,7 +267,7 @@ public class Back_RED_Truss extends LinearOpMode {
                     liftTarget = 28;
                     auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendStraightAway,false, false, openGrippers);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendStraightAway,false, false, openGrippers, false);
 
                 if (outtakePixelFinished){
                     currentState = AutoState.DROP;

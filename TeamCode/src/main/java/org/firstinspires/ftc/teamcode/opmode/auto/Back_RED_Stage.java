@@ -267,7 +267,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 //outtaking lengths for each cycle
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
-                int intakeSlideTarget = 270; // pre-extend intake for most cycles
+                int intakeSlideTarget = 330; // pre-extend intake for most cycles
                 Trajectory intakeTrajectory = null;
                 boolean openGrippers = true;
                 boolean extendStraightAway = false;
@@ -299,14 +299,14 @@ public class Back_RED_Stage extends LinearOpMode {
                 } else if (numCycles == 3){
                     pitchTarget = 25;
                     liftTarget = 31;
-                    intakeSlideTarget = 0;
+                    intakeSlideTarget = 70;
                 } else if (numCycles == 4){
                     pitchTarget = 27;
                     liftTarget = 31;
-                    intakeSlideTarget = 50;
+                    intakeSlideTarget = 70;
                     auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendStraightAway, false, false, openGrippers);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendStraightAway, false, false, openGrippers, false);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished || (teamPropLocation == 1 && numCycles == 3)){ // if team prop location is 1 we don't want more pixels
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     currentState = AutoState.PARK;
@@ -319,7 +319,7 @@ public class Back_RED_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,2.3,-27.5, -20);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,2.3,-27.5, -20,180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),20,-3,endAngleForStacks,3,3.8,-18);
                     }
@@ -379,7 +379,6 @@ public class Back_RED_Stage extends LinearOpMode {
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
                             }
                         } else { // for the back side autos we just run this straight away
-
                             if (teamPropLocation == 1){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterBackStage1);
                             } else if (teamPropLocation == 2){
@@ -404,7 +403,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
-                double delayBeforeRetracting = 100;
+                double delayBeforeRetracting = 200;
                 int intakeSlidePosition = INTAKE_SLIDE_AUTO_LONG_PRESET;
                 boolean extendSlides = false;
                 double xPosSlideThresh = -10;
@@ -436,7 +435,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 if (numCycles == 3 || numCycles == 4){
 
-                    intakeSlidePosition = 800;
+                    intakeSlidePosition = 850;
                     xSplineValue = 3;
                     yOffset = 4;
                     extendSlides = false;
@@ -445,7 +444,18 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 if (auto.grabOffStack(numCycleForDifferentLane, true, extendSlides,3, intakeSlidePosition, delayBeforeRetracting, xPosSlideThresh, retractSlides, slideSpeed)){
                     currentState = AutoState.AFTER_GRAB_OFF_STACK;
-                    Trajectory outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,20, 173, 4.3);
+
+                    Trajectory outtakeTrajectory = null;
+                 /*   if (numCycles == 1){
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 171, 4.8,14);
+                    }
+                    if (numCycles == 2){
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 169, 4.8,14);
+                    } else if (numCycles == 3){
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,16, 168, 5.4,12);
+                    } else if (numCycles == 4){
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,16, 168, 5.4,12);
+                    }*/
 
 
                  /*   if (numCycles >= 3) { // for the longer delay we follow the trajectory after the wait - just so its more consistent hopefully
@@ -458,6 +468,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     else {
                           outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 22 : 19, 176.8, endTangent, yOffset, xSplineValue);
                          }*/
+                    outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 22 : 19, 176.8, endTangent, yOffset, xSplineValue);
                     //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
                     //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
                     //   }
@@ -467,7 +478,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,3, 350,300)){
+                if (auto.afterGrabOffStack(2,3, 365,300)){
                     currentState = AutoState.TRANSFER_PIXEL;
 
                 }
