@@ -18,8 +18,8 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.frontOrBack
 public class Back_BLUE_Truss extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
-    double positiveDriftOffset1 = 0.3;
-    double positiveDriftOffset2 = 0.3;
+    double positiveDriftOffset1 = 0.1;
+    double positiveDriftOffset2 = 0.2;
     double delayForYellow = 8;
     boolean frontOrBackAuto;
 

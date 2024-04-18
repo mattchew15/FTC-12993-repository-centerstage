@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Front Blue Stage Auto", group = "Autonomous")
-public class Front_BLUE_Stage extends LinearOpMode {
+@Autonomous(name = "Front Blue Stage 4 seconds", group = "Autonomous")
+public class Front_BLUE_Stage_4SECS extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
@@ -164,7 +164,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
 
         switch (currentState) {
             case DELAY_BACK:
-                if(auto.delayState(!isArmDown? 100:0)){
+                if(auto.delayState((!isArmDown? 100:0))){
                     currentState = AutoState.PRELOAD_DRIVE_BACK;
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
@@ -187,7 +187,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
                 break;
 
             case DELAY:
-                if(auto.delayState(0)){
+                if(auto.delayState(4000)){
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1FrontStage);
                     } else if (teamPropLocation == 2){
