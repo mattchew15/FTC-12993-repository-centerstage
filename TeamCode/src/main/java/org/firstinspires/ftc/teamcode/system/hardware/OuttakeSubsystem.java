@@ -101,7 +101,7 @@ public class OuttakeSubsystem
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
             PITCH_PURPLEPIXEL_POSITION = 0.365,
-            PITCH_PURPLEPIXEL_POSITION_THIRDCASE = 0.18,
+            PITCH_PURPLEPIXEL_POSITION_THIRDCASE = 0.23,
             PITCH_LOWPITCH_POSITION = 0.7,
             PITCH_YELLOWPIXEL_POSITION = 0.4;
 

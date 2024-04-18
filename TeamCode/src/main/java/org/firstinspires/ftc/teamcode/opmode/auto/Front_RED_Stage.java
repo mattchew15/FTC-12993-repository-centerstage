@@ -70,7 +70,7 @@ public class Front_RED_Stage extends LinearOpMode {
         }
 
         if (S == -1){
-            MiddleLaneYIntake -= 3.9;
+            auto.autoTrajectories.MiddleLaneYIntake -= 3.9;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing

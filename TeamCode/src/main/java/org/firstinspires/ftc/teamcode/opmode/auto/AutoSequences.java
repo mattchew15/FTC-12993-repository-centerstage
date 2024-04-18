@@ -426,7 +426,6 @@ public class AutoSequences {
     public boolean transferPixel(boolean gripEarly){
         parkIfStuck(5500);
         outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
-        liftDown(0.1);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
 
         intakeSubsystem.intakeSlideInternalPID(-20,1);
@@ -439,10 +438,13 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
+            if (intakeSubsystem.intakeSlidePosition < 100){
+                outtakeSubsystem.liftToInternalPID(-1,1);
+            }
             if ((intakeSubsystem.intakeSlidePosition < 8 || (intakeSubsystem.intakeSlidePosition < 9 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                    intakeSubsystem.intakeSlideInternalPID(0,1); // power draw reasons
+                    intakeSubsystem.intakeSlideInternalPID(-4,1); // power draw reasons
                     resetTimer();
                     if (gripEarly){
                         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -452,6 +454,7 @@ public class AutoSequences {
             }
 
         } else {
+            liftDown(0.1);
           //  if (delay(0)){
             //telemetry.addLine("REVERSE THE FUCKING INTAKE");
             if (numCycles == 0){
@@ -587,7 +590,7 @@ public class AutoSequences {
 
     public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks, int intakeSlidePosition, double delayBeforeRetracting, double xPositionForSlideExtension, boolean retractSlidesBeforeExtending, double slideSpeed){
         goBackToStack = false;
-        parkIfStuck(6000);
+        parkIfStuck(5000);
 
         armLogic(armHeight);
 

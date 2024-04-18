@@ -70,7 +70,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
         }
 
         if (S == -1){
-            MiddleLaneYIntake -= 3.4;
+           auto.autoTrajectories.MiddleLaneYIntake -= 3.2;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -127,19 +127,21 @@ public class Back_BLUE_Stage extends LinearOpMode {
 
             loopTime.delta();
             //telemetry.addData("numCycles", numCycles);
-            telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
+            //telemetry.addData("First drive Y value",MiddleLaneYIntake + LaneOffset);
+//            telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
+            telemetry.addData("xPosition", xPosition);
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
 
-            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
-            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
+//            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
+//            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
 
-            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
-            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
-            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
-
-            telemetry.addData("armHeight", auto.armHeight);
+//            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
+//            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
+//            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
+//
+//            telemetry.addData("armHeight", auto.armHeight);
             //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
@@ -399,6 +401,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                             }
                         } else { // for the back side autos we just run this straight away
                             if (teamPropLocation == 1){
+                                //auto.parkIfStuck = true; // should force into park before doing another cycle
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterBackStage1);
                             } else if (teamPropLocation == 2){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterBackStage2);

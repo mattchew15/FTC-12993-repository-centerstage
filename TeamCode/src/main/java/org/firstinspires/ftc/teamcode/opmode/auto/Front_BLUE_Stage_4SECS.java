@@ -70,7 +70,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
         }
 
         if (S == -1){
-            MiddleLaneYIntake -= 3.4;
+            auto.autoTrajectories.MiddleLaneYIntake -= 3.2;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -395,7 +395,8 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                             } else if (teamPropLocation == 2){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage2);
                             } else if (teamPropLocation == 3){
-                                auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
+                                auto.parkIfStuck = true; // should force into park before doing another cycle
+                                //auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
                             }
                         } else { // for the back side autos we just run this straight away
                             if (teamPropLocation == 1){
