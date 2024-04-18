@@ -89,13 +89,13 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                     switch (place)
                     {
                         case MIDDLE:
-                            if (targetTag == 1 || targetTag == 4)
+                        /*    if (targetTag == 1 || targetTag == 4)
                             {
                                 place = Globals.Place.LEFT;
                             } else if (targetTag == 3 || targetTag == 6)
                             {
                                 place = Globals.Place.RIGHT;
-                            }
+                            }*/
                             // the no break is intentional lol
 
                         case LEFT:

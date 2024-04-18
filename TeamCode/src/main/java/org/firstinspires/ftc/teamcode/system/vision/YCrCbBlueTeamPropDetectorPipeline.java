@@ -24,11 +24,11 @@ public class YCrCbBlueTeamPropDetectorPipeline extends OpenCvPipeline {
             regionWidth = 100,
             regionHeight = 100,
             region1A_x = 0,
-            region1A_y = 380,
+            region1A_y = 380 + 50,
             region2A_x = 575,
-            region2A_y = 380,
+            region2A_y = 380 + 50,
             region3A_x = 1180,
-            region3A_y = 380;
+            region3A_y = 380 + 50;
 
     // Points A and B for 3 regions. Counting from left.
     private final Point

@@ -71,7 +71,7 @@ public class Globals
         NONE
     }
 
-    public static Place place = Place.RIGHT;
+    public static Place place = Place.NONE;
 
     // Team Prop Location
     public static int teamPropLocation = 1;

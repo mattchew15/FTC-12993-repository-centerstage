@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.BLUE_AUTO;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RED_AUTO;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.S;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 
@@ -99,6 +100,13 @@ public class AutoPivot {
             }
 
         } else if (numCycles > numCyclesForStraightPivot){
+            if (trussMiddleStage == 3 && numCycles == 2){
+                if (S==1){
+                    auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
+                } else {
+                    auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT);
+                }
+            }
             auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
 
         } else {

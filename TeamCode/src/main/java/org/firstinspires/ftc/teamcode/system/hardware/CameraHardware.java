@@ -206,7 +206,7 @@ public class CameraHardware
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        builder.addProcessor(preloadDetection);
+        //builder.addProcessor(preloadDetection);
         //builder.addProcessor(dashBoardProcessor);
         builder.addProcessor(railExtension);
 
@@ -215,7 +215,7 @@ public class CameraHardware
         //visionPortal.stopLiveView(); // idk this should work ig tbh why does it work like this i am literally setting it to false and this sh
         //FtcDashboard.getInstance().startCameraStream(dashBoardProcessor, 0);
         library = getCenterStageTagLibrary();
-        visionPortal.setProcessorEnabled(preloadDetection, true);
+        //visionPortal.setProcessorEnabled(preloadDetection, true);
         visionPortal.setProcessorEnabled(railExtension, true);
 
 
@@ -430,14 +430,8 @@ public class CameraHardware
                     newY = library.lookupTag(detection.id).fieldPosition.get(1) + cameraY;
 
                     //poses.add(new Pose2d(newX + (-5.9675), newY + (3.325)));
-                    if (BLUE_AUTO)
-                    {
-                        poses.add(new Pose2d(newX + (-5.371), newY - (2.516)));
-                    } else
-                    {
-                        poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
-                    }
-                    //poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
+
+                    poses.add(new Pose2d(newX + (-5.371), newY + (2.516)));
                 }
             }
         }
@@ -452,7 +446,11 @@ public class CameraHardware
             ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
             ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
 //            if (Math.abs(ROBOT_X) > 5) newPose = new Pose2d(pose.getX(), newPose.getY(), pose.getHeading());
-            if (Math.abs(ROBOT_Y) > 0) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+            if (RED_AUTO) if (Math.abs(ROBOT_Y) > 2.5) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+
+            if (BLUE_AUTO) {
+                newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+            }
             poses.clear();
             return true;
         }/*
@@ -519,7 +517,7 @@ public class CameraHardware
     }
     public void pausePreloadProcessor()
     {
-        visionPortal.setProcessorEnabled(preloadDetection, false);
+        //visionPortal.setProcessorEnabled(preloadDetection, false);
     }
     public void resumePreloadProcessor()
     {

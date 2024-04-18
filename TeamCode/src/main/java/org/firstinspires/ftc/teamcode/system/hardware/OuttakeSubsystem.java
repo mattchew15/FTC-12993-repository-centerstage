@@ -470,7 +470,7 @@ public class OuttakeSubsystem
     }
     public void setOuttakePitchPurplePixelThirdCasePosition(){
         OuttakePitchServo.setPosition(PITCH_PURPLEPIXEL_POSITION_THIRDCASE);
-        prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
+        //prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
         //prevPitch = servoCaching(PITCH_PURPLEPIXEL_POSITION_THIRDCASE, prevPitch, EPSILON_DELTA, OuttakePitchServo);
     }
 

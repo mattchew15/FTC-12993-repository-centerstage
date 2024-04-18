@@ -256,7 +256,7 @@ public class AutoSequences {
     public boolean preloadDriveState3 (){
 
         //extendIntakeArms();
-
+        outtakeSubsystem.pitchToInternalPID(PITCH_PURPLE_PIXEL_POSITION-2,1);
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
@@ -439,7 +439,7 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
-            if ((intakeSubsystem.intakeSlidePosition < 4 || (intakeSubsystem.intakeSlidePosition < 6 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
+            if ((intakeSubsystem.intakeSlidePosition < 8 || (intakeSubsystem.intakeSlidePosition < 9 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(0,1); // power draw reasons
@@ -501,7 +501,7 @@ public class AutoSequences {
                     if (delay(350)){ // once chute is down
                         outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                         if(extendRailLate){
-                            if (xPosition > 16.2){
+                            if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 33: xPosition > 15){
                                 autoRail.railLogic();
                             }
                         } else {
@@ -510,22 +510,21 @@ public class AutoSequences {
                         autoPivot.pivotLogic();
                         if (!autoTrajectories.drive.isBusy() || ((outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) && (distanceSensorForCycleZero || numCycles != 0) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > (liftTarget - 4))) {
                             // line above determines when we drop the pixels
-                            if (delayForYellowRail(500)){
-                            if (openGrippers){
-                                outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                            if (delayForYellowRail(300)){
+                                if (openGrippers){
+                                    outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                                }
+                                outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
+                                numCycles += 1;
+                                timesIntoStack = 0;
+                                resetTimer();
+                                intakeSubsystem.intakeSpin(0);
+                                autoTrajectories.extendSlidesAroundTruss = false;
+                                // this can be paused after first cycle
+                                cameraHardware.pausePreloadProcessor();
+                                cameraHardware.pauseRailProcessor();
+                                return true;
                             }
-                            outtakeSubsystem.outtakeDistanceSensorValue = 100; // so that it doesn't do funky stuff
-                            numCycles += 1;
-                            timesIntoStack = 0;
-                            resetTimer();
-                            intakeSubsystem.intakeSpin(0);
-                            autoTrajectories.extendSlidesAroundTruss = false;
-                            // this can be paused after first cycle
-                            cameraHardware.pausePreloadProcessor();
-                            cameraHardware.pauseRailProcessor();
-                            return true;
-                            }
-
                         } else {
                             resetAutoRailTimer();
                         }
@@ -592,7 +591,7 @@ public class AutoSequences {
 
         armLogic(armHeight);
 
-        if (numCycles == 1 && trussMiddleStage == 3){
+        if (numCycles == 1 && trussMiddleStage == 3 && !frontOrBackAuto){
             outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
         }
 
@@ -657,8 +656,9 @@ public class AutoSequences {
                 }
             }
 
-            if (intakeSlidePosition - intakeSubsystem.intakeSlidePosition < 70){ // this makes sure slides are holding well at the end
+            if (intakeSlidePosition - intakeSubsystem.intakeSlidePosition > 150){ // this makes sure slides are holding well at the end
                 intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,1);
+                telemetry.addLine("WE ARE GOING INTO STACK AT MAX SPEED");
             }
             else {
                 intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,slideSpeed);
@@ -798,13 +798,12 @@ public class AutoSequences {
         outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
         outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS, 1);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
-        if (delay(400)){
-            outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
-        }
-        outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
-        if (globalTimer > 29500){ // open at the end to deposit pixels
+        if (delay(150) && xPosition > 22){
+            //outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
         }
+        outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
+
     }
 
 
@@ -858,7 +857,7 @@ public class AutoSequences {
             intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(270+slideOffset,180,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(227+slideOffset,180,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
             intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,maxSpeed);
@@ -888,7 +887,9 @@ public class AutoSequences {
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 armHeight = 1;
                 if (trussMiddleStage == 3 && numCycles == 1){
-                    armHeight = 4;
+                    armHeight = 3;
+                } else if(trussMiddleStage == 3 && numCycles == 1) {
+                    armHeight = 1;
                 }
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
