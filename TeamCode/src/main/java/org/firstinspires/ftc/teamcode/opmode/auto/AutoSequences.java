@@ -31,8 +31,10 @@ import org.firstinspires.ftc.teamcode.system.hardware.StorePose;
 @Config
 public class AutoSequences {
 
+    public ElapsedTime timeInGrabOffStack;
     ElapsedTime GlobalTimer;
     double autoTimer;
+    double autoRailTimer;
 
     //int numCycles;
     double correctedHeading;
@@ -113,6 +115,7 @@ public class AutoSequences {
         cameraHardware.initBackWebcamVP(hwMap, telemetry);
 
         GlobalTimer = new ElapsedTime(System.nanoTime());
+        timeInGrabOffStack = new ElapsedTime();
         autoTrajectories.drive.setPoseEstimate(startPose);
         if (pausePreloadProcessor){
             cameraHardware.pausePreloadProcessor();
@@ -436,7 +439,7 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
-            if ((intakeSubsystem.intakeSlidePosition < 9 || (intakeSubsystem.intakeSlidePosition < 12 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
+            if ((intakeSubsystem.intakeSlidePosition < 4 || (intakeSubsystem.intakeSlidePosition < 6 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(0,1); // power draw reasons
@@ -507,6 +510,7 @@ public class AutoSequences {
                         autoPivot.pivotLogic();
                         if (!autoTrajectories.drive.isBusy() || ((outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) && (distanceSensorForCycleZero || numCycles != 0) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > (liftTarget - 4))) {
                             // line above determines when we drop the pixels
+                            if (delayForYellowRail(500)){
                             if (openGrippers){
                                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                             }
@@ -520,6 +524,10 @@ public class AutoSequences {
                             cameraHardware.pausePreloadProcessor();
                             cameraHardware.pauseRailProcessor();
                             return true;
+                            }
+
+                        } else {
+                            resetAutoRailTimer();
                         }
                     }
 
@@ -815,8 +823,15 @@ public class AutoSequences {
     public boolean delay(double delayTime){
         return globalTimer - autoTimer > delayTime;
     }
+    public boolean delayForYellowRail(double delayTime){
+        return globalTimer - autoRailTimer > delayTime;
+    }
+
     public void resetTimer(){
         autoTimer = globalTimer;
+    }
+    public void resetAutoRailTimer(){
+        autoRailTimer = globalTimer;
     }
 
     public void preExtendIntakeSlides(double slideExtendSpeed, int slideOffset){
@@ -843,7 +858,7 @@ public class AutoSequences {
             intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(290+slideOffset,180,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(270+slideOffset,180,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
             intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,maxSpeed);

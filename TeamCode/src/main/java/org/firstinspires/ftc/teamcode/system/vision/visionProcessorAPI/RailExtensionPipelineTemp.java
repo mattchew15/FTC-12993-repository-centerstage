@@ -5,19 +5,25 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.place;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import androidx.core.math.MathUtils;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RailExtensionPipelineTemp implements VisionProcessor
 {
@@ -117,7 +123,8 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                 }
             }
         }
-
+        Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(frame, b);
         return null;
     }
 
@@ -161,4 +168,5 @@ public class RailExtensionPipelineTemp implements VisionProcessor
     {
         return tagWeSee;
     }
+
 }

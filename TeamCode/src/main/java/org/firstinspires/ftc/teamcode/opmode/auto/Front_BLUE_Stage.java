@@ -404,10 +404,15 @@ public class Front_BLUE_Stage extends LinearOpMode {
                         auto.parkIfStuck = true; // should force into park before doing another cycle
                     } else {
                         currentState = AutoState.GRAB_OFF_STACK;
+                        //auto.timeInGrabOffStack.reset();
                     }
                 }
                 break;
             case GRAB_OFF_STACK:
+          /*      if (auto.timeInGrabOffStack > 10000) // if we ever get stuck in something. we go to idle so we don't get stuck in stop()
+                {
+                    currentState = AutoState.IDLE;
+                }*/
                 if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }

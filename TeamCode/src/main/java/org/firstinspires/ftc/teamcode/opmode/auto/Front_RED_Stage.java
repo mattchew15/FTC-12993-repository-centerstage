@@ -70,7 +70,7 @@ public class Front_RED_Stage extends LinearOpMode {
         }
 
         if (S == -1){
-            MiddleLaneYIntake -= 3.5;
+            MiddleLaneYIntake -= 3.9;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -124,7 +124,6 @@ public class Front_RED_Stage extends LinearOpMode {
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
-
 
             telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
             telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
@@ -256,7 +255,9 @@ public class Front_RED_Stage extends LinearOpMode {
                 break;
 
             case TRANSFER_PIXEL:
+                boolean gripEarly = true;
                 if (numCycles == 0 && frontOrBackAuto){
+                    gripEarly = false;
                     if (xPosition>-50 && xPosition<10){
                         auto.intakeSubsystem.intakeSpin(-1);
                     }
@@ -267,7 +268,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (auto.goBackToStack){
                     currentState = AutoState.GRAB_OFF_STACK;
                 }
-                if (auto.transferPixel(xPosition > 12)){
+                if (auto.transferPixel(gripEarly)){
                     currentState = AutoState.OUTTAKE_PIXEL;
                 }
                 break;
@@ -318,7 +319,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,
                         intakeSlideTarget,railLogic,pivotLogic,extendStraightAway,
                         true, false, openGrippers, true);
-                if (auto.goToParkAfterOuttaking && outtakePixelFinished || (teamPropLocation == 1 && numCycles == 3)){ // if team prop location is 1 we don't want more pixels
+                if (auto.goToParkAfterOuttaking && outtakePixelFinished){ // if team prop location is 1 we don't want more pixels //|| (teamPropLocation == 1 && numCycles == 3)
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     currentState = AutoState.PARK;
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
@@ -326,13 +327,12 @@ public class Front_RED_Stage extends LinearOpMode {
                 else if (outtakePixelFinished){
 
                     if (numCycles == 1){
-
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),22,3,2.3 + S == -1?0:0,-27.5, -20, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),20,-3,endAngleForStacks,3,3.8 + S == -1?-0.9:0,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),20,-3,endAngleForStacks,3,3.8 + S == -1?-1.4:0,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -374,7 +374,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         armHeight = 3;
                     }
                 } else if (numCycles == 3){
-                    armHeight = 6;
+                    armHeight = 5;
                 } else if (numCycles == 4) {
                     armHeight = 3;
                 }
@@ -407,6 +407,10 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
+          /*      if ( > 10000) // if we ever get stuck in something. we go to idle so we don't get stuck in stop()
+                {
+                    currentState = AutoState.IDLE;
+                }*/
                 if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
@@ -475,7 +479,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     else {
                           outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 22 : 19, 176.8, endTangent, yOffset, xSplineValue);
                          }*/
-                    outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 19 : 18, 176.8, endTangent, yOffset, xSplineValue);
+                    outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 21 : 20, 176.8, endTangent, yOffset, xSplineValue);
                     //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
                     //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
                     //   }

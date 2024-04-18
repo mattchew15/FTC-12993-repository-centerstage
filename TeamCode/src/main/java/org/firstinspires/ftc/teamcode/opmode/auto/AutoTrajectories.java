@@ -201,12 +201,12 @@ public class AutoTrajectories {
                 })
                 .build();
         PreloadDrive2FrontStage = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-50, -9.6*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(-52, -8.5*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addSpatialMarker(new Vector2d(-50, -10*S), () -> {
+                .addSpatialMarker(new Vector2d(-52, -7*S), () -> {
                     preExtendSlides = true;
                 })
-                .addSpatialMarker(new Vector2d(-50, -9.3*S), () -> {
+                .addSpatialMarker(new Vector2d(-52, -8.5*S), () -> {
                     dropPurple = true;
                 })
                 .build();
@@ -239,7 +239,7 @@ public class AutoTrajectories {
         firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
 
                 .lineToSplineHeading(new Pose2d(20, -9*S, Math.toRadians(180)*S))
-                .addSpatialMarker(new Vector2d( 29.5, -9*S), () -> {
+                .addSpatialMarker(new Vector2d( 27, -9*S), () -> {
                     extendSlidesAroundTruss = true;
                 })
                 .splineToConstantHeading(new Vector2d(36, (-9 - 15)*S), Math.toRadians(-42)*S, SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

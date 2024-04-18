@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,6 +27,7 @@ public class TestRail extends LinearOpMode
     SampleMecanumDrive drive;
     Pose2d poseEstimate;
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
+
     double heading;
     boolean prev;
     double railOffset;
@@ -42,7 +44,8 @@ public class TestRail extends LinearOpMode
         //relocationV2Pipeline = new RelocationV2Pipeline();
         //relocationV2Pipeline.setTelemetry(telemetry);
         //relocalizationAprilTagPipeline.setTelemetry(telemetry);
-
+        //cameraHardware.pausePreloadProcessor();
+//        FtcDashboard.getInstance().startCameraStream(cameraHardware.railExtension, 0);
         outtakeSubsystem.initOuttake(hardwareMap);
         outtakeSubsystem.hardwareSetup();
         outtakeSubsystem.encodersReset();
@@ -88,11 +91,13 @@ public class TestRail extends LinearOpMode
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE);
             outtakeSubsystem.outtakePitchServoKeepToPitch(outtakeSubsystem.pitchEncoderPosition);
 
+
             if (gamepad1.left_trigger > 0.2)
             {
                 double t = cameraHardware.getRailTarget(heading, ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition), outtakeSubsystem.pitchEncoderPosition);
 
-                telemetry.addData("Updating pose", true);
+                //telemetry.addData("Updating pose", true);
+                telemetry.addData("Size", BLUE_AUTO);
                 telemetry.addData("RailTarget (OP)", t);
 
                 /*if(cameraHardware.getNewPose2(drive.getPoseEstimate(), 2, telemetry))
@@ -118,7 +123,7 @@ public class TestRail extends LinearOpMode
             }
       //      if (gamepad1.left_bumper && !prev)
             {
-        //        outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS += .1);
+        //        outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS += .1);r
             }
 */
             prev = gamepad1.right_bumper || gamepad1.left_bumper;

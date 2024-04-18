@@ -49,6 +49,7 @@ public class SimplicityDrive extends LinearOpMode {
     int armTarget;
     int majorAdjustType;
     int pivotState;
+    boolean outtakeReset;
 
     double intakeClipTimer;
     double backdropRelativeHeight;
@@ -408,7 +409,6 @@ public class SimplicityDrive extends LinearOpMode {
             case TRANSFER_END:
                 bumperPressed();
                 liftPositionChange(false, false);
-                outtakeSubsystem.liftToInternalPID(0,1);
                 //intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 if (delay(45)){ // delay for the transfer to push in
                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -481,8 +481,8 @@ public class SimplicityDrive extends LinearOpMode {
                     intakeSubsystem.intakeSpin(0);
                 }
                 if (delay(0)){ // run after we enter the new state
-                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,headingPosition);
-                    liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,headingPosition);
+                    pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
+                    liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
                     if (Math.abs(gamepad2.right_stick_y)<0.2){
                         fineAdjustHeight.upToggle(gamepad2.right_bumper);
                         fineAdjustHeight.downToggle(gamepad2.left_bumper);
@@ -608,6 +608,7 @@ public class SimplicityDrive extends LinearOpMode {
                             initialHeightStored = false; // resets this each cycle
                             initialPivot = true; // so that it pivots out left as default
                             reArrangePixels = false;
+                            outtakeReset = false;
 
                             rightBumperPreExtend = false;
                             leftBumperPreExtend = false;
@@ -736,7 +737,7 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     public void setIntakeArmHeight(){ // Change this shit that lotus messed up
-        if (gamepad2.a || gamepad1.a){
+        if (gamepad2.a || gamepad1.a || ((outtakeState == OuttakeState.INTAKE || outtakeState == OuttakeState.INTAKE_EXTENDO) && intakeSubsystem.pixelsInIntake())){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
         } else if (gamepad2.x || gamepad1.x){
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.MIDDLE);
@@ -800,11 +801,12 @@ public class SimplicityDrive extends LinearOpMode {
             outtakeSubsystem.resetOuttake();
             outtakeSubsystem.outtakeResetState = OuttakeSubsystem.OuttakeResetState.UP; // starts the thing
         } else {
-            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.3){
+            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2){
                 outtakeSubsystem.liftToInternalPID(0,1);
+                outtakeReset = true;
 
                 //outtakeSubsystem.liftMotorRawControl(0);
-            } else {
+            } else if(!outtakeReset){
                 outtakeSubsystem.liftTo(-100,outtakeSubsystem.liftPosition,1);
             }
         }

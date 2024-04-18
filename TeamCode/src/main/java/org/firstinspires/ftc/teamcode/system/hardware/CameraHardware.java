@@ -37,7 +37,7 @@ public class CameraHardware
     private YCrCbRedTeamPropDetectorPipeline redPipeline;
     private AprilTagProcessor aprilTag;
     private PreloadDetectionPipeline preloadDetection;
-    private RailExtensionPipelineTemp railExtension;
+    public RailExtensionPipelineTemp railExtension;
     private DashBoardProcessor dashBoardProcessor;
     private List<Pose2d> poses = new ArrayList<>();
     private final double CAMERA_OFF_SET = 6.5;
