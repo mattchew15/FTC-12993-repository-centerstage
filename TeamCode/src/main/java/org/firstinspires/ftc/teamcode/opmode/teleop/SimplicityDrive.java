@@ -217,7 +217,7 @@ public class SimplicityDrive extends LinearOpMode {
 
                 if (gamepad1.right_stick_button){
                     intakeSubsystem.intakeSpin(-1);
-                } if (gamepad1.dpad_down){
+                } if (gamepad1.dpad_down || gamepad1.left_stick_button){
                     RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 }
                 /*

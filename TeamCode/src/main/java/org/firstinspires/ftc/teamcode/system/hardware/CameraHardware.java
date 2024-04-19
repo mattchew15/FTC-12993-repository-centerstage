@@ -372,7 +372,7 @@ public class CameraHardware
         }
         return false;
     }
-    public boolean getNewPose3(Pose2d pose, int lane, Telemetry telemetry)
+    public boolean getNewPose3(Pose2d pose, int lane, Telemetry telemetry, boolean relocalizeY)
     {
         for (int i = 0; i < 3; i++)
         {
@@ -446,11 +446,17 @@ public class CameraHardware
             ROBOT_X = returnOffSet(newPose.getX(), pose.getX());
             ROBOT_Y = returnOffSet(newPose.getY(), pose.getY());
 //            if (Math.abs(ROBOT_X) > 5) newPose = new Pose2d(pose.getX(), newPose.getY(), pose.getHeading());
-            if (RED_AUTO) if (Math.abs(ROBOT_Y) > 2.5) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
-
-            if (BLUE_AUTO) {
+            if (relocalizeY) {
+                if (RED_AUTO) if (Math.abs(ROBOT_Y) > 2.5) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+                if (BLUE_AUTO) if (Math.abs(ROBOT_Y) > 2.5) newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+                // this should stop everything
+                //newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
+            }
+            else
+            {
                 newPose = new Pose2d(newPose.getX(), pose.getY(), pose.getHeading());
             }
+
             poses.clear();
             return true;
         }/*

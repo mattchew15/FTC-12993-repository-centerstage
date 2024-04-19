@@ -15,14 +15,13 @@ import org.firstinspires.ftc.teamcode.system.hardware.SetAuto;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.*;
 
-@Autonomous(name = "Front Blue Stage 4 seconds", group = "Autonomous")
+@Autonomous(name = "Front Blue Stage Auto 4 second delay", group = "Autonomous")
 public class Front_BLUE_Stage_4SECS extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
     double endAngleForStacks = -173;
     boolean didWeFuckingRelocalize = false;
-
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -70,7 +69,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
         }
 
         if (S == -1){
-            auto.autoTrajectories.MiddleLaneYIntake -= 3.2;
+            auto.autoTrajectories.MiddleLaneYIntake -= 2.6;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -132,14 +131,15 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
 
-            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
-            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
 
-            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
-            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
-            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
-
-            telemetry.addData("armHeight", auto.armHeight);
+//            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
+//            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
+//
+//            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
+//            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
+//            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
+//
+//            telemetry.addData("armHeight", auto.armHeight);
             //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
@@ -164,7 +164,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
 
         switch (currentState) {
             case DELAY_BACK:
-                if(auto.delayState((!isArmDown? 100:0))){
+                if(auto.delayState(!isArmDown? 100:0)){
                     currentState = AutoState.PRELOAD_DRIVE_BACK;
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
@@ -268,6 +268,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                     gripEarly = false;
                     if (xPosition>-50 && xPosition<10){
                         auto.intakeSubsystem.intakeSpin(-1);
+                        auto.intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                     }
                 }
                 if (numCycles < 3){
@@ -304,13 +305,13 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                         railLogic.setRailTargetFromAprilTag(railTarget);
                     }
 
-                    pitchTarget = 31; // yellow pixel should be pitched higher
+                    pitchTarget = 30; // yellow pixel should be pitched higher
                     liftTarget = 13.2;
                     openGrippers = false;
                 } else if (numCycles == 1)
                 {
-                    pitchTarget = 19;
-                    liftTarget = 27;
+                    pitchTarget = 21;
+                    liftTarget = 26.4;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 30.5;
@@ -340,13 +341,13 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),25,3,2.3 + S == -1?0:0,-27.5, -20, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),19,-3,endAngleForStacks,3,3.8 + S == -1?-1.3:0,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),19,-3,endAngleForStacks,3,3.8 + S == -1?-0.2:0,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
                     }*/
-                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3);
+                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3, S==-1?false:true);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
@@ -395,8 +396,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                             } else if (teamPropLocation == 2){
                                 auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage2);
                             } else if (teamPropLocation == 3){
-                                auto.parkIfStuck = true; // should force into park before doing another cycle
-                                //auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
+                                auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.driveIntoStacksAfterYellowStage3);
                             }
                         } else { // for the back side autos we just run this straight away
                             if (teamPropLocation == 1){

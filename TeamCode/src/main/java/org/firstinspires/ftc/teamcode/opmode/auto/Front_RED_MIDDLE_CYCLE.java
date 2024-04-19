@@ -205,7 +205,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                    //     intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,18,-3,-160,3,0);
                     }
                     // happens when the robot is stopped - after generating trajectories so we get a good reading
-                    auto.resetPosWithAprilTags(2);
+                    auto.resetPosWithAprilTags(2,S == -1? false:true);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);

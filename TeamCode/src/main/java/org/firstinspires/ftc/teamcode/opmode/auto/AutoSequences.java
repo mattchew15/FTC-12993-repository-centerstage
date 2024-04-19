@@ -155,6 +155,8 @@ public class AutoSequences {
         headingPosition = poseEstimate.getHeading();
         correctedHeading = angleWrap(Math.toDegrees(headingPosition) - 180);
         autoTrajectories.drive.update();
+
+        telemetry.addData("intake slide position", intakeSubsystem.intakeSlidePosition);
     }
 
     public boolean goToPark(boolean notStates, int wallOrMiddle){
@@ -590,7 +592,7 @@ public class AutoSequences {
 
     public boolean grabOffStack(int numCyclesForSideways, boolean switchingLanes, boolean extendSlides, int numCyclesForTurnIntoStacks, int intakeSlidePosition, double delayBeforeRetracting, double xPositionForSlideExtension, boolean retractSlidesBeforeExtending, double slideSpeed){
         goBackToStack = false;
-        parkIfStuck(5000);
+        parkIfStuck(6000);
 
         armLogic(armHeight);
 
@@ -860,7 +862,7 @@ public class AutoSequences {
             intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(227+slideOffset,180,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(328+slideOffset,180,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
             intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,maxSpeed);
@@ -923,8 +925,8 @@ public class AutoSequences {
 
     }
 
-    public boolean resetPosWithAprilTags(int tagBeingUsed){
-        if (cameraHardware.getNewPose3(poseEstimate, tagBeingUsed, telemetry))
+    public boolean resetPosWithAprilTags(int tagBeingUsed, boolean relocalizeY){
+        if (cameraHardware.getNewPose3(poseEstimate, tagBeingUsed, telemetry, relocalizeY))
         {
             telemetry.addLine("WE are reseting the pose!!!!!");
             Pose2d pose = cameraHardware.getNewPose();

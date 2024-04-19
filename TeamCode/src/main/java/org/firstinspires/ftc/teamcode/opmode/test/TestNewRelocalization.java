@@ -37,7 +37,7 @@ public class TestNewRelocalization extends LinearOpMode
 
             if (gamepad1.left_trigger > 0.2)
             {
-                if(cameraHardware.getNewPose3(sampleMecanumDrive.getPoseEstimate(), 2, telemetry))
+                if(cameraHardware.getNewPose3(sampleMecanumDrive.getPoseEstimate(), 2, telemetry,true))
                 {
                     sampleMecanumDrive.setPoseEstimate(cameraHardware.getNewPose());
                     telemetry.addLine("WE are re-localizing boysss!!!");

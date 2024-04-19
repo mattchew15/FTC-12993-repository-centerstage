@@ -287,7 +287,7 @@ public class Back_BLUE_Truss extends LinearOpMode {
                         intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6.5,146,1,positiveDriftOffset2,-36);
                         //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     }
-                    auto.resetPosWithAprilTags(1);
+                    auto.resetPosWithAprilTags(1,S == -1? false:true);
 
                     if(intakeTrajectoryCycle!= null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle);

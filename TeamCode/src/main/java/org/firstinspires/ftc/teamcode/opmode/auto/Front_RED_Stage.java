@@ -346,7 +346,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     /*else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
                     }*/
-                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3);
+                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3,S == -1? false:true);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
