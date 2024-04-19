@@ -20,6 +20,7 @@ public class Back_RED_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
+
     double endAngleForStacks = -173;
     boolean didWeFuckingRelocalize = false;
 
@@ -69,8 +70,12 @@ public class Back_RED_Stage extends LinearOpMode {
             isArmDown = true;
         }
 
+
         if (S == -1){
             auto.autoTrajectories.MiddleLaneYIntake -= 3.2;
+        }
+        if (S == 1){
+           // endAngleForStacks = -174.3;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -312,7 +317,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 } else if (numCycles == 1)
                 {
                     pitchTarget = 19;
-                    liftTarget = 27;
+                    liftTarget = 26.4;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 30.5;

@@ -187,7 +187,7 @@ public class Front_BLUE_Stage_4SECS extends LinearOpMode {
                 break;
 
             case DELAY:
-                if(auto.delayState(4000)){
+                if(auto.delayState(5000)){
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1FrontStage);
                     } else if (teamPropLocation == 2){

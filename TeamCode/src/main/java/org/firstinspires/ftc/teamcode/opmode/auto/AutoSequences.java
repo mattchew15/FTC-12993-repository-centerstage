@@ -344,14 +344,14 @@ public class AutoSequences {
     public boolean placeAndIntakeBackSTage(double slideExtendSpeed){
         if (teamPropLocation == 1){
             intakeSubsystem.intakeSlideInternalPID(733,slideExtendSpeed);
-            outtakeSubsystem.liftToInternalPID(13.9,0.9);
+            outtakeSubsystem.liftToInternalPID(14,0.9);
         } else if (teamPropLocation == 2){
             intakeSubsystem.intakeSlideInternalPID(470,slideExtendSpeed); // 265 previously
-            outtakeSubsystem.liftToInternalPID(13.9,0.9);
+            outtakeSubsystem.liftToInternalPID(14,0.9);
             //telemetry.addLine("extending the slides here brahhh");
         } else if (teamPropLocation == 3){
             intakeSubsystem.intakeSlideInternalPID(150,slideExtendSpeed);
-            outtakeSubsystem.liftToInternalPID(13.9,0.9);
+            outtakeSubsystem.liftToInternalPID(14,0.9);
         }
 
         if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > 4.2){
@@ -438,8 +438,8 @@ public class AutoSequences {
             // goes back into the stack
             //goBackToStack();
             intakeSubsystem.intakeSpin(0.8);
-            if (intakeSubsystem.intakeSlidePosition < 100){
-                outtakeSubsystem.liftToInternalPID(-1,1);
+            if (intakeSubsystem.intakeSlidePosition < 130){
+                outtakeSubsystem.liftToInternalPID(-2,1);
             }
             if ((intakeSubsystem.intakeSlidePosition < 8 || (intakeSubsystem.intakeSlidePosition < 9 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
                // if (numCycles == 0? delay(1600):true){
@@ -654,7 +654,7 @@ public class AutoSequences {
             intakeSubsystem.intakeSpin(1);
 
             if (armHeight == 6){
-                if (intakeSubsystem.frontColourSensorValue > 1000 || intakeSubsystem.backColourSensorValue > 1000){
+                if (xPosition < -26.5){
                     armHeight = 5;
                 }
             }
