@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
 import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
@@ -20,9 +21,8 @@ public class Back_RED_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
-    double endAngleForStacks = -173;
+    double endAngleForStacks = -175.7;
     boolean didWeFuckingRelocalize = false;
-
 
     //Accessories
     AutoSequences auto = new AutoSequences(telemetry,3);
@@ -69,8 +69,11 @@ public class Back_RED_Stage extends LinearOpMode {
             isArmDown = true;
         }
 
+        DriveConstants.MAX_VEL = 60;
+        DriveConstants.MAX_ACCEL = 52;
+
         if (S == -1){
-            auto.autoTrajectories.MiddleLaneYIntake -= 2.6;
+            auto.autoTrajectories.MiddleLaneYIntake -= 3.9;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -83,6 +86,7 @@ public class Back_RED_Stage extends LinearOpMode {
         // trajectories that aren't changing should all be here
         while (!isStarted()) { // initialization loop
             auto.intializationLoop(!isArmDown);
+            auto.setPlaceForBack();
             if (teamPropLocation == 1){
                 telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
@@ -127,20 +131,19 @@ public class Back_RED_Stage extends LinearOpMode {
 
             loopTime.delta();
             //telemetry.addData("numCycles", numCycles);
-            telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
+            //telemetry.addData("Preload", auto.cameraHardware.getPreloadYellowPose());
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
 
+            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
+            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
 
-//            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
-//            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
-//
-//            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
-//            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
-//            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
-//
-//            telemetry.addData("armHeight", auto.armHeight);
+            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
+            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
+            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
+
+            telemetry.addData("armHeight", auto.armHeight);
             //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
@@ -269,7 +272,6 @@ public class Back_RED_Stage extends LinearOpMode {
                     gripEarly = false;
                     if (xPosition>-50 && xPosition<10){
                         auto.intakeSubsystem.intakeSpin(-1);
-                        auto.intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.TOP);
                     }
                 }
                 if (numCycles < 3){
@@ -306,13 +308,13 @@ public class Back_RED_Stage extends LinearOpMode {
                         railLogic.setRailTargetFromAprilTag(railTarget);
                     }
 
-                    pitchTarget = 30; // yellow pixel should be pitched higher
+                    pitchTarget = 31; // yellow pixel should be pitched higher
                     liftTarget = 13.2;
                     openGrippers = false;
                 } else if (numCycles == 1)
                 {
-                    pitchTarget = 21;
-                    liftTarget = 26.4;
+                    pitchTarget = 19;
+                    liftTarget = 27;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 30.5;
@@ -321,8 +323,8 @@ public class Back_RED_Stage extends LinearOpMode {
                     liftTarget = 31;
                     intakeSlideTarget = 70;
                 } else if (numCycles == 4){
-                    pitchTarget = 27;
-                    liftTarget = 31;
+                    pitchTarget = 28;
+                    liftTarget = 31.2;
                     intakeSlideTarget = 70;
                     auto.goToParkAfterOuttaking = true;
                 }
@@ -335,31 +337,30 @@ public class Back_RED_Stage extends LinearOpMode {
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                 }
                 else if (outtakePixelFinished){
-
                     if (numCycles == 1){
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),25,3,2.3 + S == -1?0:0,-27.5, -20, S == 1? 180:180);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),numCycles == 1? 9:22,3,2.3 + S == -1?0.3:0.3,-27.5, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),19,-3,endAngleForStacks,3,3.8 + S == -1?-0.2:0.2,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),19,-2.4,endAngleForStacks,3,3.8 + S == -1?-1.4:0.5,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(poseEstimate,22,-2,endAngleForStacks,3,0,-23);
                     }*/
-                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3,S==-1? false:true);
+                    didWeFuckingRelocalize = auto.resetPosWithAprilTags(3,S == -1? false:true);
 
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     }
-
                     currentState = AutoState.DROP;
                 }
                 break;
+
             case DROP:
                 Trajectory intakeTrajectoryAfterDrop;
-                double delayTime = 90;
+                double delayTime = 190;
                 int armHeight = 0;
                 if (numCycles == 1){
                     if (auto.delay(500)){
@@ -375,7 +376,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
-                        armHeight = 6;
+                        armHeight = 5;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -417,7 +418,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
-                if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
+                if ((xPosition < -17.5) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
                 double delayBeforeRetracting = 200;
@@ -429,11 +430,14 @@ public class Back_RED_Stage extends LinearOpMode {
                 double yOffset = 4;
                 double endTangent = -6;
                 double slideSpeed = 1;
+                double xEnd = 29.2;
+
                 if (numCycles == 1){
-                    delayBeforeRetracting = 600;
+                    xEnd = 29;
+                    delayBeforeRetracting = 650;
                     retractSlides = true;
                     slideSpeed = 0.8;
-                    if (S == 1? xPosition < 12 :xPosition < 12 ){//xPosition < -17
+                    if (xPosition < 8){//xPosition < -17
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }
                     /*yOffset = 4;
@@ -443,7 +447,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     }*/
                 }
                 if (numCycles == 2){
-                    slideSpeed = 0.7;
+                    slideSpeed = 0.83;
                     if (S == 1? xPosition < 12 : xPosition < 12){ //  xPosition < -14
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }/*if (S == 1){
@@ -452,6 +456,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 if (numCycles == 3){
                     //slideSpeed = 1;
+                    xEnd = 30.5;
                     intakeSlidePosition = 838;
                     xSplineValue = 3;
                     yOffset = 4.3;
@@ -459,6 +464,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     retractSlides = true;
                     endTangent = -7.3;
                 } else if (numCycles == 4){
+                    xEnd = 32;
                     intakeSlidePosition = 850;
                     xSplineValue = 3;
                     yOffset = 4.5;
@@ -492,7 +498,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     else {
                           outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 22 : 19, 176.8, endTangent, yOffset, xSplineValue);
                          }*/
-                    outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 21 : 22, 176.8, endTangent, yOffset, xSplineValue);
+                    outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate, numCycles >= 3 ? 21 : 22, 176.8, endTangent, yOffset, xSplineValue, xEnd);
                     //      outtakeTrajectory = auto.autoTrajectories.outtakeDriveFromStraightTUrnEndStageV2Trajectory(poseEstimate,18, 175, 4);
                     //     outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,18, 175, 4);
                     //   }
@@ -504,7 +510,6 @@ public class Back_RED_Stage extends LinearOpMode {
             case AFTER_GRAB_OFF_STACK:
                 if (auto.afterGrabOffStack(2,3, 365,300)){
                     currentState = AutoState.TRANSFER_PIXEL;
-
                 }
                 break;
             case PARK:

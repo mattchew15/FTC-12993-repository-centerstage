@@ -194,6 +194,9 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 telemetry.addData("STATE", outtakeState);
+                telemetry.addData("Backdrop Height", backdropRelativeHeight);
+                telemetry.addData("lift Target Position", liftTarget);
+                telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
                 //telemetry.addData("arm height")
                 /*
                 telemetry.addLine("");
@@ -201,23 +204,23 @@ public class SimplicityDrive extends LinearOpMode {
                 telemetry.addData("pitchTarget", pitchTarget);
                 telemetry.addLine("");
                 telemetry.addData("IntakeSlidePosition", intakeSubsystem.intakeSlidePosition);
-                telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
+
                 telemetry.addData("PitchPosition", outtakeSubsystem.pitchEncoderPosition);
               //  telemetry.addData("PitchPositionDegrees", ticksToDegreePitchMotor(outtakeSubsystem.pitchPosition));
                 telemetry.addLine("");
               *///  telemetry.addData("IntakeSlideTargetReached", intakeSubsystem.intakeSlideTargetReached());
                 //telemetry.addData("Colour Sensor front", intakeSubsystem.frontColourSensorValue);
                 //telemetry.addData("Colour Sensor back", intakeSubsystem.backColourSensorValue);
-                telemetry.addData("headingPosition", headingPosition);
+                //telemetry.addData("headingPosition", headingPosition);
                // telemetry.addData("Raw heading", AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
                 //telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
-                telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+                //telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
                 //telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
 
                 if (gamepad1.right_stick_button){
                     intakeSubsystem.intakeSpin(-1);
-                } if (gamepad1.dpad_down || gamepad1.left_stick_button){
+                } if (gamepad1.dpad_down || (gamepad1.left_stick_button && outtakeState != OuttakeState.OUTTAKE_ADJUST)){
                     RAIL_SERVO_POSITION = RAIL_CENTER_POS;
                 }
                 /*
@@ -565,7 +568,7 @@ public class SimplicityDrive extends LinearOpMode {
                 }
                  */
                 outtakeSubsystem.miniTurretPointToBackdrop(headingPosition);
-                if (delay(300) || reArrangePixels){
+                if (delay(300)){
                     setPivotServ();
                     fineadJustStuff();
                 }
@@ -641,7 +644,7 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case MANUAL_ENCODER_RESET:  // idk what this case does
-                outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y + 0.2);
+                outtakeSubsystem.liftMotorRawControl(gamepad2.right_stick_y + 0.35);
                 //outtakeSubsystem.pitchMotorRawControl(gamepad2.left_stick_y);
                 intakeSubsystem.intakeSlideMotorRawControl(gamepad2.left_trigger-gamepad2.right_trigger);
                 outtakeSubsystem.setOuttakePitchPurplePixelPosition();
@@ -969,8 +972,8 @@ public class SimplicityDrive extends LinearOpMode {
     }
 
     public void fineadJustStuff(){
-        pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,headingPosition);
-        liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,headingPosition);
+        pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
+        liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
         if (Math.abs(gamepad2.right_stick_y)<0.2){
             fineAdjustHeight.upToggle(gamepad2.right_bumper);
             fineAdjustHeight.downToggle(gamepad2.left_bumper);
@@ -980,7 +983,7 @@ public class SimplicityDrive extends LinearOpMode {
             fineAdjustHeight.OffsetTargetPosition = (int)backdropRelativeHeight;
         }
         outtakeSubsystem.pitchToInternalPID(pitchTarget,1);
-        outtakeSubsystem.liftTo(liftTarget, outtakeSubsystem.liftPosition,1);
+        outtakeSubsystem.liftToInternalPID(liftTarget,1);
         outtakeSubsystem.fineAdjustRail(-gamepad2.right_stick_x * 0.7 + (gamepad1.right_trigger-gamepad1.left_trigger), globalTimer);
         outtakeSubsystem.setOuttakeRailServo(RAIL_SERVO_POSITION); // RAIL_SERVO_POSITION SHOULD BE REMEMBERED
         //RAIL_SERVO_POSITION += outtakeInverseKinematics.railEndTicks(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);//RAIL_SERVO_POSITION += (int)outtakeInverseKinematics.railEnd(prevPureHeight,pureHeight,RAIL_SERVO_POSITION,headingPosition);

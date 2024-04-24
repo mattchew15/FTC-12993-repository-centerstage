@@ -100,13 +100,13 @@ public class AutoPivot {
             }
 
         } else if (numCycles > numCyclesForStraightPivot){
-            if (trussMiddleStage == 3 && numCycles == 2){
+            /*if (trussMiddleStage == 3 && numCycles == 2){
                 if (S==1){
                     auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_RIGHT);
                 } else {
                     auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.DIAGONAL_LEFT);
                 }
-            }
+            }*/
             auto.outtakeSubsystem.pivotServoState(OuttakeSubsystem.PivotServoState.READY);
 
         } else {
