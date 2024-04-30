@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.teamPropLocation;
 import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto;
-
+@Disabled
 @TeleOp(name = "Sensors HealthCheck")
 public class FullSystemTest extends LinearOpMode
 {

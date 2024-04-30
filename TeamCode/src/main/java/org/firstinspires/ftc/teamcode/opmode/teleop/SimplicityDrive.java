@@ -30,7 +30,6 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @TeleOp(name = "SimplicityDrive")
 public class SimplicityDrive extends LinearOpMode {
 
@@ -194,9 +193,6 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeInverseKinematics.distance = outtakeExtensionInches;
 
                 telemetry.addData("STATE", outtakeState);
-                telemetry.addData("Backdrop Height", backdropRelativeHeight);
-                telemetry.addData("lift Target Position", liftTarget);
-                telemetry.addData("LiftPosition", outtakeSubsystem.liftPosition);
                 //telemetry.addData("arm height")
                 /*
                 telemetry.addLine("");
@@ -215,7 +211,7 @@ public class SimplicityDrive extends LinearOpMode {
                // telemetry.addData("Raw heading", AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
 
                 //telemetry.addData("IntakeSlideMotor Current", intakeSubsystem.IntakeSlideMotor.getCurrent(CurrentUnit.AMPS));
-                //telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
+                telemetry.addData("LiftMotor Current", outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS));
                 //telemetry.addData("PitchMotor Current", outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS));
 
                 if (gamepad1.right_stick_button){
@@ -372,7 +368,7 @@ public class SimplicityDrive extends LinearOpMode {
                     intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                     if (delay(170)) { // time for intake holder to close
                         if (delay(380)){
-                            intakeSubsystem.intakeSpin(0.8); // helps chute arm go up
+                            intakeSubsystem.intakeSpin(0); // helps chute arm go up
                             intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.HALF_UP); // if the intake slides are retracting
                             if (delay(380)){ // could tune this more finely
                                 outtakeState = OuttakeState.TRANSFER_START;
@@ -404,7 +400,7 @@ public class SimplicityDrive extends LinearOpMode {
                 if (delay(300)){
                     intakeSubsystem.intakeSpin(0);
                 } else {
-                  intakeSubsystem.intakeSpin(0.8); // helps chute go up
+                  //intakeSubsystem.intakeSpin(0.8);
                  }
                 intakeClipHoldorNotHoldWithoutPowerCutout(-100);
                 break;
@@ -430,7 +426,6 @@ public class SimplicityDrive extends LinearOpMode {
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                                 resetTimer();// reset timer
                                 MaxExtension = true;
-
                                 extendOuttake();
                             } else if (gamepadLeftBumperRisingEdge.mode(gamepad1.left_bumper) || leftBumperPreExtend){
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
@@ -455,7 +450,6 @@ public class SimplicityDrive extends LinearOpMode {
                 break;
 
             case OUTTAKE_ADJUST:
-
 
                 if (changeExtension.ToggleMode){
                     outtakeExtensionInches = MIN_OUTTAKE_EXTENSION_INCHES;
@@ -916,14 +910,11 @@ public class SimplicityDrive extends LinearOpMode {
                 topIsRight = false;
             }
         } else if (gamepad2.right_trigger > 0.2){
-            telemetry.addLine("gamepad right trigger pressed");
             if (pivotFlipToggle.ToggleMode){
-                telemetry.addLine("we are here");
                 pivotState = 2;
                 topIsLeft = true;
                 topIsRight = false;
             } else {
-                telemetry.addLine("we are here 2");
                 pivotState = 3;
                 topIsRight = true;
                 topIsLeft = false;

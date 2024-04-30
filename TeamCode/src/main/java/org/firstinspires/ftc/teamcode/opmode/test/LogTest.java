@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.mathCaching;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.numCycles;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
 import org.firstinspires.ftc.teamcode.system.accessory.FeedFoward;
 import org.firstinspires.ftc.teamcode.system.accessory.math.MathResult;
 
+@Disabled
 @TeleOp(name = "LOG  ")
 public class LogTest extends LinearOpMode
 {
