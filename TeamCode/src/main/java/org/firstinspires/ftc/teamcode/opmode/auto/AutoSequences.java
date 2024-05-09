@@ -43,6 +43,7 @@ public class AutoSequences {
     boolean parkIfStuck;
     boolean goToParkAfterOuttaking;
     boolean goBackToStack;
+    boolean extendOuttake;
     double globalTimer;
     boolean goBackForYellowPixel;
     int trussMiddleStage;
@@ -455,6 +456,14 @@ public class AutoSequences {
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(-4,1); // power draw reasons
+
+                    if(intakeSubsystem.backColourSensorValue > 1000) {
+                        extendOuttake = true;
+                    }
+                    else {
+                        extendOuttake = false;
+                    }
+
                     resetTimer();
                     if (gripEarly){
                         outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
@@ -486,12 +495,13 @@ public class AutoSequences {
     public boolean outtakePixel(double correctedHeading, double liftTarget, int pitchTarget, int intakeSlideTarget, AutoRail autoRail,
     AutoPivot autoPivot, boolean extendStraightAway, boolean distanceSensorForCycleZero, boolean differentPitchForYellowRail, boolean openGrippers, boolean extendRailLate){
 
-       /* if (!intakeSubsystem.pixelsInIntake()){
-            dontExtend();
-            return true;
+       /* if (intakeSubsystem.backColourSensorValue < 1000){
+            //dontExtend();
+            //return true;
+            autoTrajectories.extendSlidesAroundTruss = false;
         }
 */
-        if (extendStraightAway || autoTrajectories.extendSlidesAroundTruss){
+        if ((extendStraightAway || autoTrajectories.extendSlidesAroundTruss) && extendOuttake){
             if (numCycles == 0 && !autoTrajectories.extendSlidesAroundTruss? delay(500):true){
                 outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                 if (numCycles == 0 && differentPitchForYellowRail){ // consistent across all autos
