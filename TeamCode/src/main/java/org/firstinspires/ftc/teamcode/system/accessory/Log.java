@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Objects;
 
 import android.os.Environment;
 
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Log
 {
-    private static final String BASE_FOLDER_NAME = "Log";
+    private static final String FOLDER_NAME = "Log";
     private Writer fileWriter;
     private String line;
     private boolean logTime;
@@ -25,9 +24,9 @@ public class Log
         this.telemetry = telemetry;
         if (logTime) startTime = System.nanoTime();
         this.logTime = logTime;
-        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME;
+        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+ FOLDER_NAME;
         File directory = new File(directoryPath);
-        //noinspection ResultOfMethodCallIgnored
+
         directory.mkdir();
         try {
             fileWriter = new FileWriter(directoryPath+"/"+filename+".csv");
@@ -38,9 +37,8 @@ public class Log
     public Log(String filename, boolean logTime) {
         if (logTime) startTime = System.nanoTime();
         this.logTime = logTime;
-        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME;
+        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+ FOLDER_NAME;
         File directory = new File(directoryPath);
-        //noinspection ResultOfMethodCallIgnored
         directory.mkdir();
         try {
             fileWriter = new FileWriter(directoryPath+"/"+filename+".csv");

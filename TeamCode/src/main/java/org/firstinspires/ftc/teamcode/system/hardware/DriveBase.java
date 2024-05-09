@@ -106,11 +106,11 @@ public class DriveBase {  // no constructor for this class
 
 
 
-    public void motorDirectionTest(double a, double b, double x, double y){
-        FL.setPower(a);
-        BL.setPower(b);
-        FR.setPower(x);
-        BR.setPower(y);
+    public void motorDirectionTest(double FL, double FR, double BL, double BR){
+        this.FL.setPower(FL);
+        this.BL.setPower(BL);
+        this.FR.setPower(FR);
+        this.BR.setPower(BR);
     }
     /*
     public int getMotorPosition(){

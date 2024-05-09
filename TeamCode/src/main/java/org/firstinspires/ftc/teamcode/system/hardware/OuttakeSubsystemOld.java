@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraint
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
 
 @Config
+@Deprecated
+@SuppressWarnings("unused")
 public class OuttakeSubsystemOld {
 
     public DcMotorEx

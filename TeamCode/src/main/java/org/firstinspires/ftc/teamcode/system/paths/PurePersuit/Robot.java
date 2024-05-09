@@ -44,7 +44,7 @@ public class Robot {
     /**
      * Calculates the change in position of the robot
      */
-    public void update(){
+    /*public void update(){
         //get the current time
         long currentTimeMillis = System.currentTimeMillis();
         //get the elapsed time
@@ -82,5 +82,5 @@ public class Robot {
 
 
 
-    }
+    }*/
 }

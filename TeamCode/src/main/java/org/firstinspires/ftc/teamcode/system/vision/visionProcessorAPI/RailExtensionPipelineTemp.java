@@ -123,8 +123,7 @@ public class RailExtensionPipelineTemp implements VisionProcessor
                 }
             }
         }
-        Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
-        Utils.matToBitmap(frame, b);
+
         return null;
     }
 

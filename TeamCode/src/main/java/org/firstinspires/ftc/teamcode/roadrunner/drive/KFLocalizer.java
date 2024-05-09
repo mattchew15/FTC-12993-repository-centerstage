@@ -9,7 +9,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.system.accessory.kalmanStuff.Kalman;
 
 import java.util.List;
-
+@Deprecated
 public class KFLocalizer extends StandardTrackingWheelLocalizer
 {
     Kalman kalman = new Kalman(new SimpleMatrix(new double[][]{

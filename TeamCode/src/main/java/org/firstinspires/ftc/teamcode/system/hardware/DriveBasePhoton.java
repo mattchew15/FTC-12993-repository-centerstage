@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
 @Photon
 @Config // Allows dashboard to tune
+@Deprecated
+@SuppressWarnings("unused")
 public class DriveBasePhoton
 {  // no constructor for this class
 

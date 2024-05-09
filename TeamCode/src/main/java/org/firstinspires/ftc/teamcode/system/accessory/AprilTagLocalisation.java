@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class AprilTagLocalisation {
+    // This didn't work in the end
     public double cameraOffset = 5.76;
     public Telemetry telemetry;
 

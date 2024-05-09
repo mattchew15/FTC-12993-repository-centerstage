@@ -21,6 +21,8 @@ import java.util.List;
 
 @Photon
 @Config
+@Deprecated
+@SuppressWarnings("unused")
 public class IntakeSubsystemPhoton
 {
 
