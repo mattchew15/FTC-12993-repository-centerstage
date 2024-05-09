@@ -62,7 +62,7 @@ public class RobotMovement {
         currentPoint = followMe;
 
     }
-    // TODO: a reverse option where it gets the furthest intersection from the heading? but the vector would then have a high turn amount
+
     public static CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius){
         CurvePoint followMe;
         //this makes the robot follow the previous point followed

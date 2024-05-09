@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
 @Config
+@Deprecated
+@SuppressWarnings("unused")
 public class IntakeSubsystemOld {
 
     public DcMotorEx

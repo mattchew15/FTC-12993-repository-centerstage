@@ -8,16 +8,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.system.hardware.CameraHardware;
 import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
-import org.firstinspires.ftc.teamcode.system.vision.PreloadDetection;
-import org.firstinspires.ftc.teamcode.system.vision.RelocalizationAprilTagPipeline;
-import org.firstinspires.ftc.teamcode.system.vision.visionProcessorAPI.PreloadDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 @TeleOp(name="Test Preload", group = "Test")

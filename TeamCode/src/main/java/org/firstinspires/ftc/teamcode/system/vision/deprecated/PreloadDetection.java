@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.system.vision;
+package org.firstinspires.ftc.teamcode.system.vision.deprecated;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;

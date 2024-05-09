@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 public class Tags
 {
+    // this is literally never used but like lazy to delete
     double num;
     double[] ids;
 

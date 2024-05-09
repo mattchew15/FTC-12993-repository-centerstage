@@ -9,10 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.FullStateFeedback;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
-/** This will handle the output if you want to use a motion profile,
- * To initialize in init: PID, Tolerance, MaxOutput
- * To loop: update target, create a profile, read, and output
- */
+
 @Config
 public class ProfileSubsystem
 {

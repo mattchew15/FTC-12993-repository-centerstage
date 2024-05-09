@@ -34,11 +34,13 @@ public class MeepMeepTesting {
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(backteamProp3)
-
-                                .splineToConstantHeading(new Vector2d(24, (-30 + 10 + 8)), Math.toRadians(110))
-                                .splineToConstantHeading(new Vector2d(5, (-6)), Math.toRadians(180))
-                                .lineToSplineHeading(new Pose2d(-17, (-6), Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-27, (-6), Math.toRadians(180)))
+                                .forward(10)
+                                .turn(Math.toRadians(90))
+                                //.splineToConstantHeading(new Vector2d(12, 30),Math.toRadians(180))
+                                //.splineToConstantHeading(new Vector2d(24, (-30 + 10 + 8)), Math.toRadians(110))
+                                //.splineToConstantHeading(new Vector2d(5, (-6)), Math.toRadians(180))
+                                //.lineToSplineHeading(new Pose2d(-17, (-6), Math.toRadians(180)))
+                                //.lineToSplineHeading(new Pose2d(-27, (-6), Math.toRadians(180)))
 
                             // drive into stacks truss teamprop3
 

@@ -91,25 +91,17 @@ public class PreloadDetectionPipeline implements VisionProcessor
                             }
                             yOffSet = (int) (tagHeight * i);
 
-                            //int exclusionZoneWidth = (int) (tagWidth * 0.28);
-                            //int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
                             //yOffSet = (int) Math.round(1.034 * detection.ftcPose.y + 44.48);
                             Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
                             Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - yOffSet, inclusionZoneWidth, inclusionZoneHeight);
 
-                            //Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
-                            //Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 120, exclusionZoneWidth, exclusionZoneHeight);
 
                             Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                             Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
 
                             double leftZoneAverage = Core.mean(frame.submat(leftInclusionZone)).val[0];
                             double rightZoneAverage = Core.mean(frame.submat(rightInclusionZone)).val[0];
-
-                            //int leftZoneAverage = meanColor(frame, leftInclusionZone, new Rect(0, 0,0,0));
-                            //int rightZoneAverage = meanColor(frame, rightInclusionZone, new Rect(0, 0,0,0));
-
 
                             //telemetry.addData("Left zone", leftZoneAverage);
                             //telemetry.addData("Right zone", rightZoneAverage);
@@ -146,37 +138,10 @@ public class PreloadDetectionPipeline implements VisionProcessor
     {
         return place;
     }
+
     // i guess we can iterate mannualy through so we can exclude the backdrop areas
     // but i am not sure if that is needed, we can probably assume that the lighting will be equal
     // and both areas will have the same standard value, idk
-    /*public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
-        if (frame == null) {
-            //System.out.println("frame is bad");
-            return 0;
-        }
 
-        int sum = 0;
-        int count = 0;
-        for (int y = inclusionRect.y; y < inclusionRect.y + inclusionRect.height; y++) {
-            for (int x = inclusionRect.x; x < inclusionRect.x + inclusionRect.width; x++) {
-                if (x < 0 || x >= frame.cols() || y < 0 || y >= frame.rows()) {
-                    continue;
-                }
-
-                if (x >= exclusionRect.x && x < exclusionRect.x + exclusionRect.width && y >= exclusionRect.y && y < exclusionRect.y + exclusionRect.height) {
-                    continue;
-                }
-
-                double[] data = frame.get(y, x);
-                if (data != null && data.length > 0) {
-                    sum += data[0];
-                    count++;
-                }
-            }
-        }
-
-        return count > 0 ? sum / count : 0;
-    }
-*/
 
 }

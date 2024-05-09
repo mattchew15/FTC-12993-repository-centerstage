@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
 
 @Photon
 @Config
+@Deprecated
+@SuppressWarnings("unused")
 public class OuttakeSubsystemPhoton
 {
 

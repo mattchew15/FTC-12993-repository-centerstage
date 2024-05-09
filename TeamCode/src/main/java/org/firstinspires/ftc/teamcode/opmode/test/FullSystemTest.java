@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setBlueAuto
 public class FullSystemTest extends LinearOpMode
 {
 
+    // this was like never use lol
     enum TestCase
     {
         IDLE,

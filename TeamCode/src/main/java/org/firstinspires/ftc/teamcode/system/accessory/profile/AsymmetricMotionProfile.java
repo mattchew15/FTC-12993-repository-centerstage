@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 public class AsymmetricMotionProfile
 {
+    // Kooky profile because time
     public double initialPosition;
     public double finalPosition;
     public double distance;
@@ -81,8 +82,6 @@ public class AsymmetricMotionProfile
             position = finalPosition;
         }
 
-        // fix later since something went so fucking wrong here, Mason annotation
-        // this seems right tho
         if (time <= totalTime) {
             if (flipped) {
                 state.x = originalPos - position;

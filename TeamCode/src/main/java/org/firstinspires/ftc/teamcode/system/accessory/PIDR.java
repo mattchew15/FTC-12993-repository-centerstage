@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PIDR
 {
+    // This was never tested lol, it just exists
     ElapsedTime timer = new ElapsedTime();
     double Kp;
     double Ki;
