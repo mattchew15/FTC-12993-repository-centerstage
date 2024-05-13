@@ -8,8 +8,10 @@ import android.os.LocaleList;
 import androidx.core.math.MathUtils;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.outoftheboxrobotics.photoncore.PeriodicSupplier;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -22,6 +24,9 @@ import org.firstinspires.ftc.teamcode.system.hardware.Globals;
 public class MecanumDrive
 {
     public static boolean ENABLED = true;
+
+
+
     public enum RunMode
     {
         PID,
@@ -31,8 +36,8 @@ public class MecanumDrive
 
     }
 
-    private PID TRANSLATIONAL_PID = new PID(0.016, 0, 0.00000, 0, 0);
-    private PID HEADING_PID = new PID(0.6, 0.000, 0.024, 312, 0);
+    private PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000,0);
+    private PIDController HEADING_PID = new PIDController(0.09, 0.000, 0.024);
     private DcMotor FL, FR, BL, BR;
     private RunMode runMode;
     private Localizer localizer;
@@ -41,9 +46,9 @@ public class MecanumDrive
     public Vector targetVector = new Vector();
 
     public static double ks = 0.03;
-    private double lateralMultiplier;
-    private double headingMultiplier;
-    private double overallMultiplier;
+    private double lateralMultiplier = 1.4285714286;
+    private double headingMultiplier = 1;
+    private double overallMultiplier = 1;
 
     private final double velocityThreshold = 1;
 
@@ -91,9 +96,9 @@ public class MecanumDrive
         double robotX = poseEstimate.getX();
         double robotY = poseEstimate.getY();
         double robotTheta = poseEstimate.getHeading();
-        double x = TRANSLATIONAL_PID.update(targetX, robotX, 1);
-        double y = -TRANSLATIONAL_PID.update(targetY, robotY, 1);
-        double theta = -HEADING_PID.updateWithError(AngleWrap(targetHeading - robotTheta), 1);
+        double x = TRANSLATIONAL_PID.calculate(robotX, targetX);
+        double y = -TRANSLATIONAL_PID.calculate(robotY, targetY);
+        double theta = -HEADING_PID.calculate(AngleWrap(targetHeading - robotTheta));
 
 
         double x_rotated = (x * Math.cos(robotTheta) - y * Math.sin(robotTheta));
@@ -123,38 +128,52 @@ public class MecanumDrive
         double calculatedCos = xDiff / distance;
         double calculatedSin = yDiff / distance;
 
-        double translationalPower = TRANSLATIONAL_PID.update(-distance, 0, Double.POSITIVE_INFINITY);
+        double translationalPower = TRANSLATIONAL_PID.calculate(0, distance);
 
-        powerVector = new Vector(translationalPower * calculatedCos, translationalPower * calculatedSin);
+        powerVector = new Vector(-translationalPower * calculatedCos, translationalPower * calculatedSin);
         powerVector = powerVector.rotated(currentPose.getHeading());
 
         double headingDiff = angleWrap(targetPose.getHeading() - currentPose.getHeading());
 
-        double headingPower = HEADING_PID.update(-headingDiff, 0, 1) * headingMultiplier;
+        double headingPower = HEADING_PID.calculate(0, headingDiff) * headingMultiplier;
 
-        powerVector = new Vector(powerVector.getX(), powerVector.getY() * lateralMultiplier, headingPower);
+        powerVector = new Vector(powerVector.getX() * lateralMultiplier, powerVector.getY(), headingPower);
     }
 
+    public double FLPower, FRPower, BLPower, BRPower;
     private void updateMotors()
     {
         if (runMode != RunMode.PID && runMode != RunMode.PP)
         {
+
+            /*frontLeftMotor.setPower(x_rotated + y_rotated + t);
+            backLeftMotor.setPower(x_rotated - y_rotated + t);
+            frontRightMotor.setPower(x_rotated - y_rotated - t);
+            backRightMotor.setPower(x_rotated + y_rotated - t);*/
+
             double actualKs = ks * 12.0 / voltageSupplier.get();
             // This doesn't make sense like FL is +++ and FR ++-
-            FL.setPower((powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ()));
+            FLPower = (powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ());
+            FL.setPower(FLPower);
 
-            FR.setPower((powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ()));
+            FRPower = (powerVector.getX()) - powerVector.getY() - powerVector.getZ() * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ());
+            FR.setPower(FRPower);
 
-            BL.setPower((powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ()));
+            BLPower = (powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ());
+            BL.setPower(BLPower);
 
-            BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
-        } else
-        {
-            //
+            BRPower = (powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ());
+            BR.setPower(BRPower);
+            /*
+            FL.setPower((powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ()));
+            FR.setPower((powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ()));
+            BL.setPower((powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ()));
+            BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
+*/
         }
     }
 
@@ -167,6 +186,11 @@ public class MecanumDrive
         updateMotors();
     }
 
+    //TODO: this should absolutely be cached and not done like this
+    public double getVoltage()
+    {
+        return voltageSupplier.get();
+    }
 
     public void setTargetPose(Pose pose){
         this.targetPose = pose;

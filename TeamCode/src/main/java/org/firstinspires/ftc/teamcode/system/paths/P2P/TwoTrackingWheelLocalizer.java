@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.system.paths.P2P;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
@@ -42,7 +43,7 @@ public class TwoTrackingWheelLocalizer extends com.acmerobotics.roadrunner.local
     private Encoder parallelEncoder, perpendicularEncoder;
 
 
-    public TwoTrackingWheelLocalizer(HardwareMap hardwareMap, ImuThread imuThread) {
+    public TwoTrackingWheelLocalizer(HardwareMap hardwareMap, ImuThread imuThread, LinearOpMode opMode) {
         super(Arrays.asList(
                 new Pose2d(PARALLEL_X, PARALLEL_Y, 0),
                 new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
@@ -54,6 +55,8 @@ public class TwoTrackingWheelLocalizer extends com.acmerobotics.roadrunner.local
 
         // reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         parallelEncoder.setDirection(Encoder.Direction.REVERSE);
+        imuThread.initImuThread();
+        imuThread.startThread(opMode);
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -91,5 +94,10 @@ public class TwoTrackingWheelLocalizer extends com.acmerobotics.roadrunner.local
                 encoderTicksToInches(perpendicularEncoder.getRawVelocity()) * Y_MULTIPLIER
         );
     }
-    //this is just gonna use rr but with the thread imu
+    //this is just gonna use rr odo but with the thread imu
+
+    public void startImuThread(LinearOpMode opMode)
+    {
+        imuThread.startThread(opMode);
+    }
 }
