@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -9,7 +12,6 @@ import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 import org.firstinspires.ftc.teamcode.system.paths.P2P.Localizer;
 import org.firstinspires.ftc.teamcode.system.paths.P2P.MecanumDrive;
 import org.firstinspires.ftc.teamcode.system.paths.P2P.Pose;
-import org.firstinspires.ftc.teamcode.system.paths.P2P.TwoTrackingWheelLocalizer;
 
 @Autonomous(name = "P2p test")
 public class AutoP2P extends LinearOpMode
@@ -18,6 +20,9 @@ public class AutoP2P extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        TelemetryPacket packet = new TelemetryPacket();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         DriveBase driveBase = new DriveBase();
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
@@ -28,13 +33,20 @@ public class AutoP2P extends LinearOpMode
         MecanumDrive drive = new MecanumDrive(
                 driveBase.FL, driveBase.FR, driveBase.BL, driveBase.BR,
                 MecanumDrive.RunMode.P2P, voltageSupplier);
-        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(90)), this));
+        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(0)), this));
 
         //TwoTrackingWheelLocalizer twoTrackingWheelLocalizer = new TwoTrackingWheelLocalizer(hardwareMap)
 
+        drive.setTargetPose(new Pose(10, 0, Math.toRadians(90)));
         waitForStart();
         while(!isStopRequested() && opModeIsActive())
         {
+            packet = new TelemetryPacket();
+
+            telemetry.addLine();
+            telemetry.addData("Target Heading", drive.getTargetPose().getHeading());
+            telemetry.addData("Heading", drive.getLocalizer().getHeading());
+            telemetry.addLine();
             telemetry.addData("TargetPose", drive.getTargetPose());
             telemetry.addData("PoseEstimate", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Predicted PoseEstimate", drive.getLocalizer().getPredictedPoseEstimate());
@@ -55,9 +67,19 @@ public class AutoP2P extends LinearOpMode
             telemetry.addData("FR", drive.FRPower);
             telemetry.addData("BL", drive.BLPower);
             telemetry.addData("BR", drive.BRPower);
+
+
+            //packet.fieldOverlay().setFill("red").strokeRect(drive.getLocalizer().getPoseEstimate().getX(),
+            //        drive.getLocalizer().getPoseEstimate().getY(), 8, 8);
+            //packet.fieldOverlay().setFill("red").fillCircle(drive.getTargetPose().getX(), drive.getTargetPose().getY(), 2);
+            //DashboardUtils.drawRobot(canvas, drive.getLocalizer().getPoseEstimate().toPose2d());
+            //DashboardUtils.drawTargetPose(canvas, drive.getTargetPose());
+
+
+            //dashboard.sendTelemetryPacket(packet);
             telemetry.update();
 
-            drive.setTargetPose(new Pose(0, 10, Math.toRadians(180)));
+
             //if (drive.reachedTarget(0.5)) drive.setTargetPose(drive.getLocalizer().getPoseEstimate());
             drive.update();
         }

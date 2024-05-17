@@ -212,6 +212,14 @@ public class Globals
         return radians;
     }
 
+    public static double normalizeRadians(double radians)
+    {
+        radians %= 2.0 * Math.PI;
+        if (radians < -Math.PI) radians += 2.0 * Math.PI;
+        if (radians > Math.PI) radians -= 2.0 * Math.PI;
+        return radians;
+    }
+
     public static double angleWrapDegrees(double degrees) {
         if (degrees > 180) {
             degrees -= 360;

@@ -100,24 +100,24 @@ public class PIDMotorTest extends LinearOpMode {
                 }
 
 
-                //driveBase.motorDirectionTest(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_y,gamepad1.right_stick_x);
-                else if (gamepad1.y) {
-                    //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
-                    intakeSubsystem.intakeSlideInternalPID(0,1);
-                } else if (gamepad1.x){
-                    //outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
-                    intakeSubsystem.intakeSlideInternalPID(100,1);
-                }
+//                //driveBase.motorDirectionTest(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_y,gamepad1.right_stick_x);
+//               // else if (gamepad1.y) {
+//                    //outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
+//                    intakeSubsystem.intakeSlideInternalPID(0,1);
+//                } else if (gamepad1.x){
+//                    //outtakeSubsystem.pitchToInternalPID(PITCH_LOW_DEGREE_TICKS,1);
+//                    intakeSubsystem.intakeSlideInternalPID(100,1);
+//                }
 
 
                 else if (gamepad1.x){
-                    //outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
+                    outtakeSubsystem.liftTo(6,outtakeSubsystem.liftPosition,1);
                    // outtakeSubsystem.liftToInternalPID(0, 1);
-                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
+                    //intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.BASE);
                 }else if (gamepad1.y){
-                    //outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,13);
+                    outtakeSubsystem.liftTo(12,outtakeSubsystem.liftPosition,1);
                    // outtakeSubsystem.liftToInternalPID(5, 1);
-                    intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
+                    //intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
                 }
 
 

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.system.paths.P2P;
 
-import static org.firstinspires.ftc.teamcode.system.hardware.Globals.angleWrap;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.normalizeRadians;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.AngleWrap;
 
 import android.os.LocaleList;
@@ -37,7 +37,7 @@ public class MecanumDrive
     }
 
     private PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000,0);
-    private PIDController HEADING_PID = new PIDController(0.09, 0.000, 0.024);
+    private PIDController HEADING_PID = new PIDController(0.08, 0.000, 0.0000);
     private DcMotor FL, FR, BL, BR;
     private RunMode runMode;
     private Localizer localizer;
@@ -130,14 +130,14 @@ public class MecanumDrive
 
         double translationalPower = TRANSLATIONAL_PID.calculate(0, distance);
 
-        powerVector = new Vector(-translationalPower * calculatedCos, translationalPower * calculatedSin);
-        powerVector = powerVector.rotated(currentPose.getHeading());
+        powerVector = new Vector(translationalPower * calculatedCos, translationalPower * calculatedSin);
+        powerVector = Vector.rotateBy(powerVector, currentPose.getHeading());
 
-        double headingDiff = angleWrap(targetPose.getHeading() - currentPose.getHeading());
+        double headingDiff = normalizeRadians(targetPose.getHeading() - currentPose.getHeading());
 
-        double headingPower = HEADING_PID.calculate(0, headingDiff) * headingMultiplier;
+        double headingPower = HEADING_PID.calculate(0, -headingDiff) * headingMultiplier;
 
-        powerVector = new Vector(powerVector.getX() * lateralMultiplier, powerVector.getY(), headingPower);
+        powerVector = new Vector(powerVector.getX(), powerVector.getY() * lateralMultiplier, headingPower);
     }
 
     public double FLPower, FRPower, BLPower, BRPower;
@@ -153,21 +153,22 @@ public class MecanumDrive
 
             double actualKs = ks * 12.0 / voltageSupplier.get();
             // This doesn't make sense like FL is +++ and FR ++-
-            FLPower = (powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ());
+            FLPower = (powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ());
             FL.setPower(FLPower);
 
-            FRPower = (powerVector.getX()) - powerVector.getY() - powerVector.getZ() * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ());
+            FRPower = (powerVector.getX()) + powerVector.getY() + powerVector.getZ() * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ());
             FR.setPower(FRPower);
 
-            BLPower = (powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ());
+            BLPower = (powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ());
             BL.setPower(BLPower);
 
-            BRPower = (powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
-                    + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ());
+            BRPower = (powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs)
+                    + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ());
             BR.setPower(BRPower);
+
             /*
             FL.setPower((powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ()));
             FR.setPower((powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ()));
@@ -181,7 +182,6 @@ public class MecanumDrive
     {
         if(!ENABLED) return;
         localizer.update();
-        //TODO maybe have to assign an interface on this
         updatePowerVector();
         updateMotors();
     }
@@ -226,7 +226,7 @@ public class MecanumDrive
 
     public boolean reachedHeading(double tolerance){
         if(runMode == RunMode.Vector) return false;
-        return Math.abs(angleWrap(targetPose.getHeading() - localizer.getHeading())) <= tolerance;
+        return Math.abs(normalizeRadians(targetPose.getHeading() - localizer.getHeading())) <= tolerance;
     }
 
     public boolean stopped(){
