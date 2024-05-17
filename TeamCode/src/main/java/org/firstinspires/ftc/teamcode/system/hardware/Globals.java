@@ -41,7 +41,7 @@ public class Globals
             RAIL_LEFT_LESS_POS = RAIL_CENTER_POS - 0.38,
 
 
-    RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
+            RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
             RAIL_CENTER_YELLOW_TRUSS_POS = RAIL_CENTER_POS + 0.36,
             RAIL_CENTER_YELLOW_STAGE_POS = RAIL_CENTER_POS - 0.23,
 
@@ -110,7 +110,7 @@ public class Globals
 
             INTAKE_SLIDE_AUTO_LONG_PRESET = 1000,
 
-            LIFT_INCHES_FOR_MAX_EXTENSION = 23, // 28 is the actual max but we need to give some adjustment room
+            LIFT_INCHES_FOR_MAX_EXTENSION = 25, // 28 is the actual max but we need to give some adjustment room
 
             // Nats shit bro kinda L
             //LIFT_HIGH_POSITION_TICKS = 600,
