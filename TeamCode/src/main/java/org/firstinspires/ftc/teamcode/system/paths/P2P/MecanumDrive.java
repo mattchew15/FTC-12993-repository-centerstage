@@ -48,7 +48,7 @@ public class MecanumDrive
 
     private PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000,0);
     private PIDController HEADING_PID = new PIDController(0.37, 0.008, 0.00034);
-    private DcMotor FL, FR, BL, BR; // TODO hardware class > then this
+    private DcMotor FL, FR, BL, BR; // TODO: hardware class > then this
     private RunMode runMode;
     private Localizer localizer;
     public Vector powerVector = new Vector();
@@ -56,7 +56,7 @@ public class MecanumDrive
     public Vector targetVector = new Vector();
 
     private static double ks = 0.03;
-    private double lateralMultiplier = 1;
+    private double lateralMultiplier = 1.1194029851;
     private double headingMultiplier = 1;
     private double overallMultiplier = 1;
 
@@ -107,7 +107,7 @@ public class MecanumDrive
 
     private void driveToPosition(double targetX, double targetY, double targetHeading, Pose2d poseEstimate)
     {
-        double robotX = poseEstimate.getX();
+        /*double robotX = poseEstimate.getX();
         double robotY = poseEstimate.getY();
         double robotTheta = poseEstimate.getHeading();
         double x = TRANSLATIONAL_PID.calculate(robotX, targetX);
@@ -127,7 +127,7 @@ public class MecanumDrive
         this.FL.setPower(FL);
         this.BL.setPower(BL);
         this.FR.setPower(FR);
-        this.BR.setPower(BR);
+        this.BR.setPower(BR);*/
     }
 
     private void P2P()
@@ -271,7 +271,7 @@ public class MecanumDrive
     public  CurvePoint lastPoint;
     public  boolean finished = false;
     public  double lookAheadDis;
-    public ArrayList<CurvePoint> currentPath = new ArrayList<>();
+    public ArrayList<CurvePoint> currentPath;
     private void PP()
     {
         Pose currentPose = localizer.getPredictedPose();
