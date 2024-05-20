@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.opencv.core.Point;
+
 public class Pose
 {
     private final double x, y, heading;
@@ -69,9 +71,15 @@ public class Pose
     public Pose2d toPose2d(){
         return new Pose2d(x,y,heading);
     }
+
+    public Point toPoint()
+    {
+        return new Point(x, y);
+    }
     @NonNull
     @Override
     public String toString(){
         return String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(heading);
     }
+
 }

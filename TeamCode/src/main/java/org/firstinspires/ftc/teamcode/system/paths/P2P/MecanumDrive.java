@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.system.paths.P2P;
 
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.angleWrap;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.normalizeRadians;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CrossTrackError.calculateCTE;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CrossTrackError.calculateLookahead;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.AngleWrap;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.lineCircleIntersection;
+import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.retractVector;
 
 import android.os.LocaleList;
 
+import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -20,11 +26,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 import org.firstinspires.ftc.teamcode.system.accessory.supplier.TimedSupplier;
 import org.firstinspires.ftc.teamcode.system.hardware.Globals;
+import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CurvePoint;
+import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions;
+import org.opencv.core.Point;
+
+import java.util.ArrayList;
 
 public class MecanumDrive
 {
     public static boolean ENABLED = true;
-
 
 
     public enum RunMode
@@ -32,21 +42,21 @@ public class MecanumDrive
         PID,
         P2P,
         Vector,
-        PP
-
+        PP,
+        TeleOP
     }
 
     private PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000,0);
-    private PIDController HEADING_PID = new PIDController(0.08, 0.000, 0.0000);
-    private DcMotor FL, FR, BL, BR;
+    private PIDController HEADING_PID = new PIDController(0.37, 0.008, 0.00034);
+    private DcMotor FL, FR, BL, BR; // TODO hardware class > then this
     private RunMode runMode;
     private Localizer localizer;
     public Vector powerVector = new Vector();
     private Pose targetPose = new Pose();
     public Vector targetVector = new Vector();
 
-    public static double ks = 0.03;
-    private double lateralMultiplier = 1.4285714286;
+    private static double ks = 0.03;
+    private double lateralMultiplier = 1;
     private double headingMultiplier = 1;
     private double overallMultiplier = 1;
 
@@ -70,10 +80,10 @@ public class MecanumDrive
     {
         switch (runMode)
         {
-
             case PID:
-                // This is gonna be a standard pid
-               // driveToPosition(0, 0, 0, null);
+                // This is gonna be a standard pid, probably never will be used but so like maybe rename to position lock
+                // driveToPosition(0, 0, 0, null);
+                driveToPosition(targetPose.getX(), targetPose.getY(), targetPose.getHeading(), localizer.getPredictedPose().toPose2d());
                 break;
             case P2P:
                 P2P();
@@ -84,11 +94,15 @@ public class MecanumDrive
                 powerVector = new Vector(powerVector.getX(), powerVector.getY() * lateralMultiplier, targetVector.getZ());
                 break;
             case PP:
+                PP();
                 break;
         }
-        if (Math.abs(powerVector.getX()) + Math.abs(powerVector.getY()) + Math.abs(powerVector.getZ()) > 1)
-            powerVector.scaleToMagnitude(1);
-        powerVector.scaleBy(overallMultiplier);
+        if (runMode == RunMode.PP)
+        {
+            if (Math.abs(powerVector.getX()) + Math.abs(powerVector.getY()) + Math.abs(powerVector.getZ()) > 1)
+                powerVector.scaleToMagnitude(1);
+            powerVector.scaleBy(overallMultiplier);
+        }
     }
 
     private void driveToPosition(double targetX, double targetY, double targetHeading, Pose2d poseEstimate)
@@ -133,17 +147,21 @@ public class MecanumDrive
         powerVector = new Vector(translationalPower * calculatedCos, translationalPower * calculatedSin);
         powerVector = Vector.rotateBy(powerVector, currentPose.getHeading());
 
-        double headingDiff = normalizeRadians(targetPose.getHeading() - currentPose.getHeading());
+        double headingDiff = angleWrap(targetPose.getHeading() - currentPose.getHeading());
 
-        double headingPower = HEADING_PID.calculate(0, -headingDiff) * headingMultiplier;
+        double headingPower = HEADING_PID.calculate(0, headingDiff) * headingMultiplier;
 
+        // at heading 0 and 180 the y component is lateral, and at 90 and 270  the x is the lateral
+        // so y * cos(H) * LateralMulti and x * sin(H) * LateralMulti deals with that
+        //double xPow = powerVector.getX() * Math.sin(currentPose.getHeading()) * lateralMultiplier;
+        //double yPow = powerVector.getY() * Math.cos(currentPose.getHeading()) * lateralMultiplier;
         powerVector = new Vector(powerVector.getX(), powerVector.getY() * lateralMultiplier, headingPower);
     }
 
     public double FLPower, FRPower, BLPower, BRPower;
     private void updateMotors()
     {
-        if (runMode != RunMode.PID && runMode != RunMode.PP)
+        if (runMode != RunMode.PID && runMode != RunMode.TeleOP)
         {
 
             /*frontLeftMotor.setPower(x_rotated + y_rotated + t);
@@ -152,7 +170,7 @@ public class MecanumDrive
             backRightMotor.setPower(x_rotated + y_rotated - t);*/
 
             double actualKs = ks * 12.0 / voltageSupplier.get();
-            // This doesn't make sense like FL is +++ and FR ++-
+
             FLPower = (powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs)
                     + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ());
             FL.setPower(FLPower);
@@ -175,6 +193,14 @@ public class MecanumDrive
             BL.setPower((powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ()));
             BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
 */
+        }
+        else if(runMode == RunMode.PID)
+        {
+
+        }
+        else
+        {
+
         }
     }
 
@@ -199,6 +225,10 @@ public class MecanumDrive
     public void setTargetVector(Vector Vector){
         this.targetVector = Vector;
     }
+    public void setTargetPath(ArrayList<CurvePoint> path)
+    {
+        currentPath = path;
+    }
 
     public RunMode getRunMode() {
         return runMode;
@@ -221,11 +251,13 @@ public class MecanumDrive
 
     public boolean reachedTarget(double tolerance){
         if(runMode == RunMode.Vector) return false;
+        if(runMode == RunMode.PP) return localizer.getPoseEstimate().getDistance(currentPath.get(currentPath.size() - 1).toPose()) <= tolerance;
         return localizer.getPoseEstimate().getDistance(targetPose) <= tolerance;
     }
 
     public boolean reachedHeading(double tolerance){
-        if(runMode == RunMode.Vector) return false;
+        if(runMode == RunMode.Vector) return false; // for now PP will be caught here
+        if(runMode == RunMode.PP) return false;
         return Math.abs(normalizeRadians(targetPose.getHeading() - localizer.getHeading())) <= tolerance;
     }
 
@@ -234,6 +266,132 @@ public class MecanumDrive
     }
 
 
+    // PP
+    public CurvePoint currentPoint;
+    public  CurvePoint lastPoint;
+    public  boolean finished = false;
+    public  double lookAheadDis;
+    public ArrayList<CurvePoint> currentPath = new ArrayList<>();
+    private void PP()
+    {
+        Pose currentPose = localizer.getPredictedPose();
+
+        followCurve(currentPath, Math.toRadians(90), currentPose);
+
+    }
+
+    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle, Pose currentPose){
+        if (lookAheadDis == 0) // the initial one should always be the first
+        {
+            lookAheadDis = allPoints.get(0).followDistance;
+        }
+        CurvePoint followMe = getFollowPointPath(allPoints, new Point(currentPose.getX(), currentPose.getY()),
+                lookAheadDis, currentPose);
+
+
+        //lookAheadDis = calculateLookahead(calculateCTE(currentPose.toPoint(), followMe.toPoint(), lookAheadDis), 10, 25, 5);
+
+
+        goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed, currentPose);
+   /*
+        if (finished)
+        {
+            CurvePoint startPoint = allPoints.get(allPoints.size() -2);
+            CurvePoint endPoint = allPoints.get(allPoints.size() - 1);
+            CurvePoint finalPoint = extendVector(startPoint, endPoint);
+
+            goToHeading(finalPoint.x, finalPoint.y, finalPoint.moveSpeed, followAngle, finalPoint.turnSpeed);
+        }
+
+         */
+
+        lastPoint = currentPoint;
+
+        currentPoint = followMe;
+
+    }
+
+    public CurvePoint getFollowPointPath (ArrayList<CurvePoint> pathPoint, Point robotLocation, double followRadius, Pose currentPosition){
+        CurvePoint followMe;
+        //this makes the robot follow the previous point followed
+
+        if (lastPoint != null)
+        {
+            followMe = lastPoint;
+        }
+        else // if at the intersect
+        {
+            followMe = new CurvePoint(pathPoint.get(0));
+        }
+
+
+        for (int i = 0; i < pathPoint.size() - 1; i ++)
+        {
+            CurvePoint startLine = pathPoint.get(i);
+            CurvePoint endLine = pathPoint.get(i + 1);
+
+            ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius, startLine.toPoint(),
+                    endLine.toPoint());
+
+
+            double closestAngle = Double.MAX_VALUE;
+
+            for (Point thisIntersection : intersections)
+            {
+                double angle = Math.atan2(thisIntersection.y - currentPosition.getY(), thisIntersection.x - currentPosition.getX());
+                double deltaAngle = Math.abs(MathFunctions.AngleWrap(angle - currentPosition.getHeading()));
+
+                if (deltaAngle < closestAngle)
+                {
+                    closestAngle = deltaAngle;
+                    followMe.setPoint(thisIntersection);
+                    /*
+                    CurvePoint finalStartLine = pathPoint.get(pathPoint.size() - 2);
+                    CurvePoint finalEndLine = pathPoint.get(pathPoint.size() - 1);
+                    finalStartLine = retractVector(finalStartLine, finalEndLine);
+
+                    ArrayList<Point> interFinal = lineCircleIntersection(thisIntersection,0.2, finalStartLine.toPoint(), finalEndLine.toPoint());
+                    if (interFinal.size() > 0)
+                    {
+                        finished = true;
+                    }*/
+                }
+            }
+        }
+        /*if (finished)
+        {
+            followMe = new CurvePoint(pathPoint.get(pathPoint.size()-1));
+        }*/
+        return followMe;
+    }
+
+  public void goToPosition(double x, double y, double movementSpeed, double preferredAngle, double turnSpeed, @NonNull Pose currentPosition) {
+
+
+        double distanceToTarget = Math.hypot(x-currentPosition.getX(), y-currentPosition.getY());
+
+        double absoluteAngleToTarget = Math.atan2(y-currentPosition.getY(), x-currentPosition.getX());
+
+        double relativeAngleToPoint = AngleWrap(absoluteAngleToTarget - (currentPosition.getHeading() - Math.toRadians(90)));
+
+        double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
+        double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
+
+        double denominator = (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        double movementXPower = relativeXToPoint / denominator;
+        double movementYPower = relativeYToPoint / denominator;
+
+        powerVector = new Vector(movementXPower * movementSpeed, movementYPower * movementSpeed);
+
+        double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
+        double headingPower = relativeTurnAngle/Math.toRadians(30) * turnSpeed;
+
+        if (distanceToTarget < 2 ){
+            headingPower = 0;
+        }
+
+        powerVector = new Vector(powerVector.getX(), powerVector.getY(), headingPower);
+    }
 
 
 }

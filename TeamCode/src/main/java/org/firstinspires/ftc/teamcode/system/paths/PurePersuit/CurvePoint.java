@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 
+import org.firstinspires.ftc.teamcode.system.paths.P2P.Pose;
 import org.opencv.core.Point;
 
 public class CurvePoint {
@@ -37,6 +38,10 @@ public class CurvePoint {
 
     public Point toPoint(){
         return new Point(x, y);
+    }
+    public Pose toPose()
+    {
+        return new Pose(x, y);
     }
 
     public void setPoint(Point point){

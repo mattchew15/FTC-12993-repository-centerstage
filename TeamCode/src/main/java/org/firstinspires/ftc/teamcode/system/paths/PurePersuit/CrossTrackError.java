@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 
 
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
+//import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
 
 import org.opencv.core.Point;
 
@@ -15,7 +15,7 @@ public class CrossTrackError
     {
 
     }
-    public static double calculateCTE(Point robotPosition, Point lookAheadPoint, double radius)
+    public static double calculateCTE(Point robotPosition, Point lookAheadPoint, double radius, double worldAngle_rad)
     {
         double a = - Math.tan(worldAngle_rad);
         double b = 1;
@@ -29,19 +29,19 @@ public class CrossTrackError
 
     }
 
-        public static double calculateLookahead(double CTE, double minLookahead, double maxLookahead, double maxCTE)
-        {
-            // Normalize the CTE
-            double normalizedCTE = Math.min(CTE / maxCTE, 1);
+    public static double calculateLookahead(double CTE, double minLookahead, double maxLookahead, double maxCTE)
+    {
+        // Normalize the CTE
+        double normalizedCTE = Math.min(CTE / maxCTE, 1);
 
-            // Calculate lookahead (linear relationship)
-            double lookahead =  maxLookahead - (normalizedCTE * (maxLookahead - minLookahead));
-            if (lookahead <= 0)
-            {
-                lookahead = minLookahead;
-            }
-            return  lookahead;
+        // Calculate lookahead (linear relationship)
+        double lookahead =  maxLookahead - (normalizedCTE * (maxLookahead - minLookahead));
+        if (lookahead <= 0)
+        {
+            lookahead = minLookahead;
         }
+        return  lookahead;
+    }
 
 
 
