@@ -76,6 +76,7 @@ public class MecanumDrive
         this.voltageSupplier = supplier;
     }
 
+
     private void updatePowerVector()
     {
         switch (runMode)
@@ -220,6 +221,9 @@ public class MecanumDrive
 
     public void setTargetPose(Pose pose){
         this.targetPose = pose;
+    }
+    public void setTargetPose(Pose2d pose){
+        this.targetPose = new Pose(pose);
     }
 
     public void setTargetVector(Vector Vector){

@@ -21,6 +21,13 @@ public class Localizer
         localizer.setPoseEstimate(startingPose.toPose2d());
 
     }
+    public Localizer(HardwareMap hardwareMap, Pose2d startingPose, LinearOpMode opMode)
+    {
+        this.pose = new Pose(startingPose);
+        this.localizer = new TwoTrackingWheelLocalizer(hardwareMap, new ImuThread(hardwareMap), opMode);
+        localizer.setPoseEstimate(startingPose);
+
+    }
 
     public Localizer(HardwareMap hardwareMap, LinearOpMode opMode)
     {
