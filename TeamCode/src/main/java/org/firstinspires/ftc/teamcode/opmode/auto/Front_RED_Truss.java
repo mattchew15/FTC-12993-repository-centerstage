@@ -222,7 +222,7 @@
                     if (auto.goBackToStack){
                         currentState = AutoState.GRAB_OFF_STACK;
                     }
-                    if (auto.transferPixel(numCycles==0?false:true)){
+                    if (auto.transferPixel(numCycles==0? false:true)){
                         currentState = AutoState.OUTTAKE_PIXEL;
                     }
                     break;
@@ -306,7 +306,7 @@
                         if (auto.delay(600)){
                             auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         }
-                        delayTime = frontOrBackAuto? 800:350;
+                        delayTime = frontOrBackAuto? 650:350;
                     } else if (numCycles == 2){
                         if (frontOrBackAuto){
                             armHeight = 1;
@@ -318,7 +318,7 @@
                     } else if (numCycles == 4) {
                         armHeight = 3;
                     }
-                    if (auto.drop(armHeight,auto.goToParkAfterOuttaking, delayTime)){
+                    if (auto.drop(armHeight, auto.goToParkAfterOuttaking, delayTime)){
                         if (numCycles == 1){ // for very first cycle
                             if (frontOrBackAuto){
                                 if (teamPropLocation == 1){

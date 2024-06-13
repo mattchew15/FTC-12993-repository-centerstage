@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 
@@ -8,13 +9,6 @@ import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFuncti
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.extendVector;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.lineCircleIntersection;
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MathFunctions.retractVector;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldXPosition;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldYPosition;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_y;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_x;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.MovementVars.movement_turn;
-import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.DriveTrainKinematics.angleToPoint;
 import androidx.core.math.MathUtils;
 
 import org.opencv.core.Point;
@@ -45,7 +39,8 @@ public class RobotMovement {
 
 
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
-   /*
+   */
+/*
         if (finished)
         {
             CurvePoint startPoint = allPoints.get(allPoints.size() -2);
@@ -55,7 +50,8 @@ public class RobotMovement {
             goToHeading(finalPoint.x, finalPoint.y, finalPoint.moveSpeed, followAngle, finalPoint.turnSpeed);
         }
 
-         */
+         *//*
+
 
         lastPoint = currentPoint;
 
@@ -122,12 +118,14 @@ public class RobotMovement {
 
 
 
-    /**
+    */
+/**
      *
      * @param x
      * @param y
      * @param movementSpeed
-     */
+     *//*
+
     public static void goToPosition(double x, double y, double movementSpeed, double preferredAngle, double turnSpeed) {
 
         double distanceToTarget = Math.hypot(x-worldXPosition, y-worldYPosition);
@@ -184,3 +182,4 @@ public class RobotMovement {
 
 
 }
+*/

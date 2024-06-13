@@ -27,8 +27,8 @@ public class ServoTuner extends LinearOpMode {
             OUTTAKE_RAIL_POS = 0.5,
             OUTTAKE_ARM_POS = 0.5,
             PIVOT_POS = 0.5,
-            GRIPPER_TOP_POS = 0.5,
-            GRIPPER_BOTTOM_POS = 0.5;
+            GRIPPER_TOP_POS = 0.455,
+            GRIPPER_BOTTOM_POS = 0.545;
 
     @Override
     public void runOpMode() {
@@ -36,6 +36,8 @@ public class ServoTuner extends LinearOpMode {
         driveBase.initDrivebase(hardwareMap);
         outtakeSubsystem.initOuttake(hardwareMap);
         intakeSubsystem.initIntake(hardwareMap);
+        outtakeSubsystem.hardwareSetup();
+        intakeSubsystem.intakeHardwareSetup();
 
         waitForStart();
         while (opModeIsActive()) {

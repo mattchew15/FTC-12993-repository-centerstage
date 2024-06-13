@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 import static org.firstinspires.ftc.teamcode.system.paths.PurePersuit.Robot.worldAngle_rad;
@@ -18,3 +19,4 @@ public class MovementVars {
 
 
 }
+*/

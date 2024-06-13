@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.system.paths.PurePersuit.CurvePoint;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "P2p test")
-public class AutoP2P extends LinearOpMode
+@Autonomous(name = "PP test")
+public class AutoPP extends LinearOpMode
 {
 
     @Override
@@ -35,14 +35,15 @@ public class AutoP2P extends LinearOpMode
 
         MecanumDrive drive = new MecanumDrive(
                 driveBase.FL, driveBase.FR, driveBase.BL, driveBase.BR,
-                MecanumDrive.RunMode.P2P, voltageSupplier);
-        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(90)), this));
+                MecanumDrive.RunMode.PP, voltageSupplier);
+        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(0)), this));
 
         //TwoTrackingWheelLocalizer twoTrackingWheelLocalizer = new TwoTrackingWheelLocalizer(hardwareMap)
-
-        //drive.setTargetPose(new Pose(-30, 0, Math.toRadians(90)));
-
-
+        ArrayList<CurvePoint> path = new ArrayList<>();
+        path.add(new CurvePoint(0, 0, 0.5, 0.5, 5, Math.toRadians(30), Math.toRadians(30)));
+        path.add(new CurvePoint(0, -10, 0.5, 0.5, 5, Math.toRadians(30), Math.toRadians(30)));
+        drive.setTargetPath(path);
+        //drive.setTargetPose(new Pose(10, 0, Math.toRadians(0)));
         waitForStart();
         while(!isStopRequested() && opModeIsActive())
         {
@@ -55,7 +56,7 @@ public class AutoP2P extends LinearOpMode
             telemetry.addData("TargetPose", drive.getTargetPose());
             telemetry.addData("PoseEstimate", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Predicted PoseEstimate", drive.getLocalizer().getPredictedPoseEstimate());
-            telemetry.addData("Is reached", drive.reachedTarget(0.5));
+            //telemetry.addData("Is reached", drive.reachedTarget(0.5));
             telemetry.addData("DriveTrain Velocity", drive.getLocalizer().driveTrainVelocity);
 
             telemetry.addLine();

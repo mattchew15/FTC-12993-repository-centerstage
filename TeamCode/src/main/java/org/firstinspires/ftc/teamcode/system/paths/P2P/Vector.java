@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.system.paths.P2P;
 
+import androidx.annotation.NonNull;
+
 public class Vector {
     private double x,y,z;
 
@@ -78,10 +80,11 @@ public class Vector {
         return aux;
     }
 
-    public static Vector rotateBy(Vector vector, double theta){
+    public static Vector  rotateBy(Vector vector, double theta){
         return new Vector(Math.cos(theta) * vector.getX() + Math.sin(theta) * vector.getY(), Math.cos(theta) * vector.getY() - Math.sin(theta) * vector.getX());
     }
 
+    @NonNull
     @Override
     public String toString(){
         return String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(z);

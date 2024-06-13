@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.system.paths.PurePersuit;
 
 import androidx.core.math.MathUtils;
@@ -6,9 +7,11 @@ import androidx.core.math.MathUtils;
 public class Robot {
     public static boolean usingComputer = true;
 
-    /**
+    */
+/**
      * Creates a robot simulation
-     */
+     *//*
+
     public Robot(){
         worldXPosition = 0;
         worldYPosition = 0;
@@ -41,10 +44,13 @@ public class Robot {
     //last update time
     private long lastUpdateTime = 0;
 
-    /**
+    */
+/**
      * Calculates the change in position of the robot
-     */
-    /*public void update(){
+     *//*
+
+    */
+/*public void update(){
         //get the current time
         long currentTimeMillis = System.currentTimeMillis();
         //get the elapsed time
@@ -82,5 +88,7 @@ public class Robot {
 
 
 
-    }*/
+    }*//*
+
 }
+*/
