@@ -21,7 +21,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
-    double endAngleForStacks = -176.8;
+    double endAngleForStacks = -175.7;
     boolean didWeFuckingRelocalize = false;
 
     //Accessories
@@ -87,7 +87,6 @@ public class Back_BLUE_Stage extends LinearOpMode {
         while (!isStarted()) { // initialization loop
             auto.intializationLoop(!isArmDown);
             auto.setPlaceForBack();
-            place = Place.RIGHT;
             if (teamPropLocation == 1){
                 telemetry.addLine("Front");
             } else if (teamPropLocation == 2){
@@ -175,6 +174,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
                     } else if (teamPropLocation == 2){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
+
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3);
                     }
@@ -315,17 +315,17 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 } else if (numCycles == 1)
                 {
                     pitchTarget = 19;
-                    liftTarget = 27;
+                    liftTarget = 25;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
-                    liftTarget = 30.5;
+                    liftTarget = 27.5; // TODO Check lift Max inches it can extend
                 } else if (numCycles == 3){
                     pitchTarget = 25;
-                    liftTarget = 31;
+                    liftTarget = 37.5;
                     intakeSlideTarget = 70;
                 } else if (numCycles == 4){
-                    pitchTarget = 27;
-                    liftTarget = 31;
+                    pitchTarget = 28;
+                    liftTarget = 27.5;
                     intakeSlideTarget = 70;
                     auto.goToParkAfterOuttaking = true;
                 }
@@ -338,14 +338,13 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                 }
                 else if (outtakePixelFinished){
-
                     if (numCycles == 1){
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition+1.8,yPosition,headingPosition),numCycles == 1? 10:22,3,2.3 + S == -1?0:0,-27.5, -25.2, S == 1? 180:180);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:0.7,-27.5, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition+2.7,yPosition,headingPosition),19,-3,endAngleForStacks,3,3.8 + S == -1?-1.4:0,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.4,endAngleForStacks,3,3.8 + S == -1?-1.4:0.5,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -356,10 +355,10 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     if (intakeTrajectory != null){
                         auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
                     }
-
                     currentState = AutoState.DROP;
                 }
                 break;
+
             case DROP:
                 Trajectory intakeTrajectoryAfterDrop;
                 double delayTime = 190;
@@ -368,7 +367,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
-                            auto.outtakeSubsystem.liftToInternalPID(0,0.4);
+                            auto.outtakeSubsystem.liftToInternalPID(0,0.8);
                         } // so we don't rely on a drive back
                     }
                     if(auto.delay(270) && !frontOrBackAuto){
@@ -378,7 +377,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -420,7 +419,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 }
                 break;
             case GRAB_OFF_STACK:
-                if ((xPosition < -18) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
+                if ((xPosition < -17.5) && ((endAngleForStacks - Math.toDegrees(headingPosition)) < 2.8)){ // test to see if this works
                     auto.autoTrajectories.extendSlidesAroundStage = true;
                 }
                 double delayBeforeRetracting = 200;
@@ -435,7 +434,8 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 double xEnd = 29.2;
 
                 if (numCycles == 1){
-                    delayBeforeRetracting = 600;
+                    xEnd = 29;
+                    delayBeforeRetracting = 650;
                     retractSlides = true;
                     slideSpeed = 0.8;
                     if (xPosition < 8){//xPosition < -17
@@ -509,7 +509,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,3, 365,300)){
+                if (auto.afterGrabOffStack(2,3, 340,290)){
                     currentState = AutoState.TRANSFER_PIXEL;
                 }
                 break;

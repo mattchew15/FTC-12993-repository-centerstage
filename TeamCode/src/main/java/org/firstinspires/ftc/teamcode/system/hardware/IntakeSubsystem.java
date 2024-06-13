@@ -42,11 +42,12 @@ public class IntakeSubsystem
 
 
     public static double
-            INTAKE_ARM_TOP_POS = 0.465,
-            INTAKE_ARM_VERY_TOP_POS = 0.35,
-            INTAKE_ARM_FOUR_POS = 0.57,
-            INTAKE_ARM_MIDDLE_POS = 0.68,
-            INTAKE_ARM_BASE_POS = 0.91;
+            INTAKE_ARM_BASE_POS = 1,
+            INTAKE_ARM_TOP_POS = INTAKE_ARM_BASE_POS -0.41,
+            INTAKE_ARM_VERY_TOP_POS = INTAKE_ARM_BASE_POS - 0.55,
+            INTAKE_ARM_FOUR_POS = INTAKE_ARM_BASE_POS - 0.34,
+            INTAKE_ARM_MIDDLE_POS = INTAKE_ARM_BASE_POS - 0.23;
+
     public static double
             INTAKE_CHUTE_ARM_READY_POS = 0.918,
 

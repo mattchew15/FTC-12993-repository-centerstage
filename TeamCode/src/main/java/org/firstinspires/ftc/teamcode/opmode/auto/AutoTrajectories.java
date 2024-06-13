@@ -73,7 +73,7 @@ public class AutoTrajectories {
     public double MiddleLaneYIntake = -30.85;
 
     public static Pose2d poseEstimate;
-    final public static double LaneOffset = 23.8;
+    final public static double LaneOffset = 24;
 
     Pose2d startPoseBack;
     Pose2d startPoseFront;
@@ -107,22 +107,23 @@ public class AutoTrajectories {
         startPoseFront = new Pose2d(-38, -59*S, Math.toRadians(180)*S);
 
         // static trajectories - might have to make these public
+         double extendSLidesForBackYValue = -34;
          PreloadDrive1 = drive.trajectoryBuilder(startPoseBack)
                 .lineToLinearHeading(new Pose2d(36,-29*S, Math.toRadians(180)*S)
                         )
-                 .addSpatialMarker(new Vector2d( 36, -31*S), () -> {
+                 .addSpatialMarker(new Vector2d( 36, extendSLidesForBackYValue*S), () -> {
                      extendSlidesForBackAutos = true;
                  })
                 .build();
          PreloadDrive2 = drive.trajectoryBuilder(startPoseBack)
                 .lineToLinearHeading(new Pose2d(36,-26*S, Math.toRadians(174)*S))
-                 .addSpatialMarker(new Vector2d( 36, -29*S), () -> {
+                 .addSpatialMarker(new Vector2d( 36, extendSLidesForBackYValue*S), () -> {
                      extendSlidesForBackAutos = true;
                  })
                 .build();
          PreloadDrive3 = drive.trajectoryBuilder(startPoseBack)
                 .lineToLinearHeading(new Pose2d(36,-34*S, Math.toRadians(180)*S))
-                 .addSpatialMarker(new Vector2d( 36, -36*S), () -> {
+                 .addSpatialMarker(new Vector2d( 36, extendSLidesForBackYValue + 2*S), () -> {
                      extendSlidesForBackAutos = true;
                  })
                 .build();
@@ -399,7 +400,7 @@ public class AutoTrajectories {
                 .lineToSplineHeading(new Pose2d(33, (MiddleLaneYIntake + LaneOffset - 10)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 //.splineToConstantHeading(new Vector2d(33, (-32 + 11)), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(17, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(34, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(17, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToSplineHeading(new Pose2d(-17, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S))
                 .lineToSplineHeading(new Pose2d(-28.7, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -410,7 +411,7 @@ public class AutoTrajectories {
                 .lineToSplineHeading(new Pose2d(33, (MiddleLaneYIntake + LaneOffset - 10)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 //.splineToConstantHeading(new Vector2d(33, (-32 + 11)), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(12, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(37, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(12, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(38, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToSplineHeading(new Pose2d(-17, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S))
                 .lineToSplineHeading(new Pose2d(-28.7, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -421,7 +422,7 @@ public class AutoTrajectories {
                 .lineToSplineHeading(new Pose2d(33, (MiddleLaneYIntake + LaneOffset - 10)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 //.splineToConstantHeading(new Vector2d(33, (-32 + 11)), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(5, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(37, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(5, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(38, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToSplineHeading(new Pose2d(-17, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S))
                 .lineToSplineHeading(new Pose2d(-28.7, (MiddleLaneYIntake + LaneOffset)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

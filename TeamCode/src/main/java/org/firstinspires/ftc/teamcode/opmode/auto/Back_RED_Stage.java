@@ -173,7 +173,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1);
                     } else if (teamPropLocation == 2){
-                        //auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2);
 
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3);
@@ -315,17 +315,17 @@ public class Back_RED_Stage extends LinearOpMode {
                 } else if (numCycles == 1)
                 {
                     pitchTarget = 19;
-                    liftTarget = 27;
+                    liftTarget = 25;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
-                    liftTarget = 30.5; // TODO Check lift Max inches it can extend
+                    liftTarget = 27.5; // TODO Check lift Max inches it can extend
                 } else if (numCycles == 3){
                     pitchTarget = 25;
-                    liftTarget = 31;
+                    liftTarget = 37.5;
                     intakeSlideTarget = 70;
                 } else if (numCycles == 4){
                     pitchTarget = 28;
-                    liftTarget = 31.2;
+                    liftTarget = 27.5;
                     intakeSlideTarget = 70;
                     auto.goToParkAfterOuttaking = true;
                 }
@@ -342,7 +342,7 @@ public class Back_RED_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 9:22,3,2.3 + S == -1?0.3:0.3,-27.5, -26.3, S == 1? 180:180);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:0.7,-27.5, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.4,endAngleForStacks,3,3.8 + S == -1?-1.4:0.5,-18);
                     }
@@ -367,7 +367,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
-                            auto.outtakeSubsystem.liftToInternalPID(0,0.4);
+                            auto.outtakeSubsystem.liftToInternalPID(0,0.8);
                         } // so we don't rely on a drive back
                     }
                     if(auto.delay(270) && !frontOrBackAuto){
@@ -377,7 +377,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -509,7 +509,7 @@ public class Back_RED_Stage extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,3, 365,300)){
+                if (auto.afterGrabOffStack(2,3, 340,290)){
                     currentState = AutoState.TRANSFER_PIXEL;
                 }
                 break;

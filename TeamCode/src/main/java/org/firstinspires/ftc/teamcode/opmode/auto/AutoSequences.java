@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.opmode.auto.AutoTrajectories.yPosit
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
 import android.graphics.Path;
+import android.provider.Settings;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -322,7 +323,7 @@ public class AutoSequences {
          else{
             preExtendIntakeSlides(slideExtendSpeed,0);
         }
-        if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches()){ // limit switches don't touch in this case
+        if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches() || GlobalTimer.seconds() > 6.5){ // limit switches don't touch in this case
             if (delay(delayTimeForIntake)){ // ensure pixels are in robot
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                 if(reExtendSlides && !intakeSubsystem.pixelsInIntake()){
@@ -452,7 +453,12 @@ public class AutoSequences {
             if (intakeSubsystem.intakeSlidePosition < 130){
                 outtakeSubsystem.liftToInternalPID(-2,1);
             }
-            if ((intakeSubsystem.intakeSlidePosition < 8 || (intakeSubsystem.intakeSlidePosition < 9 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.1 ){
+
+            if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) >= 0.1) {
+                telemetry.addLine("LIFT ISN'T IN WHYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+            }
+
+            if ((intakeSubsystem.intakeSlidePosition < 14 || (intakeSubsystem.intakeSlidePosition < 14 && intakeSubsystem.chuteDetectorLimitSwitchValue))  && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.13){
                // if (numCycles == 0? delay(1600):true){
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
                     intakeSubsystem.intakeSlideInternalPID(-4,1); // power draw reasons
@@ -527,10 +533,10 @@ public class AutoSequences {
                     intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
 
 
-                    if (delay(350)){ // once chute is down
+                    if (delay(365)){ // once chute is down
                         outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                         if(extendRailLate){
-                            if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 33: xPosition > 15){
+                            if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 33: xPosition > 14.7){
                                 autoRail.railLogic();
                             }
                         } else {
@@ -692,9 +698,14 @@ public class AutoSequences {
         if (!extendSlides? autoTrajectories.extendSlidesAroundStage: xPosition < 18){ // this is kinda useless and dum
             intakeSubsystem.intakeSpin(1);
 
-            if (armHeight == 6){
-                if (xPosition < -26.5){
-                    armHeight = 5;
+            if (armHeight == 6 || armHeight == 3) {
+                if (xPosition < -26 || (intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue) || intakeSubsystem.frontColourSensorValue > 1000){
+                    if (armHeight == 6){
+                        armHeight = 5;
+                    } if (armHeight == 3){
+                        armHeight = 1;
+                    }
+
                 }
             }
 
@@ -896,15 +907,16 @@ public class AutoSequences {
         } else{
             maxSpeed = 1;
         }
+        int initialSlideOffset = 10;
         if (teamPropLocation == 1 || frontThirdCase){
             //intakeSubsystem.intakeSlideInternalPID(60 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(29+slideOffset,90,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(45+slideOffset + initialSlideOffset,90,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(290 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(335+slideOffset,180,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(370+slideOffset + initialSlideOffset,180,slideExtendSpeed,maxSpeed);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
-            intakeSlideToSlowedEnd(372+slideOffset,90,slideExtendSpeed,maxSpeed);
+            intakeSlideToSlowedEnd(390+slideOffset + initialSlideOffset,90,slideExtendSpeed,maxSpeed);
         }
     }
 
