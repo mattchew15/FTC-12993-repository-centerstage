@@ -622,7 +622,7 @@ public class SimplicityDrive extends LinearOpMode {
                     }
                 }
                 if (pitchTarget > 36){
-                    if (delay(250)){ // if we are pitching down wait a little bit
+                    if (true){ // if we are pitching down wait a little bit
                         outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                     }
                 } else {
