@@ -28,7 +28,7 @@ public class MathTest extends LinearOpMode {
 
 
     //DcMotorEx IntakeSlideMotor;
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     LoopTime loopTime = new LoopTime(); // might have to create new instance of class instead of just declaring it (who knows)
 
     // uses the ElapsedTime class from the SDK to create variable GlobalTimer

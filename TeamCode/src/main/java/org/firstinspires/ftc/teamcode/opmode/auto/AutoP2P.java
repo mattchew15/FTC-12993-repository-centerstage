@@ -26,7 +26,7 @@ public class AutoP2P extends LinearOpMode
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        DriveBase driveBase = new DriveBase();
+        DriveBase driveBase = new DriveBase(telemetry);
         driveBase.initDrivebase(hardwareMap);
         driveBase.drivebaseSetup();
 

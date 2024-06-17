@@ -35,7 +35,7 @@ public class SimplicityDrive extends LinearOpMode {
 
     //Subsystems
     VoltageSensor voltageSensor;
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();

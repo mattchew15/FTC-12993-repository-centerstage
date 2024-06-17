@@ -368,7 +368,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
-                            auto.outtakeSubsystem.liftToInternalPID(0,0.8);
+                            //auto.outtakeSubsystem.liftToInternalPID(0,0.8);
                         } // so we don't rely on a drive back
                     }
                     if(auto.delay(270) && !frontOrBackAuto){

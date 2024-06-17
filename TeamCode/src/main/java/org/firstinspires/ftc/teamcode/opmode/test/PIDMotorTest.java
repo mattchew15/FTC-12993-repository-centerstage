@@ -30,7 +30,7 @@ public class PIDMotorTest extends LinearOpMode {
 
 
     //DcMotorEx IntakeSlideMotor;
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem(); // test to see if you get a null pointer error if you remove this - to test if the robothardware.setupHardware is inefficient
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     LoopTime loopTime = new LoopTime(); // might have to create new instance of class instead of just declaring it (who knows)

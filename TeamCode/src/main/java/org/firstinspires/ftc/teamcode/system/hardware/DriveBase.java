@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.system.accessory.CoordinatesLogic;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
 
@@ -23,6 +24,28 @@ public class DriveBase {  // no constructor for this class
             BR;
 
     public ServoImplEx DroneServo;
+
+    // higher values of k means more adjustment.
+    // c centers the adjustment
+
+//    k = 20, c = 0.7
+//    x = 0.1, y = 0.000017
+//    x = 0.3, y = 0.000911
+//    x = 0.5, y = 0.047426
+//    x = 0.7, y = 0.500000
+//    x = 0.9, y = 0.977023
+
+//    k = 5, c = 0.3
+//    x = 0.1, y = 0.377541
+//    x = 0.3, y = 0.500000
+//    x = 0.5, y = 0.622459
+//    x = 0.7, y = 0.750000
+//    x = 0.9, y = 0.845534
+
+    // where the scaling centers around
+    public static double c = 1.7;
+    // how agressive the scaling is
+    public static double m = 1;
 
     private double previousFrontLeftPower, previousFrontRightPower, previousBackLeftPower, previousBackRightPower;
     //variable for the drivebase speed toggle;
@@ -45,11 +68,16 @@ public class DriveBase {  // no constructor for this class
     PID drivebaseThetaPID = new PID(DrivebaseThetaKp,DrivebaseThetaKi,DrivebaseThetaKd,DrivebaseThetaIntegralSumLimit,DrivebaseThetaKf);
 
     CoordinatesLogic coordinatesLogic = new CoordinatesLogic();
+    Telemetry telemetry;
     private double powerCoefficient = 2;
 
     public enum DroneServoState {
         HOLD,
         RELEASE
+    }
+
+    public DriveBase(Telemetry t){
+        this.telemetry = t;
     }
 
     public void initDrivebase(HardwareMap hwMap){
@@ -82,20 +110,42 @@ public class DriveBase {  // no constructor for this class
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
+
+    public static double adjustedJoystick(double x) {
+        double y = Math.pow(c-x,m);
+       // double y = Math.pow(x,c-x);
+        return Math.pow(x,y);
+    }
+
     public void Drive(double LY, double LX, double RX) {
+//        double f = LY < 0? -adjustedJoystick(Math.abs(LY)):adjustedJoystick(Math.abs(LY));
+//        double s = LX < 0? -adjustedJoystick(Math.abs(LX)):adjustedJoystick(Math.abs(LX));
+//        double t = RX < 0? -adjustedJoystick(Math.abs(RX)):adjustedJoystick(Math.abs(RX));
+
+        double s = LX;
+        double t = RX;
+        double f = LY;
+
+        telemetry.addData("LY",LY);
+        telemetry.addData("f",f);
+        telemetry.addData("LX",LX);
+        telemetry.addData("s",s);
+        telemetry.addData("RX",RX);
+        telemetry.addData("t",t);
+
         double denominator = Math.max(Math.abs(LY) + Math.abs(LX) + Math.abs(RX), 1);
-        double frontLeftPower = (-LY*PowerBase + LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
-        double backLeftPower = (-LY*PowerBase - LX*PowerStrafe + RX*PowerBaseTurn) / denominator;
-        double frontRightPower = (-LY*PowerBase - LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
-        double backRightPower = (-LY*PowerBase + LX*PowerStrafe - RX*PowerBaseTurn) / denominator;
+        double frontLeftPower = (-f*PowerBase + s*PowerStrafe + t*PowerBaseTurn) / denominator;
+        double backLeftPower = (-f*PowerBase - s*PowerStrafe + t*PowerBaseTurn) / denominator;
+        double frontRightPower = (-f*PowerBase - s*PowerStrafe - t*PowerBaseTurn) / denominator;
+        double backRightPower = (-f*PowerBase + s*PowerStrafe - t*PowerBaseTurn) / denominator;
 
         // just comment this out if you don't like the drive...
-        /*
-        frontLeftPower = Math.pow(frontLeftPower, powerCoefficient);
-        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
-        frontRightPower = Math.pow(frontRightPower, powerCoefficient);
-        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
-         */
+
+//        frontLeftPower = Math.pow(frontLeftPower, powerCoefficient);
+//        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
+//        frontRightPower = Math.pow(frontRightPower, powerCoefficient);
+//        backLeftPower = Math.pow(backLeftPower, powerCoefficient);
+
 
         previousFrontLeftPower = motorCaching(frontLeftPower, previousFrontLeftPower, EPSILON_DELTA, FL);
         previousFrontRightPower = motorCaching(frontRightPower, previousFrontRightPower, EPSILON_DELTA, FR);

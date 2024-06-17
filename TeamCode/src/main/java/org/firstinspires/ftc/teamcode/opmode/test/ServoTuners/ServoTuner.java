@@ -14,7 +14,7 @@ public class ServoTuner extends LinearOpMode {
 
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
 
     public static double
             DRONE_POS = 0.43,

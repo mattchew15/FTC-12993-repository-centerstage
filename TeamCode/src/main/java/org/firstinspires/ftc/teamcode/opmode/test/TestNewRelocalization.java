@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.DriveBase;
 public class TestNewRelocalization extends LinearOpMode
 {
 
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     @Override
     public void runOpMode() throws InterruptedException {
         //setRedAuto();

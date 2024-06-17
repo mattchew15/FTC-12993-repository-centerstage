@@ -18,7 +18,7 @@ public class BackdropKinTest extends LinearOpMode {
             railTarget;
     ElapsedTime GlobalTimer = new ElapsedTime();
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     OuttakeInverseKinematics outtakeInverseKinematics = new OuttakeInverseKinematics();
 
     @Override

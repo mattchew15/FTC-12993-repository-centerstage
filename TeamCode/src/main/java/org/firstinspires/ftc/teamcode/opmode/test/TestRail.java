@@ -1,6 +1,4 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
-
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -21,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.system.hardware.SetAuto.setRedAuto;
 @TeleOp(name="Test Rail", group = "Test")
 public class TestRail extends LinearOpMode
 {
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     //OpenCvCamera backWebcam;
     CameraHardware cameraHardware = new CameraHardware();
     SampleMecanumDrive drive;

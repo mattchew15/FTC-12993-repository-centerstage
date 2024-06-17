@@ -33,7 +33,7 @@ public class FullSystemTest extends LinearOpMode
     }
     OuttakeSubsystem outtakeSubsystem = new OuttakeSubsystem();
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     TestCase testCase = TestCase.IDLE;
     CameraHardware cameraHardware = new CameraHardware();
     boolean isDriveWorking, isDistanceSensorWorking, isBackColourSensorWorking,

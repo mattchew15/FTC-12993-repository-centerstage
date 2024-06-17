@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.IntakeSubsystem;
 public class IntakeDBServoTuner extends LinearOpMode {
 
     IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
 
     public static double
             DRONE_POS = 0.43,

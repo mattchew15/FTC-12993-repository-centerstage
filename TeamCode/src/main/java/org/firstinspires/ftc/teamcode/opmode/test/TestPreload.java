@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 @TeleOp(name="Test Preload", group = "Test")
 public class TestPreload extends LinearOpMode
 {
-    DriveBase driveBase = new DriveBase();
+    DriveBase driveBase = new DriveBase(telemetry);
     OpenCvCamera backWebcam;
     SampleMecanumDrive drive;
     public static int PURPLE = 0;
