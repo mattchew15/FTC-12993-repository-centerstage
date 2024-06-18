@@ -45,7 +45,7 @@ public class DriveBase {  // no constructor for this class
     // where the scaling centers around
     public static double c = 1.7;
     // how agressive the scaling is
-    public static double m = 1;
+    public static double m = 0.9;
 
     private double previousFrontLeftPower, previousFrontRightPower, previousBackLeftPower, previousBackRightPower;
     //variable for the drivebase speed toggle;
@@ -69,7 +69,7 @@ public class DriveBase {  // no constructor for this class
 
     CoordinatesLogic coordinatesLogic = new CoordinatesLogic();
     Telemetry telemetry;
-    private double powerCoefficient = 2;
+    //private double powerCoefficient = 2;
 
     public enum DroneServoState {
         HOLD,
@@ -113,18 +113,17 @@ public class DriveBase {  // no constructor for this class
 
     public static double adjustedJoystick(double x) {
         double y = Math.pow(c-x,m);
-       // double y = Math.pow(x,c-x);
         return Math.pow(x,y);
     }
 
     public void Drive(double LY, double LX, double RX) {
-//        double f = LY < 0? -adjustedJoystick(Math.abs(LY)):adjustedJoystick(Math.abs(LY));
-//        double s = LX < 0? -adjustedJoystick(Math.abs(LX)):adjustedJoystick(Math.abs(LX));
-//        double t = RX < 0? -adjustedJoystick(Math.abs(RX)):adjustedJoystick(Math.abs(RX));
+        double f = LY < 0? -adjustedJoystick(Math.abs(LY)):adjustedJoystick(Math.abs(LY));
+        double s = LX < 0? -adjustedJoystick(Math.abs(LX)):adjustedJoystick(Math.abs(LX));
+        double t = RX < 0? -adjustedJoystick(Math.abs(RX)):adjustedJoystick(Math.abs(RX));
 
-        double s = LX;
-        double t = RX;
-        double f = LY;
+//        double s = LX;
+//        double t = RX;
+//        double f = LY;
 
         telemetry.addData("LY",LY);
         telemetry.addData("f",f);

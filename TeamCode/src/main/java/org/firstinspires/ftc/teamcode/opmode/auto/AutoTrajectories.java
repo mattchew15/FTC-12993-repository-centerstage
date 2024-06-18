@@ -27,60 +27,55 @@ public class AutoTrajectories {
     public boolean extendOuttakeSlidesAroundTruss;
     public boolean extendSlidesForBackAutos;
     Pose2d trussSideStackCoordinate;
-    public static double
 
+    public static double
     xPosition,
     yPosition,
-    headingPosition,
+    headingPosition;
 
-    SlowerVelocityConstraintIntake = 14,
-    SlowerVelocityConstraintDeposit = 15,
-    SlowerVelocityConstraintDepositFaster = 25,
+    public double
+        MiddleLaneYIntake,
+        MiddleY = -32,
+        TrussY = -52.8,
+        StageY = -8,
+        StageYIntake = -5;
 
-    StartPoseYBackdrop = -59,
-    StartPoseXBackdrop = 12,
-    StartPoseHeadingBackdrop = Math.toRadians(180),
-
-    FrontPreloadY = -37,
-
-    PreloadPose1X = 35,
-            PreloadPose1Y = -32,
-            PreloadPose1Heading = Math.toRadians(180),
-
-    PreloadPose2X = 35,
-            PreloadPose2Y = -35,
-            PreloadPose2Heading = Math.toRadians(175),
-
-    PreloadPose3X = 35,
-            PreloadPose3Y = -38,
-            PreloadPose3Heading = Math.toRadians(170),
+    final public static double
+// deposits and offsets
+    // FrontPreloadY = -37,
+//    MiddleY = -32,
+//    TrussY = -52.8,
+//    StageY = -8,
+//    StageYIntake = -6,
 
     MiddleLaneYDeposit = -32,
 
+    LaneOffset = 24,
     LaneOffsetTruss = 20.8,
+    // value for pregenerated first drive from backdrop into stacks truss
     FirstTrussDriveOffset = 2.1,
+    // used in 3 front cases and 3 back cases (6 total for pregenerated trajecotry)
+
+// velocity constraints
     SlowerVelocityFirstTrussDriveToStacks = 28,
+    // used for 6 cases (3 front and back) for pregenerated trajectories
     SlowerVelocityFirstStageDriveToStacks = 24,
+    // pregenerated first stack truss angle
+    SlowerVelocityConstraintIntake = 14,
+    // these aren't needed really
+    SlowerVelocityConstraintDeposit = 15,
+    SlowerVelocityConstraintDepositFaster = 25,
+// angle constraints
     StackTrussAngle1 = 154.5,
 
+// park trajectories have been good
     ParkX = 45,
-            ParkMiddleY = -14,
-            ParkWallY = -54,
-
-    TurnLeftFrontPreload = -176,
-    TurnRightFrontPreload = 176;
-
-    public double MiddleLaneYIntake = -30.85;
+    ParkMiddleY = -14,
+    ParkWallY = -54;
 
     public static Pose2d poseEstimate;
-    final public static double LaneOffset = 24;
-
     Pose2d startPoseBack;
     Pose2d startPoseFront;
-
-    Pose2d preload1Pose = new Pose2d(PreloadPose1X,PreloadPose1Y*S, PreloadPose1Heading*S); // not necessary lol
-    Pose2d preload2Pose = new Pose2d(PreloadPose2X,PreloadPose2Y*S, PreloadPose2Heading*S);
-    Pose2d preload3Pose = new Pose2d(PreloadPose3X,PreloadPose3Y*S,PreloadPose3Heading*S);
 
     public double middleDepositPoseX = 26.5;
 
@@ -92,12 +87,13 @@ public class AutoTrajectories {
         PreloadDrive2FrontStage, PreloadDrive1FrontStage,PreloadDrive3FrontStage
         ,firstDriveThroughStageAfterPurple2, firstDriveThroughStageAfterPurple3, firstDriveThroughStageAfterPurple1,
         driveIntoStacksAfterYellowStage2, driveIntoStacksAfterYellowStage1, driveIntoStacksAfterYellowStage3,PreloadDrive3FrontFirst,PreloadDrive3FrontSecond,
-            driveIntoStacksAfterYellowTruss1,driveIntoStacksAfterYellowTruss2,driveIntoStacksAfterYellowTruss3,
-            driveIntoStacksAfterBackTruss1,driveIntoStacksAfterBackTruss2,driveIntoStacksAfterBackTruss3, driveIntoStacksAfterBackStage2,driveIntoStacksAfterBackStage1,
-    driveIntoStacksAfterBackStage3;
+        driveIntoStacksAfterYellowTruss1,driveIntoStacksAfterYellowTruss2,driveIntoStacksAfterYellowTruss3,
+        driveIntoStacksAfterBackTruss1,driveIntoStacksAfterBackTruss2,driveIntoStacksAfterBackTruss3, driveIntoStacksAfterBackStage2,driveIntoStacksAfterBackStage1,
+        driveIntoStacksAfterBackStage3;
 
     public void init(HardwareMap hardwareMap, LinearOpMode opMode)
     {
+        MiddleLaneYIntake = -30.85;
         preExtendSlides = false;
         dropPurple = false;
         drive = new SampleMecanumDriveThread(hardwareMap);
@@ -107,7 +103,8 @@ public class AutoTrajectories {
         startPoseFront = new Pose2d(-38, -59*S, Math.toRadians(180)*S);
 
         // static trajectories - might have to make these public
-         double extendSLidesForBackYValue = -34;
+        double extendSLidesForBackYValue = -34;
+        //Back preload drives
          PreloadDrive1 = drive.trajectoryBuilder(startPoseBack)
                 .lineToLinearHeading(new Pose2d(36,-29*S, Math.toRadians(180)*S)
                         )
@@ -268,7 +265,7 @@ public class AutoTrajectories {
         Pose2d frontStageEnd2 = firstDriveThroughStageAfterPurple2.end();
         Pose2d newFrontStageEnd2 = new Pose2d(frontStageEnd2.getX() + 3,frontStageEnd2.getY(),frontStageEnd2.getHeading());
         driveIntoStacksAfterYellowStage2 = drive.trajectoryBuilder(newFrontStageEnd2)
-                .splineToConstantHeading(new Vector2d(33, (MiddleLaneYIntake + 10 + 8)*S), Math.toRadians(110)*S, SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(33, (MiddleLaneYIntake + 10 + 8)*S), Math.toRadians(110)*S, SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(18.5, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(38, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -279,7 +276,7 @@ public class AutoTrajectories {
         Pose2d frontStageEnd1 = firstDriveThroughStageAfterPurple1.end();
         Pose2d newFrontStageEnd1 = new Pose2d(frontStageEnd1.getX() + 3,frontStageEnd1.getY(),frontStageEnd1.getHeading());
         driveIntoStacksAfterYellowStage1 = drive.trajectoryBuilder(newFrontStageEnd1)
-                .splineToConstantHeading(new Vector2d(24, (MiddleLaneYIntake + 25)*S), Math.toRadians(170)*S, SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(24, (MiddleLaneYIntake + 25)*S), Math.toRadians(170)*S, SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(15, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -290,7 +287,7 @@ public class AutoTrajectories {
         Pose2d frontStageEnd3 = firstDriveThroughStageAfterPurple3.end();
         Pose2d newFrontStageEnd3 = new Pose2d(frontStageEnd3.getX() + 3,frontStageEnd3.getY(),frontStageEnd3.getHeading());
         driveIntoStacksAfterYellowStage3 = drive.trajectoryBuilder(newFrontStageEnd3)
-                .splineToConstantHeading(new Vector2d(34, (MiddleLaneYIntake + 11)*S), Math.toRadians(110)*S, SampleMecanumDrive.getVelocityConstraint(frontOrBackAuto? 18: 25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineToConstantHeading(new Vector2d(34, (MiddleLaneYIntake + 11)*S), Math.toRadians(110)*S, SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstStageDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(27.8, (MiddleLaneYIntake + LaneOffset)*S), Math.toRadians(180)*S, SampleMecanumDrive.getVelocityConstraint(36, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -358,7 +355,7 @@ public class AutoTrajectories {
                 .lineToSplineHeading(new Pose2d(27, (-47.8 + 5)*S, Math.toRadians(180)*S), SampleMecanumDrive.getVelocityConstraint(SlowerVelocityFirstTrussDriveToStacks, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(-16.5, (MiddleLaneYIntake - LaneOffsetTruss)*S), Math.toRadians(180)*S) // end tangent affects path alot\
-                .splineTo(new Vector2d(-36,-47.8*S), Math.toRadians(155)*S, SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineTo(new Vector2d(-36,-47.8*S), Math.toRadians(StackTrussAngle1)*S, SampleMecanumDrive.getVelocityConstraint(SlowerVelocityConstraintIntake, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // roughly 160
                 .build();
 
@@ -430,7 +427,7 @@ public class AutoTrajectories {
                 .build();
 
 
-        AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
+      /*  AfterPreloadDrive1Front = drive.trajectoryBuilder(PreloadDrive1Front.end())
                 .lineToLinearHeading(new Pose2d(-54, FrontPreloadY*S, Math.toRadians(180)*S)) // hardest one closest to stack
                 .build();
         AfterPreloadDrive2Front = drive.trajectoryBuilder(PreloadDrive2Front.end())
@@ -438,7 +435,7 @@ public class AutoTrajectories {
                 .build();
         AfterPreloadDrive3Front = drive.trajectoryBuilder(PreloadDrive3Front.end())
                 .lineToLinearHeading(new Pose2d(-38, FrontPreloadY*S, Math.toRadians(180)*S)) // hardest one closest to stack
-                .build();
+                .build();*/
     }
 
     /* //shouldn't need to do this if drive is public :)

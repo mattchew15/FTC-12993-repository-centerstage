@@ -200,7 +200,7 @@ public class AutoSequences {
     public boolean preloadDriveState (boolean railLeftOrRight, boolean preDropPurple, double railDelay, double slideExtendSpeed, boolean preExtendSlides){
 
         //extendIntakeArms();
-
+        //intakeSubsystem
         outtakeSubsystem.liftToInternalPID(3.9,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
@@ -243,7 +243,10 @@ public class AutoSequences {
             else{
                 preExtendIntakeSlides(slideExtendSpeed,0);
             }
+        } else {
+            intakeSubsystem.intakeSlideInternalPID(60,0.4);
         }
+
         if (autoTrajectories.dropPurple && preDropPurple){
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
             outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
@@ -324,7 +327,9 @@ public class AutoSequences {
             preExtendIntakeSlides(slideExtendSpeed,0);
         }
         if (intakeSubsystem.intakeSlideTargetReached() || limitSwitches() || GlobalTimer.seconds() > 6.5){ // limit switches don't touch in this case
-            if (delay(delayTimeForIntake)){ // ensure pixels are in robot
+            telemetry.addLine("MOVING ON");
+            if (delay(delayTimeForIntake) || GlobalTimer.seconds() > 6.5){ // ensure pixels are in robot
+
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.HOLDING);
                 if(reExtendSlides && !intakeSubsystem.pixelsInIntake()){
                     intakeSubsystem.intakeSlideInternalPID(0,1);
