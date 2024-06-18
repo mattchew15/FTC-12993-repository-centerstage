@@ -21,7 +21,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
-    double endAngleForStacks = -175.7;
+    double endAngleForStacks = -175;
     boolean didWeFuckingRelocalize = false;
 
     //Accessories
@@ -74,6 +74,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
 
         if (S == -1){
             auto.autoTrajectories.MiddleLaneYIntake -= 3.9;
+            auto.autoTrajectories.StageYIntake -= 3.9;
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { // turns on bulk reads cannot double read or it will call multiple bulkreads in the one thing
@@ -230,7 +231,8 @@ public class Front_BLUE_Stage extends LinearOpMode {
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(350,0.18, true)){
+
+                if (auto.placeAndIntakeFrontMIDTRUSS(350,0.23, true)){
                     if (auto.goBackForYellowPixel){
                         currentState = AutoState.GO_BACK_FOR_YELLOW;
                     } else {
@@ -251,7 +253,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
                 break;
 
             case GO_BACK_FOR_YELLOW:
-                if (auto.reExtendSLidesForYellow(1200,0.35)){
+                if (auto.reExtendSLidesForYellow(1200,0.23)){
                     if (auto.GlobalTimer.seconds() > delayForYellow){
                         Trajectory startDrive = null;
                         if (teamPropLocation == 2){
@@ -342,9 +344,9 @@ public class Front_BLUE_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:0.7,-27.5, -26.3, S == 1? 180:180);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:1,-27.5, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.4,endAngleForStacks,3,3.8 + S == -1?-1.4:0.5,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.9,endAngleForStacks,3,3.8 + (S == -1?-1.4:0) - 4,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -367,7 +369,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
                     if (auto.delay(500)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
-                            auto.outtakeSubsystem.liftToInternalPID(0,0.8);
+                            //auto.outtakeSubsystem.liftToInternalPID(0,0.8);
                         } // so we don't rely on a drive back
                     }
                     if(auto.delay(270) && !frontOrBackAuto){

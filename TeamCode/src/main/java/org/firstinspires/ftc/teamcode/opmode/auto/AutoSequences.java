@@ -418,7 +418,7 @@ public class AutoSequences {
         if (delay(250)){ // limit switches don't touch in this case
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             if (trussMiddleStage == 3){
-                preExtendIntakeSlidesStage(slideExtendSpeed,2);
+                preExtendIntakeSlidesStage(slideExtendSpeed,8);
             }
             else{
                 preExtendIntakeSlides(slideExtendSpeed,2);

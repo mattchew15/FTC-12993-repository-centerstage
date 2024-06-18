@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.system.hardware.OuttakeSubsystem;
 
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.*;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -436,14 +437,17 @@ public class SimplicityDrive extends LinearOpMode {
                                 intakeSubsystem.intakeSpin(0);
                             }
                             intakeClipHoldorNotHold(-8,7); // backs up intake slides into robot
+
                             if (gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper) || rightBumperPreExtend) { //.mode is returns a boolean
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
+                                changeExtension.ToggleMode = true;
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                                 resetTimer();// reset timer
                                 MaxExtension = true;
                                 extendOuttake();
                             } else if (gamepadLeftBumperRisingEdge.mode(gamepad1.left_bumper) || leftBumperPreExtend){
                                 outtakeState = OuttakeState.OUTTAKE_ADJUST;
+                                changeExtension.ToggleMode = true;
                                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                                 resetTimer();// reset timer
                                 MaxExtension = false;
@@ -480,7 +484,8 @@ public class SimplicityDrive extends LinearOpMode {
                 }else{
                     intakeSubsystem.intakeSpin(-0.8);
                 }
-                changeExtension.ToggleMode(gamepad1.left_bumper);
+
+                changeExtension.ToggleMode(gamepad1.dpad_up);
                 liftPositionChange(true,true);
                 // tinkos major adjustment
                 // driver 2 fine adjusts rail
@@ -496,11 +501,11 @@ public class SimplicityDrive extends LinearOpMode {
                     pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
                     liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
                     if (Math.abs(gamepad2.right_stick_y)<0.2){
-                        fineAdjustHeight.upToggle(gamepad2.right_bumper);
-                        fineAdjustHeight.downToggle(gamepad2.left_bumper);
+                        fineAdjustHeight.upToggle(gamepad2.right_bumper || gamepad1.left_bumper);
+                        fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad);
                         backdropRelativeHeight = fineAdjustHeight.OffsetTargetPosition;
                     } else {
-                       // fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
+                        fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
                         fineAdjustHeight.OffsetTargetPosition = (int)backdropRelativeHeight;
                     }
                     // this shoudl be rememebered because we are caching fineAdjustHeight
@@ -981,8 +986,8 @@ public class SimplicityDrive extends LinearOpMode {
         pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
         liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
         if (Math.abs(gamepad2.right_stick_y)<0.2){
-            fineAdjustHeight.upToggle(gamepad2.right_bumper);
-            fineAdjustHeight.downToggle(gamepad2.left_bumper);
+            fineAdjustHeight.upToggle(gamepad2.right_bumper || gamepad1.left_bumper);
+            fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad);
             backdropRelativeHeight = fineAdjustHeight.OffsetTargetPosition;
         } else {
             fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
