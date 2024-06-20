@@ -200,7 +200,7 @@ public class AutoTrajectories {
                 })
                 .build();
         PreloadDrive2FrontStage = drive.trajectoryBuilder(startPoseFront)
-                .lineToLinearHeading(new Pose2d(-48, -10*S, Math.toRadians(178)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(-48, -9.8*S, Math.toRadians(179)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addSpatialMarker(new Vector2d(-48, -10*S), () -> {
                     preExtendSlides = true;

@@ -137,14 +137,14 @@ public class Front_RED_Stage extends LinearOpMode {
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
 
-            telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
-            telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
+            //telemetry.addData("X OFfset", auto.cameraHardware.ROBOT_X);
+            //telemetry.addData("Y Offset", auto.cameraHardware.ROBOT_Y);
 
-            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
-            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
-            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
+//            telemetry.addData("Target tag", auto.cameraHardware.getTargetTag());
+//            telemetry.addData("Num tag we see", auto.cameraHardware.getNumSeenTags());
+//            telemetry.addData("Did we fucking relocalize???", didWeFuckingRelocalize);
 
-            telemetry.addData("armHeight", auto.armHeight);
+            //telemetry.addData("armHeight", auto.armHeight);
             //telemetry.addData("intakeSlidePosition", auto.intakeSubsystem.intakeSlidePosition);
 
 
@@ -316,8 +316,8 @@ public class Front_RED_Stage extends LinearOpMode {
                     openGrippers = false;
                 } else if (numCycles == 1)
                 {
-                    pitchTarget = 19;
-                    liftTarget = 23;
+                    pitchTarget = 23;
+                    liftTarget = 25;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
                     liftTarget = 27.5; 
@@ -346,7 +346,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:1,-27.5, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.9,endAngleForStacks,3, (S == -1?-1.4:0) - 4,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.9,endAngleForStacks,3, (S == -1?-1.4:0) - 2.9,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     /*else if (numCycles == 4){
@@ -366,7 +366,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 double delayTime = 190;
                 int armHeight = 0;
                 if (numCycles == 1){
-                    if (auto.delay(500)){
+                    if (auto.delay(550)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                         if(auto.delay(710)){
                             //auto.outtakeSubsystem.liftToInternalPID(0,0.8);
@@ -375,7 +375,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if(auto.delay(270) && !frontOrBackAuto){
                         auto.outtakeSubsystem.liftToInternalPID(0,0.5);
                     }
-                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:690):300;
+                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:750):300;
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
