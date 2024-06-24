@@ -38,7 +38,7 @@ public class AutoTrajectories {
         MiddleY = -32,
         TrussY = -53.5,
         StageY = -8,
-        StageYIntake = -5.5;
+        StageYIntake = -5.7;
 
     final public static double
 // deposits and offsets
@@ -238,7 +238,7 @@ public class AutoTrajectories {
         firstDriveThroughStageAfterPurple2 = drive.trajectoryBuilder(PreloadDrive2FrontStage.end(), true)
 
                 .lineToSplineHeading(new Pose2d(20, -9*S, Math.toRadians(180)*S))
-                .addSpatialMarker(new Vector2d( 27, -9*S), () -> {
+                .addSpatialMarker(new Vector2d( 26, -9*S), () -> {
                     extendSlidesAroundTruss = true;
                 })
                 .splineToConstantHeading(new Vector2d(36, (-9 - 15)*S), Math.toRadians(-42)*S, SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),

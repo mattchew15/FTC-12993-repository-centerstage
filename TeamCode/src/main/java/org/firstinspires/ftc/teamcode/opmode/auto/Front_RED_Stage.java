@@ -511,7 +511,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 break;
             case AFTER_GRAB_OFF_STACK:
-                if (auto.afterGrabOffStack(2,3, 340,290)){
+                if (auto.afterGrabOffStack(2,3, 500,290)){
                     currentState = AutoState.TRANSFER_PIXEL;
                 }
                 break;
