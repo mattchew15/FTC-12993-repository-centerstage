@@ -558,7 +558,7 @@ public class AutoSequences {
                         }
                         if (!autoTrajectories.drive.isBusy() || ((outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) && (distanceSensorForCycleZero || numCycles != 0) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > (liftTarget - 4))) {
                             // line above determines when we drop the pixels
-                            if (delayForYellowRail(300)){
+                            if (delayForYellowRail(350)){
                                 if (openGrippers){
                                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
                                 }
@@ -849,6 +849,7 @@ public class AutoSequences {
     }
 
     public boolean park(){
+        outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
         if (delay(200)){
             resetTimer(); // resets timer
             return true;

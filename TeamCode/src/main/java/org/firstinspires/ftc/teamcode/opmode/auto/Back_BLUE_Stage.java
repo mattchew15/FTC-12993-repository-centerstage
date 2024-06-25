@@ -63,7 +63,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         frontOrBackAuto = false;
-        SetAuto.setBlueAuto();
+        SetAuto.setRedAuto();
         auto.setGamepad1(gamepad1);
         if (!frontOrBackAuto){
             isArmDown = true;
@@ -314,7 +314,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     openGrippers = false;
                 } else if (numCycles == 1)
                 {
-                    pitchTarget = 19;
+                    pitchTarget = 22;
                     liftTarget = 25;
                 } else if (numCycles == 2){
                     pitchTarget = 23;
@@ -360,7 +360,6 @@ public class Back_BLUE_Stage extends LinearOpMode {
                 break;
 
             case DROP:
-                Trajectory intakeTrajectoryAfterDrop;
                 double delayTime = 190;
                 int armHeight = 0;
                 if (numCycles == 1){
@@ -391,7 +390,7 @@ public class Back_BLUE_Stage extends LinearOpMode {
                     armHeight = 3;
                 }
 
-                if (auto.drop(armHeight, false, delayTime)){
+                if (auto.drop(armHeight, numCycles == 1 && !frontOrBackAuto, delayTime)){
                     if (numCycles == 1){ // for very first cycle
                         if (frontOrBackAuto){
                             if (teamPropLocation == 1){

@@ -304,7 +304,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (xPosition > 4){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.GRIP);
                     }
-                    if (xPosition > 18){ //teamPropLocation != 1? xPosition > 21: teamPropLocation == 2? xPosition > 19:
+                    if (xPosition > 17){ //teamPropLocation != 1? xPosition > 21: teamPropLocation == 2? xPosition > 19:
                         // stop yellow detection
                         auto.cameraHardware.pausePreloadProcessor();
                         railTarget = auto.cameraHardware.getRailTarget(auto.correctedHeading, ticksToInchesSlidesMotor(auto.outtakeSubsystem.liftPosition), auto.outtakeSubsystem.pitchEncoderPosition);
@@ -344,7 +344,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         intakeTrajectory = auto.autoTrajectories.driveBackToDropYellow(poseEstimate,10,5.2);
                     }
                     if (numCycles == 2){
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:1,-27.5, -26.3, S == 1? 180:180);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + S == -1?0.4:1,-28, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3 || numCycles == 4){ // turning into the stacks
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition,yPosition,headingPosition),19,-2.9,endAngleForStacks,3, (S == -1?-1.4:0) - 2.9,-18);
                     }
@@ -368,14 +368,15 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (numCycles == 1){
                     if (auto.delay(550)){
                         auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
-                        if(auto.delay(710)){
-                            //auto.outtakeSubsystem.liftToInternalPID(0,0.8);
+                        if(auto.delay(700)){
+                            auto.outtakeSubsystem.pitchToInternalPID(30,0.5);
+                            auto.outtakeSubsystem.liftToInternalPID(0,0.15);
                         } // so we don't rely on a drive back
                     }
                     if(auto.delay(270) && !frontOrBackAuto){
                         auto.outtakeSubsystem.liftToInternalPID(0,0.5);
                     }
-                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:750):300;
+                    delayTime = frontOrBackAuto? (teamPropLocation == 3?830:780):300;
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {

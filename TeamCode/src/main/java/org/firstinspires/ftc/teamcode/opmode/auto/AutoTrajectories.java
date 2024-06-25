@@ -557,7 +557,7 @@ public class AutoTrajectories {
                  })
 
                  */
-                .splineTo(new Vector2d(-34.5,(StageYIntake+positiveYDriftOffset + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .splineTo(new Vector2d(-34.7,(StageYIntake+positiveYDriftOffset + yOffset)*S), Math.toRadians(endAngle)*S,SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)) // roughly 160
                 .build();
     }
