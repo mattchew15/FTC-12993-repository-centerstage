@@ -137,6 +137,7 @@ public class Front_RED_Stage extends LinearOpMode {
             telemetry.addData("LoopTime", loopTime.getDt() / 1_000_000);
             //telemetry.addData("Hz", loopTime.getHz());
             telemetry.addData("Auto State", currentState);
+            telemetry.addData("extend slides around truss", auto.autoTrajectories.extendOuttakeSlidesAroundTruss);
 //            log.addData(
 //                    auto.outtakeSubsystem.LiftMotor.getCurrent(CurrentUnit.AMPS),
 //                  //  auto.outtakeSubsystem.PitchMotor.getCurrent(CurrentUnit.AMPS),
@@ -398,7 +399,11 @@ public class Front_RED_Stage extends LinearOpMode {
                     }
                     delayTime = frontOrBackAuto? (teamPropLocation == 3?830:820):300;
                     if (frontOrBackAuto){
-                        armHeight = 4;
+                        if (teamPropLocation == 3){
+                            armHeight = 5;
+                        } else {
+                            armHeight = 4;
+                        }
                     } else {
                         armHeight = 5;
                     }
@@ -409,7 +414,11 @@ public class Front_RED_Stage extends LinearOpMode {
                         armHeight = 3;
                     }
                 } else if (numCycles == 3){
-                    armHeight = 5;
+                    if (teamPropLocation == 3 && frontOrBackAuto){
+                        armHeight = 4;
+                    } else {
+                        armHeight = 5;
+                    }
                 } else if (numCycles == 4) {
                     armHeight = 3;
                 }

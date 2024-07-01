@@ -40,7 +40,7 @@ public class AutoP2P extends LinearOpMode
 
         //TwoTrackingWheelLocalizer twoTrackingWheelLocalizer = new TwoTrackingWheelLocalizer(hardwareMap)
 
-        //drive.setTargetPose(new Pose(-30, 0, Math.toRadians(90)));
+        drive.setTargetPose(new Pose(-30, 0, Math.toRadians(90)));
 
 
         waitForStart();
@@ -74,15 +74,15 @@ public class AutoP2P extends LinearOpMode
             telemetry.addData("BR", drive.BRPower);
 */
 
-/*            packet.fieldOverlay().setFill("red").strokeRect(drive.getLocalizer().getPoseEstimate().getX(),
+            packet.fieldOverlay().setFill("red").strokeRect(drive.getLocalizer().getPoseEstimate().getX(),
                     drive.getLocalizer().getPoseEstimate().getY(), 8, 8);
-            packet.fieldOverlay().setFill("red").fillCircle(drive.getTargetPose().getX(), drive.getTargetPose().getY(), 2);*/
+            packet.fieldOverlay().setFill("red").fillCircle(drive.getTargetPose().getX(), drive.getTargetPose().getY(), 2);
             //DashboardUtils.drawRobot(canvas, drive.getLocalizer().getPoseEstimate().toPose2d());
             //DashboardUtils.drawTargetPose(canvas, drive.getTargetPose());
 
 
-            //dashboard.sendTelemetryPacket(packet);
-            telemetry.update();
+            dashboard.sendTelemetryPacket(packet);
+            //telemetry.update();
 
 
             //if (drive.reachedTarget(0.5)) drive.setTargetPose(drive.getLocalizer().getPoseEstimate());

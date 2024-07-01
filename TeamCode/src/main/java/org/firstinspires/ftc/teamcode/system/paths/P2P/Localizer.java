@@ -35,6 +35,7 @@ public class Localizer
         this.localizer = new TwoTrackingWheelLocalizer(hardwareMap, new ImuThread(hardwareMap), opMode);
         localizer.setPoseEstimate(pose.toPose2d());
     }
+    @Deprecated
     public Pose getPredictedPose()
     {
         return new Pose();

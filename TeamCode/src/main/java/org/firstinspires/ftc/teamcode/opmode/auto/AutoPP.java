@@ -31,21 +31,22 @@ public class AutoPP extends LinearOpMode
         driveBase.drivebaseSetup();
 
         VoltageSensor voltageSensor = hardwareMap.voltageSensor.iterator().next();
-        TimedSupplier<Double> voltageSupplier = new TimedSupplier<>( voltageSensor::getVoltage, 100);
+        TimedSupplier<Double> voltageSupplier = new TimedSupplier<>(voltageSensor::getVoltage, 100);
 
         MecanumDrive drive = new MecanumDrive(
                 driveBase.FL, driveBase.FR, driveBase.BL, driveBase.BR,
                 MecanumDrive.RunMode.PP, voltageSupplier);
-        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(0)), this));
+        drive.setLocalizer(new Localizer(hardwareMap, new Pose(0, 0, Math.toRadians(90)), this));
 
         //TwoTrackingWheelLocalizer twoTrackingWheelLocalizer = new TwoTrackingWheelLocalizer(hardwareMap)
         ArrayList<CurvePoint> path = new ArrayList<>();
-        path.add(new CurvePoint(0, 0, 0.5, 0.5, 5, Math.toRadians(30), Math.toRadians(30)));
-        path.add(new CurvePoint(0, -10, 0.5, 0.5, 5, Math.toRadians(30), Math.toRadians(30)));
+        path.add(new CurvePoint(0, 0, 1, 1, 3, Math.toRadians(30), Math.toRadians(30)));
+        path.add(new CurvePoint(0, 55, 1, 1, 3, Math.toRadians(30), Math.toRadians(30)));
+        //path.add(new CurvePoint(-30, 30, 1, 1, 3, Math.toRadians(30), Math.toRadians(30)));
         drive.setTargetPath(path);
         //drive.setTargetPose(new Pose(10, 0, Math.toRadians(0)));
         waitForStart();
-        while(!isStopRequested() && opModeIsActive())
+        while (!isStopRequested() && opModeIsActive())
         {
             packet = new TelemetryPacket();
 /*
@@ -75,15 +76,27 @@ public class AutoPP extends LinearOpMode
             telemetry.addData("BR", drive.BRPower);
 */
 
-/*            packet.fieldOverlay().setFill("red").strokeRect(drive.getLocalizer().getPoseEstimate().getX(),
-                    drive.getLocalizer().getPoseEstimate().getY(), 8, 8);
-            packet.fieldOverlay().setFill("red").fillCircle(drive.getTargetPose().getX(), drive.getTargetPose().getY(), 2);*/
+            packet.fieldOverlay().setFill("red").strokeRect(drive.getLocalizer().getPoseEstimate().getX() - 4,
+                    drive.getLocalizer().getPoseEstimate().getY() -4, 8, 8); // robot
+
+
+            //packet.fieldOverlay().setFill("red").fillCircle(drive.getTargetPose().getX(), drive.getTargetPose().getY(), 2);
             //DashboardUtils.drawRobot(canvas, drive.getLocalizer().getPoseEstimate().toPose2d());
             //DashboardUtils.drawTargetPose(canvas, drive.getTargetPose());
 
+            for (int i = 0; i < path.size() - 1; i++)
+            {
+                packet.fieldOverlay().setFill("black").strokeLine(path.get(i).x, path.get(i).y, path.get(i+1).x, path.get(i+1).y);
+            }
+            if (drive.currentPoint != null)
+            {
+                packet.fieldOverlay().setFill("black").fillCircle(drive.currentPoint.x, drive.currentPoint.y, 2);
 
-            //dashboard.sendTelemetryPacket(packet);
-            telemetry.update();
+                packet.fieldOverlay().setStroke("red").strokeCircle(drive.getLocalizer().getPoseEstimate().getX(),
+                        drive.getLocalizer().getPoseEstimate().getY(), drive.lookAheadDis);
+            }
+            dashboard.sendTelemetryPacket(packet);
+            //telemetry.update();
 
 
             //if (drive.reachedTarget(0.5)) drive.setTargetPose(drive.getLocalizer().getPoseEstimate());
@@ -91,3 +104,4 @@ public class AutoPP extends LinearOpMode
         }
     }
 }
+

@@ -16,7 +16,6 @@ import androidx.core.math.MathUtils;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Vector2d;
-import com.outoftheboxrobotics.photoncore.PeriodicSupplier;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -84,7 +83,7 @@ public class MecanumDrive
             case PID:
                 // This is gonna be a standard pid, probably never will be used but so like maybe rename to position lock
                 // driveToPosition(0, 0, 0, null);
-                driveToPosition(targetPose.getX(), targetPose.getY(), targetPose.getHeading(), localizer.getPredictedPose().toPose2d());
+                driveToPosition(targetPose.getX(), targetPose.getY(), targetPose.getHeading(), localizer.getPredictedPoseEstimate().toPose2d());
                 break;
             case P2P:
                 P2P();
@@ -98,11 +97,11 @@ public class MecanumDrive
                 PP();
                 break;
         }
-        if (runMode == RunMode.PP)
+        if (runMode == RunMode.P2P || runMode == RunMode.PP)
         {
             if (Math.abs(powerVector.getX()) + Math.abs(powerVector.getY()) + Math.abs(powerVector.getZ()) > 1)
                 powerVector.scaleToMagnitude(1);
-            powerVector.scaleBy(overallMultiplier);
+            powerVector.scaleBy(1); // search for the speed controller lol
         }
     }
 
@@ -162,7 +161,7 @@ public class MecanumDrive
     public double FLPower, FRPower, BLPower, BRPower;
     private void updateMotors()
     {
-        if (runMode != RunMode.PID && runMode != RunMode.TeleOP)
+        if (runMode == RunMode.P2P)
         {
 
             /*frontLeftMotor.setPower(x_rotated + y_rotated + t);
@@ -195,8 +194,72 @@ public class MecanumDrive
             BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
 */
         }
-        else if(runMode == RunMode.PID)
+        else if(runMode == RunMode.PP)
         {
+            /*double strafeSpeed = powerVector.getY();
+            double forwardSpeed = powerVector.getX();
+            double turnSpeed = powerVector.getZ();
+
+            Vector2d input = new Vector2d(strafeSpeed, forwardSpeed);
+            Pose currentPose = localizer.getPredictedPoseEstimate();
+            input = input.rotateBy(0);
+
+            //double distance = Math.hypot(strafeSpeed, forwardSpeed);
+
+        // trying to counter act no pid
+*//*        if (distance < 0.5)
+        {
+            forwardSpeed = 0;
+            strafeSpeed = 0;
+        }*//*
+
+            double theta = -input.angle();
+
+            double[] wheelSpeeds = new double[4];
+            wheelSpeeds[0] = Math.sin(theta + Math.PI / 4); // FL
+            wheelSpeeds[1] = Math.sin(theta - Math.PI / 4); // FR
+            wheelSpeeds[2] = Math.sin(theta - Math.PI / 4); // BL
+            wheelSpeeds[3] = Math.sin(theta + Math.PI / 4); // BR
+
+            normalize(wheelSpeeds, input.magnitude());
+
+            wheelSpeeds[0] += turnSpeed;
+            wheelSpeeds[1] -= turnSpeed;
+            wheelSpeeds[2] += turnSpeed;
+            wheelSpeeds[3] -= turnSpeed;
+
+            normalize(wheelSpeeds); // normalize for like
+            FL.setPower(wheelSpeeds[0]);
+            FR.setPower(wheelSpeeds[1]);
+            BL.setPower(wheelSpeeds[2]);
+            BR.setPower(wheelSpeeds[3]);*/
+            //PIDController translationalPID = new PIDController(1, 0, 0);
+            //PIDController headingPID = new PIDController(1, 0, 0);
+
+            double robotX = powerVector.getX();
+            double robotY = powerVector.getY();
+            double robotTheta = powerVector.getZ();
+            double x = robotX; //translationalPID.calculate(robotX);
+            double y = -robotY; //-translationalPID.calculate(robotY);
+            double theta = -robotTheta; //-headingPID.calculate(AngleWrap(robotTheta));
+            double heading = 180 - localizer.getPredictedPoseEstimate().getHeading();
+
+
+            double x_rotated = (x * Math.cos(heading) - y * Math.sin(heading));
+            double y_rotated = (x * Math.sin(heading) + y * Math.cos(heading));
+
+            double FL =  MathUtils.clamp(x_rotated + y_rotated + theta, -1, 1);
+            double BL = MathUtils.clamp(x_rotated - y_rotated + theta, -1, 1);
+            double FR = MathUtils.clamp(x_rotated - y_rotated - theta, -1, 1);
+            double BR = MathUtils.clamp(x_rotated + y_rotated - theta, -1, 1);
+
+
+            this.FL.setPower(FL);
+            this.BL.setPower(BL);
+            this.FR.setPower(FR);
+            this.BR.setPower(BR);
+
+
 
         }
         else
@@ -278,13 +341,13 @@ public class MecanumDrive
     public ArrayList<CurvePoint> currentPath;
     private void PP()
     {
-        Pose currentPose = localizer.getPredictedPose();
+        Pose currentPose = localizer.getPredictedPoseEstimate();
 
-        followCurve(currentPath, Math.toRadians(90), currentPose);
+        followCurve(currentPath, Math.toRadians(90), currentPose, currentPose.getHeading());
 
     }
 
-    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle, Pose currentPose){
+    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle, Pose currentPose, double heading){
         if (lookAheadDis == 0) // the initial one should always be the first
         {
             lookAheadDis = allPoints.get(0).followDistance;
@@ -293,7 +356,7 @@ public class MecanumDrive
                 lookAheadDis, currentPose);
 
 
-        //lookAheadDis = calculateLookahead(calculateCTE(currentPose.toPoint(), followMe.toPoint(), lookAheadDis), 10, 25, 5);
+        lookAheadDis = calculateLookahead(calculateCTE(currentPose.toPoint(), followMe.toPoint(), lookAheadDis, heading), 1, 5, 12);
 
 
         goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed, currentPose);
@@ -348,7 +411,9 @@ public class MecanumDrive
                 if (deltaAngle < closestAngle)
                 {
                     closestAngle = deltaAngle;
-                    followMe.setPoint(thisIntersection);
+                    followMe.setPoint(thisIntersection); //TODO: this only sets the x, y. The other parameters are preserved from the curvepoint declaration
+
+
                     /*
                     CurvePoint finalStartLine = pathPoint.get(pathPoint.size() - 2);
                     CurvePoint finalEndLine = pathPoint.get(pathPoint.size() - 1);
@@ -359,6 +424,17 @@ public class MecanumDrive
                     {
                         finished = true;
                     }*/
+
+                }
+            }
+            if (currentPoint != null)
+            {
+                double distanceFromAFollowMe = Math.sqrt(Math.pow(followMe.x - startLine.x, 2) + Math.pow(followMe.y - startLine.x, 2));
+                double distanceFromACurrentPoint = Math.sqrt(Math.pow(currentPoint.x - startLine.x, 2) + Math.pow(currentPoint.y - startLine.x, 2));
+
+                if (distanceFromACurrentPoint > distanceFromAFollowMe)
+                {
+                    followMe.setPoint(currentPoint.toPoint());
                 }
             }
         }
@@ -366,6 +442,7 @@ public class MecanumDrive
         {
             followMe = new CurvePoint(pathPoint.get(pathPoint.size()-1));
         }*/
+
         return followMe;
     }
 
@@ -390,11 +467,79 @@ public class MecanumDrive
         double relativeTurnAngle = relativeAngleToPoint - Math.toRadians(180) + preferredAngle;
         double headingPower = relativeTurnAngle/Math.toRadians(30) * turnSpeed;
 
-        if (distanceToTarget < 2 ){
+        if (distanceToTarget < 1 ){
             headingPower = 0;
         }
 
         powerVector = new Vector(powerVector.getX(), powerVector.getY(), headingPower);
+    }
+
+    private void updatePPmotors()
+    {
+        double strafeSpeed = powerVector.getY();
+        double forwardSpeed = powerVector.getX();
+        double turnSpeed = powerVector.getZ();
+
+        Vector2d input = new Vector2d(strafeSpeed, forwardSpeed);
+        Pose currentPose = localizer.getPredictedPoseEstimate();
+        input = input.rotateBy(-currentPose.getHeading());
+
+        double distance = Math.hypot(strafeSpeed, forwardSpeed);
+        /*
+        // trying to counter act no pid
+        if (distance < 0.5)
+        {
+            forwardSpeed = 0;
+            strafeSpeed = 0;
+        }*/
+
+        double theta = input.angle();
+
+        double[] wheelSpeeds = new double[4];
+        wheelSpeeds[0] = Math.sin(theta + Math.PI / 4);
+        wheelSpeeds[1] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[2] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[3] = Math.sin(theta + Math.PI / 4);
+
+        normalize(wheelSpeeds, input.magnitude());
+
+        wheelSpeeds[0] += turnSpeed;
+        wheelSpeeds[1] -= turnSpeed;
+        wheelSpeeds[2] += turnSpeed;
+        wheelSpeeds[3] -= turnSpeed;
+
+        normalize(wheelSpeeds); // normalize for like
+
+    }
+
+    private void normalize(double[] wheelSpeeds, double magnitude) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        for (int i = 0; i < wheelSpeeds.length; i++) {
+            wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude) * magnitude;
+        }
+
+    }
+
+    private void normalize(double[] wheelSpeeds) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        if (maxMagnitude > 1) {
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude);
+            }
+        }
+
     }
 
 
