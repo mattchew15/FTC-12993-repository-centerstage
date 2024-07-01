@@ -276,7 +276,7 @@ public class AutoSequences {
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
             outtakeSubsystem.setOuttakePitchPurplePixelThirdCasePosition();
 
-            intakeSubsystem.intakeSlideInternalPID(420,1);
+            intakeSubsystem.intakeSlideInternalPID(490,1);
             intakeSubsystem.intakeSpin(1);
             intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
         }
@@ -294,6 +294,7 @@ public class AutoSequences {
 
     public boolean afterPreloadDriveState3(){
 
+        intakeSubsystem.intakeSlideInternalPID(0,1);
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
         if (delay(80)){
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
@@ -302,7 +303,7 @@ public class AutoSequences {
         if (outtakeSubsystem.pitchPosition > 23 && globalTimer-autoTimer>60){
             outtakeSubsystem.liftToInternalPID(-0.2,1);
         }
-        if (!autoTrajectories.drive.isBusy() || Math.abs(yPosition) < 11){
+        if (Math.abs(yPosition) < 12){
             resetTimer();
             return true;
 

@@ -220,18 +220,19 @@ public class Front_RED_Stage extends LinearOpMode {
 
             case PRELOAD_DRIVE_CASE_3:
                 if (auto.preloadDriveState3()){
-//                    currentState = AutoState.AFTER_PRELOAD_DRIVE_3;
+                    currentState = AutoState.AFTER_PRELOAD_DRIVE_3;
 //                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontSecond);
                     Trajectory startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple3StraightTo;
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
-                    currentState = AutoState.TRANSFER_PIXEL;
-                    auto.cameraHardware.pausePreloadProcessor();
+
                 }
                 break;
 
             case AFTER_PRELOAD_DRIVE_3:
                 if (auto.afterPreloadDriveState3()){
-                    currentState = AutoState.PLACE_AND_INTAKE;
+
+                    currentState = AutoState.TRANSFER_PIXEL;
+                    auto.cameraHardware.pausePreloadProcessor();
                     auto.frontThirdCase = true;
                 }
                 break;
