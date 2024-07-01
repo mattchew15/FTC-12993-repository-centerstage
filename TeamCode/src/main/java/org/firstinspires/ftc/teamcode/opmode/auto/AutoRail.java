@@ -45,13 +45,13 @@ public class AutoRail {
     public void railLogic(){
         if (numCycles == yellowCycle){
             if (trussMiddleStage == 2){
-                if (teamPropLocation == 2){
-                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
-                } else if (teamPropLocation == 1){
-                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
-                } else if (teamPropLocation == 3){
-                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
-                }
+//                if (teamPropLocation == 2){
+//                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
+//                } else if (teamPropLocation == 1){
+//                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
+//                } else if (teamPropLocation == 3){
+//                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
+//                }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
                     setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);

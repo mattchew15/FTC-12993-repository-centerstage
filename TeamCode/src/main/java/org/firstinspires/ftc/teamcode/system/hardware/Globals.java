@@ -23,6 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 @Config // Allows dashboard tune
 public class Globals
 {
+
     public static double PITCH_OFFSET = 2.8;
     //public static double BLUE_AUTO_OFFSET = 1.9;
     public static boolean isArmDown;

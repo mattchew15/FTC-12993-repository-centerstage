@@ -15,7 +15,7 @@ public class MeepMeepTesting {
         Pose2d stacks = new Pose2d(36,-21,Math.toRadians(180));
         Pose2d backdrop = new Pose2d(28,-36,Math.toRadians(180)); // not necessary lol
         Pose2d startPoseFront = new Pose2d(-38, -59, Math.toRadians(180));
-        Pose2d thirdDriveStage = new Pose2d(36, -29, Math.toRadians(180));
+        Pose2d thirdDriveStage = new Pose2d(32, -14.5, Math.toRadians(180));
 
         // front side truss auto first drive endings:
 
@@ -27,15 +27,23 @@ public class MeepMeepTesting {
         Pose2d backteamProp1 = new Pose2d(36,-29, Math.toRadians(180));
         Pose2d backteamProp2 = new Pose2d(36,-26, Math.toRadians(174));
         Pose2d backteamProp3 = new Pose2d(36,-34, Math.toRadians(180));
+        Pose2d afterDrive3 = new Pose2d(-43, -24, Math.toRadians(180));
 
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(backteamProp3)
-                                .forward(10)
-                                .turn(Math.toRadians(90))
+                        drive.trajectorySequenceBuilder(afterDrive3)
+//                                .forward(10)
+//                                .turn(Math.toRadians(90))
+
+                                // .splineToSplineHeading(new Pose2d(-25, (-9), Math.toRadians(180)), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(-37, -15, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(-25, (-9)), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+                                .splineToConstantHeading(new Vector2d(36, (-9 - 20)), Math.toRadians(-58))
+
                                 //.splineToConstantHeading(new Vector2d(12, 30),Math.toRadians(180))
                                 //.splineToConstantHeading(new Vector2d(24, (-30 + 10 + 8)), Math.toRadians(110))
                                 //.splineToConstantHeading(new Vector2d(5, (-6)), Math.toRadians(180))

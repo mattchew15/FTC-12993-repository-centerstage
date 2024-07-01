@@ -229,7 +229,6 @@ public class Front_BLUE_Truss extends LinearOpMode {
 
             case OUTTAKE_PIXEL:
                 //outtaking lengths for each cycle
-
                 double liftTarget = 0; // could cause issues if these stay zero
                 int pitchTarget = 0;
                 int intakeSlideTarget = 90; // pre-extend a little
