@@ -278,7 +278,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
                     }
                 }
                 if (numCycles < 3){
-                    auto.goBackToStack(3,6,-29.3);
+                    auto.goBackToStack(3,6,-29.3,180);
                 }
                 if (auto.goBackToStack){
                     currentState = AutoState.GRAB_OFF_STACK;

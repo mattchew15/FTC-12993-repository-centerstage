@@ -272,12 +272,29 @@ public class AutoSequences {
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
 
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
-        if (Math.abs(yPosition) < 48){
+
+
+        double y1 = 0;
+        double y2 = 0;
+        int intakeSlidePosition = 0;
+        if (teamPropLocation == 1){
+
+        } else if (teamPropLocation == 2){
+            y1 = 32;
+            y2 = 26;
+            intakeSlidePosition = 370;
+        } else if (teamPropLocation == 3){
+            y1 = 48;
+            y2 = 36;
+            intakeSlidePosition = 487;
+        }
+
+        if (Math.abs(yPosition) < y1){
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.SCORE_PURPLE);
-            if (Math.abs(yPosition) < 36){
+            if (Math.abs(yPosition) < y2){
                 outtakeSubsystem.setOuttakePitchPurplePixelThirdCasePosition();
 
-                intakeSubsystem.intakeSlideInternalPID(490,1);
+                intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,1);
                 intakeSubsystem.intakeSpin(1);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             }
@@ -297,10 +314,13 @@ public class AutoSequences {
 
     public boolean afterPreloadDriveState3(){
 
-        intakeSubsystem.intakeSlideInternalPID(0,1);
+        if (delay(230)){
+            intakeSubsystem.intakeSlideInternalPID(0,1);
+        }
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
         if (delay(200)){
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
+
         }
         outtakeSubsystem.outtakeRailState(OuttakeSubsystem.OuttakeRailState.CENTER);
         if (outtakeSubsystem.pitchPosition > 24){
@@ -485,8 +505,8 @@ public class AutoSequences {
                     else {
                         extendOuttake = false;
                     }
-                    if (numCycles == 0){ // so that it will always extend first cycle
-                        extendOuttake = true;
+                    if (numCycles == 0 || trussMiddleStage == 2){ // so that it will always extend first cycle
+                        extendOuttake = true; // always extend on the middle auto
                     }
 
                     resetTimer();
@@ -561,7 +581,7 @@ public class AutoSequences {
                         if (extendOuttake){
                             outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                             if(extendRailLate){
-                                if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 33: xPosition > 14.7){
+                                if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 32: xPosition > 14.7){
                                     autoRail.railLogic();
                                 }
                             } else {
@@ -920,7 +940,7 @@ public class AutoSequences {
             //intakeSubsystem.intakeSlideInternalPID(24 + slideOffset,slideExtendSpeed);
         } else if (teamPropLocation == 2){
             //intakeSubsystem.intakeSlideInternalPID(280 + slideOffset,slideExtendSpeed); // 265 previously
-            intakeSlideToSlowedEnd(340+slideOffset,60,0.2,1);
+            intakeSlideToSlowedEnd(352+slideOffset,60,0.2,1);
         } else if (teamPropLocation == 3){
             //intakeSubsystem.intakeSlideInternalPID(372 + slideOffset,slideExtendSpeed);
             intakeSlideToSlowedEnd(390+slideOffset,60,0.2,1);
@@ -962,7 +982,7 @@ public class AutoSequences {
             resetTimer();
         }
     }
-    public void goBackToStack(int trussMiddleStage, double slowerStackVelocity, double xPosition){
+    public void goBackToStack(int trussMiddleStage, double slowerStackVelocity, double xPosition, double headingPosition){
         if ((delay(300)) && timesIntoStack < 1 && numCycles != 0){ // go back into stack formore pixels case
             if (!intakeSubsystem.pixelsInIntake()){
                 goBackToStack = true;
@@ -970,19 +990,15 @@ public class AutoSequences {
                 armHeight = 1;
                 if (trussMiddleStage == 3 && numCycles == 1){
                     armHeight = 3;
-                } else if(trussMiddleStage == 3 && numCycles == 1) {
+                } else if(trussMiddleStage == 3 && numCycles == 3) {
                     armHeight = 1;
                 }
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
                 intakeSubsystem.intakePixelHolderServoState(IntakeSubsystem.IntakePixelHolderServoState.OPEN);
                 timesIntoStack += 1;
                 resetTimer();
-                if (numCycles == 3){
-                    autoTrajectories.goBackToStack(poseEstimate,slowerStackVelocity,trussMiddleStage,xPosition);
-                }
-                else {
-                    autoTrajectories.goBackToStack(poseEstimate,slowerStackVelocity,trussMiddleStage,xPosition);
-                }
+                autoTrajectories.goBackToStack(poseEstimate,slowerStackVelocity,trussMiddleStage,xPosition, headingPosition);
+
             }
         }
     }

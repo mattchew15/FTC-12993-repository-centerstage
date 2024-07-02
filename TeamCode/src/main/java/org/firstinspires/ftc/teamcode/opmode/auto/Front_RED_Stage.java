@@ -206,11 +206,11 @@ public class Front_RED_Stage extends LinearOpMode {
                     if (teamPropLocation == 1){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive1FrontStage);
                     } else if (teamPropLocation == 2){
-                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontStage);
+                        auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive2FrontFirst);
                     } else if (teamPropLocation == 3){
                         auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontFirst);
                     }
-                    if (teamPropLocation != 3){
+                    if (teamPropLocation == 1){
                         currentState = AutoState.PRELOAD_DRIVE;
                     } else {
                         currentState = AutoState.PRELOAD_DRIVE_CASE_3;
@@ -222,8 +222,13 @@ public class Front_RED_Stage extends LinearOpMode {
             case PRELOAD_DRIVE_CASE_3:
                 if (auto.preloadDriveState3()){
                     currentState = AutoState.AFTER_PRELOAD_DRIVE_3;
-//                    auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.PreloadDrive3FrontSecond);
-                    Trajectory startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple3StraightTo;
+                    Trajectory startDrive = null;
+                    if (teamPropLocation == 2){
+                        startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple2StraightTo;
+                    } else if (teamPropLocation == 3){
+                        startDrive = auto.autoTrajectories.firstDriveThroughStageAfterPurple3StraightTo;
+
+                    }
                     auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
 
                 }
@@ -294,7 +299,9 @@ public class Front_RED_Stage extends LinearOpMode {
                     }
                 }
                 if (numCycles < 3){
-                    auto.goBackToStack(3,6,-29.3);
+                    auto.goBackToStack(3,6,-29.3, 180);
+                } else if (numCycles >= 3){
+                    auto.goBackToStack(3,6,-34, -174);
                 }
                 if (auto.goBackToStack){
                     currentState = AutoState.GRAB_OFF_STACK;
@@ -343,7 +350,7 @@ public class Front_RED_Stage extends LinearOpMode {
                     pitchTarget = 26;
                     liftTarget = 28;
                 } else if (numCycles == 3){
-                    pitchTarget = 28;
+                    pitchTarget = 30;
                     liftTarget = 28;
                     intakeSlideTarget = 70;
                 } else if (numCycles == 4){
@@ -414,7 +421,7 @@ public class Front_RED_Stage extends LinearOpMode {
                         armHeight = 3;
                     }
                 } else if (numCycles == 3){
-                    if (teamPropLocation == 3 && frontOrBackAuto){
+                    if (teamPropLocation != 1 && frontOrBackAuto){
                         armHeight = 4;
                     } else {
                         armHeight = 5;
@@ -482,7 +489,7 @@ public class Front_RED_Stage extends LinearOpMode {
                 if (numCycles == 2){
                     slideSpeed = 0.8;
                     xPosSlideThresh = -12;
-                    xEnd = 29.6;
+                    xEnd = 29.8;
                     if (S == 1? xPosition < 12 : xPosition < 12){ //  xPosition < -14
                         auto.autoTrajectories.extendSlidesAroundStage = true;
                     }/*if (S == 1){
@@ -491,8 +498,12 @@ public class Front_RED_Stage extends LinearOpMode {
                 }
                 if (numCycles == 3){
                     //slideSpeed = 1;
-                    xEnd = 30.8;
-                    intakeSlidePosition = 838;
+                    xEnd = 31.3;
+                    if (frontOrBackAuto){
+                        intakeSlidePosition = 850;
+                    } else {
+                        intakeSlidePosition = 843;
+                    }
                     xSplineValue = 3;
                     yOffset = 4.3;
                     extendSlides = false;

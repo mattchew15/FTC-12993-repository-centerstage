@@ -136,7 +136,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(160,1, true)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(170,1, true)){
 //                    Trajectory startDrive = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 29, -32);
 //                    auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.firstOuttakeMiddleDrive);
@@ -149,9 +149,9 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                     currentState = AutoState.GRAB_OFF_STACK;
                 }
                 if (numCycles < 3){
-                    auto.goBackToStack(2,6,-31);
+                    auto.goBackToStack(2,6,-31,180);
                 } else {
-                    auto.goBackToStack(3,6,-31);
+                    auto.goBackToStack(3,6,-31,180);
                 }
                 if (auto.transferPixel(numCycles==0?false:true)){
                     currentState = AutoState.OUTTAKE_PIXEL;
@@ -316,7 +316,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                         // this seems to be the best trajectory to follow
                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, -5,4, 14, 29.2);
                     } else {
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 26, MiddleLaneYDeposit, 20);
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, numCycles == 1? 26: 26.3, MiddleLaneYDeposit, 20);
                     }
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
 

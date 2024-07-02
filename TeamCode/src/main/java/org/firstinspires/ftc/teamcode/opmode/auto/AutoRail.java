@@ -4,8 +4,10 @@ import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_CENTER_YELLOW_TRUSS_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_LESS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_LEFT_YELLOW_TRUSS_POS;
+import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_LESS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_STAGE_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.RAIL_RIGHT_YELLOW_TRUSS_POS;
 import static org.firstinspires.ftc.teamcode.system.hardware.Globals.S;
@@ -45,13 +47,16 @@ public class AutoRail {
     public void railLogic(){
         if (numCycles == yellowCycle){
             if (trussMiddleStage == 2){
-//                if (teamPropLocation == 2){
+                if (teamPropLocation == 2){
 //                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
-//                } else if (teamPropLocation == 1){
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
+                } else if (teamPropLocation == 3){
 //                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
-//                } else if (teamPropLocation == 3){
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_LEFT_LESS_POS);
+                } else if (teamPropLocation == 1){
 //                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
-//                }
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_RIGHT_LESS_POS);
+                }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
                     setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
