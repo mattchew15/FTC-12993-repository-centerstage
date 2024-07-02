@@ -427,7 +427,7 @@ public class OuttakeSubsystem
     }
 
     public static double degreesToTicksMiniTurret(double degrees){
-        return MINI_TURRET_STRAIGHT_POS - degrees/348; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
+        return MINI_TURRET_STRAIGHT_POS - degrees/195; // this should return a servoposition for the miniturret if you pass in the degrees of the robot
     }
     public double angleWrap(double radians) {
         while (radians > Math.PI) {

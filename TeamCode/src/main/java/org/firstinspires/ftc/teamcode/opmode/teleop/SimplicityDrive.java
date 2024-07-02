@@ -406,7 +406,8 @@ public class SimplicityDrive extends LinearOpMode {
                 liftPositionChange(false,false); // we dont want d1 control in this state
                 liftDown(0.07);
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.TRANSFER);
-                if (((delay(460)) && intakeSubsystem.intakeSlidePosition < 5 || (intakeSubsystem.intakeSlidePosition < 28 && intakeOutBtnLogic.OffsetTargetPosition == 2)) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2) { //((delay() 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || globalTimer > 2000
+                telemetry.addData("lift position", ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition));
+                if (((delay(460)) && intakeSubsystem.intakeSlidePosition < 12 || (intakeSubsystem.intakeSlidePosition < 29 && intakeOutBtnLogic.OffsetTargetPosition == 2)) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) < 0.2) { //((delay() 1500) && (intakeSubsystem.intakeChuteArmPosition < 140)) || globalTimer > 2000
                     outtakeState = OuttakeState.TRANSFER_END;
                     gamepad2.rumbleBlips(1);
                     intakeSubsystem.intakeSpin(0);
