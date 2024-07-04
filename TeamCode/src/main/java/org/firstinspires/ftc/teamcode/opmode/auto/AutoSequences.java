@@ -266,7 +266,7 @@ public class AutoSequences {
 
         //extendIntakeArms();
         outtakeSubsystem.pitchToInternalPID(PITCH_PURPLE_PIXEL_POSITION-2,1);
-        outtakeSubsystem.liftToInternalPID(4.1,1); // so rail doesn't hit
+        outtakeSubsystem.liftToInternalPID(4.4,1); // so rail doesn't hit
         intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
         intakeSubsystem.intakeClipServoState(IntakeSubsystem.IntakeClipServoState.OPEN); // just so we don't have an extra write during the loop
         intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
@@ -282,10 +282,10 @@ public class AutoSequences {
         } else if (teamPropLocation == 2){
             y1 = 32;
             y2 = 26;
-            intakeSlidePosition = 370;
+            intakeSlidePosition = 363;
         } else if (teamPropLocation == 3){
             y1 = 48;
-            y2 = 36;
+            y2 = 35.5;
             intakeSlidePosition = 487;
         }
 
@@ -294,7 +294,7 @@ public class AutoSequences {
             if (Math.abs(yPosition) < y2){
                 outtakeSubsystem.setOuttakePitchPurplePixelThirdCasePosition();
 
-                intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,1);
+                intakeSubsystem.intakeSlideInternalPID(intakeSlidePosition,0.7);
                 intakeSubsystem.intakeSpin(1);
                 intakeSubsystem.intakeArmServoState(IntakeSubsystem.IntakeArmServoState.VERY_TOP);
             }
@@ -302,7 +302,7 @@ public class AutoSequences {
 
 
 
-        if (!autoTrajectories.drive.isBusy() && intakeSubsystem.intakeSlideTargetReached() || intakeSubsystem.frontColourSensorValue > 1000){
+        if (!autoTrajectories.drive.isBusy() && intakeSubsystem.intakeSlideTargetReached()){
             outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
             outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
             frontThirdCase = true;
@@ -318,7 +318,7 @@ public class AutoSequences {
             intakeSubsystem.intakeSlideInternalPID(0,1);
         }
         outtakeSubsystem.miniTurretState(OuttakeSubsystem.MiniTurretState.STRAIGHT);
-        if (delay(200)){
+        if (delay(500)){
             outtakeSubsystem.armServoState(OuttakeSubsystem.ArmServoState.READY);
 
         }
@@ -402,7 +402,7 @@ public class AutoSequences {
         }
 
         if (ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > 4.2){
-            outtakeSubsystem.pitchToInternalPID(20,1);
+            outtakeSubsystem.pitchToInternalPID(21,1);
         }
         double railOffset;
         double railTarget = cameraHardware.getRailTarget(correctedHeading, ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition), outtakeSubsystem.pitchEncoderPosition);
@@ -581,7 +581,7 @@ public class AutoSequences {
                         if (extendOuttake){
                             outtakeSubsystem.miniTurretPointToBackdrop(correctedHeading);
                             if(extendRailLate){
-                                if ((trussMiddleStage == 3 && numCycles ==0)? xPosition > 32: xPosition > 14.7){
+                                if (xPosition > 14.7){ //(trussMiddleStage == 3 && numCycles ==0)? xPosition > 31:
                                     autoRail.railLogic();
                                 }
                             } else {
@@ -743,11 +743,15 @@ public class AutoSequences {
         if (!extendSlides? autoTrajectories.extendSlidesAroundStage: xPosition < 18){ // this is kinda useless and dum
             intakeSubsystem.intakeSpin(1);
 
-            if (armHeight == 6 || armHeight == 3) {
+            if (armHeight == 6 || armHeight == 3 || armHeight == 4) {
                 if (xPosition < -26 || ((intakeSubsystem.leftArmLimitSwitchValue || intakeSubsystem.rightArmLimitSwitchValue)) || intakeSubsystem.frontColourSensorValue > 1000){
                     if (armHeight == 6){
                         armHeight = 5;
-                    } if (armHeight == 3){
+                    }
+                    if (armHeight == 4){
+                        armHeight = 3;
+                    }
+                    if (armHeight == 3){
                         armHeight = 1;
                     }
 
@@ -990,7 +994,7 @@ public class AutoSequences {
                 armHeight = 1;
                 if (trussMiddleStage == 3 && numCycles == 1){
                     armHeight = 3;
-                } else if(trussMiddleStage == 3 && numCycles == 3) {
+                } else if(trussMiddleStage == 3 && numCycles >= 3) {
                     armHeight = 1;
                 }
                 intakeSubsystem.intakeChuteArmServoState(IntakeSubsystem.IntakeChuteServoState.READY);
@@ -1069,15 +1073,15 @@ public class AutoSequences {
 
     public void setPlaceForBack(){
         if (S ==1){
-            if (teamPropLocation == 1 || teamPropLocation == 2){
+            if (teamPropLocation == 1 ){
                 place = Place.LEFT;
-            } else if (teamPropLocation == 3){
+            } else if (teamPropLocation == 3 || teamPropLocation == 2){
                 place = Place.RIGHT;
             }
         } else {
-            if (teamPropLocation == 1 || teamPropLocation == 2){
+            if (teamPropLocation == 1){
                 place = Place.RIGHT;
-            } else if (teamPropLocation == 3){
+            } else if (teamPropLocation == 3 || teamPropLocation == 2){
                 place = Place.LEFT;
             }
         }
