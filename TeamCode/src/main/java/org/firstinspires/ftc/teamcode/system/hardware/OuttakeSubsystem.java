@@ -82,8 +82,9 @@ public class OuttakeSubsystem
     public static double
             ARM_READY_POS = 0.82, //0.809,
             ARM_UPRIGHT_POS = 0.55,
-            ARM_SCORE_POS = 0.2,
-            ARM_SCORE_PURPLE_PIXEL_POS = 0.146,
+            ARM_SCORE_POS = 0.21,
+            ARM_SCORE_POS_AUTO = 0.243,
+            ARM_SCORE_PURPLE_PIXEL_POS = 0.18,
             ARM_SCORE_YELLOW_POS = 0.24;
     public static double
             PIVOT_READY_POS = 0.486,
@@ -94,10 +95,10 @@ public class OuttakeSubsystem
             PIVOT_SIDEWAYS_LEFT_POS = PIVOT_READY_POS - 0.276,
             PIVOT_SIDEWAYS_RIGHT_POS = PIVOT_READY_POS + 0.276;
     public static double
-            GRIPPER_TOP_GRIP_POS = 0.25,
-            GRIPPER_TOP_OPEN_POS = 0.455,
-            GRIPPER_BOTTOM_GRIP_POS = 0.74,
-            GRIPPER_BOTTOM_OPEN_POS = 0.545;
+            GRIPPER_TOP_GRIP_POS = 0.24,
+            GRIPPER_TOP_OPEN_POS = 0.508,
+            GRIPPER_BOTTOM_GRIP_POS = 0.79,
+            GRIPPER_BOTTOM_OPEN_POS = 0.464;
     public static double
             PITCH_OVERCENTERED_POSITION = 0.18,
             PITCH_PURPLEPIXEL_POSITION = 0.365,
@@ -198,6 +199,7 @@ public class OuttakeSubsystem
         NULL,
         SCORE_PURPLE,
         UPRIGHT,
+        SCORE_AUTO,
         YELLOW
     }
 
@@ -592,6 +594,9 @@ public class OuttakeSubsystem
             case SCORE:
                 arm = ARM_SCORE_POS;
                 //OuttakeArmServo.setPosition(ARM_SCORE_POS);
+                break;
+            case SCORE_AUTO:
+                arm = ARM_SCORE_POS_AUTO;
                 break;
             case SCORE_PURPLE:
                 arm = ARM_SCORE_PURPLE_PIXEL_POS;

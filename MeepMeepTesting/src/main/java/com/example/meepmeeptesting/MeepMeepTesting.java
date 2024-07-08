@@ -34,7 +34,7 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(90, 90, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(afterDrive2)
+                        drive.trajectorySequenceBuilder(backdrop)
 //                                .forward(10)
 //                                .turn(Math.toRadians(90))
 
@@ -46,10 +46,10 @@ public class MeepMeepTesting {
 
                                 // same for 2 as above
 
-                                .lineToSplineHeading(new Pose2d(-41, -12, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(-28, (-9)), Math.toRadians(0))
-                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(36, (-9 - 15)), Math.toRadians(-42))
+//                                .lineToSplineHeading(new Pose2d(-41, -12, Math.toRadians(180)))
+//                                .splineToConstantHeading(new Vector2d(-28, (-9)), Math.toRadians(0))
+//                                .lineToSplineHeading(new Pose2d(20, -9, Math.toRadians(180)))
+//                                .splineToConstantHeading(new Vector2d(36, (-9 - 15)), Math.toRadians(-42))
 
 
                                 //.splineToConstantHeading(new Vector2d(12, 30),Math.toRadians(180))
@@ -60,9 +60,13 @@ public class MeepMeepTesting {
 
                             // drive into stacks truss teamprop3
 
-                          /*      .lineToSplineHeading(new Pose2d(27.5, -47.8 + 5.3, Math.toRadians(180)))
+                                .lineToSplineHeading(new Pose2d(27.5, -47.8 + 5.3, Math.toRadians(180)))
                                 .splineToConstantHeading(new Vector2d(-16.5, -52.8), Math.toRadians(180)) // end tangent affects path alot\
-                                .splineTo(new Vector2d(-36,-47.8), Math.toRadians(155)) // roughly 160*/
+                                //.lineToSplineHeading(new Pose2d(-16.5, -53, Math.toRadians(180)))
+                                .splineToSplineHeading(new Pose2d(-36,-51, Math.toRadians(160)), Math.toRadians(170))
+
+
+                                //.splineTo(new Vector2d(-36,-47.8), Math.toRadians(155)) // roughly 160
 
                                 /*.addSpatialMarker(new Vector2d(-24.5, MiddleLaneYDeposit+positiveYDriftOffset+ (trussMiddleStage == 2? 0: (trussMiddleStage == 1? -LaneOffsetTruss*S: LaneOffset*S))), () -> {
                                   extendSlidesAroundTruss = true;

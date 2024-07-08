@@ -52,18 +52,21 @@ public class AutoRail {
                     auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS);
                 } else if (teamPropLocation == 3){
 //                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
-                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_LEFT_LESS_POS);
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_RIGHT_LESS_POS);
                 } else if (teamPropLocation == 1){
 //                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
-                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_RIGHT_LESS_POS);
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_LEFT_LESS_POS);
                 }
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
                     setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.22);
                 } else if (teamPropLocation == 1){
-                    setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
+                    //setAprilTagRailThingy(RAIL_CENTER_POS,pivotOffset,pivotOffset);
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS-0.23);
                 } else if (teamPropLocation == 3){
-                    setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
+                  //  setAprilTagRailThingy(RAIL_CENTER_POS,-pivotOffset,-pivotOffset);
+                    auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.256);
                 }
             } else if (trussMiddleStage == 1){
                 if (teamPropLocation == 2){
