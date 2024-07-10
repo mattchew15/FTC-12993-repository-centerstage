@@ -185,6 +185,7 @@ public class SimplicityDrive extends LinearOpMode {
                 outtakeSubsystem.outtakeReads(false); //we don't use distance sensor in tele
                 intakeSubsystem.intakeReads(outtakeState == OuttakeState.INTAKE || outtakeState == OuttakeState.AFTER_INTAKE || outtakeState == OuttakeState.INTAKE_EXTENDO);
                 // can be condensed into the one class? - try it
+
                 loopTime.updateLoopTime(telemetry); // this may or may not work
                 driveBase.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
                 pivotFlipToggle.ToggleMode(gamepad2.dpad_up); // this could go on states but it may as well be here cos it is run all the time
@@ -402,6 +403,9 @@ public class SimplicityDrive extends LinearOpMode {
 
             case TRANSFER_START:
                 gamepad1.rumbleBlips(1);
+                if (gamepad1.right_stick_button){
+                    intakeSubsystem.intakeSlideMotorEncodersReset();
+                }
                 bumperPressed();
                 liftPositionChange(false,false); // we dont want d1 control in this state
                 liftDown(0.07);

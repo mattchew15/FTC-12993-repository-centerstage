@@ -38,8 +38,8 @@ public class Globals
     public static double
             RAIL_CENTER_POS = 0.487,
 
-            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS + 0.27,
-            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS - 0.27,
+            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS + 0.251,
+            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS - 0.251,
 
 
             RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,
@@ -103,7 +103,7 @@ public class Globals
             PITCH_CLIMB_TICKS = 67,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
-            PITCH_PURPLE_PIXEL_POSITION = 20,
+            PITCH_PURPLE_PIXEL_POSITION = 21,
             PITCH_MID_DEGREE_TICKS = 45,
 
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 1000,

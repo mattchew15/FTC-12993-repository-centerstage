@@ -71,16 +71,16 @@ public class OuttakeSubsystem
     public DistanceSensor OuttakeDistanceSensor;
 
     public static double
-            MINI_TURRET_STRAIGHT_POS = 0.53,
+            MINI_TURRET_STRAIGHT_POS = 0.57,
             MINI_TURRET_FRONTPURPLE_STAGE_POS_RED = MINI_TURRET_STRAIGHT_POS - 0.07,
             MINI_TURRET_FRONTPURPLE_STAGE_POS_BLUE = MINI_TURRET_STRAIGHT_POS + 0.07,
 
             MINI_TURRET_BACKPURPLE_STAGE_POS = MINI_TURRET_STRAIGHT_POS + 0.16,
             MINI_TURRET_FRONTPURPLE_POS = MINI_TURRET_STRAIGHT_POS + 0.095,
-            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.068;
+            MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.069;
 
     public static double
-            ARM_READY_POS = 0.82, //0.809,
+            ARM_READY_POS = 0.835, //0.809,
             ARM_UPRIGHT_POS = 0.55,
             ARM_SCORE_POS = 0.21,
             ARM_SCORE_POS_AUTO = 0.243,
@@ -479,6 +479,9 @@ public class OuttakeSubsystem
     public void setOuttakePitchPitchDownPosition(){
         prevPitch = servoCaching(PITCH_LOWPITCH_POSITION, prevPitch, EPSILON_DELTA, OuttakePitchServo);
         //OuttakePitchServo.setPosition(PITCH_LOWPITCH_POSITION);
+    }
+    public void setMiniTurretServo(double position){
+        MiniTurretServo.setPosition(position);
     }
     public void miniTurretState(MiniTurretState state) { // set this last parameter to null if not being used, R: If you do this you will raise a NullPointerException, make a default case instead... or a IDLE
         double miniTurret = 0;

@@ -168,18 +168,18 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 boolean extendSlidesStraightAway = true;
                 Trajectory intakeTrajectory = null;
                 if (numCycles == 0){ // for very first cycle
-                    pitchTarget = 21;
-                    liftTarget = 24;
+                    pitchTarget = 20;
+                    liftTarget = 23.7;
                 } else if (numCycles == 1){
                     pitchTarget = 21;
                     liftTarget = 27;
                 } else if (numCycles == 2){
                     intakeSlideTarget = 0;
                     pitchTarget = 24;
-                    liftTarget = 27;
+                    liftTarget = 28;
                 } else if (numCycles == 3){
-                    pitchTarget = 22;
-                    liftTarget = 27.5;
+                    pitchTarget = 24;
+                    liftTarget = 28;
                 } else if (numCycles == 4){
                     pitchTarget = 26;
                     liftTarget = 27.5;
@@ -316,7 +316,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                         // this seems to be the best trajectory to follow
                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, -5,4, 14, 29.2);
                     } else {
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, numCycles == 1? 26: 26.3, MiddleLaneYDeposit, 20);
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, numCycles == 1? 27.1: 27.6, MiddleLaneYDeposit, 20);
                     }
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
 

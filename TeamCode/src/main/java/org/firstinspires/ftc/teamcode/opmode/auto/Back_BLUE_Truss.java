@@ -275,6 +275,8 @@ public class Back_BLUE_Truss extends LinearOpMode {
                 }
                 boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendStraightAway,false, false, openGrippers, true);
 
+                double angleOffset = 0;
+                if (S == 1) angleOffset = 1;
                 if (outtakePixelFinished){
                     currentState = AutoState.DROP;
                     Trajectory intakeTrajectoryCycle = null;
@@ -283,10 +285,10 @@ public class Back_BLUE_Truss extends LinearOpMode {
                         // intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,22,5,148,1,0.9);
                         // this cycle runs on the drop case now
                     } else if (numCycles == 2){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,153.7,1,positiveDriftOffset1, -36);
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,5,153.7 + angleOffset,1,positiveDriftOffset1, -36);
                         //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     } else if (numCycles == 3){
-                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6.5,145,1,positiveDriftOffset2,-36);
+                        intakeTrajectoryCycle = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectory(poseEstimate,25,6.5,145+ angleOffset,1,positiveDriftOffset2,-36);
                         //auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectoryCycle2);
                     }
                     auto.resetPosWithAprilTags(1,S == -1? false:true);
@@ -307,8 +309,9 @@ public class Back_BLUE_Truss extends LinearOpMode {
                     } else{
                         armHeight = 5;
                     }
-                    if (auto.delay(600)){
-                        auto.outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
+                    if (auto.delay(200)){
+                        auto.outtakeSubsystem.liftToInternalPID(0,0.7);
+                        auto.outtakeSubsystem.pitchToInternalPID(22,1);
                     }
                     delayTime = frontOrBackAuto? 800:350;
                 } else if (numCycles == 2){
