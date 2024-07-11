@@ -61,7 +61,7 @@ public class MeepMeepTesting {
                             // drive into stacks truss teamprop3
 
                                 .lineToSplineHeading(new Pose2d(27.5, -47.8 + 5.3, Math.toRadians(180)))
-                                .splineToConstantHeading(new Vector2d(-16.5, -52.8), Math.toRadians(180)) // end tangent affects path alot\
+                                .splineToConstantHeading(new Vector2d(10, -52.8), Math.toRadians(180)) // end tangent affects path alot\
                                 //.lineToSplineHeading(new Pose2d(-16.5, -53, Math.toRadians(180)))
                                 .splineToSplineHeading(new Pose2d(-36,-51, Math.toRadians(160)), Math.toRadians(170))
 

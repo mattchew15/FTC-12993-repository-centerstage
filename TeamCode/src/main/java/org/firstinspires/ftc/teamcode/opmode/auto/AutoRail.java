@@ -60,16 +60,16 @@ public class AutoRail {
             } else if (trussMiddleStage == 3){
                 if (teamPropLocation == 2){
               //    setAprilTagRailThingy(RAIL_CENTER_POS - 0.22,-pivotOffset,-pivotOffset);
-                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.212);
-                    if (S == -1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS + 0.185);
+                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.222);
+                    if (S == -1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS + 0.195);
 
                 } else if (teamPropLocation == 1){
                    // setAprilTagRailThingy(RAIL_CENTER_POS-0.23,pivotOffset,pivotOffset);
-                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.234);
+                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.236);
                     if (S == -1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS + 0.22);
                 } else if (teamPropLocation == 3){
                    // setAprilTagRailThingy(RAIL_CENTER_POS - 0.256,-pivotOffset,-pivotOffset);
-                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.256);
+                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.27);
                     if (S == -1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS + 0.24);
                 }
             } else if (trussMiddleStage == 1){

@@ -109,7 +109,11 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
     }
 
     public void autoSequence(){
-        auto.goToPark(currentState == AutoState.IDLE,2);
+
+        if (auto.goToPark(currentState == AutoState.IDLE,2)){
+            currentState = AutoState.IDLE;
+        }
+
         switch (currentState) {
             case DELAY:
                 if (auto.delayState(0)){
