@@ -275,7 +275,7 @@ public class AutoTrajectories {
         if (trussMiddleStage == 3 && frontOrBackAuto){
             initializedFrontStageTrajectories = true;
             PreloadDrive2FrontStage = drive.trajectoryBuilder(startPoseFront)
-                    .lineToLinearHeading(new Pose2d(-48, -9.8*S, Math.toRadians(179)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                    .lineToLinearHeading(new Pose2d(-48.5, -9.8*S, Math.toRadians(179)*S), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .addSpatialMarker(new Vector2d(-48, -10*S), () -> {
                         preExtendSlides = true;
@@ -331,9 +331,9 @@ public class AutoTrajectories {
             double backDepositStage = 40.6;
             firstDriveThroughStageAfterPurple2StraightTo = drive.trajectoryBuilder(PreloadDrive2FrontFirst.end(), true)
 
-                    .lineToSplineHeading(new Pose2d(-43, -12*S, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                    .lineToSplineHeading(new Pose2d(-46, -12*S, Math.toRadians(180)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                    .splineToConstantHeading(new Vector2d(-30, -9*S), Math.toRadians(0))
+                    .splineToConstantHeading(new Vector2d(-32, -9*S), Math.toRadians(0))
                     .lineToSplineHeading(new Pose2d(20, -9*S, Math.toRadians(180)*S))
                     .addSpatialMarker(new Vector2d( 21, -9*S), () -> {
                         extendSlidesAroundTruss = true;
@@ -355,7 +355,7 @@ public class AutoTrajectories {
                     //.lineToSplineHeading(new Pose2d(-5, -9*S, Math.toRadians(180)*S))
 
 
-                    .lineToSplineHeading(new Pose2d(-42, -15*S, Math.toRadians(180*S)), SampleMecanumDrive.getVelocityConstraint(28, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                    .lineToSplineHeading(new Pose2d(-42, -15*S, Math.toRadians(180*S)), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .splineToConstantHeading(new Vector2d(-29, -9*S), Math.toRadians(0*S))
                     .lineToSplineHeading(new Pose2d(20, -9*S, Math.toRadians(180)*S))
@@ -366,7 +366,7 @@ public class AutoTrajectories {
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .build();
             firstDriveThroughStageAfterPurple1 = drive.trajectoryBuilder(PreloadDrive1FrontStage.end(), true)
-                    .lineToSplineHeading(new Pose2d(-56, -15*S, Math.toRadians(180*S)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                    .lineToSplineHeading(new Pose2d(-56, -15*S, Math.toRadians(180*S)), SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .splineToConstantHeading(new Vector2d(-34, -8.5*S), Math.toRadians(0*S))
                     .lineToSplineHeading(new Pose2d(20, -8.5*S, Math.toRadians(180)*S))
@@ -538,7 +538,7 @@ public class AutoTrajectories {
     //Stage
     public Trajectory driveIntoStackStraightTrajectory(Pose2d startTrajectory, double slowerVelocityIntoStack, int trussMiddleStage, double positiveYOffset, double intakeX, double slowedX, double heading){ // generates a live trajectory
         return drive.trajectoryBuilder(startTrajectory)
-                .lineToSplineHeading(new Pose2d(10, (StageY +positiveYOffset + 1.6)*S, Math.toRadians(heading)*S), SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToSplineHeading(new Pose2d(10, (StageY +positiveYOffset + 1)*S, Math.toRadians(heading)*S), SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(slowedX, (StageYIntake +positiveYOffset)*S), Math.toRadians(heading)*S) // end tangent affects path alot\
                 .lineToSplineHeading(new Pose2d(intakeX, (StageYIntake +positiveYOffset)*S, Math.toRadians(heading)*S), SampleMecanumDrive.getVelocityConstraint(slowerVelocityIntoStack, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -640,7 +640,7 @@ public class AutoTrajectories {
     public Trajectory driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(Pose2d startTrajectory, double slowerVelocityIntoStack, double yOffset, double endAngle, int trussMiddleStage, double positiveYDriftOffset, double xSplineStart){
         return drive.trajectoryBuilder(startTrajectory)
                 // acount for hitting truss on blue side
-                .lineToSplineHeading(new Pose2d(15, (StageYIntake+positiveYDriftOffset)*S, Math.toRadians(180)*S),SampleMecanumDrive.getVelocityConstraint(  S==-1? 29:35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToSplineHeading(new Pose2d(15, (StageYIntake+positiveYDriftOffset)*S, Math.toRadians(180)*S),SampleMecanumDrive.getVelocityConstraint(  S==-1? 28:35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .splineToConstantHeading(new Vector2d(xSplineStart, (StageYIntake+positiveYDriftOffset)*S), Math.toRadians(180)*S) // end tangent affects path alot\
                 /*

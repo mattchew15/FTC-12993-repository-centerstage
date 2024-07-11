@@ -103,7 +103,7 @@ public class Globals
             PITCH_CLIMB_TICKS = 67,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
-            PITCH_PURPLE_PIXEL_POSITION = 21,
+            PITCH_PURPLE_PIXEL_POSITION = 22,
             PITCH_MID_DEGREE_TICKS = 45,
 
             INTAKE_SLIDE_EXTENDO_TELEOP_FAR = 1000,

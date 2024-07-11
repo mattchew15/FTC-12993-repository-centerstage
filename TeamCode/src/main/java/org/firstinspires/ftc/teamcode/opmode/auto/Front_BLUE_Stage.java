@@ -22,7 +22,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
 
     int numCycleForDifferentLane = 0;
     double delayForYellow = 0; // this is in seconds
-    double endAngleForStacks = S == 1? -174: -173;
+    double endAngleForStacks = S == 1? -173.7: -172.5;
     boolean didWeFuckingRelocalize = false;
 
     //Accessories
@@ -375,7 +375,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
                     if (numCycles == 2){
                         intakeTrajectory = auto.autoTrajectories.driveIntoStackStraightTrajectory(new Pose2d(xPosition,yPosition,headingPosition),numCycles == 1? 15:22,3,2.3 + positiveYOffset + S == -1?4.2:1,-27.7, -26.3, S == 1? 180:180);
                     } else if (numCycles == 3){ // turning into the stacks
-                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition + 1.3,yPosition,headingPosition),19,-2.9,endAngleForStacks,3, (S == -1?4.2:0.2) - 2.9 + positiveYOffset,-18);
+                        intakeTrajectory = auto.autoTrajectories.driveIntoStackAngledAfterAngledOuttakeTrajectoryStage(new Pose2d(xPosition + 1.3,yPosition,headingPosition),19,-2.9,endAngleForStacks,3, (S == -1?4.35:0.2) - 2.9 + positiveYOffset,-18);
                     }
                     //TODO mental note - if you move the x distance upwards the angle needs to be less and the offset needs to be more for the spline to work properly
                     else if (numCycles == 4 && !frontOrBackAuto){

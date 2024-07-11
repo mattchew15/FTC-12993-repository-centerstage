@@ -315,7 +315,8 @@ public class Front_RED_Stage extends LinearOpMode {
                 //outtaking lengths for each cycle
                 double positiveYOffset = 0;
                 if (frontOrBackAuto){
-                    positiveYOffset = -1;
+                    if (S == 1) positiveYOffset = -1.2;
+                    if (S == -1) positiveYOffset = -1;
                 } else {
                     positiveYOffset = 0;
                 }

@@ -26,7 +26,6 @@ public class Front_RED_MIDDLE_CYCLE extends LinearOpMode {
     AutoRail railLogic = new AutoRail(numCycleForDifferentLane,0, auto,true,2);
     AutoPivot pivotLogic = new AutoPivot(numCycleForDifferentLane,0, auto, telemetry,2);
 
-
     enum AutoState {
         DELAY,
         PRELOAD_DRIVE,
@@ -169,7 +168,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 Trajectory intakeTrajectory = null;
                 if (numCycles == 0){ // for very first cycle
                     pitchTarget = 20;
-                    liftTarget = 23.7;
+                    liftTarget = 25;
                 } else if (numCycles == 1){
                     pitchTarget = 21;
                     liftTarget = 27;
@@ -191,7 +190,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 } else if (numCycles == 6){
                     //auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, true, false, true, true);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, false, true, true, true);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);

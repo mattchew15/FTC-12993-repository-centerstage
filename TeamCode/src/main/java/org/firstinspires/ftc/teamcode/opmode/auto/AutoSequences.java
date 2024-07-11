@@ -56,6 +56,7 @@ public class AutoSequences {
     Gamepad gamepad1;
     HardwareMap hwMap;
     int armHeight;
+    boolean distanceSensorWorked;
 
     final double xyP = 1;
     final double headingP = 1;
@@ -308,7 +309,7 @@ public class AutoSequences {
         } else if (teamPropLocation == 2){
             y1 = 32;
             y2 = 26;
-            intakeSlidePosition = 360;
+            intakeSlidePosition = 355;
         } else if (teamPropLocation == 3){
             y1 = 46;
             y2 = 35.5;
@@ -617,6 +618,7 @@ public class AutoSequences {
                         }
                         if (!autoTrajectories.drive.isBusy() || ((outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) && (distanceSensorForCycleZero || numCycles != 0) && ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition) > (liftTarget - 4.5))) {
                             // line above determines when we drop the pixels
+                            if (outtakeSubsystem.outtakeDistanceSensorValue < OUTTAKE_DISTANCE_AUTO_THRESHOLD) telemetry.addData("DISTANCE SENSOR WORKED FOR CYCLE:", numCycles);
                             if (delayForYellowRail(350)){
                                 if (openGrippers){
                                     outtakeSubsystem.gripperServoState(OuttakeSubsystem.GripperServoState.OPEN);
