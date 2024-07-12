@@ -99,7 +99,7 @@ public class Globals
 
     public static int
             PITCH_OFFSET_VALUE = 319,
-            PITCH_DEFAULT_DEGREE_TICKS = 36,
+            PITCH_DEFAULT_DEGREE_TICKS = 37,
             PITCH_CLIMB_TICKS = 67,
             UPRIGHT_PITCH_TICKS = 56,
             PITCH_LOW_DEGREE_TICKS = 22,
