@@ -65,7 +65,7 @@ public class AutoRail {
 
                 } else if (teamPropLocation == 1){
                    // setAprilTagRailThingy(RAIL_CENTER_POS-0.23,pivotOffset,pivotOffset);
-                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.236);
+                    if (S == 1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS - 0.241);
                     if (S == -1) auto.outtakeSubsystem.setOuttakeRailServo(RAIL_CENTER_POS + 0.22);
                 } else if (teamPropLocation == 3){
                    // setAprilTagRailThingy(RAIL_CENTER_POS - 0.256,-pivotOffset,-pivotOffset);

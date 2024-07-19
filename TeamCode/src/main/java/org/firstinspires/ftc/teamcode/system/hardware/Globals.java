@@ -38,8 +38,8 @@ public class Globals
     public static double
             RAIL_CENTER_POS = 0.487,
 
-            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS + 0.251,
-            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS - 0.251,
+            RAIL_LEFT_LESS_POS = RAIL_CENTER_POS + 0.25,
+            RAIL_RIGHT_LESS_POS = RAIL_CENTER_POS - 0.1,
 
 
             RAIL_CENTER_YELLOW_POS = RAIL_CENTER_POS - 0.067,

@@ -80,12 +80,12 @@ public class OuttakeSubsystem
             MINI_TURRET_BACKPURPLE_POS = MINI_TURRET_STRAIGHT_POS - 0.069;
 
     public static double
-            ARM_READY_POS = 0.835, //0.809,
+            ARM_READY_POS = 0.833, //0.809,
             ARM_UPRIGHT_POS = 0.55,
             ARM_SCORE_POS = 0.21,
-            ARM_SCORE_POS_AUTO = 0.243,
+            ARM_SCORE_POS_AUTO = 0.242,
             ARM_SCORE_PURPLE_PIXEL_POS = 0.18,
-            ARM_SCORE_YELLOW_POS = 0.26;
+            ARM_SCORE_YELLOW_POS = 0.33;
     public static double
             PIVOT_READY_POS = 0.486,
             PIVOT_DIAGONAL_LEFT_POS = PIVOT_READY_POS - 0.096,
@@ -104,7 +104,7 @@ public class OuttakeSubsystem
             PITCH_PURPLEPIXEL_POSITION = 0.365,
             PITCH_PURPLEPIXEL_POSITION_THIRDCASE = 0.23,
             PITCH_LOWPITCH_POSITION = 0.7,
-            PITCH_YELLOWPIXEL_POSITION = 0.45;
+            PITCH_YELLOWPIXEL_POSITION = 0.37;
 
 
     public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
