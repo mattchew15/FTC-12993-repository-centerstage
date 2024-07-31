@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.system.paths.P2P;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.system.accessory.imu.ImuThread;
-
-import java.util.Objects;
+import org.firstinspires.ftc.teamcode.system.hardware.robot.GeneralHardware;
 
 public class Localizer
 {
@@ -34,6 +32,11 @@ public class Localizer
         this.pose = new Pose();
         this.localizer = new TwoTrackingWheelLocalizer(hardwareMap, new ImuThread(hardwareMap), opMode);
         localizer.setPoseEstimate(pose.toPose2d());
+    }
+
+    public Localizer(GeneralHardware hardware)
+    {
+        // implement this
     }
     @Deprecated
     public Pose getPredictedPose()
@@ -66,7 +69,7 @@ public class Localizer
     private final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0),
             yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
-    public static double xDeceleration = 100, yDeceleration = 150;
+    public static double xDeceleration = 55.1, yDeceleration = 2.97;//29.7; // 100 , 150,  50.87
 
     public Vector getVelocity(){
         return velocity;

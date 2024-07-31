@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.system.accessory;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.system.paths.P2P.LowPassFilter;
+
 public class PIDR
 {
     // This was never tested lol, it just exists
@@ -75,18 +77,21 @@ public class PIDR
 
         return output;
     }
+    double filterCoeff = 0.8;
+    LowPassFilter derivativeFilter = new LowPassFilter(filterCoeff, 0);
     /** Return the output with a low pass filter and an integral wind up */
     public double betterUpdate(double target, double state, double maxOutput) { // parameter of the method is the target,
         // PID logic and then return the output with low pass filter + integral wind up
         error = target-state;
         errorDerivative = error-lastError;
-
+        derivative = (error-lastError) / timer.seconds();
         reference = Math.signum(error);
 
         // Low pass filter logic
-        currentEstimate = (a * previousEstimate) + (1 - a) * errorDerivative;
-        derivative = currentEstimate / timer.seconds();
-        previousEstimate = currentEstimate;
+        //currentEstimate = (a * previousEstimate) + (1 - a) * errorDerivative;
+        //derivative = currentEstimate / timer.seconds();
+        derivative = derivativeFilter.getValue(derivative);
+        //previousEstimate = currentEstimate;
 
         integralSum += error * timer.seconds();
         // set a limit on our integral sum
@@ -150,6 +155,10 @@ public class PIDR
 
     public double returnIntegralSum() {
         return integralSum;
+    }
+    public double returnDerivative()
+    {
+        return derivative;
     }
 
 }

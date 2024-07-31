@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.system.accessory.PID;
+import org.firstinspires.ftc.teamcode.system.accessory.PIDR;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.system.accessory.profile.ProfileSubsystem;
@@ -107,7 +108,7 @@ public class OuttakeSubsystem
             PITCH_YELLOWPIXEL_POSITION = 0.45;
 
 
-    public static double LiftKp = 0.015, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
+    public static double LiftKp = 0.009, LiftKi = 0.0001, LiftKd = 0.00002, LiftIntegralSumLimit = 10, LiftKf = 0;
     public static double LiftFTCLIBKp = 0.015, LiftFTCLIBKi = 0.0001, LiftFTCLIBKd = 0.05;
 
     public static double PitchKp = 0.25, PitchKi = 0.001, PitchKd = 0.001, PitchIntegralSumLimit = 5, PitchFeedforward = 0.3;
@@ -120,7 +121,7 @@ public class OuttakeSubsystem
     public PID pitchPID = new PID(PitchKp,PitchKi,PitchKd,PitchIntegralSumLimit,0);
     public PIDController pitchFTCLibPID = new PIDController(PitchFTCLIBKp,PitchFTCLIBKi,PitchFTCLIBKd);
     public PIDController liftFTCLibPID = new PIDController(LiftFTCLIBKp,LiftFTCLIBKi,LiftFTCLIBKd);
-
+    public PIDR liftPIDR = new PIDR(LiftKp,LiftKi,LiftKd,LiftKf);
     final double PITCH_THRESHOLD_DISTANCE = degreestoTicksPitchMotor(1.5); // could change this to a number in ticks
     final double LIFT_THRESHOLD_DISTANCE = inchesToTicksSlidesMotor(0.4);
 
@@ -329,6 +330,14 @@ public class OuttakeSubsystem
         double output = liftFTCLibPID.calculate(liftPosition,liftTarget); //does a lift to with external PID instead of just regular encoders
         //LiftMotor.setPower(-output);
         prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
+    }
+    public void liftToPIDR(int inches)
+    {
+        liftTarget = (int)inchesToTicksSlidesMotor(inches);
+        LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // this is added so that the external pids could be used
+        double output = liftPIDR.betterUpdate(liftTarget, liftPosition, 1); //does a lift to with external PID instead of just regular encoders
+        LiftMotor.setPower(-output);
+        //prevLiftOutput = motorCaching(-output, prevLiftOutput, EPSILON_DELTA, LiftMotor);
     }
 
 

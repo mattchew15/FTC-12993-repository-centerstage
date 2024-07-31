@@ -45,8 +45,8 @@ public class MecanumDrive
         TeleOP
     }
 
-    private PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000,0);
-    private PIDController HEADING_PID = new PIDController(0.37, 0.008, 0.00034);
+    public static PIDController TRANSLATIONAL_PID = new PIDController(0.044, 0.00000, 0);
+    public static PIDController HEADING_PID = new PIDController(0.37, 0.008, 0.00034);
     private DcMotor FL, FR, BL, BR; // TODO: hardware class > then this
     private RunMode runMode;
     private Localizer localizer;
@@ -55,8 +55,8 @@ public class MecanumDrive
     public Vector targetVector = new Vector();
 
     private static double ks = 0.03;
-    private double lateralMultiplier = 1.1194029851;
-    private double headingMultiplier = 1;
+    public double lateralMultiplier = 1.1194029851;
+    public static double headingMultiplier = 1;
     private double overallMultiplier = 1;
 
     private final double velocityThreshold = 1;
@@ -101,7 +101,7 @@ public class MecanumDrive
         {
             if (Math.abs(powerVector.getX()) + Math.abs(powerVector.getY()) + Math.abs(powerVector.getZ()) > 1)
                 powerVector.scaleToMagnitude(1);
-            powerVector.scaleBy(1); // search for the speed controller lol
+            powerVector.scaleBy(overallMultiplier); // search for the speed controller lol
         }
     }
 
@@ -159,6 +159,7 @@ public class MecanumDrive
     }
 
     public double FLPower, FRPower, BLPower, BRPower;
+
     private void updateMotors()
     {
         if (runMode == RunMode.P2P)
@@ -193,8 +194,7 @@ public class MecanumDrive
             BL.setPower((powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ()));
             BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
 */
-        }
-        else if(runMode == RunMode.PP)
+        } else if (runMode == RunMode.PP)
         {
             /*double strafeSpeed = powerVector.getY();
             double forwardSpeed = powerVector.getX();
@@ -248,7 +248,7 @@ public class MecanumDrive
             double x_rotated = (x * Math.cos(heading) - y * Math.sin(heading));
             double y_rotated = (x * Math.sin(heading) + y * Math.cos(heading));
 
-            double FL =  MathUtils.clamp(x_rotated + y_rotated + theta, -1, 1);
+            double FL = MathUtils.clamp(x_rotated + y_rotated + theta, -1, 1);
             double BL = MathUtils.clamp(x_rotated - y_rotated + theta, -1, 1);
             double FR = MathUtils.clamp(x_rotated - y_rotated - theta, -1, 1);
             double BR = MathUtils.clamp(x_rotated + y_rotated - theta, -1, 1);
@@ -260,17 +260,20 @@ public class MecanumDrive
             this.BR.setPower(BR);
 
 
-
-        }
-        else
+        } else if(runMode == RunMode.Vector)
         {
+            double actualKs = ks * 12.0 / voltageSupplier.get();
 
+            FL.setPower((powerVector.getX() - powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() - powerVector.getZ()));
+            FR.setPower((powerVector.getX() + powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() + powerVector.getZ()));
+            BL.setPower((powerVector.getX() + powerVector.getY() - powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() + powerVector.getY() - powerVector.getZ()));
+            BR.setPower((powerVector.getX() - powerVector.getY() + powerVector.getZ()) * (1 - actualKs) + actualKs * Math.signum(powerVector.getX() - powerVector.getY() + powerVector.getZ()));
         }
     }
 
     public void update()
     {
-        if(!ENABLED) return;
+        if (!ENABLED) return;
         localizer.update();
         updatePowerVector();
         updateMotors();
@@ -282,57 +285,76 @@ public class MecanumDrive
         return voltageSupplier.get();
     }
 
-    public void setTargetPose(Pose pose){
+    public void setTargetPose(Pose pose)
+    {
         this.targetPose = pose;
     }
-    public void setTargetPose(Pose2d pose){
+
+    public void setTargetPose(Pose2d pose)
+    {
         this.targetPose = new Pose(pose);
     }
 
-    public void setTargetVector(Vector Vector){
+    public void setTargetVector(Vector Vector)
+    {
         this.targetVector = Vector;
     }
+
     public void setTargetPath(ArrayList<CurvePoint> path)
     {
         currentPath = path;
     }
 
-    public RunMode getRunMode() {
+    public RunMode getRunMode()
+    {
         return runMode;
     }
 
-    public Localizer getLocalizer(){
+    public Localizer getLocalizer()
+    {
         return localizer;
     }
-    public void setLocalizer(Localizer localizer){
+
+    public void setLocalizer(Localizer localizer)
+    {
         this.localizer = localizer;
     }
 
-    public Pose getTargetPose(){
+    public Pose getTargetPose()
+    {
         return targetPose;
     }
 
-    public void setRunMode(RunMode runMode){
+    public void setRunMode(RunMode runMode)
+    {
         this.runMode = runMode;
     }
 
-    public boolean reachedTarget(double tolerance){
-        if(runMode == RunMode.Vector) return false;
-        if(runMode == RunMode.PP) return localizer.getPoseEstimate().getDistance(currentPath.get(currentPath.size() - 1).toPose()) <= tolerance;
+    public boolean reachedTarget(double tolerance)
+    {
+        if (runMode == RunMode.Vector) return false;
+        if (runMode == RunMode.PP)
+            return localizer.getPoseEstimate().getDistance(currentPath.get(currentPath.size() - 1).toPose()) <= tolerance;
         return localizer.getPoseEstimate().getDistance(targetPose) <= tolerance;
     }
 
-    public boolean reachedHeading(double tolerance){
-        if(runMode == RunMode.Vector) return false; // for now PP will be caught here
-        if(runMode == RunMode.PP) return false;
+    public boolean reachedHeading(double tolerance)
+    {
+        if (runMode == RunMode.Vector) return false; // for now PP will be caught here
+        if (runMode == RunMode.PP) return false;
         return Math.abs(normalizeRadians(targetPose.getHeading() - localizer.getHeading())) <= tolerance;
     }
 
-    public boolean stopped(){
+    public boolean stopped()
+    {
         return localizer.getVelocity().getMagnitude() <= velocityThreshold;
     }
 
-
+    public void setSpeed(double speed)
+    {
+        MathUtils.clamp(speed, 0, 1);
+        overallMultiplier = speed;
+    }
     // PP
     public CurvePoint currentPoint;
     public  CurvePoint lastPoint;
