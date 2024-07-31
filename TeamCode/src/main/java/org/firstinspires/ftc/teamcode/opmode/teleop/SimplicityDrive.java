@@ -49,6 +49,7 @@ public class SimplicityDrive extends LinearOpMode {
     int armTarget;
     int majorAdjustType;
     int pivotState;
+    int M;
     boolean outtakeReset;
 
     double intakeClipTimer;
@@ -323,7 +324,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case INTAKE_EXTENDO:
                 intakeOutBtnLogic.upToggle(gamepad1.left_bumper);
-                intakeOutBtnLogic.downToggle(gamepad1.right_bumper);
+                intakeOutBtnLogic.downToggle(gamepad1.right_bumper,1);
                 if (intakeOutBtnLogic.OffsetTargetPosition == 1){
                     intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE;
                 } else if (intakeOutBtnLogic.OffsetTargetPosition == 2){
@@ -356,7 +357,7 @@ public class SimplicityDrive extends LinearOpMode {
 
             case AFTER_INTAKE:
                 intakeOutBtnLogic.upToggle(gamepad1.left_bumper);
-                intakeOutBtnLogic.downToggle(gamepad1.right_bumper);
+                intakeOutBtnLogic.downToggle(gamepad1.right_bumper,1);
                 if (intakeOutBtnLogic.OffsetTargetPosition == 1){
                     intakeTarget = INTAKE_SLIDE_EXTENDO_TELEOP_CLOSE;
                 } else if (intakeOutBtnLogic.OffsetTargetPosition == 2){
@@ -506,8 +507,17 @@ public class SimplicityDrive extends LinearOpMode {
                     pitchTarget = (int)outtakeInverseKinematics.pitchEnd(pureHeight,0);
                     liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
                     if (Math.abs(gamepad2.right_stick_y)<0.2){
+
+
+
                         fineAdjustHeight.upToggle(gamepad2.right_bumper || gamepad1.left_bumper);
-                        fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad);
+                        if (gamepad1.left_bumper) {
+                            M = 2;
+                        } else {
+                            M = 1;
+                        }
+                        fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad || (gamepad1.left_bumper?gamepad1.right_bumper:false), M);
+
                         backdropRelativeHeight = fineAdjustHeight.OffsetTargetPosition;
                     } else {
                         fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic
@@ -526,7 +536,7 @@ public class SimplicityDrive extends LinearOpMode {
                     outtakeSubsystem.pitchToInternalPID(PITCH_DEFAULT_DEGREE_TICKS,1);
                 }
 
-                if ((gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper)) || (delay(300) && reArrangePixels)) {
+                if ((gamepadRightBumperRisingEdge.mode(gamepad1.right_bumper) && !gamepad1.left_bumper) || (delay(300) && reArrangePixels)) {
                     if (((liftTarget - ticksToInchesSlidesMotor(outtakeSubsystem.liftPosition)) < 5) || reArrangePixels){
                         resetTimer();// reset timer
                         outtakeState = OuttakeState.DEPOSIT;
@@ -992,7 +1002,15 @@ public class SimplicityDrive extends LinearOpMode {
         liftTarget = (int)outtakeInverseKinematics.slideEnd(pureHeight,0);
         if (Math.abs(gamepad2.right_stick_y)<0.2){
             fineAdjustHeight.upToggle(gamepad2.right_bumper || gamepad1.left_bumper);
-            fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad);
+
+            if (gamepad1.left_bumper) {
+                M = 2;
+            } else {
+                M = 1;
+            }
+            fineAdjustHeight.downToggle(gamepad2.left_bumper || gamepad1.touchpad || (gamepad1.left_bumper?gamepad1.right_bumper:false), M);
+
+
             backdropRelativeHeight = fineAdjustHeight.OffsetTargetPosition;
         } else {
             fineAdjustHeight(gamepad2.right_stick_y); // this shouldn't conflict with bumpers because of rising edge detector logic

@@ -115,7 +115,15 @@ public class Front_BLUE_Stage extends LinearOpMode {
             }
             if(gamepad1.b)
             {
+                initialDelay = 4000;
+            }
+            if(gamepad1.dpad_up)
+            {
                 initialDelay = 5000;
+            }
+            if(gamepad1.left_bumper)
+            {
+                initialDelay = 8500;
             }
             telemetry.addData("Initial Delay", initialDelay);
             telemetry.update();
@@ -570,7 +578,7 @@ public class Front_BLUE_Stage extends LinearOpMode {
             case AFTER_GRAB_OFF_STACK:
                 double intakeTime = 0;
                 if (numCycles == 1) intakeTime = 270;
-                if (numCycles == 2) intakeTime = 300;
+                if (numCycles == 2) intakeTime = 290;
                 if (auto.afterGrabOffStack(2,3, 500,intakeTime)){
                     if (!auto.intakeSubsystem.pixelsInIntake() && numCycles >= 3){
                         currentState = AutoState.GO_BACK_FOR_WHITES;

@@ -110,7 +110,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
 
     public void autoSequence(){
 
-        if (auto.goToPark(currentState == AutoState.IDLE,2)){
+    if (auto.goToPark(currentState == AutoState.IDLE || currentState == AutoState.PARK,2)){
             currentState = AutoState.IDLE;
         }
 
@@ -139,7 +139,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 break;
 
             case PLACE_AND_INTAKE:
-                if (auto.placeAndIntakeFrontMIDTRUSS(170,1, true)){
+                if (auto.placeAndIntakeFrontMIDTRUSS(50,1, false)){
 //                    Trajectory startDrive = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, 29, -32);
 //                    auto.autoTrajectories.drive.followTrajectoryAsync(startDrive);
                     auto.autoTrajectories.drive.followTrajectoryAsync(auto.autoTrajectories.firstOuttakeMiddleDrive);
@@ -156,7 +156,12 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 } else {
                     auto.goBackToStack(3,6,-31,180);
                 }
-                if (auto.transferPixel(numCycles==0?false:true)){
+                boolean transferEarly = true;
+                if (numCycles == 0) transferEarly = false;
+                if (numCycles == 1) transferEarly = false;
+                if (numCycles == 2) transferEarly = false;
+
+                if (auto.transferPixel(transferEarly)){
                     currentState = AutoState.OUTTAKE_PIXEL;
                 }
 
@@ -194,7 +199,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                 } else if (numCycles == 6){
                     //auto.goToParkAfterOuttaking = true;
                 }
-                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, false, true, true, true);
+                boolean outtakePixelFinished = auto.outtakePixel(auto.correctedHeading,liftTarget,pitchTarget,intakeSlideTarget,railLogic,pivotLogic,extendSlidesStraightAway, true, true, true, true);
                 if (auto.goToParkAfterOuttaking && outtakePixelFinished){
                     intakeTrajectory = auto.autoTrajectories.parkTrajectory(poseEstimate,2);
                     auto.autoTrajectories.drive.followTrajectoryAsync(intakeTrajectory);
@@ -319,7 +324,7 @@ currentState != AutoState.PRELOAD_DRIVE && currentState != AutoState.OUTTAKE_PIX
                         // this seems to be the best trajectory to follow
                         outtakeTrajectory = auto.autoTrajectories.simplifiedOuttakeDrive(poseEstimate,17, 175, -5,4, 14, 29.2);
                     } else {
-                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, numCycles == 1? 27.1: 27.6, MiddleLaneYDeposit, 20);
+                        outtakeTrajectory = auto.autoTrajectories.outtakeDriveMiddlePathTrajectory(poseEstimate,15, numCycles == 1? 27.3: 27.7, MiddleLaneYDeposit, 21);
                     }
                     auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
 

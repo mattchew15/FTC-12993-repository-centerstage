@@ -442,12 +442,12 @@ public class Front_RED_Stage extends LinearOpMode {
                     delayTime = frontOrBackAuto? 350:300;
                     if (frontOrBackAuto){
                         //if (teamPropLocation != 1){
-                        armHeight = 5;
+                        armHeight = 6;
                         // } else {
                         //     armHeight = 4;
                         // }
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -572,13 +572,12 @@ public class Front_RED_Stage extends LinearOpMode {
                 double intakeTime = 0;
                 if (numCycles == 1) intakeTime = 270;
                 if (numCycles == 2) intakeTime = 300;
-                if (auto.afterGrabOffStack(2,3, 500,intakeTime)){
+                if (auto.afterGrabOffStack(2,3, 450,intakeTime)){
                     if (!auto.intakeSubsystem.pixelsInIntake() && numCycles >= 3){
                         currentState = AutoState.GO_BACK_FOR_WHITES;
                     } else {
                         currentState = AutoState.TRANSFER_PIXEL;
                         if (numCycles >= 3) auto.autoTrajectories.drive.followTrajectoryAsync(outtakeTrajectory);
-
                     }
                 }
                 break;

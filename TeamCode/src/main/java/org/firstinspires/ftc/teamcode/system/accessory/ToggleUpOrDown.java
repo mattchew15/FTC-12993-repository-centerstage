@@ -5,6 +5,7 @@ public class ToggleUpOrDown { // TODO: Optimize the shit out of this please
     public boolean ToggleUp;
     public boolean ToggleDown;
 
+
     public int OffsetTargetPosition;
     public double UpIncrement;
     public double DownIncrement;
@@ -22,17 +23,18 @@ public class ToggleUpOrDown { // TODO: Optimize the shit out of this please
                 // this logic runs when you press the button without releasing it
                 OffsetTargetPosition += UpIncrement;
             }
+
         }
         else {
             ToggleUp = false;
         }
     }
 
-    public void downToggle (boolean Btn){
+    public void downToggle (boolean Btn, int incrementMultiplier){
         if (Btn) {
             if (!ToggleDown) {
                 ToggleDown = true;
-                OffsetTargetPosition -= DownIncrement;
+                OffsetTargetPosition -= DownIncrement * incrementMultiplier;
             }
         }
         else {

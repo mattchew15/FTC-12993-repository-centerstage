@@ -442,12 +442,12 @@ public class Back_RED_Stage extends LinearOpMode {
                     delayTime = frontOrBackAuto? 350:300;
                     if (frontOrBackAuto){
                         //if (teamPropLocation != 1){
-                        armHeight = 5;
+                        armHeight = 6;
                         // } else {
                         //     armHeight = 4;
                         // }
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 2){
                     if (frontOrBackAuto){
@@ -459,7 +459,7 @@ public class Back_RED_Stage extends LinearOpMode {
                     if (frontOrBackAuto){
                         armHeight = 4;
                     } else {
-                        armHeight = 5;
+                        armHeight = 6;
                     }
                 } else if (numCycles == 4) {
                     armHeight = 3;
