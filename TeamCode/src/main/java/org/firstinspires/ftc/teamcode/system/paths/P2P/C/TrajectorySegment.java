@@ -1,5 +1,8 @@
-package org.firstinspires.ftc.teamcode.system.paths.P2P;
+package org.firstinspires.ftc.teamcode.system.paths.P2P.C;
 
+
+import org.firstinspires.ftc.teamcode.system.paths.P2P.Pose;
+import org.firstinspires.ftc.teamcode.system.paths.P2P.Vector;
 
 import java.util.ArrayList;
 
