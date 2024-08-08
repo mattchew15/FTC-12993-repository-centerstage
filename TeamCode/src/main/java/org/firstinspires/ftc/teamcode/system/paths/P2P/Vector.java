@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.system.paths.P2P;
 
 import androidx.annotation.NonNull;
 
+import org.opencv.core.Point;
+
 public class Vector {
     private double x,y,z;
 
@@ -23,6 +25,11 @@ public class Vector {
         this.x = otherVector.x;
         this.y = otherVector.y;
         this.z = otherVector.z;
+    }
+    public Vector(Point otherPoint){
+        this.x = otherPoint.x;
+        this.y = otherPoint.y;
+        this.z = 0;
     }
 
     public static Vector fromAngleAndMagnitude(double t, double m){
@@ -80,13 +87,33 @@ public class Vector {
         return aux;
     }
 
+    public Vector subtract(Vector v)
+    {
+        return new Vector(x - v.x, y - v.y, z - v.z);
+    }
+    public Vector subtract(Point p)
+    {
+        return new Vector(x - p.x, y - p.y);
+    }
     public static Vector  rotateBy(Vector vector, double theta){
         return new Vector(Math.cos(theta) * vector.getX() + Math.sin(theta) * vector.getY(), Math.cos(theta) * vector.getY() - Math.sin(theta) * vector.getX());
     }
+
 
     @NonNull
     @Override
     public String toString(){
         return String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(z);
+    }
+
+    public double getMagSqr()
+    {
+        return x * x + y * y + z * z;
+    }
+
+    /** Keep in mind result in rad **/
+    public double getAngle()
+    {
+        return Math.atan2(y, x);
     }
 }

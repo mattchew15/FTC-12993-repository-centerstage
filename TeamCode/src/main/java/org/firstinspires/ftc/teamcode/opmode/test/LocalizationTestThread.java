@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.system.accessory.LoopTime;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
-@Disabled
+
 @TeleOp(name="LocalizationTestThread", group = "Test")
 public class LocalizationTestThread extends LinearOpMode {
     LoopTime loopTime = new LoopTime();
@@ -28,6 +28,7 @@ public class LocalizationTestThread extends LinearOpMode {
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(90)));
         waitForStart();
 
         while (!isStopRequested()) {

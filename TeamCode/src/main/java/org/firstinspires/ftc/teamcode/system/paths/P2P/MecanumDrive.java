@@ -55,7 +55,7 @@ public class MecanumDrive
     public Vector targetVector = new Vector();
 
     private static double ks = 0.03;
-    public double lateralMultiplier = 1.1194029851;
+    public double lateralMultiplier = 1; //= 1.1194029851;
     public static double headingMultiplier = 1;
     private double overallMultiplier = 1;
 
